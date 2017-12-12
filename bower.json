@@ -1,0 +1,16 @@
+{
+  "name": "lockssomatic",
+  "authors": [
+    "Michael Joyce <ubermichael@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "GPL 3",
+  "homepage": "",
+  "private": true,
+  
+  "dependencies": {
+    "jquery": "^3.2.1",
+    "bootstrap": "^3.3.7"
+  }
+}
