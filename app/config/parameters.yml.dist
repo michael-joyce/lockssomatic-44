@@ -17,3 +17,9 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
+
+    # routing and session configuration.
+    router.request_context.host: localhost
+    router.request_context.scheme: http
+    router.request_context.base_url: /lom/web/app_dev.php
+    secure_cookies: false
