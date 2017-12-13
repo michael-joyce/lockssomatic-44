@@ -36,7 +36,6 @@ services:
             - { name: knp_menu.menu_builder, method: buildMainMenu, alias: main }
             - { name: knp_menu.menu_builder, method: buildUserMenu, alias: user }
             
-    # add more services, or override services that need manual wiring
-    # AppBundle\Service\ExampleService:
-    #     arguments:
-    #         $someArgument: 'some_value'
+    AppBundle\Services\FilePaths:
+        public: true
+        arguments: ['@logger', '%kernel.project_dir%', '%lom.download_dir%']

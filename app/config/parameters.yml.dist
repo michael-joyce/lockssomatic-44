@@ -23,3 +23,6 @@ parameters:
     router.request_context.scheme: http
     router.request_context.base_url: /lom/web/app_dev.php
     secure_cookies: false
+
+    # LOCKSSOMatic configuration
+    lom.download_dir: data/download

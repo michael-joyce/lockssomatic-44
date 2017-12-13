@@ -25,7 +25,7 @@ class FilePaths
      *
      * @var string
      */
-    private $env;
+    private $root;
 
     /**
      * @var string
@@ -40,36 +40,11 @@ class FilePaths
     /**
      * Build the service.
      */
-    public function __construct() {
+    public function __construct(Logger $logger, $root, $downloadDir) {
         $this->fs = new Filesystem();
-    }
-
-    /**
-     * Set the service logger.
-     *
-     * @param Logger $logger The logger service.
-     */
-    public function setLogger(Logger $logger) {
         $this->logger = $logger;
-    }
-
-    /**
-     * Set the kernel environment.
-     *
-     * @param string $env The kernel environment.
-     */
-    public function setKernelEnv($env) {
-        $this->env = $env;
-    }
-
-    /**
-     * Set the download directory for content fetched from the PLN and made
-     * available to the staging server.
-     *
-     * @param string $dir The file path to the download directory.
-     */
-    public function setDownloadDir($dir) {
-        $this->downloadDir = $dir;
+        $this->root = $root;
+        $this->downloadDir = $downloadDir;
     }
 
     /**
@@ -78,9 +53,7 @@ class FilePaths
      * @return string
      */
     public function getRootPath() {
-        $path = dirname($this->env);
-
-        return realpath($path);
+        return realpath($this->root);
     }
 
     /**
