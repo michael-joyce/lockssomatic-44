@@ -3,42 +3,58 @@
 namespace AppBundle\Menu;
 
 use Knp\Menu\FactoryInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
-/**
- * Menu builder for the navigation and search menus.
- */
-class Builder implements ContainerAwareInterface
-{
-    use ContainerAwareTrait;
+class Builder {
+    
+    /**
+     * @var FactoryInterface
+     */
+    private $factory;
 
     /**
-     * Build the navigation menu and return it.
-     *
-     * @param FactoryInterface $factory
-     * @param array $options
-     * @return ItemInterface
+     * @var AuthorizationChecker
      */
-    public function navMenu(FactoryInterface $factory, array $options) {
-        $menu = $factory->createItem('root');
+    private $authChecker;
+    
+    /**
+     * @var TokenStorage
+     */
+    private $tokenStorage;
+    
+    public function __construct(FactoryInterface $factory, AuthorizationChecker $authChecker, TokenStorage $tokenStorage) {
+        $this->factory = $factory;
+        $this->authChecker = $authChecker;
+        $this->tokenStorage = $tokenStorage;
+    }
+    
+    private function hasRole($role) {
+        if( ! $this->tokenStorage->getToken()) { 
+            return false;
+        }
+        return $this->authChecker->isGranted($role);
+    }
+    
+    private function getUser() {
+        if(! $this->tokenStorage->getToken()) {
+            return false;
+        }
+        return $this->tokenStorage->getToken()->getUser();
+    }
+    
+    public function buildMainMenu(array $options) {
+        $menu = $this->factory->createItem('root');
         $menu->setChildrenAttributes(array(
             'class' => 'dropdown-menu',
         ));
         $menu->setAttribute('dropdown', true);
-
-//        $menu->addChild('Titles', array(
-//            'route' => 'title_index',
-//        ));
-//        $menu->addChild('Persons', array(
-//            'route' => 'person_index',
-//        ));
-//        $menu->addChild('Firms', array(
-//            'route' => 'firm_index',
-//        ));
-
+        
+        $menu->addChild('Home', array(
+            'route' => 'homepage',
+        ));
+        
         return $menu;
     }
-
-
+    
 }

@@ -1,6 +1,24 @@
 imports:
     - { resource: config_dev.yml }
 
+liip_functional_test: 
+    cache_sqlite_db: true
+
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                driver:   pdo_sqlite
+                path:     %kernel.cache_dir%/test.db
+                
+security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface: plaintext
+    firewalls:
+        main:
+            http_basic: ~
+            
 framework:
     test: ~
     session:

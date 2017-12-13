@@ -22,7 +22,7 @@
     </php>
 
     <testsuites>
-        <testsuite name="wphp">
+        <testsuite name="LOCKSSOmatic">
             <directory>src/AppBundle/Tests</directory>
         </testsuite>
     </testsuites>

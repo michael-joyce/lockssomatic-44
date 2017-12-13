@@ -29,6 +29,13 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
+    AppBundle\Menu\Builder:
+        public: true
+        arguments: ['@knp_menu.factory', '@security.authorization_checker', '@security.token_storage']
+        tags:
+            - { name: knp_menu.menu_builder, method: buildMainMenu, alias: main }
+            - { name: knp_menu.menu_builder, method: buildUserMenu, alias: user }
+            
     # add more services, or override services that need manual wiring
     # AppBundle\Service\ExampleService:
     #     arguments:
