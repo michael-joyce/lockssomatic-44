@@ -1,0 +1,138 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use DateTime;
+use Doctrine\ORM\Mapping as ORM;
+use Nines\UtilBundle\Entity\AbstractEntity;
+
+/**
+ * DepositStatus
+ *
+ * @ORM\Table(name="deposit_status")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\DepositStatusRepository")
+ */
+class DepositStatus extends AbstractEntity {
+
+    /**
+     * @var Deposit
+     *
+     * @ORM\ManyToOne(targetEntity="Deposit", inversedBy="status")
+     */
+    private $deposit;
+
+    /**
+     * @var float
+     * @ORM\Column(name="agreement", type="float")
+     */
+    private $agreement;
+
+    /**
+     * @var DateTime
+     *
+     * @ORM\Column(name="query_date", type="datetime", nullable=false)
+     */
+    private $queryDate;
+
+    /**
+     * A deposit status is a big array.
+     *
+     * @var array
+     *
+     * @ORM\Column(name="status", type="array", nullable=true)
+     */
+    private $status;
+
+    public function __toString() {
+        return $this->deposit . ' ' . $this->queryDate->format('c');
+    }
+
+    /**
+     * Set agreement
+     *
+     * @param float $agreement
+     *
+     * @return DepositStatus
+     */
+    public function setAgreement($agreement) {
+        $this->agreement = $agreement;
+
+        return $this;
+    }
+
+    /**
+     * Get agreement
+     *
+     * @return float
+     */
+    public function getAgreement() {
+        return $this->agreement;
+    }
+
+    /**
+     * Set queryDate
+     *
+     * @param DateTime $queryDate
+     *
+     * @return DepositStatus
+     */
+    public function setQueryDate($queryDate) {
+        $this->queryDate = $queryDate;
+
+        return $this;
+    }
+
+    /**
+     * Get queryDate
+     *
+     * @return DateTime
+     */
+    public function getQueryDate() {
+        return $this->queryDate;
+    }
+
+    /**
+     * Set status
+     *
+     * @param array $status
+     *
+     * @return DepositStatus
+     */
+    public function setStatus($status) {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return array
+     */
+    public function getStatus() {
+        return $this->status;
+    }
+
+    /**
+     * Set deposit
+     *
+     * @param Deposit $deposit
+     *
+     * @return DepositStatus
+     */
+    public function setDeposit(Deposit $deposit = null) {
+        $this->deposit = $deposit;
+
+        return $this;
+    }
+
+    /**
+     * Get deposit
+     *
+     * @return Deposit
+     */
+    public function getDeposit() {
+        return $this->deposit;
+    }
+
+}
