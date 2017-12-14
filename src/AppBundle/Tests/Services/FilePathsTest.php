@@ -5,7 +5,7 @@ namespace AppBundle\Tests\Services;
 use AppBundle\Services\FilePaths;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  
-class TestFilePaths extends KernelTestCase  {
+class FilePathsTest extends KernelTestCase  {
 
     /**
      * @var FilePaths

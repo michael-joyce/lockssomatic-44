@@ -39,3 +39,7 @@ services:
     AppBundle\Services\FilePaths:
         public: true
         arguments: ['@logger', '%kernel.project_dir%', '%lom.download_dir%']
+
+    AppBundle\Services\ContentBuilder:
+        public: true
+    

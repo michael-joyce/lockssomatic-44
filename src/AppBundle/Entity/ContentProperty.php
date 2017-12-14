@@ -54,6 +54,10 @@ class ContentProperty extends AbstractEntity {
         return $this->propertyKey;
     }
 
+    public function __construct() {
+        parent::__construct();
+        $this->isList = false;
+    }
 
     /**
      * Set propertyKey
@@ -82,12 +86,15 @@ class ContentProperty extends AbstractEntity {
     /**
      * Set propertyValue
      *
-     * @param string $propertyValue
+     * @param string|array $propertyValue
      *
      * @return ContentProperty
      */
     public function setPropertyValue($propertyValue)
     {
+        if(is_array($propertyValue)) {
+            $this->isList = true;
+        }
         $this->propertyValue = $propertyValue;
 
         return $this;

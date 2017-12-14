@@ -72,7 +72,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     /**
      * The (optional) user making the deposit, perhaps via the gui.
      *
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="Nines\UserBundle\Entity\User")
      *
      * @var User
      */

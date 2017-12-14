@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
@@ -101,6 +102,11 @@ class Content extends AbstractEntity {
      */
     private $contentProperties;
 
+    public function __construct() {
+        parent::__construct();
+        $this->contentProperties = new ArrayCollection();
+    }
+    
     public function __toString() {
         return $this->url;
     }
@@ -174,12 +180,12 @@ class Content extends AbstractEntity {
     /**
      * Set dateDeposited
      *
-     * @param DateTime $dateDeposited
-     *
      * @return Content
      */
-    public function setDateDeposited($dateDeposited) {
-        $this->dateDeposited = $dateDeposited;
+    public function setDateDeposited() {
+        if($this->dateDeposited === null) {
+            $this->dateDeposited = new DateTime();
+        }
 
         return $this;
     }
@@ -310,6 +316,34 @@ class Content extends AbstractEntity {
      */
     public function getContentProperties() {
         return $this->contentProperties;
+    }
+    
+    /**
+     * Get the value of a content property, optionally encoded to
+     * LOCKSS standards.
+     *
+     * @param string $key
+     * @param bool $encoded
+     * @return string
+     */
+    public function getContentPropertyValue($key, $encoded = false) {
+        $value = null;
+        foreach ($this->getContentProperties() as $prop) {
+            if ($prop->getPropertyKey() === $key) {
+                $value = $prop->getPropertyValue();
+                break;
+            }
+        }
+        if ($encoded === false || $value === null) {
+            return $value;
+        }
+        $callback = function ($matches) {
+            $char = ord($matches[0]);
+
+            return '%'.strtoupper(sprintf('%02x', $char));
+        };
+
+        return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
     }
 
 }
