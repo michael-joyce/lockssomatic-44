@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Deposit List{% endblock %}
+
+{% block pageheader %}
+    <h1>Deposit List</h1>
+    <p class="count">
+        Displaying {{ deposits|length }} deposits of {{ deposits.getTotalItemCount }} total.
+    </p>
+{% endblock %} 
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('pln_deposit_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+            {% endif %}
+            <a href="{{ path('pln_deposit_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Uuid</th>
+                <th>Title</th>
+                <th>Agreement</th>
+                <th>Summary</th>
+                <th>Date Deposited</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for deposit in deposits %}
+                <tr>
+                    <td>
+                        <a href="{{ path('pln_deposit_show', { 'id': deposit.id }) }}">
+                            {{ deposit.uuid }}
+                        </a>
+                    </td>
+                    <td>{{ deposit.title }}</td>
+                    <td>{{ deposit.agreement }}</td>
+                    <td>{{ deposit.summary }}</td>
+                    <td>{% if deposit.dateDeposited %}{{ deposit.dateDeposited|date('Y-m-d H:i:s') }}{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(deposits) }}
+    </div>
+
+{% endblock %}

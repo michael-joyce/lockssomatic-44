@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ContentProvider List{% endblock %}
+
+{% block pageheader %}
+    <h1>ContentProvider List</h1>
+    <p class="count">
+        Displaying {{ contentProviders|length }} contentProviders of {{ contentProviders.getTotalItemCount }} total.
+    </p>
+{% endblock %} 
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('content_provider_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+            {% endif %}
+            <a href="{{ path('content_provider_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Uuid</th>
+                <th>Permissionurl</th>
+                <th>Name</th>
+                <th>Max File Size</th>
+                <th>Max Au Size</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contentProvider in contentProviders %}
+                <tr>
+                    <td>
+                        <a href="{{ path('content_provider_show', { 'id': contentProvider.id }) }}">
+                            {{ contentProvider.uuid }}
+                        </a>
+                    </td>
+                    <td>{{ contentProvider.permissionurl }}</td>
+                    <td>{{ contentProvider.name }}</td>
+                    <td>{{ contentProvider.maxFileSize }}</td>
+                    <td>{{ contentProvider.maxAuSize }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(contentProviders) }}
+    </div>
+
+{% endblock %}

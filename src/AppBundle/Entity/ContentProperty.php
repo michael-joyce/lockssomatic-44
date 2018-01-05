@@ -49,7 +49,7 @@ class ContentProperty extends AbstractEntity {
      * @ORM\ManyToOne(targetEntity="Content", inversedBy="contentProperties")
      */
     private $content;
-    
+
     public function __toString() {
         return $this->propertyKey;
     }
@@ -66,8 +66,7 @@ class ContentProperty extends AbstractEntity {
      *
      * @return ContentProperty
      */
-    public function setPropertyKey($propertyKey)
-    {
+    public function setPropertyKey($propertyKey) {
         $this->propertyKey = $propertyKey;
 
         return $this;
@@ -78,8 +77,7 @@ class ContentProperty extends AbstractEntity {
      *
      * @return string
      */
-    public function getPropertyKey()
-    {
+    public function getPropertyKey() {
         return $this->propertyKey;
     }
 
@@ -90,9 +88,8 @@ class ContentProperty extends AbstractEntity {
      *
      * @return ContentProperty
      */
-    public function setPropertyValue($propertyValue)
-    {
-        if(is_array($propertyValue)) {
+    public function setPropertyValue($propertyValue) {
+        if (is_array($propertyValue)) {
             $this->isList = true;
         }
         $this->propertyValue = $propertyValue;
@@ -105,8 +102,7 @@ class ContentProperty extends AbstractEntity {
      *
      * @return string
      */
-    public function getPropertyValue()
-    {
+    public function getPropertyValue() {
         return $this->propertyValue;
     }
 
@@ -117,8 +113,7 @@ class ContentProperty extends AbstractEntity {
      *
      * @return ContentProperty
      */
-    public function setIsList($isList)
-    {
+    public function setIsList($isList) {
         $this->isList = $isList;
 
         return $this;
@@ -129,8 +124,7 @@ class ContentProperty extends AbstractEntity {
      *
      * @return boolean
      */
-    public function getIsList()
-    {
+    public function getIsList() {
         return $this->isList;
     }
 
@@ -141,8 +135,7 @@ class ContentProperty extends AbstractEntity {
      *
      * @return ContentProperty
      */
-    public function setContent(Content $content = null)
-    {
+    public function setContent(Content $content = null) {
         $this->content = $content;
 
         return $this;
@@ -153,8 +146,8 @@ class ContentProperty extends AbstractEntity {
      *
      * @return Content
      */
-    public function getContent()
-    {
+    public function getContent() {
         return $this->content;
     }
+
 }

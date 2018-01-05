@@ -139,3 +139,7 @@ div.embedded-form {
     padding-top: 15px;
     padding-right: 15px;    
 }
+
+div.radio label.required::after {
+    content: '';
+}

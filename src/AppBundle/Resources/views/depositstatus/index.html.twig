@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}DepositStatus List{% endblock %}
+
+{% block pageheader %}
+    <h1>DepositStatus List</h1>
+    <p class="count">
+        Displaying {{ depositStatuses|length }} depositStatuses of {{ depositStatuses.getTotalItemCount }} total.
+    </p>
+{% endblock %} 
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('pln_deposit_status_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+            {% endif %}
+            <a href="{{ path('pln_deposit_status_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Agreement</th>
+                <th>Query Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for depositStatus in depositStatuses %}
+                <tr>
+                    <td>
+                        <a href="{{ path('pln_deposit_status_show', { 'id': depositStatus.id }) }}">
+                            {{ depositStatus.agreement }}
+                        </a>
+                    </td>
+                    <td>{% if depositStatus.queryDate %}{{ depositStatus.queryDate|date('Y-m-d H:i:s') }}{% endif %}</td>
+                    <td>{% if depositStatus.status %}{{ depositStatus.status|join(', ') }}{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(depositStatuses) }}
+    </div>
+
+{% endblock %}

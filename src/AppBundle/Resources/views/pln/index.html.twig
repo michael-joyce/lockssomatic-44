@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pln List{% endblock %}
+
+{% block pageheader %}
+    <h1>Pln List</h1>
+    <p class="count">
+        Displaying {{ plns|length }} plns of {{ plns.getTotalItemCount }} total.
+    </p>
+{% endblock %} 
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('pln_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+            {% endif %}
+            <a href="{{ path('pln_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Enable Content Ui</th>
+                <th>Content Port</th>
+                <th>Property</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pln in plns %}
+                <tr>
+                    <td>
+                        <a href="{{ path('pln_show', { 'id': pln.id }) }}">
+                            {{ pln.name }}
+                        </a>
+                    </td>
+                    <td>{{ pln.description }}</td>
+                    <td>{{ pln.username }}</td>
+                    <td>{{ pln.password }}</td>
+                    <td>{% if pln.enableContentUi %}Yes{% else %}No{% endif %}</td>
+                    <td>{{ pln.contentPort }}</td>
+                    <td>{% if pln.properties %}{{ pln.properties|join(', ') }}{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(plns) }}
+    </div>
+
+{% endblock %}

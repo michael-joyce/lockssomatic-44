@@ -13,8 +13,8 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * Construct file paths for different elements of the application.
  */
-class FilePaths
-{
+class FilePaths {
+
     /**
      * @var Logger
      */
@@ -230,7 +230,7 @@ class FilePaths
     public function getManifestPath(Au $au) {
         $path = implode('/', array(
             $this->getManifestDir($au->getPln(), $au->getContentprovider()),
-            'manifest_'.$au->getId().'.html',
+            'manifest_' . $au->getId() . '.html',
         ));
 
         return $path;
@@ -253,4 +253,5 @@ class FilePaths
 
         return $path;
     }
+
 }

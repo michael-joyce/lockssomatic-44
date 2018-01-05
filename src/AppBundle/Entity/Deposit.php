@@ -20,7 +20,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
      *
      * @var string
      *
-     * @ORM\Column(name="uuid", type="string", length=36, nullable=false, unique=true)
+     * @ORM\Column(name="uuid", type="string", length=36, nullable=false)
      */
     private $uuid;
 

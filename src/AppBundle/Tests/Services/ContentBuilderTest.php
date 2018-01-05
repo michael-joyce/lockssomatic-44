@@ -16,17 +16,17 @@ class ContentBuilderTest extends KernelTestCase {
      * @var ContentBuilder
      */
     private $builder;
-    
+
     public function setUp() {
         parent::setUp();
         self::bootKernel();
         $this->builder = static::$kernel->getContainer()->get('AppBundle\Services\ContentBuilder');
     }
-    
+
     public function testInstace() {
         $this->assertInstanceOf(ContentBuilder::class, $this->builder);
     }
-    
+
     public function testBuildSimpleProperty() {
         $content = new Content();
         $property = $this->builder->buildProperty($content, "t1", "value");
@@ -37,7 +37,7 @@ class ContentBuilderTest extends KernelTestCase {
         $this->assertEquals($content, $property->getContent());
         $this->assertTrue($content->getContentProperties()->contains($property));
     }
-    
+
     public function testBuildListProperty() {
         $content = new Content();
         $property = $this->builder->buildProperty($content, "t1", ["value 1", 'value 2']);
@@ -48,7 +48,7 @@ class ContentBuilderTest extends KernelTestCase {
         $this->assertEquals($content, $property->getContent());
         $this->assertTrue($content->getContentProperties()->contains($property));
     }
-    
+
     public function testFromArrayNoTitle() {
         $data = $this->getArrayData();
         $content = $this->builder->fromArray($data);
@@ -61,14 +61,14 @@ class ContentBuilderTest extends KernelTestCase {
         $this->assertInstanceOf(DateTime::class, $content->getDateDeposited());
         $properties = $content->getContentProperties();
         $this->assertEquals(6, $properties->count());
-        foreach($properties as $property) {
+        foreach ($properties as $property) {
             $key = $property->getPropertyKey();
             $this->assertInstanceOf(ContentProperty::class, $property);
             $this->assertArrayHasKey($key, $data);
             $this->assertEquals($data[$key], $property->getPropertyValue());
         }
     }
-   
+
     public function testFromArrayWithTitle() {
         $data = $this->getArrayData();
         $data['title'] = 'The big whale';
@@ -82,14 +82,14 @@ class ContentBuilderTest extends KernelTestCase {
         $this->assertInstanceOf(DateTime::class, $content->getDateDeposited());
         $properties = $content->getContentProperties();
         $this->assertEquals(7, $properties->count());
-        foreach($properties as $property) {
+        foreach ($properties as $property) {
             $key = $property->getPropertyKey();
             $this->assertInstanceOf(ContentProperty::class, $property);
             $this->assertArrayHasKey($key, $data);
             $this->assertEquals($data[$key], $property->getPropertyValue());
         }
     }
-    
+
     private function getArrayData() {
         return [
             'size' => 123,
@@ -100,7 +100,7 @@ class ContentBuilderTest extends KernelTestCase {
             'prop2' => 'value 2',
         ];
     }
-    
+
     public function testFromSimpleXml() {
         $xml = $this->getXmlData();
         $content = $this->builder->fromSimpleXML($xml);
@@ -118,8 +118,8 @@ class ContentBuilderTest extends KernelTestCase {
         $this->assertEquals('http://example.com/permission', $content->getContentPropertyValue('permission_url'));
         $this->assertEquals(3, $content->getContentPropertyValue('container_number'));
         $this->assertEquals('http://example.com', $content->getContentPropertyValue('base_url'));
-    }    
-    
+    }
+
     private function getXmlData() {
         $str = <<<XML
 <content 
@@ -139,6 +139,6 @@ XML;
         $ns = new Namespaces();
         $ns->registerNamespaces($xml);
         return $xml;
-        
     }
+
 }

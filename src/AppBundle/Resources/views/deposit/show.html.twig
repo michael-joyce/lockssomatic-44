@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Deposit{% endblock %}
+
+{% block pageheader %} 
+    <h1>Deposit</h1>
+{% endblock %} 
+
+{% block body %}
+    <div class="btn-toolbar">
+        <div class="btn-group pull-right">
+            <a href="{{ path('pln_deposit_index') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-arrow-left"></span> Back
+            </a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('pln_deposit_edit', { 'id': deposit.id }) }}" class="btn btn-default">
+                    <span class='glyphicon glyphicon-edit'></span> Edit
+                </a>
+                <a href="{{ path('pln_deposit_delete', { 'id': deposit.id }) }}" class="btn btn-default" data-confirm="Are you sure you want to delete this Deposit?">
+                    <span class='glyphicon glyphicon-remove'></span> Delete
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <tbody>
+            <tr>
+                <th>Uuid</th>
+                <td>{{ deposit.uuid }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ deposit.title }}</td>
+            </tr>
+            <tr>
+                <th>Agreement</th>
+                <td>{{ deposit.agreement }}</td>
+            </tr>
+            <tr>
+                <th>Summary</th>
+                <td>{{ deposit.summary }}</td>
+            </tr>
+            <tr>
+                <th>Date Deposited</th>
+                <td>{% if deposit.dateDeposited %}{{ deposit.dateDeposited|date }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Created</th>
+                <td>{% if deposit.created %}{{ deposit.created|date }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{% if deposit.updated %}{{ deposit.updated|date }}{% endif %}</td>
+            </tr>        
+            <tr>
+                <th>Contentprovider</th>
+                <td>
+                    <a href="{{ path('contentProvider_show', { 'id': deposit.contentProvider.id}) }}">
+                        {{ deposit.contentProvider }}
+                    </a>
+                </td>
+            </tr>        
+            <tr>
+                <th>User</th>
+                <td>
+                    <a href="{{ path('user_show', { 'id': deposit.user.id}) }}">
+                        {{ deposit.user }}
+                    </a>
+                </td>
+            </tr>        
+        </tbody>
+    </table>
+    {% if deposit.content | length > 0 %}    
+        <h2>Content</h2>
+        <ul>
+            {% for content in deposit.content %}
+                <li>
+                    <a href="{{ path("content_show", {"id":content.id}) }}">
+                        {{ content }}
+                    </a>
+                </li>
+            {% endfor %} 
+        </ul>
+    {% endif %}
+    {% if deposit.status | length > 0 %}    
+        <h2>Status</h2>
+        <ul>
+            {% for status in deposit.status %}
+                <li>
+                    <a href="{{ path("status_show", {"id":status.id}) }}">
+                        {{ status }}
+                    </a>
+                </li>
+            {% endfor %} 
+        </ul>
+    {% endif %}
+{% endblock %}

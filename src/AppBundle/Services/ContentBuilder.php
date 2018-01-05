@@ -15,7 +15,7 @@ use Symfony\Bridge\Monolog\Logger;
  * @author Michael Joyce <ubermichael@gmail.com>
  */
 class ContentBuilder {
-    
+
     /**
      * @var Logger
      */
@@ -84,7 +84,7 @@ class ContentBuilder {
         $content->setDateDeposited();
         $this->buildProperty($content, 'journalTitle', (string) $xml->attributes('pkp', true)->journalTitle);
         $this->buildProperty($content, 'publisher', (string) $xml->attributes('pkp', true)->publisher);
-        $content->setTitle((string)$xml->attributes('pkp', true)->journalTitle);
+        $content->setTitle((string) $xml->attributes('pkp', true)->journalTitle);
         if ($this->em !== null) {
             $this->em->persist($content);
         }
@@ -126,6 +126,6 @@ class ContentBuilder {
         }
 
         return $content;
-    }    
-    
+    }
+
 }

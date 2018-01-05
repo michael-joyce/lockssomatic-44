@@ -15,7 +15,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class ContentOwner extends AbstractEntity {
 
-
     /**
      * Name of the content owner.
      *
@@ -41,11 +40,10 @@ class ContentOwner extends AbstractEntity {
      * @var Collection|ContentProvider[]
      */
     private $contentProviders;
-    
+
     public function __toString() {
         return $this->name;
     }
-
 
     /**
      * Set name
@@ -54,8 +52,7 @@ class ContentOwner extends AbstractEntity {
      *
      * @return ContentOwner
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;
@@ -66,8 +63,7 @@ class ContentOwner extends AbstractEntity {
      *
      * @return string
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -78,8 +74,7 @@ class ContentOwner extends AbstractEntity {
      *
      * @return ContentOwner
      */
-    public function setEmailAddress($emailAddress)
-    {
+    public function setEmailAddress($emailAddress) {
         $this->emailAddress = $emailAddress;
 
         return $this;
@@ -90,8 +85,7 @@ class ContentOwner extends AbstractEntity {
      *
      * @return string
      */
-    public function getEmailAddress()
-    {
+    public function getEmailAddress() {
         return $this->emailAddress;
     }
 
@@ -102,8 +96,7 @@ class ContentOwner extends AbstractEntity {
      *
      * @return ContentOwner
      */
-    public function addContentProvider(ContentProvider $contentProvider)
-    {
+    public function addContentProvider(ContentProvider $contentProvider) {
         $this->contentProviders[] = $contentProvider;
 
         return $this;
@@ -114,8 +107,7 @@ class ContentOwner extends AbstractEntity {
      *
      * @param ContentProvider $contentProvider
      */
-    public function removeContentProvider(ContentProvider $contentProvider)
-    {
+    public function removeContentProvider(ContentProvider $contentProvider) {
         $this->contentProviders->removeElement($contentProvider);
     }
 
@@ -124,8 +116,8 @@ class ContentOwner extends AbstractEntity {
      *
      * @return Collection
      */
-    public function getContentProviders()
-    {
+    public function getContentProviders() {
         return $this->contentProviders;
     }
+
 }

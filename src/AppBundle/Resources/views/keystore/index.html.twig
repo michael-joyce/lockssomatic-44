@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Keystore List{% endblock %}
+
+{% block pageheader %}
+    <h1>Keystore List</h1>
+    <p class="count">
+        Displaying {{ keystores|length }} keystores of {{ keystores.getTotalItemCount }} total.
+    </p>
+{% endblock %} 
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('pln_keystore_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+            {% endif %}
+            <a href="{{ path('pln_keystore_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Path</th>
+                <th>Filename</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for keystore in keystores %}
+                <tr>
+                    <td>
+                        <a href="{{ path('pln_keystore_show', { 'id': keystore.id }) }}">
+                            {{ keystore.path }}
+                        </a>
+                    </td>
+                    <td>{{ keystore.filename }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(keystores) }}
+    </div>
+
+{% endblock %}

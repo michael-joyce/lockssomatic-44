@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PluginProperty List{% endblock %}
+
+{% block pageheader %}
+    <h1>PluginProperty List</h1>
+    <p class="count">
+        Displaying {{ pluginProperties|length }} pluginProperties of {{ pluginProperties.getTotalItemCount }} total.
+    </p>
+{% endblock %} 
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('plugin_property_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+            {% endif %}
+            <a href="{{ path('plugin_property_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Property Key</th>
+                <th>Property Value</th>
+                <th>Is List</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pluginProperty in pluginProperties %}
+                <tr>
+                    <td>
+                        <a href="{{ path('plugin_property_show', { 'id': pluginProperty.id }) }}">
+                            {{ pluginProperty.propertyKey }}
+                        </a>
+                    </td>
+                    <td>{{ pluginProperty.propertyValue }}</td>
+                    <td>{% if pluginProperty.isList %}Yes{% else %}No{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(pluginProperties) }}
+    </div>
+
+{% endblock %}

@@ -106,7 +106,7 @@ class Content extends AbstractEntity {
         parent::__construct();
         $this->contentProperties = new ArrayCollection();
     }
-    
+
     public function __toString() {
         return $this->url;
     }
@@ -183,7 +183,7 @@ class Content extends AbstractEntity {
      * @return Content
      */
     public function setDateDeposited() {
-        if($this->dateDeposited === null) {
+        if ($this->dateDeposited === null) {
             $this->dateDeposited = new DateTime();
         }
 
@@ -317,7 +317,7 @@ class Content extends AbstractEntity {
     public function getContentProperties() {
         return $this->contentProperties;
     }
-    
+
     /**
      * Get the value of a content property, optionally encoded to
      * LOCKSS standards.
@@ -340,7 +340,7 @@ class Content extends AbstractEntity {
         $callback = function ($matches) {
             $char = ord($matches[0]);
 
-            return '%'.strtoupper(sprintf('%02x', $char));
+            return '%' . strtoupper(sprintf('%02x', $char));
         };
 
         return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);

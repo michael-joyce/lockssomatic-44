@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ContentProperty List{% endblock %}
+
+{% block pageheader %}
+    <h1>ContentProperty List</h1>
+    <p class="count">
+        Displaying {{ contentProperties|length }} contentProperties of {{ contentProperties.getTotalItemCount }} total.
+    </p>
+{% endblock %} 
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('pln_deposit_content_property_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+            {% endif %}
+            <a href="{{ path('pln_deposit_content_property_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Property Key</th>
+                <th>Property Value</th>
+                <th>Is List</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contentProperty in contentProperties %}
+                <tr>
+                    <td>
+                        <a href="{{ path('pln_deposit_content_property_show', { 'id': contentProperty.id }) }}">
+                            {{ contentProperty.propertyKey }}
+                        </a>
+                    </td>
+                    <td>{{ contentProperty.propertyValue }}</td>
+                    <td>{% if contentProperty.isList %}Yes{% else %}No{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(contentProperties) }}
+    </div>
+
+{% endblock %}

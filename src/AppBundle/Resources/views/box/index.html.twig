@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Box List{% endblock %}
+
+{% block pageheader %}
+    <h1>Box List</h1>
+    <p class="count">
+        Displaying {{ boxes|length }} boxes of {{ boxes.getTotalItemCount }} total.
+    </p>
+{% endblock %} 
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('box_new', {'plnId': pln.id}) }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>Protocol</th>
+                <th>Port</th>
+                <th>Ws Port</th>
+                <th>Ip Address</th>
+                <th>Contact Name</th>
+                <th>Contact Email</th>
+                <th>Send Notifications</th>
+                <th>Active</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for box in boxes %}
+                <tr>
+                    <td>
+                        <a href="{{ path('box_show', { 'id': box.id, 'plnId': pln.id }) }}">
+                            {{ box.hostname }}
+                        </a>
+                    </td>
+                    <td>{{ box.protocol }}</td>
+                    <td>{{ box.port }}</td>
+                    <td>{{ box.webServicePort }}</td>
+                    <td>{{ box.ipAddress }}</td>
+                    <td>{{ box.contactName }}</td>
+                    <td>{{ box.contactEmail }}</td>
+                    <td>{% if box.sendNotifications %}Yes{% else %}No{% endif %}</td>
+                    <td>{% if box.active %}Yes{% else %}No{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(boxes) }}
+    </div>
+
+{% endblock %}

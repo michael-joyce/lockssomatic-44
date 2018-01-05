@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Utilities;
 
 use ReflectionClass;
@@ -9,8 +8,8 @@ use SimpleXMLElement;
 /**
  * Simplify handling namespaces for SWORD XML documents.
  */
-class Namespaces
-{
+class Namespaces {
+
     const DCTERMS = 'http://purl.org/dc/terms/';
     const SWORD = 'http://purl.org/net/sword/';
     const ATOM = 'http://www.w3.org/2005/Atom';
@@ -27,7 +26,7 @@ class Namespaces
      * @return string
      */
     public function getNamespace($prefix) {
-        $constant = get_class().'::'.strtoupper($prefix);
+        $constant = get_class() . '::' . strtoupper($prefix);
         if (!defined($constant)) {
             return;
         }
@@ -48,4 +47,5 @@ class Namespaces
             $xml->registerXPathNamespace($prefix, $this->getNamespace($prefix));
         }
     }
+
 }

@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Content{% endblock %}
+
+{% block pageheader %} 
+    <h1>Content</h1>
+{% endblock %} 
+
+{% block body %}
+    <div class="btn-toolbar">
+        <div class="btn-group pull-right">
+            <a href="{{ path('pln_deposit_content_index') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-arrow-left"></span> Back
+            </a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('pln_deposit_content_edit', { 'id': content.id }) }}" class="btn btn-default">
+                    <span class='glyphicon glyphicon-edit'></span> Edit
+                </a>
+                <a href="{{ path('pln_deposit_content_delete', { 'id': content.id }) }}" class="btn btn-default" data-confirm="Are you sure you want to delete this Content?">
+                    <span class='glyphicon glyphicon-remove'></span> Delete
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <tbody>
+            <tr>
+                <th>Url</th>
+                <td>{{ content.url }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ content.title }}</td>
+            </tr>
+            <tr>
+                <th>Size</th>
+                <td>{{ content.size }}</td>
+            </tr>
+            <tr>
+                <th>Date Deposited</th>
+                <td>{% if content.dateDeposited %}{{ content.dateDeposited|date }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Checksum Type</th>
+                <td>{{ content.checksumType }}</td>
+            </tr>
+            <tr>
+                <th>Checksum Value</th>
+                <td>{{ content.checksumValue }}</td>
+            </tr>
+            <tr>
+                <th>Created</th>
+                <td>{% if content.created %}{{ content.created|date }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{% if content.updated %}{{ content.updated|date }}{% endif %}</td>
+            </tr>        
+            <tr>
+                <th>Deposit</th>
+                <td>
+                    <a href="{{ path('deposit_show', { 'id': content.deposit.id}) }}">
+                        {{ content.deposit }}
+                    </a>
+                </td>
+            </tr>        
+            <tr>
+                <th>Au</th>
+                <td>
+                    <a href="{{ path('au_show', { 'id': content.au.id}) }}">
+                        {{ content.au }}
+                    </a>
+                </td>
+            </tr>        
+        </tbody>
+    </table>
+    {% if content.contentProperties | length > 0 %}    
+        <h2>Contentproperties</h2>
+        <ul>
+            {% for contentProperties in content.contentProperties %}
+                <li>
+                    <a href="{{ path("contentProperties_show", {"id":contentProperties.id}) }}">
+                        {{ contentProperties }}
+                    </a>
+                </li>
+            {% endfor %} 
+        </ul>
+    {% endif %}
+{% endblock %}

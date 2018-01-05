@@ -123,6 +123,11 @@ class Pln extends AbstractEntity {
      * @var Pln[]|Collection
      */
     private $contentProviders;
+    
+    public function __construct() {
+        parent::__construct();
+        $this->contentPort = '8080';
+    }
 
     public function __toString() {
         return $this->name;
@@ -147,7 +152,7 @@ class Pln extends AbstractEntity {
      * @return string
      */
     public function getName() {
-        return $this->name;
+        return $this->name;        
     }
 
     /**
