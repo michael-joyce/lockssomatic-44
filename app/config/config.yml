@@ -52,7 +52,7 @@ twig:
         '%kernel.root_dir%/../src/AppBundle/Resources/views': ~
     exception_controller:  NinesUtilBundle:Error:showException
     date:
-        format: d.m.Y, H:i:s
+        format: D M j G:i:s T Y
         interval_format: '%%d days'
 
 # Doctrine Configuration

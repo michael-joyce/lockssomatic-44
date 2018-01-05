@@ -43,3 +43,8 @@ services:
     AppBundle\Services\ContentBuilder:
         public: true
     
+    AppBundle\EventListener\BoxIpUpdater:
+        public: true
+        arguments: ['@logger']
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
