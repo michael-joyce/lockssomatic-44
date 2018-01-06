@@ -126,6 +126,7 @@ class Pln extends AbstractEntity {
     
     public function __construct() {
         parent::__construct();
+        $this->enableContentUi = false;
         $this->contentPort = '8080';
     }
 

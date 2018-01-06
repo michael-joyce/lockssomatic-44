@@ -8,13 +8,16 @@ use AppBundle\Form\BoxType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Box controller.
  *
+ * @Security("has_role('ROLE_USER')")
  * @Route("/pln/{plnId}/box")
  * @ParamConverter("pln", options={"id"="plnId"})
  */
@@ -44,16 +47,13 @@ class BoxController extends Controller {
     /**
      * Creates a new Box entity.
      *
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="box_new")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
      */
     public function newAction(Request $request, Pln $pln) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $box = new Box();
         $box->setPln($pln);
         $form = $this->createForm(BoxType::class, $box);
@@ -84,7 +84,9 @@ class BoxController extends Controller {
      * @param Box $box
      */
     public function showAction(Pln $pln, Box $box) {
-
+        if($pln->getId() !== $box->getId()) {
+            throw new NotFoundHttpException("No such box.");
+        }
         return array(
             'box' => $box,
             'pln' => $pln,
@@ -94,6 +96,7 @@ class BoxController extends Controller {
     /**
      * Displays a form to edit an existing Box entity.
      *
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="box_edit")
      * @Method({"GET", "POST"})
      * @Template()
@@ -101,9 +104,8 @@ class BoxController extends Controller {
      * @param Box $box
      */
     public function editAction(Request $request, Pln $pln, Box $box) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        if($pln->getId() !== $box->getId()) {
+            throw new NotFoundHttpException("No such box.");
         }
         $editForm = $this->createForm(BoxType::class, $box);
         $editForm->handleRequest($request);
@@ -125,15 +127,15 @@ class BoxController extends Controller {
     /**
      * Deletes a Box entity.
      *
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="box_delete")
      * @Method("GET")
      * @param Request $request
      * @param Box $box
      */
     public function deleteAction(Request $request, Pln $pln, Box $box) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        if($pln->getId() !== $box->getId()) {
+            throw new NotFoundHttpException("No such box.");
         }
         $em = $this->getDoctrine()->getManager();
         $em->remove($box);

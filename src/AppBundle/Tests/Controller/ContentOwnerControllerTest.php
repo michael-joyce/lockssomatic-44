@@ -2,16 +2,16 @@
 
 namespace AppBundle\Tests\Controller;
 
+use AppBundle\DataFixtures\ORM\LoadContentOwner;
 use AppBundle\Entity\ContentOwner;
-use AppBundle\Tests\DataFixtures\ORM\LoadContentOwner;
-use AppBundle\Tests\Util\BaseTestCase;
-use Nines\UserBundle\Tests\DataFixtures\ORM\LoadUsers;
+use Nines\UserBundle\DataFixtures\ORM\LoadUser;
+use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 class ContentOwnerControllerTest extends BaseTestCase {
 
     protected function getFixtures() {
         return [
-            LoadUsers::class,
+            LoadUser::class,
             LoadContentOwner::class
         ];
     }
@@ -19,8 +19,7 @@ class ContentOwnerControllerTest extends BaseTestCase {
     public function testAnonIndex() {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/content_owner/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->count());
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
     }
 
     public function testUserIndex() {
@@ -46,9 +45,7 @@ class ContentOwnerControllerTest extends BaseTestCase {
     public function testAnonShow() {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/content_owner/1');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('Edit')->count());
-        $this->assertEquals(0, $crawler->selectLink('Delete')->count());
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
     }
 
     public function testUserShow() {
@@ -77,7 +74,6 @@ class ContentOwnerControllerTest extends BaseTestCase {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/content_owner/1/edit');
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
     }
 
     public function testUserEdit() {
@@ -86,8 +82,7 @@ class ContentOwnerControllerTest extends BaseTestCase {
             'password' => 'secret',
         ]);
         $crawler = $client->request('GET', '/content_owner/1/edit');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminEdit() {
@@ -117,7 +112,6 @@ class ContentOwnerControllerTest extends BaseTestCase {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/content_owner/new');
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
     }
 
     public function testUserNew() {
@@ -126,8 +120,7 @@ class ContentOwnerControllerTest extends BaseTestCase {
             'password' => 'secret',
         ]);
         $crawler = $client->request('GET', '/content_owner/new');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminNew() {
@@ -157,7 +150,6 @@ class ContentOwnerControllerTest extends BaseTestCase {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/content_owner/1/delete');
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
     }
 
     public function testUserDelete() {
@@ -166,8 +158,7 @@ class ContentOwnerControllerTest extends BaseTestCase {
             'password' => 'secret',
         ]);
         $crawler = $client->request('GET', '/content_owner/1/delete');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminDelete() {

@@ -83,7 +83,7 @@
         <ul>
             {% for boxes in pln.boxes %}
                 <li>
-                    <a href="{{ path("boxes_show", {"id":boxes.id}) }}">
+                    <a href="{{ path("box_show", {"plnId": pln.id, "id":boxes.id}) }}">
                         {{ boxes }}
                     </a>
                 </li>

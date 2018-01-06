@@ -3,34 +3,51 @@
 namespace AppBundle\Tests\Controller;
 
 use AppBundle\Entity\Box;
-use AppBundle\Tests\DataFixtures\ORM\LoadBox;
-use AppBundle\Tests\Util\BaseTestCase;
-use Nines\UserBundle\Tests\DataFixtures\ORM\LoadUsers;
+use AppBundle\DataFixtures\ORM\LoadBox;
+use Nines\UserBundle\DataFixtures\ORM\LoadUser;
+use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 class BoxControllerTest extends BaseTestCase {
 
     protected function getFixtures() {
         return [
-            LoadUsers::class,
+            LoadUser::class,
             LoadBox::class
         ];
     }
 
     public function testAnonIndex() {
         $client = $this->makeClient();
-        $crawler = $client->request('GET', '/pln/{plnId}/box/');
+        $crawler = $client->request('GET', '/pln/1/box/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertEquals(0, $crawler->selectLink('New')->count());
     }
 
+    // pln 33 does not exist.
+    public function testAnonIndex404() {
+        $client = $this->makeClient();
+        $crawler = $client->request('GET', '/pln/33/box/');
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+    
     public function testUserIndex() {
         $client = $this->makeClient([
             'username' => 'user@example.com',
             'password' => 'secret',
         ]);
-        $crawler = $client->request('GET', '/pln/{plnId}/box/');
+        $crawler = $client->request('GET', '/pln/1/box/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertEquals(0, $crawler->selectLink('New')->count());
+    }
+
+    // pln 33 does not exist.
+    public function testUserIndex404() {
+        $client = $this->makeClient([
+            'username' => 'user@example.com',
+            'password' => 'secret',
+        ]);
+        $crawler = $client->request('GET', '/pln/33/box/');
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminIndex() {
@@ -38,28 +55,55 @@ class BoxControllerTest extends BaseTestCase {
             'username' => 'admin@example.com',
             'password' => 'supersecret',
         ]);
-        $crawler = $client->request('GET', '/pln/{plnId}/box/');
+        $crawler = $client->request('GET', '/pln/1/box/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertEquals(1, $crawler->selectLink('New')->count());
     }
 
+    // pln 33 does not exist.
+    public function testAdminIndex404() {
+        $client = $this->makeClient([
+            'username' => 'admin@example.com',
+            'password' => 'supersecret',
+        ]);
+        $crawler = $client->request('GET', '/pln/33/box/');
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+
     public function testAnonShow() {
         $client = $this->makeClient();
-        $crawler = $client->request('GET', '/pln/{plnId}/box/1');
+        $crawler = $client->request('GET', '/pln/1/box/1');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertEquals(0, $crawler->selectLink('Edit')->count());
         $this->assertEquals(0, $crawler->selectLink('Delete')->count());
     }
 
+    // box 2 is not in pln 1.
+    public function testAnonShowBox404() {
+        $client = $this->makeClient();
+        $crawler = $client->request('GET', '/pln/1/box/2');
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+    
     public function testUserShow() {
         $client = $this->makeClient([
             'username' => 'user@example.com',
             'password' => 'secret',
         ]);
-        $crawler = $client->request('GET', '/pln/{plnId}/box/1');
+        $crawler = $client->request('GET', '/pln/1/box/1');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertEquals(0, $crawler->selectLink('Edit')->count());
         $this->assertEquals(0, $crawler->selectLink('Delete')->count());
+    }
+
+    // box 2 is not in pln 1.
+    public function testUserShowBox404() {
+        $client = $this->makeClient([
+            'username' => 'user@example.com',
+            'password' => 'secret',
+        ]);
+        $crawler = $client->request('GET', '/pln/1/box/2');
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminShow() {
@@ -67,17 +111,26 @@ class BoxControllerTest extends BaseTestCase {
             'username' => 'admin@example.com',
             'password' => 'supersecret',
         ]);
-        $crawler = $client->request('GET', '/pln/{plnId}/box/1');
+        $crawler = $client->request('GET', '/pln/1/box/1');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertEquals(1, $crawler->selectLink('Edit')->count());
         $this->assertEquals(1, $crawler->selectLink('Delete')->count());
     }
 
+    // box 2 is not in pln 1.
+    public function testAdminShowBox404() {
+        $client = $this->makeClient([
+            'username' => 'admin@example.com',
+            'password' => 'supersecret',
+        ]);
+        $crawler = $client->request('GET', '/pln/1/box/2');
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+    
     public function testAnonEdit() {
         $client = $this->makeClient();
-        $crawler = $client->request('GET', '/pln/{plnId}/box/1/edit');
+        $crawler = $client->request('GET', '/pln/1/box/1/edit');
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
     }
 
     public function testUserEdit() {
@@ -85,9 +138,8 @@ class BoxControllerTest extends BaseTestCase {
             'username' => 'user@example.com',
             'password' => 'secret',
         ]);
-        $crawler = $client->request('GET', '/pln/{plnId}/box/1/edit');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
+        $crawler = $client->request('GET', '/pln/1/box/1/edit');
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminEdit() {
@@ -95,7 +147,7 @@ class BoxControllerTest extends BaseTestCase {
             'username' => 'admin@example.com',
             'password' => 'supersecret',
         ]);
-        $formCrawler = $client->request('GET', '/pln/{plnId}/box/1/edit');
+        $formCrawler = $client->request('GET', '/pln/1/box/1/edit');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $this->markTestIncomplete(
@@ -103,11 +155,11 @@ class BoxControllerTest extends BaseTestCase {
         );
         $form = $formCrawler->selectButton('Update')->form([
                 // DO STUFF HERE.
-                // 'pln/{plnId}/boxs[FIELDNAME]' => 'FIELDVALUE',
+                // 'pln/1/boxs[FIELDNAME]' => 'FIELDVALUE',
         ]);
 
         $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect('/pln/{plnId}/box/1'));
+        $this->assertTrue($client->getResponse()->isRedirect('/pln/1/box/1'));
         $responseCrawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
@@ -115,9 +167,8 @@ class BoxControllerTest extends BaseTestCase {
 
     public function testAnonNew() {
         $client = $this->makeClient();
-        $crawler = $client->request('GET', '/pln/{plnId}/box/new');
+        $crawler = $client->request('GET', '/pln/1/box/new');
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
     }
 
     public function testUserNew() {
@@ -125,9 +176,8 @@ class BoxControllerTest extends BaseTestCase {
             'username' => 'user@example.com',
             'password' => 'secret',
         ]);
-        $crawler = $client->request('GET', '/pln/{plnId}/box/new');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
+        $crawler = $client->request('GET', '/pln/1/box/new');
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminNew() {
@@ -135,7 +185,7 @@ class BoxControllerTest extends BaseTestCase {
             'username' => 'admin@example.com',
             'password' => 'supersecret',
         ]);
-        $formCrawler = $client->request('GET', '/pln/{plnId}/box/new');
+        $formCrawler = $client->request('GET', '/pln/1/box/new');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $this->markTestIncomplete(
@@ -143,7 +193,7 @@ class BoxControllerTest extends BaseTestCase {
         );
         $form = $formCrawler->selectButton('Create')->form([
                 // DO STUFF HERE.
-                // 'pln/{plnId}/boxs[FIELDNAME]' => 'FIELDVALUE',
+                // 'pln/1/boxs[FIELDNAME]' => 'FIELDVALUE',
         ]);
 
         $client->submit($form);
@@ -155,9 +205,8 @@ class BoxControllerTest extends BaseTestCase {
 
     public function testAnonDelete() {
         $client = $this->makeClient();
-        $crawler = $client->request('GET', '/pln/{plnId}/box/1/delete');
+        $crawler = $client->request('GET', '/pln/1/box/1/delete');
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
     }
 
     public function testUserDelete() {
@@ -165,9 +214,8 @@ class BoxControllerTest extends BaseTestCase {
             'username' => 'user@example.com',
             'password' => 'secret',
         ]);
-        $crawler = $client->request('GET', '/pln/{plnId}/box/1/delete');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
+        $crawler = $client->request('GET', '/pln/1/box/1/delete');
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminDelete() {
@@ -178,7 +226,7 @@ class BoxControllerTest extends BaseTestCase {
             'username' => 'admin@example.com',
             'password' => 'supersecret',
         ]);
-        $crawler = $client->request('GET', '/pln/{plnId}/box/1/delete');
+        $crawler = $client->request('GET', '/pln/1/box/1/delete');
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
