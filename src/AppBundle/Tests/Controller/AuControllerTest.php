@@ -5,13 +5,13 @@ namespace AppBundle\Tests\Controller;
 use AppBundle\Entity\Au;
 use AppBundle\Tests\DataFixtures\ORM\LoadAu;
 use AppBundle\Tests\Util\BaseTestCase;
-use Nines\UserBundle\Tests\DataFixtures\ORM\LoadUsers;
+use Nines\UserBundle\DataFixtures\ORM\LoadUser;
 
 class AuControllerTest extends BaseTestCase {
 
     protected function getFixtures() {
         return [
-            LoadUsers::class,
+            LoadUser::class,
             LoadAu::class
         ];
     }

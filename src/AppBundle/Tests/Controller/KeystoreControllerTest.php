@@ -5,13 +5,13 @@ namespace AppBundle\Tests\Controller;
 use AppBundle\Entity\Keystore;
 use AppBundle\Tests\DataFixtures\ORM\LoadKeystore;
 use AppBundle\Tests\Util\BaseTestCase;
-use Nines\UserBundle\Tests\DataFixtures\ORM\LoadUsers;
+use Nines\UserBundle\DataFixtures\ORM\LoadUser;
 
 class KeystoreControllerTest extends BaseTestCase {
 
     protected function getFixtures() {
         return [
-            LoadUsers::class,
+            LoadUser::class,
             LoadKeystore::class
         ];
     }

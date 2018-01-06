@@ -5,13 +5,13 @@ namespace AppBundle\Tests\Controller;
 use AppBundle\Entity\Content;
 use AppBundle\Tests\DataFixtures\ORM\LoadContent;
 use AppBundle\Tests\Util\BaseTestCase;
-use Nines\UserBundle\Tests\DataFixtures\ORM\LoadUsers;
+use Nines\UserBundle\DataFixtures\ORM\LoadUser;
 
 class ContentControllerTest extends BaseTestCase {
 
     protected function getFixtures() {
         return [
-            LoadUsers::class,
+            LoadUser::class,
             LoadContent::class
         ];
     }

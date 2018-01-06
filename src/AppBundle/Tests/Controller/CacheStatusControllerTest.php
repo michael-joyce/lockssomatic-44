@@ -5,13 +5,13 @@ namespace AppBundle\Tests\Controller;
 use AppBundle\Entity\CacheStatus;
 use AppBundle\Tests\DataFixtures\ORM\LoadCacheStatus;
 use AppBundle\Tests\Util\BaseTestCase;
-use Nines\UserBundle\Tests\DataFixtures\ORM\LoadUsers;
+use Nines\UserBundle\DataFixtures\ORM\LoadUser;
 
 class CacheStatusControllerTest extends BaseTestCase {
 
     protected function getFixtures() {
         return [
-            LoadUsers::class,
+            LoadUser::class,
             LoadCacheStatus::class
         ];
     }

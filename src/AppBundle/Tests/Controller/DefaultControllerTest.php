@@ -3,7 +3,7 @@
 namespace AppBundle\Tests\Controller;
 
 use Liip\FunctionalTestBundle\Test\WebTestCase;
-use Nines\UserBundle\Tests\DataFixtures\ORM\LoadUsers;
+use Nines\UserBundle\DataFixtures\ORM\LoadUser;
 
 /**
  * Description of DefaultControllerTest
@@ -15,7 +15,7 @@ class DefaultControllerTest extends WebTestCase {
     public function setUp() {
         parent::setUp();
         $this->loadFixtures([
-            LoadUsers::class
+            LoadUser::class
         ]);
     }
 
