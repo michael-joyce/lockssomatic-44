@@ -39,8 +39,7 @@ services:
         public: true
         arguments: ['@knp_menu.factory', '@security.authorization_checker', '@security.token_storage']
         tags:
-            - { name: knp_menu.menu_builder, method: buildMainMenu, alias: main }
-            - { name: knp_menu.menu_builder, method: buildUserMenu, alias: user }
+            - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
             
     AppBundle\Services\FilePaths:
         public: true

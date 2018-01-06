@@ -20,7 +20,7 @@ class DepositStatusController extends Controller {
     /**
      * Lists all DepositStatus entities.
      *
-     * @Route("/", name="pln_deposit_status_index")
+     * @Route("/", name="deposit_status_index")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -53,7 +53,7 @@ class DepositStatusController extends Controller {
       //    }
      *
      *
-     * @Route("/search", name="pln_deposit_status_search")
+     * @Route("/search", name="deposit_status_search")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -98,7 +98,7 @@ class DepositStatusController extends Controller {
      *     ORM\Index(name="alias_name_idx",columns="name", flags={"fulltext"})
      *
      *
-     * @Route("/fulltext", name="pln_deposit_status_fulltext")
+     * @Route("/fulltext", name="deposit_status_fulltext")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -125,7 +125,7 @@ class DepositStatusController extends Controller {
     /**
      * Creates a new DepositStatus entity.
      *
-     * @Route("/new", name="pln_deposit_status_new")
+     * @Route("/new", name="deposit_status_new")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -145,7 +145,7 @@ class DepositStatusController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new depositStatus was created.');
-            return $this->redirectToRoute('pln_deposit_status_show', array('id' => $depositStatus->getId()));
+            return $this->redirectToRoute('deposit_status_show', array('id' => $depositStatus->getId()));
         }
 
         return array(
@@ -157,7 +157,7 @@ class DepositStatusController extends Controller {
     /**
      * Finds and displays a DepositStatus entity.
      *
-     * @Route("/{id}", name="pln_deposit_status_show")
+     * @Route("/{id}", name="deposit_status_show")
      * @Method("GET")
      * @Template()
      * @param DepositStatus $depositStatus
@@ -172,7 +172,7 @@ class DepositStatusController extends Controller {
     /**
      * Displays a form to edit an existing DepositStatus entity.
      *
-     * @Route("/{id}/edit", name="pln_deposit_status_edit")
+     * @Route("/{id}/edit", name="deposit_status_edit")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -190,7 +190,7 @@ class DepositStatusController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The depositStatus has been updated.');
-            return $this->redirectToRoute('pln_deposit_status_show', array('id' => $depositStatus->getId()));
+            return $this->redirectToRoute('deposit_status_show', array('id' => $depositStatus->getId()));
         }
 
         return array(
@@ -202,7 +202,7 @@ class DepositStatusController extends Controller {
     /**
      * Deletes a DepositStatus entity.
      *
-     * @Route("/{id}/delete", name="pln_deposit_status_delete")
+     * @Route("/{id}/delete", name="deposit_status_delete")
      * @Method("GET")
      * @param Request $request
      * @param DepositStatus $depositStatus
@@ -217,7 +217,7 @@ class DepositStatusController extends Controller {
         $em->flush();
         $this->addFlash('success', 'The depositStatus was deleted.');
 
-        return $this->redirectToRoute('pln_deposit_status_index');
+        return $this->redirectToRoute('deposit_status_index');
     }
 
 }

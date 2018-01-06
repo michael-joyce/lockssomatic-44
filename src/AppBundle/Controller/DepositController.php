@@ -20,7 +20,7 @@ class DepositController extends Controller {
     /**
      * Lists all Deposit entities.
      *
-     * @Route("/", name="pln_deposit_index")
+     * @Route("/", name="deposit_index")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -53,7 +53,7 @@ class DepositController extends Controller {
       //    }
      *
      *
-     * @Route("/search", name="pln_deposit_search")
+     * @Route("/search", name="deposit_search")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -98,7 +98,7 @@ class DepositController extends Controller {
      *     ORM\Index(name="alias_name_idx",columns="name", flags={"fulltext"})
      *
      *
-     * @Route("/fulltext", name="pln_deposit_fulltext")
+     * @Route("/fulltext", name="deposit_fulltext")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -125,7 +125,7 @@ class DepositController extends Controller {
     /**
      * Creates a new Deposit entity.
      *
-     * @Route("/new", name="pln_deposit_new")
+     * @Route("/new", name="deposit_new")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -145,7 +145,7 @@ class DepositController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new deposit was created.');
-            return $this->redirectToRoute('pln_deposit_show', array('id' => $deposit->getId()));
+            return $this->redirectToRoute('deposit_show', array('id' => $deposit->getId()));
         }
 
         return array(
@@ -157,7 +157,7 @@ class DepositController extends Controller {
     /**
      * Finds and displays a Deposit entity.
      *
-     * @Route("/{id}", name="pln_deposit_show")
+     * @Route("/{id}", name="deposit_show")
      * @Method("GET")
      * @Template()
      * @param Deposit $deposit
@@ -172,7 +172,7 @@ class DepositController extends Controller {
     /**
      * Displays a form to edit an existing Deposit entity.
      *
-     * @Route("/{id}/edit", name="pln_deposit_edit")
+     * @Route("/{id}/edit", name="deposit_edit")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -190,7 +190,7 @@ class DepositController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The deposit has been updated.');
-            return $this->redirectToRoute('pln_deposit_show', array('id' => $deposit->getId()));
+            return $this->redirectToRoute('deposit_show', array('id' => $deposit->getId()));
         }
 
         return array(
@@ -202,7 +202,7 @@ class DepositController extends Controller {
     /**
      * Deletes a Deposit entity.
      *
-     * @Route("/{id}/delete", name="pln_deposit_delete")
+     * @Route("/{id}/delete", name="deposit_delete")
      * @Method("GET")
      * @param Request $request
      * @param Deposit $deposit
@@ -217,7 +217,7 @@ class DepositController extends Controller {
         $em->flush();
         $this->addFlash('success', 'The deposit was deleted.');
 
-        return $this->redirectToRoute('pln_deposit_index');
+        return $this->redirectToRoute('deposit_index');
     }
 
 }

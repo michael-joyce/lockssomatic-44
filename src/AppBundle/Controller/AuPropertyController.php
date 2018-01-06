@@ -20,7 +20,7 @@ class AuPropertyController extends Controller {
     /**
      * Lists all AuProperty entities.
      *
-     * @Route("/", name="pln_au_property_index")
+     * @Route("/", name="au_property_index")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -53,7 +53,7 @@ class AuPropertyController extends Controller {
       //    }
      *
      *
-     * @Route("/search", name="pln_au_property_search")
+     * @Route("/search", name="au_property_search")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -98,7 +98,7 @@ class AuPropertyController extends Controller {
      *     ORM\Index(name="alias_name_idx",columns="name", flags={"fulltext"})
      *
      *
-     * @Route("/fulltext", name="pln_au_property_fulltext")
+     * @Route("/fulltext", name="au_property_fulltext")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -125,7 +125,7 @@ class AuPropertyController extends Controller {
     /**
      * Creates a new AuProperty entity.
      *
-     * @Route("/new", name="pln_au_property_new")
+     * @Route("/new", name="au_property_new")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -145,7 +145,7 @@ class AuPropertyController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new auProperty was created.');
-            return $this->redirectToRoute('pln_au_property_show', array('id' => $auProperty->getId()));
+            return $this->redirectToRoute('au_property_show', array('id' => $auProperty->getId()));
         }
 
         return array(
@@ -157,7 +157,7 @@ class AuPropertyController extends Controller {
     /**
      * Finds and displays a AuProperty entity.
      *
-     * @Route("/{id}", name="pln_au_property_show")
+     * @Route("/{id}", name="au_property_show")
      * @Method("GET")
      * @Template()
      * @param AuProperty $auProperty
@@ -172,7 +172,7 @@ class AuPropertyController extends Controller {
     /**
      * Displays a form to edit an existing AuProperty entity.
      *
-     * @Route("/{id}/edit", name="pln_au_property_edit")
+     * @Route("/{id}/edit", name="au_property_edit")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -190,7 +190,7 @@ class AuPropertyController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The auProperty has been updated.');
-            return $this->redirectToRoute('pln_au_property_show', array('id' => $auProperty->getId()));
+            return $this->redirectToRoute('au_property_show', array('id' => $auProperty->getId()));
         }
 
         return array(
@@ -202,7 +202,7 @@ class AuPropertyController extends Controller {
     /**
      * Deletes a AuProperty entity.
      *
-     * @Route("/{id}/delete", name="pln_au_property_delete")
+     * @Route("/{id}/delete", name="au_property_delete")
      * @Method("GET")
      * @param Request $request
      * @param AuProperty $auProperty
@@ -217,7 +217,7 @@ class AuPropertyController extends Controller {
         $em->flush();
         $this->addFlash('success', 'The auProperty was deleted.');
 
-        return $this->redirectToRoute('pln_au_property_index');
+        return $this->redirectToRoute('au_property_index');
     }
 
 }

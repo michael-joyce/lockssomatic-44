@@ -20,7 +20,7 @@ class AuController extends Controller {
     /**
      * Lists all Au entities.
      *
-     * @Route("/", name="pln_au_index")
+     * @Route("/", name="au_index")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -53,7 +53,7 @@ class AuController extends Controller {
       //    }
      *
      *
-     * @Route("/search", name="pln_au_search")
+     * @Route("/search", name="au_search")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -98,7 +98,7 @@ class AuController extends Controller {
      *     ORM\Index(name="alias_name_idx",columns="name", flags={"fulltext"})
      *
      *
-     * @Route("/fulltext", name="pln_au_fulltext")
+     * @Route("/fulltext", name="au_fulltext")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -125,7 +125,7 @@ class AuController extends Controller {
     /**
      * Creates a new Au entity.
      *
-     * @Route("/new", name="pln_au_new")
+     * @Route("/new", name="au_new")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -145,7 +145,7 @@ class AuController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new au was created.');
-            return $this->redirectToRoute('pln_au_show', array('id' => $au->getId()));
+            return $this->redirectToRoute('au_show', array('id' => $au->getId()));
         }
 
         return array(
@@ -157,7 +157,7 @@ class AuController extends Controller {
     /**
      * Finds and displays a Au entity.
      *
-     * @Route("/{id}", name="pln_au_show")
+     * @Route("/{id}", name="au_show")
      * @Method("GET")
      * @Template()
      * @param Au $au
@@ -172,7 +172,7 @@ class AuController extends Controller {
     /**
      * Displays a form to edit an existing Au entity.
      *
-     * @Route("/{id}/edit", name="pln_au_edit")
+     * @Route("/{id}/edit", name="au_edit")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -190,7 +190,7 @@ class AuController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The au has been updated.');
-            return $this->redirectToRoute('pln_au_show', array('id' => $au->getId()));
+            return $this->redirectToRoute('au_show', array('id' => $au->getId()));
         }
 
         return array(
@@ -202,7 +202,7 @@ class AuController extends Controller {
     /**
      * Deletes a Au entity.
      *
-     * @Route("/{id}/delete", name="pln_au_delete")
+     * @Route("/{id}/delete", name="au_delete")
      * @Method("GET")
      * @param Request $request
      * @param Au $au
@@ -217,7 +217,7 @@ class AuController extends Controller {
         $em->flush();
         $this->addFlash('success', 'The au was deleted.');
 
-        return $this->redirectToRoute('pln_au_index');
+        return $this->redirectToRoute('au_index');
     }
 
 }

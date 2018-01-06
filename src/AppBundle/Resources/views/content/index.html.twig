@@ -14,11 +14,11 @@
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
             {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('pln_deposit_content_new') }}" class="btn btn-default">
+                <a href="{{ path('deposit_content_new') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus"></span> New
                 </a>
             {% endif %}
-            <a href="{{ path('pln_deposit_content_search') }}" class="btn btn-default">
+            <a href="{{ path('deposit_content_search') }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-search"></span> Search
             </a>
         </div>
@@ -39,7 +39,7 @@
             {% for content in contents %}
                 <tr>
                     <td>
-                        <a href="{{ path('pln_deposit_content_show', { 'id': content.id }) }}">
+                        <a href="{{ path('deposit_content_show', { 'id': content.id }) }}">
                             {{ content.url }}
                         </a>
                     </td>

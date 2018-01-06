@@ -20,7 +20,7 @@ class AuStatusController extends Controller {
     /**
      * Lists all AuStatus entities.
      *
-     * @Route("/", name="pln_au_status_index")
+     * @Route("/", name="au_status_index")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -53,7 +53,7 @@ class AuStatusController extends Controller {
       //    }
      *
      *
-     * @Route("/search", name="pln_au_status_search")
+     * @Route("/search", name="au_status_search")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -98,7 +98,7 @@ class AuStatusController extends Controller {
      *     ORM\Index(name="alias_name_idx",columns="name", flags={"fulltext"})
      *
      *
-     * @Route("/fulltext", name="pln_au_status_fulltext")
+     * @Route("/fulltext", name="au_status_fulltext")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -125,7 +125,7 @@ class AuStatusController extends Controller {
     /**
      * Creates a new AuStatus entity.
      *
-     * @Route("/new", name="pln_au_status_new")
+     * @Route("/new", name="au_status_new")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -145,7 +145,7 @@ class AuStatusController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new auStatus was created.');
-            return $this->redirectToRoute('pln_au_status_show', array('id' => $auStatus->getId()));
+            return $this->redirectToRoute('au_status_show', array('id' => $auStatus->getId()));
         }
 
         return array(
@@ -157,7 +157,7 @@ class AuStatusController extends Controller {
     /**
      * Finds and displays a AuStatus entity.
      *
-     * @Route("/{id}", name="pln_au_status_show")
+     * @Route("/{id}", name="au_status_show")
      * @Method("GET")
      * @Template()
      * @param AuStatus $auStatus
@@ -172,7 +172,7 @@ class AuStatusController extends Controller {
     /**
      * Displays a form to edit an existing AuStatus entity.
      *
-     * @Route("/{id}/edit", name="pln_au_status_edit")
+     * @Route("/{id}/edit", name="au_status_edit")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -190,7 +190,7 @@ class AuStatusController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The auStatus has been updated.');
-            return $this->redirectToRoute('pln_au_status_show', array('id' => $auStatus->getId()));
+            return $this->redirectToRoute('au_status_show', array('id' => $auStatus->getId()));
         }
 
         return array(
@@ -202,7 +202,7 @@ class AuStatusController extends Controller {
     /**
      * Deletes a AuStatus entity.
      *
-     * @Route("/{id}/delete", name="pln_au_status_delete")
+     * @Route("/{id}/delete", name="au_status_delete")
      * @Method("GET")
      * @param Request $request
      * @param AuStatus $auStatus
@@ -217,7 +217,7 @@ class AuStatusController extends Controller {
         $em->flush();
         $this->addFlash('success', 'The auStatus was deleted.');
 
-        return $this->redirectToRoute('pln_au_status_index');
+        return $this->redirectToRoute('au_status_index');
     }
 
 }

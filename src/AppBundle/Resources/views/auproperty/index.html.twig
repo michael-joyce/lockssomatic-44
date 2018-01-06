@@ -14,11 +14,11 @@
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
             {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('pln_au_property_new') }}" class="btn btn-default">
+                <a href="{{ path('au_property_new') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus"></span> New
                 </a>
             {% endif %}
-            <a href="{{ path('pln_au_property_search') }}" class="btn btn-default">
+            <a href="{{ path('au_property_search') }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-search"></span> Search
             </a>
         </div>
@@ -35,7 +35,7 @@
             {% for auProperty in auProperties %}
                 <tr>
                     <td>
-                        <a href="{{ path('pln_au_property_show', { 'id': auProperty.id }) }}">
+                        <a href="{{ path('au_property_show', { 'id': auProperty.id }) }}">
                             {{ auProperty.propertyKey }}
                         </a>
                     </td>

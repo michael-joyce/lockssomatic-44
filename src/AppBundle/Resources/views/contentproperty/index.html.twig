@@ -14,11 +14,11 @@
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
             {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('pln_deposit_content_property_new') }}" class="btn btn-default">
+                <a href="{{ path('deposit_content_property_new') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus"></span> New
                 </a>
             {% endif %}
-            <a href="{{ path('pln_deposit_content_property_search') }}" class="btn btn-default">
+            <a href="{{ path('deposit_content_property_search') }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-search"></span> Search
             </a>
         </div>
@@ -36,7 +36,7 @@
             {% for contentProperty in contentProperties %}
                 <tr>
                     <td>
-                        <a href="{{ path('pln_deposit_content_property_show', { 'id': contentProperty.id }) }}">
+                        <a href="{{ path('deposit_content_property_show', { 'id': contentProperty.id }) }}">
                             {{ contentProperty.propertyKey }}
                         </a>
                     </td>

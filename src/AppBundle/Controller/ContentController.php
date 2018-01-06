@@ -20,7 +20,7 @@ class ContentController extends Controller {
     /**
      * Lists all Content entities.
      *
-     * @Route("/", name="pln_deposit_content_index")
+     * @Route("/", name="deposit_content_index")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -53,7 +53,7 @@ class ContentController extends Controller {
       //    }
      *
      *
-     * @Route("/search", name="pln_deposit_content_search")
+     * @Route("/search", name="deposit_content_search")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -98,7 +98,7 @@ class ContentController extends Controller {
      *     ORM\Index(name="alias_name_idx",columns="name", flags={"fulltext"})
      *
      *
-     * @Route("/fulltext", name="pln_deposit_content_fulltext")
+     * @Route("/fulltext", name="deposit_content_fulltext")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -125,7 +125,7 @@ class ContentController extends Controller {
     /**
      * Creates a new Content entity.
      *
-     * @Route("/new", name="pln_deposit_content_new")
+     * @Route("/new", name="deposit_content_new")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -145,7 +145,7 @@ class ContentController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new content was created.');
-            return $this->redirectToRoute('pln_deposit_content_show', array('id' => $content->getId()));
+            return $this->redirectToRoute('deposit_content_show', array('id' => $content->getId()));
         }
 
         return array(
@@ -157,7 +157,7 @@ class ContentController extends Controller {
     /**
      * Finds and displays a Content entity.
      *
-     * @Route("/{id}", name="pln_deposit_content_show")
+     * @Route("/{id}", name="deposit_content_show")
      * @Method("GET")
      * @Template()
      * @param Content $content
@@ -172,7 +172,7 @@ class ContentController extends Controller {
     /**
      * Displays a form to edit an existing Content entity.
      *
-     * @Route("/{id}/edit", name="pln_deposit_content_edit")
+     * @Route("/{id}/edit", name="deposit_content_edit")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -190,7 +190,7 @@ class ContentController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The content has been updated.');
-            return $this->redirectToRoute('pln_deposit_content_show', array('id' => $content->getId()));
+            return $this->redirectToRoute('deposit_content_show', array('id' => $content->getId()));
         }
 
         return array(
@@ -202,7 +202,7 @@ class ContentController extends Controller {
     /**
      * Deletes a Content entity.
      *
-     * @Route("/{id}/delete", name="pln_deposit_content_delete")
+     * @Route("/{id}/delete", name="deposit_content_delete")
      * @Method("GET")
      * @param Request $request
      * @param Content $content
@@ -217,7 +217,7 @@ class ContentController extends Controller {
         $em->flush();
         $this->addFlash('success', 'The content was deleted.');
 
-        return $this->redirectToRoute('pln_deposit_content_index');
+        return $this->redirectToRoute('deposit_content_index');
     }
 
 }

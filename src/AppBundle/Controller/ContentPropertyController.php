@@ -20,7 +20,7 @@ class ContentPropertyController extends Controller {
     /**
      * Lists all ContentProperty entities.
      *
-     * @Route("/", name="pln_deposit_content_property_index")
+     * @Route("/", name="deposit_content_property_index")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -53,7 +53,7 @@ class ContentPropertyController extends Controller {
       //    }
      *
      *
-     * @Route("/search", name="pln_deposit_content_property_search")
+     * @Route("/search", name="deposit_content_property_search")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -98,7 +98,7 @@ class ContentPropertyController extends Controller {
      *     ORM\Index(name="alias_name_idx",columns="name", flags={"fulltext"})
      *
      *
-     * @Route("/fulltext", name="pln_deposit_content_property_fulltext")
+     * @Route("/fulltext", name="deposit_content_property_fulltext")
      * @Method("GET")
      * @Template()
      * @param Request $request
@@ -125,7 +125,7 @@ class ContentPropertyController extends Controller {
     /**
      * Creates a new ContentProperty entity.
      *
-     * @Route("/new", name="pln_deposit_content_property_new")
+     * @Route("/new", name="deposit_content_property_new")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -145,7 +145,7 @@ class ContentPropertyController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new contentProperty was created.');
-            return $this->redirectToRoute('pln_deposit_content_property_show', array('id' => $contentProperty->getId()));
+            return $this->redirectToRoute('deposit_content_property_show', array('id' => $contentProperty->getId()));
         }
 
         return array(
@@ -157,7 +157,7 @@ class ContentPropertyController extends Controller {
     /**
      * Finds and displays a ContentProperty entity.
      *
-     * @Route("/{id}", name="pln_deposit_content_property_show")
+     * @Route("/{id}", name="deposit_content_property_show")
      * @Method("GET")
      * @Template()
      * @param ContentProperty $contentProperty
@@ -172,7 +172,7 @@ class ContentPropertyController extends Controller {
     /**
      * Displays a form to edit an existing ContentProperty entity.
      *
-     * @Route("/{id}/edit", name="pln_deposit_content_property_edit")
+     * @Route("/{id}/edit", name="deposit_content_property_edit")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
@@ -190,7 +190,7 @@ class ContentPropertyController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The contentProperty has been updated.');
-            return $this->redirectToRoute('pln_deposit_content_property_show', array('id' => $contentProperty->getId()));
+            return $this->redirectToRoute('deposit_content_property_show', array('id' => $contentProperty->getId()));
         }
 
         return array(
@@ -202,7 +202,7 @@ class ContentPropertyController extends Controller {
     /**
      * Deletes a ContentProperty entity.
      *
-     * @Route("/{id}/delete", name="pln_deposit_content_property_delete")
+     * @Route("/{id}/delete", name="deposit_content_property_delete")
      * @Method("GET")
      * @param Request $request
      * @param ContentProperty $contentProperty
@@ -217,7 +217,7 @@ class ContentPropertyController extends Controller {
         $em->flush();
         $this->addFlash('success', 'The contentProperty was deleted.');
 
-        return $this->redirectToRoute('pln_deposit_content_property_index');
+        return $this->redirectToRoute('deposit_content_property_index');
     }
 
 }
