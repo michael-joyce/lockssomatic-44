@@ -2,10 +2,10 @@
 
 namespace AppBundle\Tests\Controller;
 
+use AppBundle\DataFixtures\ORM\LoadPlugin;
 use AppBundle\Entity\Plugin;
-use AppBundle\Tests\DataFixtures\ORM\LoadPlugin;
-use AppBundle\Tests\Util\BaseTestCase;
 use Nines\UserBundle\DataFixtures\ORM\LoadUser;
+use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 class PluginControllerTest extends BaseTestCase {
 
@@ -19,8 +19,7 @@ class PluginControllerTest extends BaseTestCase {
     public function testAnonIndex() {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/plugin/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->count());
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
     }
 
     public function testUserIndex() {
@@ -46,9 +45,7 @@ class PluginControllerTest extends BaseTestCase {
     public function testAnonShow() {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/plugin/1');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('Edit')->count());
-        $this->assertEquals(0, $crawler->selectLink('Delete')->count());
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
     }
 
     public function testUserShow() {
@@ -77,7 +74,6 @@ class PluginControllerTest extends BaseTestCase {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/plugin/1/edit');
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
     }
 
     public function testUserEdit() {
@@ -86,8 +82,7 @@ class PluginControllerTest extends BaseTestCase {
             'password' => 'secret',
         ]);
         $crawler = $client->request('GET', '/plugin/1/edit');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminEdit() {
@@ -117,7 +112,6 @@ class PluginControllerTest extends BaseTestCase {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/plugin/new');
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
     }
 
     public function testUserNew() {
@@ -126,8 +120,7 @@ class PluginControllerTest extends BaseTestCase {
             'password' => 'secret',
         ]);
         $crawler = $client->request('GET', '/plugin/new');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminNew() {
@@ -157,7 +150,6 @@ class PluginControllerTest extends BaseTestCase {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/plugin/1/delete');
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
     }
 
     public function testUserDelete() {
@@ -166,8 +158,7 @@ class PluginControllerTest extends BaseTestCase {
             'password' => 'secret',
         ]);
         $crawler = $client->request('GET', '/plugin/1/delete');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminDelete() {
