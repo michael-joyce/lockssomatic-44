@@ -104,7 +104,7 @@ class FilePaths {
     }
 
     /**
-     * Ge the directory for uploaded plugin files.
+     * Get the directory for uploaded plugin files.
      *
      * @return string
      */

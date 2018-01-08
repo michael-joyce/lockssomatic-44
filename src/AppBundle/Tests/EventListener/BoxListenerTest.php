@@ -16,17 +16,17 @@ function gethostbyname($hostname) {
 namespace AppBundle\Tests\EventListener;
 
 use AppBundle\Entity\Box;
-use AppBundle\EventListener\BoxIpUpdater;
+use AppBundle\EventListener\BoxListener;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
-class BoxIpUpdaterTest extends BaseTestCase {
+class BoxListenerTest extends BaseTestCase {
 
     private $listener;
 
     protected function setUp() {
         parent::setUp();
-        $this->listener = $this->getContainer()->get(BoxIpUpdater::class);
+        $this->listener = $this->getContainer()->get(BoxListener::class);
     }
 
     /**

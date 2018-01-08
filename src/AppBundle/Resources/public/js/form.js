@@ -1,12 +1,15 @@
 (function ($, window) {
 
+    var hostname = window.location.hostname.replace('www.', '');
+
+
     function confirm() {
         var $this = $(this);
         $this.click(function () {
             return window.confirm($this.data('confirm'));
         });
     }
-
+    
     function windowBeforeUnload(e) {
         var clean = true;
         $('form').each(function () {
@@ -22,7 +25,7 @@
         }
     }
 
-    function formDirty($form) {
+    function formDirty() {
         var $form = $(this);
         $form.data('dirty', false);
         $form.on('change', function () {
@@ -47,12 +50,16 @@
             add: '<a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span></a>',
             remove: '<a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-minus"></span></a>',
             add_at_the_end: false,
+            after_add: function (collection, element) {
+                $(element).find('.select2entity').select2entity();
+                $(element).find('.select2-container').css('width', '100%');
+                return true;
+            },
         });
     }
 
     function complexCollection() {
         $('.collection-complex').collection({
-            init_with_n_elements: 1,
             allow_up: false,
             allow_down: false,
             add: '<a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span></a>',
@@ -66,19 +73,33 @@
         });
     }
 
+    function link() {
+        if (this.hostname.replace('www.', '') === hostname) {
+            return;
+        }
+        $(this).attr('target', '_blank');
+    }
+
+    function uploadControls() {
+        var $input = $(this);
+        $input.change(function () {
+            if ($input.data('maxsize') && $input.data('maxsize') < this.files[0].size) {
+                alert('The selected file is too big.');
+            }
+            $('#filename').val($input.val().replace(/.*\\/, ''));
+        });
+    }
+
     $(document).ready(function () {
         $(window).bind('beforeunload', windowBeforeUnload);
-        $('form:not(.search)').each(formDirty);
-        $("a.popup").click(formPopup);
+        $('form').each(formDirty);
+        $('input:file').each(uploadControls);
         $("*[data-confirm]").each(confirm);
+        $("a.popup").click(formPopup);
+        $("a").each(link);
         if (typeof $().collection === 'function') {
             simpleCollection();
             complexCollection();
-        }
-        if (typeof $().tablesorter === 'function') {
-            $("#titleRoles").tablesorter({
-                sortList: [[0, 0], [1, 0], [2, 0]],
-            });
         }
     });
 

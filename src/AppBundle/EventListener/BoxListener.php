@@ -7,11 +7,11 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Bridge\Monolog\Logger;
 
 /**
- * Description of BoxIpUpdater
+ * Description of BoxListener
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class BoxIpUpdater {
+class BoxListener {
     
     /**
      * @var Logger

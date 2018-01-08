@@ -2,52 +2,33 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Services\FileUploader;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PluginType extends AbstractType {
 
+    private $fileUploader;
+    
+    public function __construct(FileUploader $fileUploader) {
+        $this->fileUploader = $fileUploader;
+    }
+    
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('name', null, array(
-            'label' => 'Name',
+        $builder->add('jarFile', FileType::class, array(
+            'label' => 'JAR File',
             'required' => true,
             'attr' => array(
-                'help_block' => '',
-            ),
-        ));
-        $builder->add('path', null, array(
-            'label' => 'Path',
-            'required' => true,
-            'attr' => array(
-                'help_block' => '',
-            ),
-        ));
-        $builder->add('filename', null, array(
-            'label' => 'Filename',
-            'required' => true,
-            'attr' => array(
-                'help_block' => '',
-            ),
-        ));
-        $builder->add('version', null, array(
-            'label' => 'Version',
-            'required' => true,
-            'attr' => array(
-                'help_block' => '',
-            ),
-        ));
-        $builder->add('identifier', null, array(
-            'label' => 'Identifier',
-            'required' => true,
-            'attr' => array(
-                'help_block' => '',
+                'help_block' => 'Select a LOCKSS plugin JAR file to upload.',
+                'data-maxsize' => $this->fileUploader->getMaxUploadSize(),
             ),
         ));
     }

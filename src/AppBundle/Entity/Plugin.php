@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Plugin
@@ -14,6 +15,11 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  */
 class Plugin extends AbstractEntity {
 
+    /**
+     * @var File
+     */
+    private $jarFile;
+    
     /**
      * Name of the plugin.
      *
@@ -84,6 +90,16 @@ class Plugin extends AbstractEntity {
 
     public function __toString() {
         return $this->name;
+    }
+    
+    public function getJarFile() {
+        return $this->jarFile;
+    }
+    
+    public function setJarFile(File $jarFile) {
+        $this->jarFile = $jarFile;
+        
+        return $this;
     }
 
     /**
