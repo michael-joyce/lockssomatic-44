@@ -13,10 +13,10 @@ class FilePathsTest extends KernelTestCase {
     private $filePaths;
     private $root;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         self::bootKernel();
-        $this->filePaths = static::$kernel->getContainer()->get('AppBundle\Services\FilePaths');
+        $this->filePaths = static::$kernel->getContainer()->get(FilePaths::class);
         $this->root = static::$kernel->getContainer()->getParameter('kernel.project_dir');
     }
 

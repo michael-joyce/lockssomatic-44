@@ -4,6 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Plugin;
 use AppBundle\Form\PluginType;
+use AppBundle\Services\FileUploader;
+use AppBundle\Services\PluginImporter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -49,7 +51,7 @@ class PluginController extends Controller {
      * @Template()
      * @param Request $request
      */
-    public function newAction(Request $request) {
+    public function newAction(Request $request, FileUploader $fileUploader, PluginImporter $pluginImporter) {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'You must login to access this page.');
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -61,10 +63,12 @@ class PluginController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($plugin);
-            $em->flush();
-
-            $this->addFlash('success', 'The new plugin was created.');
-            return $this->redirectToRoute('plugin_show', array('id' => $plugin->getId()));
+            $pluginImporter->import($plugin);
+            dump($plugin);
+//            $em->flush();
+//
+//            $this->addFlash('success', 'The new plugin was created.');
+//            return $this->redirectToRoute('plugin_show', array('id' => $plugin->getId()));
         }
 
         return array(

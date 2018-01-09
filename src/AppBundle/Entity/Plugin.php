@@ -30,20 +30,12 @@ class Plugin extends AbstractEntity {
     private $name;
 
     /**
-     * Path, in the local file system, to the plugin file (includes version number).
+     * Path, in the local file system, to the plugin file.
      *
      * @var string
      * @ORM\Column(name="path", type="string", length=255)
      */
     private $path;
-
-    /**
-     * Original file name for the plugin, does not include the version number.
-     *
-     * @var string
-     * @ORM\Column(name="filename", type="string", length=127)
-     */
-    private $filename;
 
     /**
      * Version number for the plugin, from the plugin's Xml config.
@@ -92,10 +84,22 @@ class Plugin extends AbstractEntity {
         return $this->name;
     }
     
+    /**
+     * Get jarFile
+     * 
+     * @return File
+     */
     public function getJarFile() {
         return $this->jarFile;
     }
     
+    /**
+     * Set jarFile
+     * 
+     * @param File $jarFile
+     * 
+     * @return Plugin
+     */
     public function setJarFile(File $jarFile) {
         $this->jarFile = $jarFile;
         
@@ -147,25 +151,12 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Set filename
-     *
-     * @param string $filename
-     *
-     * @return Plugin
-     */
-    public function setFilename($filename) {
-        $this->filename = $filename;
-
-        return $this;
-    }
-
-    /**
      * Get filename
      *
      * @return string
      */
     public function getFilename() {
-        return $this->filename;
+        return $this->jarFile->getBasename();
     }
 
     /**

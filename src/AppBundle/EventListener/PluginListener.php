@@ -9,34 +9,30 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Entity\Plugin;
+use AppBundle\Services\FilePaths;
 use AppBundle\Services\FileUploader;
 use AppBundle\Services\PluginImporter;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * Description of Plugin
+ * Description of PluginListener
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
 class PluginListener {
     
-    /**
-     * @var FileUploader
-     */
-    private $uploader;
+    private $fileUploader;
     
-    /**
-     * @var PluginImporter
-     */
-    private $pluginImporter;
+    private $filePaths;
     
-    public function __construct(FileUploader $uploader, PluginImporter $pluginImporter) {
-        $this->uploader = $uploader;
-        $this->pluginImporter = $pluginImporter;
+    public function __construct(FileUploader $fileUploader, FilePaths $filePaths) {
+        $this->fileUploader = $fileUploader;
+        $this->filePaths = $filePaths;
     }
-
-    public function prePersist(LifecycleEventArgs $args) {
+    
+    public function prePersist(LifecycleEventArgs $args){
         $entity = $args->getEntity();
         if( ! $entity instanceof Plugin) {
             return;
@@ -44,30 +40,21 @@ class PluginListener {
         $this->uploadFile($entity);
     }
     
-    public function preUpdate(LifecycleEventArgs $args) {
+    public function preUpdate(LifecycleEventArgs $args){
         $entity = $args->getEntity();
         if( ! $entity instanceof Plugin) {
             return;
         }
         $this->uploadFile($entity);
-    }
-    
-    public function postLoad(LifecycleEventArgs $args) {
-        $entity = $args->getEntity();
-        if( ! $entity instanceof Plugin) {
-            return;
-        }
-        
     }
     
     private function uploadFile(Plugin $plugin) {
-        $file = $plugin->getJarFile();
-        if(! $file instanceof UploadedFile) {
+        $jarFile = $plugin->getJarFile();
+        if( ! $jarFile instanceof UploadedFile) {
             return;
         }
-        $filename = $this->uploader->upload($file, 'plugin');
-        $plugin->setFilename($filename);
-        $this->pluginImporter->import($plugin);
+        $filename = $this->fileUploader->upload($jarFile, FileUploader::PLUGIN);
+        $plugin->setPath($filename);
+        $plugin->setJarFile(new File($this->filePaths->getPluginsDir() . '/' . $filename));
     }
-    
 }

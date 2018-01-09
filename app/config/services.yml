@@ -43,6 +43,13 @@ services:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }            
 
+    AppBundle\EventListener\PluginListener:
+        public: true
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }            
+        
+
     AppBundle\Menu\Builder:
         public: true
         arguments: ['@knp_menu.factory', '@security.authorization_checker', '@security.token_storage']
@@ -52,6 +59,9 @@ services:
     AppBundle\Services\FilePaths:
         public: true
         arguments: ['@logger', '%kernel.project_dir%', '%lom.download_dir%']
+
+    AppBundle\Services\FileUploader:
+        public: true
 
     AppBundle\Services\ContentBuilder:
         public: true
