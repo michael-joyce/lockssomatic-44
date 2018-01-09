@@ -23,6 +23,8 @@ class PluginImporter {
     
     const MANIFEST = 'META-INF/MANIFEST.MF';
 
+    const PLUGIN_KEY = 'lockss-plugin';
+    
     private $em;
     
     public function __construct(EntityManagerInterface $em) {
@@ -35,14 +37,29 @@ class PluginImporter {
         if($res !== true) {
             throw new Exception("Cannot read plugin jar file. Error code {$res}.");
         }
-        $raw = $zipArchive->getFromName('META-INF/MANIFEST.MF');
-        $manifest = preg_replace('/\r\n/', "\n", $raw);
-        $property = new PluginProperty();
-        $property->setPlugin($plugin);
-        $plugin->addPluginProperty($property);
-        $property->setPropertyKey("MANIFEST");
-        $property->setPropertyValue($this->parseManifest($manifest));
-        $this->em->persist($property);
+        $raw = $zipArchive->getFromName(self::MANIFEST);
+        $manifest = $this->parseManifest(preg_replace('/\r\n/', "\n", $raw));
+        $entries = $this->findPluginEntries($manifest);
+        foreach($entries as $entry) {
+            $xml = $this->findPluginXml($zipArchive, $entry);
+        }
+    }
+    
+    public function findPluginEntries($manifest) {
+        $entries = [];
+        foreach($manifest as $section) {
+            if(isset($section[self::PLUGIN_KEY]) && $section[self::PLUGIN_KEY] === 'true') {
+                // the comparison above must be string, not boolean.
+                $entries[] = $section['name'];
+            }
+        }
+        return $entries;
+    }
+    
+    public function findPluginXml(ZipArchive $zipArchive, $entry) {
+        $raw = $zipArchive->getFromName($entry);
+        $xml = simplexml_load_string($raw);
+        return $xml;
     }
     
     public function parseManifest($raw) {
@@ -62,9 +79,11 @@ class PluginImporter {
                     continue;
                 }
                 list($k, $v) = preg_split('/\s*:\s*/', $line);
-                $keys[$k] = $v;
+                $keys[mb_convert_case($k, MB_CASE_LOWER)] = $v;
             }
-            $sections[] = $keys;
+            if(count($keys) > 0) {
+                $sections[] = $keys;
+            }
         }
         return $sections;
     }

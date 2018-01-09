@@ -43,9 +43,9 @@ class PluginImporterTest extends KernelTestCase {
         $data = $this->manifestData();
         $manifest = $this->importer->parseManifest($data);
         $this->assertEquals(array(
-            'Manifest-Version' => '1.0',
-            'Ant-Version' => 'Apache Ant 1.10.1',
-            'Created-By' => '1.8.0_144-b01 (Oracle Corporation)',
+            'manifest-version' => '1.0',
+            'ant-version' => 'Apache Ant 1.10.1',
+            'created-by' => '1.8.0_144-b01 (Oracle Corporation)',
         ), $manifest[0]);
     }
     
@@ -53,10 +53,24 @@ class PluginImporterTest extends KernelTestCase {
         $data = $this->manifestData();
         $manifest = $this->importer->parseManifest($data);
         $this->assertEquals(array(
-            'Name' => 'ca/sfu/lib/plugin/coppul/WestVaultPlugin.xml',
-            'Lockss-Plugin' => 'true',
-            'SHA-256-Digest' => '1PNUJEn9tHPeDE3qiIgXCzvi6eblJayHNZK1M3YWq30=',
+            'name' => 'ca/sfu/lib/plugin/coppul/WestVaultPlugin.xml',
+            'lockss-plugin' => 'true',
+            'sha-256-digest' => '1PNUJEn9tHPeDE3qiIgXCzvi6eblJayHNZK1M3YWq30=',
         ), $manifest[1]);
+    }
+    
+    public function testManifestBlankLines() {
+        $data = $this->manifestData() . "\n\n\n";
+        $manifest = $this->importer->parseManifest($data);
+        $manifest = $this->importer->parseManifest($data);
+        $this->assertEquals(2, count($manifest));
+    }
+    
+    public function testFindPluginXml() {
+        $data = $this->manifestData();
+        $manifest = $this->importer->parseManifest($data);
+        $entries = $this->importer->findPluginEntries($manifest);
+        $this->assertEquals(['ca/sfu/lib/plugin/coppul/WestVaultPlugin.xml'], $entries);
     }
     
     public function manifestData() {
