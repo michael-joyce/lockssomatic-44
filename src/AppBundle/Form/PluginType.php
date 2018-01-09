@@ -12,12 +12,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PluginType extends AbstractType {
 
-    private $fileUploader;
-    
-    public function __construct(FileUploader $fileUploader) {
-        $this->fileUploader = $fileUploader;
-    }
-    
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -28,7 +22,7 @@ class PluginType extends AbstractType {
             'required' => true,
             'attr' => array(
                 'help_block' => 'Select a LOCKSS plugin JAR file to upload.',
-                'data-maxsize' => $this->fileUploader->getMaxUploadSize(),
+//                'data-maxsize' => $this->fileUploader->getMaxUploadSize(),
             ),
         ));
     }

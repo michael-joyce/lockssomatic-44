@@ -19,7 +19,7 @@ class BoxControllerTest extends BaseTestCase {
     public function testAnonIndex() {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/pln/1/box/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
         $this->assertEquals(0, $crawler->selectLink('New')->count());
     }
 
@@ -73,7 +73,7 @@ class BoxControllerTest extends BaseTestCase {
     public function testAnonShow() {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/pln/1/box/1');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
         $this->assertEquals(0, $crawler->selectLink('Edit')->count());
         $this->assertEquals(0, $crawler->selectLink('Delete')->count());
     }
@@ -82,7 +82,7 @@ class BoxControllerTest extends BaseTestCase {
     public function testAnonShowBox404() {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/pln/1/box/2');
-        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
     }
     
     public function testUserShow() {

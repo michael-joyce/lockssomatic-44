@@ -35,6 +35,14 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
+            
+    AppBundle\EventListener\BoxListener:
+        public: true
+        arguments: ['@logger']
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }            
+
     AppBundle\Menu\Builder:
         public: true
         arguments: ['@knp_menu.factory', '@security.authorization_checker', '@security.token_storage']
@@ -48,15 +56,4 @@ services:
     AppBundle\Services\ContentBuilder:
         public: true
     
-    AppBundle\EventListener\BoxListener:
-        public: true
-        arguments: ['@logger']
-        tags:
-            - { name: doctrine.event_listener, event: prePersist }
-            
-    AppBundle\EventListener\PluginListener:
-        public: true
-        tags:
-            - { name: doctrine.event_listener, event: prePersist }
-            - { name: doctrine.event_listener, event: preUpdate }            
-            - { name: doctrine.event_listener, event: postLoad }            
+
