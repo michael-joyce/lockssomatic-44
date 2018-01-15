@@ -31,8 +31,11 @@ class PluginImporter {
         $this->em = $em;
     }
     
-    public function import(Plugin $plugin) {
-        $zipArchive = new ZipArchive();
+    public function import(Plugin $plugin, ZipArchive $reader = null) {
+        $zipArchive = $reader;
+        if($zipArchive === null) {
+            $zipArchive = new ZipArchive();
+        }
         $res = $zipArchive->open($plugin->getJarFile()->getPathname());
         if($res !== true) {
             throw new Exception("Cannot read plugin jar file. Error code {$res}.");
@@ -41,8 +44,16 @@ class PluginImporter {
         $manifest = $this->parseManifest(preg_replace('/\r\n/', "\n", $raw));
         $entries = $this->findPluginEntries($manifest);
         foreach($entries as $entry) {
-            $xml = $this->findPluginXml($zipArchive, $entry);
+            $xml = $this->getPluginXml($zipArchive, $entry);
         }
+    }
+    
+    public function getManifest(ZipArchive $zipArchive) {
+        $raw = $zipArchive->getFromName(self::MANIFEST);
+        $data = preg_replace('/\r\n/', "\n", $raw);
+        $manifest = $this->parseManifest($data);
+        print_r($manifest);
+        return $manifest;
     }
     
     public function findPluginEntries($manifest) {
@@ -56,9 +67,12 @@ class PluginImporter {
         return $entries;
     }
     
-    public function findPluginXml(ZipArchive $zipArchive, $entry) {
+    public function getPluginXml(ZipArchive $zipArchive, $entry) {
         $raw = $zipArchive->getFromName($entry);
         $xml = simplexml_load_string($raw);
+        if( ! $xml) {
+            throw new Exception("Cannot read plugin xml description. " . $zipArchive->getStatusString());
+        }
         return $xml;
     }
     
