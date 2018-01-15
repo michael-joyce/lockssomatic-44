@@ -8,7 +8,10 @@
 
 namespace AppBundle\Tests\Services;
 
+use AppBundle\Entity\Plugin;
+use AppBundle\Entity\PluginProperty;
 use AppBundle\Services\PluginImporter;
+use Exception;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use ZipArchive;
@@ -35,21 +38,20 @@ class PluginImporterTest extends KernelTestCase {
         $stub = $this->createMock(ZipArchive::class);
         $stub->method('open')->willReturn(true);
         $entries = [
-            [PluginImporter::MANIFEST, $this->manifestData()],
-            ['ca/sfu/lib/plugin/coppul/WestVaultPlugin.xml', $this->xmlData()],
+            PluginImporter::MANIFEST => $this->manifestData(),
+            'ca/sfu/lib/plugin/coppul/WestVaultPlugin.xml' => $this->xmlData(),
         ];
-        $stub->method('getFromName')->will($this->returnValueMap($entries));
+        $stub->method('getFromName')->will($this->returnCallback(function($name) use ($entries) {
+            if(isset($entries[$name])) {
+                return $entries[$name];
+            }
+            return null;
+        }));
         return $stub;
     }
     
     public function testSanity() {
         $this->assertInstanceOf(PluginImporter::class, $this->importer);
-    }
-    
-    public function testGetManifest() {
-        $stub = $this->getArchiveStub();
-        $manifest = $this->importer->getManifest($stub);
-        $this->assertEquals([], $manifest);
     }
 
     public function testManifestSectionCount() {
@@ -95,6 +97,46 @@ class PluginImporterTest extends KernelTestCase {
         $stub = $this->getArchiveStub();
         $xml = $this->importer->getPluginXml($stub, 'ca/sfu/lib/plugin/coppul/WestVaultPlugin.xml');
         $this->assertInstanceOf(SimpleXMLElement::class, $xml);
+    }
+    
+    public function testFindXmlPropString() {
+        $xml = simplexml_load_string($this->xmlData());
+        $this->assertEquals('COPPUL WestVault Plugin', $this->importer->findXmlPropString($xml, 'plugin_name'));
+        $this->assertEquals(null, $this->importer->findXmlPropString($xml, 'fancy_dan'));
+    }
+    
+    /**
+     * @expectedException Exception
+     */
+    public function testFindXmlPropStringException() {
+        $xml = simplexml_load_string($this->xmlData());
+        $this->importer->findXmlPropString($xml, 'bad_entry');
+    }
+    
+    public function testFindXmlPropElement() {
+        $xml = simplexml_load_string($this->xmlData());
+        $this->assertInstanceOf(SimpleXMLElement::class, $this->importer->findXmlPropElement($xml, 'au_permission_url'));
+        $this->assertEquals(null, $this->importer->findXmlPropElement($xml, 'fancy_dan'));
+    }
+    
+    /**
+     * @expectedException Exception
+     */
+    public function testFindXmlPropElementException() {
+        $xml = simplexml_load_string($this->xmlData());
+        $this->importer->findXmlPropElement($xml, 'other_bad_entry');
+    }
+    
+    public function testNewPluginPropertyString() {
+        $xml = simplexml_load_string($this->xmlData());
+        $plugin = new Plugin();
+        $property = $this->importer->newPluginProperty($plugin, 'plugin_version', $xml->xpath('//entry[string[1]/text()="plugin_version"]/string[2]')[0]);
+        $this->assertInstanceOf(PluginProperty::class, $property);
+        $this->assertEquals('plugin_version', $property->getPropertyKey());
+        $this->assertEquals($plugin, $property->getPlugin());
+        $this->assertEquals(1, $property->getPropertyValue());
+        $this->assertNull($property->getChildren());
+        $this->assertFalse($property->getIsList());
     }
     
     public function manifestData() {
@@ -189,6 +231,14 @@ ENDMANIFEST;
         <string>COPPUL WestVault Plugin</string>
     </entry>
     <entry>
+        <string>bad_entry</string>
+        <string>This is bad entry because it has a duplicate key.</string>
+    </entry>
+    <entry>
+        <string>bad_entry</string>
+        <string>This is bad entry because it has a duplicate key.</string>
+    </entry>
+    <entry>
         <string>au_refetch_depth</string>
         <int>999</int>
     </entry>
@@ -202,6 +252,20 @@ ENDMANIFEST;
             <string>1,"^%sfetch/[^/]+/[^/]+\.zip$", base_url</string>
             <string>1,"^%s$", manifest_url</string>
             <string>1,"^%s$", permission_url</string>
+        </list>
+    </entry>
+    <entry>
+        <string>other_bad_entry</string>
+        <list>
+            <string>foo</string>
+            <string>bar</string>
+        </list>
+    </entry>
+    <entry>
+        <string>other_bad_entry</string>
+        <list>
+            <string>foo</string>
+            <string>bar</string>
         </list>
     </entry>
     <entry>

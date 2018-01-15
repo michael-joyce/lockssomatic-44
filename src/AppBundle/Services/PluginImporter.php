@@ -12,6 +12,7 @@ use AppBundle\Entity\Plugin;
 use AppBundle\Entity\PluginProperty;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use SimpleXMLElement;
 use ZipArchive;
 
 /**
@@ -101,4 +102,83 @@ class PluginImporter {
         }
         return $sections;
     }
+    
+    /**
+     * Find a property string in a LOCKSS plugin.xml file.
+     *
+     * @param SimpleXMLElement $xml
+     * @param string $propName
+     *
+     * @return string
+     *
+     * @throws Exception
+     */
+    public function findXmlPropString(SimpleXMLElement $xml, $propName) {
+        $data = $xml->xpath("//entry[string[1]/text() = '{$propName}']/string[2]");
+        if (count($data) === 1) {
+            return (string)$data[0];
+        }
+        if (count($data) === 0) {
+            return;
+        }
+        throw new Exception('Too many entry elements for property string '.$propName);
+    }
+    
+    /**
+     * Find a list element in a LOCKSS plugin.xml file.
+     *
+     * @param SimpleXMLElement $xml
+     * @param type $propName
+     *
+     * @return SimpleXMLElement
+     *
+     * @throws Exception
+     */
+    public function findXmlPropElement(SimpleXMLElement $xml, $propName) {
+        $data = $xml->xpath("//entry[string[1]/text() = '{$propName}']/list");
+        if (count($data) === 1) {
+            return $data[0];
+        }
+        if (count($data) === 0) {
+            return;
+        }
+        throw new Exception('Too many entry elements for property element'.$propName);
+    }
+    
+    /**
+     * Generate and persist a new Plugins object.
+     *
+     * @param Plugin                  $plugin
+     * @param string                  $name
+     * @param SimpleXMLElement        $value
+     *
+     * @return PluginProperty
+     */
+    public function newPluginProperty(Plugin $plugin, $name, SimpleXMLElement $value = null) {
+        $property = new PluginProperty();
+        $property->setPlugin($plugin);
+        $property->setPropertyKey($name);
+        if ($value !== null) {
+            switch ($value->getName()) {
+                // this is the name of the XML element defining the property.
+                case 'string':
+                    $property->setPropertyValue((string) $value);
+                    break;
+                case 'list':
+                    $values = array();
+                    foreach ($value->children() as $child) {
+                        $values[] = (string) $child;
+                    }
+                    $property->setPropertyValue($values);
+                    break;
+                default:
+                    $property->setPropertyValue((string) $value);
+            }
+        }
+        $this->em->persist($property);
+
+        return $property;
+    }
+    
+
 }

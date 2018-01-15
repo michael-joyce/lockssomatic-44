@@ -136,7 +136,7 @@ class PluginProperty extends AbstractEntity {
      * @return boolean
      */
     public function getIsList() {
-        return $this->isList;
+        return (bool)$this->isList;
     }
 
     /**
