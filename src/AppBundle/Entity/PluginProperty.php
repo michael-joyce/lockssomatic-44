@@ -31,8 +31,7 @@ class PluginProperty extends AbstractEntity {
      *
      * @ORM\Column(name="property_value", type="text", nullable=true)
      */
-    // Access is weakened for testing.
-    protected $propertyValue;
+    private $propertyValue;
 
     /**
      * True if the property value is a list/array.
