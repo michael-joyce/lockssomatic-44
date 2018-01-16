@@ -33,7 +33,7 @@ class Plugin extends AbstractEntity {
      * Path, in the local file system, to the plugin file.
      *
      * @var string
-     * @ORM\Column(name="path", type="string", length=255)
+     * @ORM\Column(name="path", type="string", length=255, nullable=true)
      */
     private $path;
 
@@ -81,7 +81,10 @@ class Plugin extends AbstractEntity {
     private $pluginProperties;
 
     public function __toString() {
-        return $this->name;
+        if($this->name) {
+            return $this->name;
+        }
+        return "";
     }
     
     /**

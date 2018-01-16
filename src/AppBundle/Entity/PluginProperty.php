@@ -31,7 +31,8 @@ class PluginProperty extends AbstractEntity {
      *
      * @ORM\Column(name="property_value", type="text", nullable=true)
      */
-    private $propertyValue;
+    // Access is weakened for testing.
+    protected $propertyValue;
 
     /**
      * True if the property value is a list/array.
@@ -69,8 +70,16 @@ class PluginProperty extends AbstractEntity {
      */
     private $children;
 
+    public function __construct() {
+        parent::__construct();
+        $this->isList = false;
+    }
+
     public function __toString() {
-        return $this->propertyKey;
+        if ($this->propertyKey) {
+            return $this->propertyKey;
+        }
+        return "";
     }
 
     /**
@@ -96,38 +105,35 @@ class PluginProperty extends AbstractEntity {
     }
 
     /**
-     * Set propertyValue
+     * Set propertyValue, which is either a string or an array of strings.
      *
-     * @param string $propertyValue
+     * @param string|array $propertyValue
      *
-     * @return PluginProperty
+     * @return PlnProperty
      */
     public function setPropertyValue($propertyValue) {
-        $this->propertyValue = $propertyValue;
+        if (is_array($propertyValue)) {
+            $this->isList = true;
+            $this->propertyValue = serialize($propertyValue);
+        } else {
+            $this->isList = false;
+            $this->propertyValue = $propertyValue;
+        }
 
         return $this;
     }
 
     /**
-     * Get propertyValue
+     * Get propertyValue. Returns either a string or an array of strings.
      *
-     * @return string
+     * @return mixed
      */
     public function getPropertyValue() {
+        if ($this->isList) {
+            return unserialize($this->propertyValue);
+        }
+
         return $this->propertyValue;
-    }
-
-    /**
-     * Set isList
-     *
-     * @param boolean $isList
-     *
-     * @return PluginProperty
-     */
-    public function setIsList($isList) {
-        $this->isList = $isList;
-
-        return $this;
     }
 
     /**
@@ -135,8 +141,8 @@ class PluginProperty extends AbstractEntity {
      *
      * @return boolean
      */
-    public function getIsList() {
-        return (bool)$this->isList;
+    public function isList() {
+        return (bool) $this->isList;
     }
 
     /**

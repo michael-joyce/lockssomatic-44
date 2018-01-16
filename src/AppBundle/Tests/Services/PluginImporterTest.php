@@ -12,8 +12,8 @@ use AppBundle\Entity\Plugin;
 use AppBundle\Entity\PluginProperty;
 use AppBundle\Services\PluginImporter;
 use Exception;
+use Nines\UtilBundle\Tests\Util\BaseTestCase;
 use SimpleXMLElement;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use ZipArchive;
 
 /**
@@ -21,7 +21,7 @@ use ZipArchive;
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class PluginImporterTest extends KernelTestCase {
+class PluginImporterTest extends BaseTestCase {
     
     /**
      * @var PluginImporter
@@ -30,7 +30,6 @@ class PluginImporterTest extends KernelTestCase {
     
     protected function setUp() {
         parent::setUp();
-        self::bootKernel();
         $this->importer = static::$kernel->getContainer()->get(PluginImporter::class);
     }
     
@@ -138,7 +137,7 @@ class PluginImporterTest extends KernelTestCase {
         $this->assertEquals($plugin, $property->getPlugin());
         $this->assertEquals(1, $property->getPropertyValue());
         $this->assertNull($property->getChildren());
-        $this->assertFalse($property->getIsList());
+        $this->assertFalse($property->isList());
     }
     
     public function testNewPluginPropertyList() {
@@ -150,14 +149,17 @@ class PluginImporterTest extends KernelTestCase {
         $this->assertEquals($plugin, $property->getPlugin());
         $this->assertEquals(['"%s", manifest_url', '"%s", permission_url'], $property->getPropertyValue());
         $this->assertNull($property->getChildren());
-        $this->assertTrue($property->getIsList());
+        $this->assertTrue($property->isList());
     }
     
     public function testImportChildren() {
         $xml = simplexml_load_string($this->xmlData());
         $property = new PluginProperty();
-        $plugin = new Plugin();
+        
+        $plugin = new Plugin();        
         $property->setPlugin($plugin);
+        $plugin->addPluginProperty($property);
+        
         $childProp = $this->importer->importChildren($property, $xml->xpath('//org.lockss.daemon.ConfigParamDescr[1]')[0]);
         $this->assertInstanceOf(PluginProperty::class, $childProp);
         $this->assertEquals($plugin, $childProp->getPlugin());
@@ -181,12 +183,33 @@ class PluginImporterTest extends KernelTestCase {
         $this->assertEquals('false', $children[6]->getPropertyValue());
     }
     
-//    public function testNewPluginConfig() {
-//        $xml = simplexml_load_string($this->xmlData());
-//        $plugin = new Plugin();
-//        $property = $this->importer->newPluginConfig($plugin, 'plugin_config_props', $xml->xpath('//entry[string[1]/text()="plugin_config_props"]/list[1]')[0]);
-//        dump($property);
-//    }
+    public function testNewPluginConfig() {
+        $xml = simplexml_load_string($this->xmlData());
+        $plugin = new Plugin();
+        $property = $this->importer->newPluginConfig($plugin, 'plugin_config_props', $xml->xpath('//entry[string[1]/text()="plugin_config_props"]/list[1]')[0]);
+        $this->assertInstanceOf(PluginProperty::class, $property);
+        $this->assertEquals(4, count($property->getChildren()));
+    }
+    
+    public function testAddProperties() {
+        $xml = simplexml_load_string($this->xmlData());
+        $plugin = new Plugin();
+        $plugin->setName('test plugin');
+        $plugin->setVersion(2);
+        $plugin->setIdentifier('com.example.lockss.plugin');
+        $this->em->persist($plugin);
+        $this->importer->addProperties($plugin, $xml);
+        $this->em->flush();
+        $this->assertEquals(45, count($plugin->getPluginProperties()));
+    }
+    
+    public function testBuildPlugin() {
+        $xml = simplexml_load_string($this->xmlData());
+        $plugin = $this->importer->buildPlugin($xml);
+        $this->assertInstanceOf(Plugin::class, $plugin);
+        $this->assertNotNull($plugin->getId()); // make sure it was flushed to the db.
+    }
+    
     
     public function manifestData() {
         return <<<'ENDMANIFEST'
