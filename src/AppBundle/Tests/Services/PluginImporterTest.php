@@ -210,6 +210,24 @@ class PluginImporterTest extends BaseTestCase {
         $this->assertNotNull($plugin->getId()); // make sure it was flushed to the db.
     }
     
+    /**
+     * @expectedException Exception
+     */
+    public function testBuildPluginMissingId() {
+        $xml = simplexml_load_string($this->xmlData());
+        $node = $xml->xpath('//entry[string/text()="plugin_version"]')[0];
+        unset($node[0]); // remove plugin_identifier.
+        $this->importer->buildPlugin($xml);
+    }
+    
+    /**
+     * @expectedException Exception
+     */
+    public function testBuildPluginDuplicate() {
+        $xml = simplexml_load_string($this->xmlData());
+        $this->importer->buildPlugin($xml);
+        $this->importer->buildPlugin($xml);
+    }
     
     public function manifestData() {
         return <<<'ENDMANIFEST'

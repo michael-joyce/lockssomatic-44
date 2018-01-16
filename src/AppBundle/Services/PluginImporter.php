@@ -271,23 +271,18 @@ class PluginImporter {
      *
      * @throws Exception
      */
-    public function buildPlugin(SimpleXMLElement $xml, SplFileInfo $jarInfo = null, $copy = false) {
+    public function buildPlugin(SimpleXMLElement $xml) {
         $pluginRepo = $this->em->getRepository(Plugin::class);
-        $filename = null; 
-        if ($jarInfo && get_class($jarInfo) === UploadedFile::class) {
-            $filename = $jarInfo->getClientOriginalName();
-        }
-
         $pluginName = $this->findXmlPropString($xml, 'plugin_name');
         $pluginId = $this->findXmlPropString($xml, 'plugin_identifier');
 
         $pluginVersion = $this->findXmlPropString($xml, 'plugin_version');
         if ($pluginVersion === null || $pluginVersion === '') {
-            throw new Exception("Plugin {$filename} does not have a plugin_version element in its XML configuration.");
+            throw new Exception("Plugin {$pluginId} does not have a plugin_version element in its XML configuration.");
         }
 
         if ($pluginRepo->findOneBy(array('identifier' => $pluginId, 'version' => $pluginVersion)) !== null) {
-            throw new Exception("Plugin {$filename} version {$pluginVersion} has already been imported.");
+            throw new Exception("Plugin {$pluginId} version {$pluginVersion} has already been imported.");
         }
 
         $plugin = new Plugin();
@@ -295,33 +290,21 @@ class PluginImporter {
         $plugin->setIdentifier($pluginId);
         $plugin->setVersion($pluginVersion);
         $this->addProperties($plugin, $xml);
-        if ($jarInfo && $copy) {
-            $plugin->setFilename($filename);
-            $basename = basename($filename, '.jar');
-            $jarPath = $this->jarDir.'/'.$basename.'-v'.$pluginVersion.'.jar';
-            $plugin->setPath(realpath($jarPath));
-            copy($jarInfo->getPathname(), $jarPath);
-        }
         $this->em->persist($plugin);
         $this->em->flush();
         return $plugin;
     }
 
-    public function import(Plugin $plugin, ZipArchive $reader = null) {
-        $zipArchive = $reader;
-        if ($zipArchive === null) {
-            $zipArchive = new ZipArchive();
-        }
-        $res = $zipArchive->open($plugin->getJarFile()->getPathname());
-        if ($res !== true) {
-            throw new Exception("Cannot read plugin jar file. Error code {$res}.");
-        }
-        $raw = $zipArchive->getFromName(self::MANIFEST);
+    public function import(ZipArchive $zip) {
+        $raw = $zip->getFromName(self::MANIFEST);
         $manifest = $this->parseManifest(preg_replace('/\r\n/', "\n", $raw));
         $entries = $this->findPluginEntries($manifest);
+        $plugins = [];
         foreach ($entries as $entry) {
-            $xml = $this->getPluginXml($zipArchive, $entry);
+            $xml = $this->getPluginXml($zip, $entry);
+            $plugins[] = $this->buildPlugin($xml);
         }
+        return $plugins;
     }
 
 }
