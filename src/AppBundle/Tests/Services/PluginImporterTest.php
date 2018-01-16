@@ -41,6 +41,8 @@ class PluginImporterTest extends KernelTestCase {
             PluginImporter::MANIFEST => $this->manifestData(),
             'ca/sfu/lib/plugin/coppul/WestVaultPlugin.xml' => $this->xmlData(),
         ];
+        // This should really be returnMap(), but the default arguments to
+        // ZipArchive->getFromName() are too weird to map properly. Meh.
         $stub->method('getFromName')->will($this->returnCallback(function($name) use ($entries) {
             if(isset($entries[$name])) {
                 return $entries[$name];
@@ -138,6 +140,53 @@ class PluginImporterTest extends KernelTestCase {
         $this->assertNull($property->getChildren());
         $this->assertFalse($property->getIsList());
     }
+    
+    public function testNewPluginPropertyList() {
+        $xml = simplexml_load_string($this->xmlData());
+        $plugin = new Plugin();
+        $property = $this->importer->newPluginProperty($plugin, 'au_permission_url', $xml->xpath('//entry[string[1]/text()="au_permission_url"]/list[1]')[0]);
+        $this->assertInstanceOf(PluginProperty::class, $property);
+        $this->assertEquals('au_permission_url', $property->getPropertyKey());
+        $this->assertEquals($plugin, $property->getPlugin());
+        $this->assertEquals(['"%s", manifest_url', '"%s", permission_url'], $property->getPropertyValue());
+        $this->assertNull($property->getChildren());
+        $this->assertTrue($property->getIsList());
+    }
+    
+    public function testImportChildren() {
+        $xml = simplexml_load_string($this->xmlData());
+        $property = new PluginProperty();
+        $plugin = new Plugin();
+        $property->setPlugin($plugin);
+        $childProp = $this->importer->importChildren($property, $xml->xpath('//org.lockss.daemon.ConfigParamDescr[1]')[0]);
+        $this->assertInstanceOf(PluginProperty::class, $childProp);
+        $this->assertEquals($plugin, $childProp->getPlugin());
+        $this->assertEquals($property, $childProp->getParent());
+        
+        $children = $childProp->getChildren();
+        $this->assertEquals(7, count($children));
+        $this->assertEquals('key', $children[0]->getPropertyKey());
+        $this->assertEquals('base_url', $children[0]->getPropertyValue());
+        $this->assertEquals('displayName', $children[1]->getPropertyKey());
+        $this->assertEquals('Base URL', $children[1]->getPropertyValue());
+        $this->assertEquals('description', $children[2]->getPropertyKey());
+        $this->assertEquals('Usually of the form http://<journal-name>.com/', $children[2]->getPropertyValue());
+        $this->assertEquals('type', $children[3]->getPropertyKey());
+        $this->assertEquals('3', $children[3]->getPropertyValue());
+        $this->assertEquals('size', $children[4]->getPropertyKey());
+        $this->assertEquals('40', $children[4]->getPropertyValue());
+        $this->assertEquals('definitional', $children[5]->getPropertyKey());
+        $this->assertEquals('true', $children[5]->getPropertyValue());
+        $this->assertEquals('defaultOnly', $children[6]->getPropertyKey());
+        $this->assertEquals('false', $children[6]->getPropertyValue());
+    }
+    
+//    public function testNewPluginConfig() {
+//        $xml = simplexml_load_string($this->xmlData());
+//        $plugin = new Plugin();
+//        $property = $this->importer->newPluginConfig($plugin, 'plugin_config_props', $xml->xpath('//entry[string[1]/text()="plugin_config_props"]/list[1]')[0]);
+//        dump($property);
+//    }
     
     public function manifestData() {
         return <<<'ENDMANIFEST'

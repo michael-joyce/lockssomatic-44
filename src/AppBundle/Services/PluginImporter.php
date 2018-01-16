@@ -26,6 +26,39 @@ class PluginImporter {
 
     const PLUGIN_KEY = 'lockss-plugin';
     
+    /**
+     * Names of the prop strings in the plugin's XML configuration file which
+     * should be imported.
+     *
+     * @var array
+     */
+    const PROP_STRINGS = array(
+        'au_name',
+        'au_permission_url',
+        'plugin_crawl_type',
+        'plugin_identifier',
+        'plugin_name',
+        'plugin_publishing_platform',
+        'plugin_status',
+        'plugin_version',
+        'plugin_parent',
+        'required_daemon_version',
+    );
+
+    /**
+     * List of the property lists which should be imported.
+     *
+     * @var array
+     */
+    const PROP_LISTS = array(
+        'au_crawlrules',
+        'au_start_url',
+    );
+    
+    const PROP_OBS = array(
+        'plugin_config_props',
+    );
+    
     private $em;
     
     public function __construct(EntityManagerInterface $em) {
@@ -145,6 +178,39 @@ class PluginImporter {
         throw new Exception('Too many entry elements for property element'.$propName);
     }
     
+    public function importChildren(PluginProperty $property, SimpleXMLElement $value) {
+        $childProperty = new PluginProperty();
+        $childProperty->setParent($property);
+        $property->addChild($childProperty);
+        $childProperty->setPlugin($property->getPlugin());
+        $childProperty->setPropertyKey($value->getName());
+        $childProperty->setIsList(true);
+        $this->em->persist($childProperty);
+        
+        foreach($value->children() as $key => $value) {
+            $leaf = new PluginProperty();
+            $leaf->setParent($childProperty);
+            $childProperty->addChild($leaf);
+            $leaf->setPlugin($property->getPlugin());
+            $leaf->setPropertyKey($key);
+            $leaf->setPropertyValue((string)$value);
+            $this->em->persist($leaf);
+        }
+        return $childProperty;                
+    }
+    
+    public function newPluginConfig(Plugin $plugin, $name, SimpleXMLElement $value) {
+        $property = new PluginProperty();
+        $property->setPlugin($plugin);
+        $property->setPropertyKey($name);
+        $property->setIsList(true);
+        $this->em->persist($property);
+        foreach($value->children() as $child) {
+            $childProp = $this->importChildren($property, $child);
+        }
+        return $property;
+    }
+    
     /**
      * Generate and persist a new Plugins object.
      *
@@ -170,15 +236,14 @@ class PluginImporter {
                         $values[] = (string) $child;
                     }
                     $property->setPropertyValue($values);
+                    $property->setIsList(true);
                     break;
-                default:
-                    $property->setPropertyValue((string) $value);
+                default:                    
+                    throw new Exception("Cannot import simple property {$name}.");
             }
         }
         $this->em->persist($property);
 
         return $property;
     }
-    
-
 }
