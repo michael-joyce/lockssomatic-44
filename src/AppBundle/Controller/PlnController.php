@@ -14,6 +14,7 @@ use AppBundle\Form\PlnType;
 /**
  * Pln controller.
  *
+ * @Security("has_role('ROLE_USER')")
  * @Route("/pln")
  */
 class PlnController extends Controller {
