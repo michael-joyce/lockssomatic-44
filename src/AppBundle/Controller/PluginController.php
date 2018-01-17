@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Plugin;
 use AppBundle\Form\FileUploadType;
-use AppBundle\Form\PluginType;
 use AppBundle\Services\FilePaths;
 use AppBundle\Services\PluginImporter;
 use Exception;
@@ -23,11 +22,6 @@ use ZipArchive;
  * @Route("/plugin")
  */
 class PluginController extends Controller {
-
-    const MIMETYPES = array(
-        'application/java-archive',
-        'application/zip',
-    );
     
     /**
      * Lists all Plugin entities.
@@ -73,7 +67,7 @@ class PluginController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $file = $data['file'];
-            if(! in_array($file->getMimeType(), self::MIMETYPES)) {
+            if(! in_array($file->getMimeType(), PluginImporter::MIMETYPES)) {
                 throw new Exception("Uploaded file does not look like a Java .jar file. Mime type is {$file->getMimeType()}");
             }
             if(!preg_match('/^[a-zA-Z0-9 .-]+\.jar$/', $file->getClientOriginalName())) {

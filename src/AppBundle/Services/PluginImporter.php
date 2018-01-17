@@ -24,7 +24,13 @@ use ZipArchive;
  */
 class PluginImporter {
 
+    const MIMETYPES = array(
+        'application/java-archive',
+        'application/zip',
+    );
+    
     const MANIFEST = 'META-INF/MANIFEST.MF';
+   
     const PLUGIN_KEY = 'lockss-plugin';
 
     /**
@@ -311,10 +317,11 @@ class PluginImporter {
             throw new Exception("Too many LOCKSS entries in plugin manifest.");
         }
         $xml = $this->getPluginXml($zip, $entries[0]);
+        $plugin = $this->buildPlugin($xml);
         if($flush) {
             $this->em->flush();
         }
-        return $this->buildPlugin($xml);
+        return $plugin;
     }
 
 }
