@@ -116,7 +116,7 @@ class FilePaths {
 
         return $path;
     }
-
+    
     /**
      * Get the path to exported lockss configuration files.
      *

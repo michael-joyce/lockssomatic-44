@@ -16,11 +16,6 @@ use Symfony\Component\HttpFoundation\File\File;
 class Plugin extends AbstractEntity {
 
     /**
-     * @var File
-     */
-    private $jarFile;
-    
-    /**
      * Name of the plugin.
      *
      * @var string
@@ -88,28 +83,6 @@ class Plugin extends AbstractEntity {
     }
     
     /**
-     * Get jarFile
-     * 
-     * @return File
-     */
-    public function getJarFile() {
-        return $this->jarFile;
-    }
-    
-    /**
-     * Set jarFile
-     * 
-     * @param File $jarFile
-     * 
-     * @return Plugin
-     */
-    public function setJarFile(File $jarFile) {
-        $this->jarFile = $jarFile;
-        
-        return $this;
-    }
-
-    /**
      * Set name
      *
      * @param string $name
@@ -159,7 +132,8 @@ class Plugin extends AbstractEntity {
      * @return string
      */
     public function getFilename() {
-        return $this->jarFile->getBasename();
+        $fileinfo = new \SplFileInfo($this->path);
+        return $fileinfo->getBasename();
     }
 
     /**
@@ -297,6 +271,12 @@ class Plugin extends AbstractEntity {
      */
     public function getPluginProperties() {
         return $this->pluginProperties;
+    }
+    
+    public function getRootPluginProperties() {
+        return $this->pluginProperties->filter(function(PluginProperty $p){
+            return $p->getParent() === null;
+        });
     }
 
 }

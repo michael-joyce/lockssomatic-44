@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PluginType extends AbstractType {
+class FileUploadType extends AbstractType {
 
     /**
      * @param FormBuilderInterface $builder
@@ -18,12 +18,12 @@ class PluginType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $maxUpload = min([ini_get('post_max_size'), ini_get('upload_max_filesize')]);
-        $builder->add('jarFile', FileType::class, array(
-            'label' => 'JAR File',
+        $builder->add('file', FileType::class, array(
+            'label' => $options['label'],
             'required' => true,
             'attr' => array(
-                'help_block' => 'Select a LOCKSS plugin JAR file to upload.',
-                'data-maxsize' => $maxUpload,
+                'help_block' => $options['help'],
+                'max_size' => ini_get('upload_max_filesize'),
             ),
         ));
     }
@@ -33,7 +33,9 @@ class PluginType extends AbstractType {
      */
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Plugin'
+            'data_class' => null,
+            'label' => '',
+            'help' => '',
         ));
     }
 

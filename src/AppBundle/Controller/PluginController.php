@@ -3,15 +3,18 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Plugin;
+use AppBundle\Form\FileUploadType;
 use AppBundle\Form\PluginType;
-use AppBundle\Services\FileUploader;
+use AppBundle\Services\FilePaths;
 use AppBundle\Services\PluginImporter;
+use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use ZipArchive;
 
 /**
  * Plugin controller.
@@ -21,6 +24,11 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PluginController extends Controller {
 
+    const MIMETYPES = array(
+        'application/java-archive',
+        'application/zip',
+    );
+    
     /**
      * Lists all Plugin entities.
      *
@@ -51,28 +59,43 @@ class PluginController extends Controller {
      * @Template()
      * @param Request $request
      */
-    public function newAction(Request $request, FileUploader $fileUploader, PluginImporter $pluginImporter) {
+    public function newAction(Request $request, PluginImporter $pluginImporter, FilePaths $filePaths) {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'You must login to access this page.');
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
-        $plugin = new Plugin();
-        $form = $this->createForm(PluginType::class, $plugin);
+        $form = $this->createForm(FileUploadType::class, null, [
+            'help' => 'Select a LOCKSS plugin .jar file.',
+            'label' => 'JAR File',
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $file = $data['file'];
+            if(! in_array($file->getMimeType(), self::MIMETYPES)) {
+                throw new Exception("Uploaded file does not look like a Java .jar file. Mime type is {$file->getMimeType()}");
+            }
+            if(!preg_match('/^[a-zA-Z0-9 .-]+\.jar$/', $file->getClientOriginalName())) {
+                throw new Exception("Uploaded file does not look like a Java .jar file. File name is strange.");
+            }
+            $zipArchive = new ZipArchive();
+            $result = $zipArchive->open($file->getPathName());
+            if($result !== true) {
+                throw new Exception("Cannot read from uploaded file: " . $result);
+            }
+            $plugin = $pluginImporter->import($zipArchive, false);
+            $filename = basename($file->getClientOriginalName(), '.jar') . '-v' . $plugin->getVersion() . '.jar';
+            $file->move($filePaths->getPluginsDir(), $filename);
+            $plugin->setPath($filePaths->getPluginsDir() . '/' . $filename);
             $em = $this->getDoctrine()->getManager();
-            $em->persist($plugin);
-            $pluginImporter->import($plugin);
-            dump($plugin);
-//            $em->flush();
-//
-//            $this->addFlash('success', 'The new plugin was created.');
-//            return $this->redirectToRoute('plugin_show', array('id' => $plugin->getId()));
+            $em->flush();
+
+            $this->addFlash('success', 'The new plugin was created.');
+            return $this->redirectToRoute('plugin_show', array('id' => $plugin->getId()));
         }
 
         return array(
-            'plugin' => $plugin,
             'form' => $form->createView(),
         );
     }
@@ -91,58 +114,4 @@ class PluginController extends Controller {
             'plugin' => $plugin,
         );
     }
-
-    /**
-     * Displays a form to edit an existing Plugin entity.
-     *
-     * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/{id}/edit", name="plugin_edit")
-     * @Method({"GET", "POST"})
-     * @Template()
-     * @param Request $request
-     * @param Plugin $plugin
-     */
-    public function editAction(Request $request, Plugin $plugin) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-        $editForm = $this->createForm(PluginType::class, $plugin);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->flush();
-            $this->addFlash('success', 'The plugin has been updated.');
-            return $this->redirectToRoute('plugin_show', array('id' => $plugin->getId()));
-        }
-
-        return array(
-            'plugin' => $plugin,
-            'edit_form' => $editForm->createView(),
-        );
-    }
-
-    /**
-     * Deletes a Plugin entity.
-     *
-     * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/{id}/delete", name="plugin_delete")
-     * @Method("GET")
-     * @param Request $request
-     * @param Plugin $plugin
-     */
-    public function deleteAction(Request $request, Plugin $plugin) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($plugin);
-        $em->flush();
-        $this->addFlash('success', 'The plugin was deleted.');
-
-        return $this->redirectToRoute('plugin_index');
-    }
-
 }

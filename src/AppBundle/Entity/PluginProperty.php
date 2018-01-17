@@ -218,5 +218,9 @@ class PluginProperty extends AbstractEntity {
     public function getChildren() {
         return $this->children;
     }
+    
+    public function hasChildren() {
+        return ($this->children && count($this->children));
+    }
 
 }

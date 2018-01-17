@@ -35,7 +35,6 @@ class PluginImporter {
      */
     const PROP_STRINGS = array(
         'au_name',
-        'au_permission_url',
         'plugin_crawl_type',
         'plugin_identifier',
         'plugin_name',
@@ -52,6 +51,7 @@ class PluginImporter {
      * @var array
      */
     const PROP_LISTS = array(
+        'au_permission_url',
         'au_crawlrules',
         'au_start_url',
     );
@@ -291,20 +291,30 @@ class PluginImporter {
         $plugin->setVersion($pluginVersion);
         $this->addProperties($plugin, $xml);
         $this->em->persist($plugin);
-        $this->em->flush();
         return $plugin;
     }
 
-    public function import(ZipArchive $zip) {
+    /**
+     * @param ZipArchive $zip
+     * @param bool $flush
+     * 
+     * @return Plugin
+     */
+    public function import(ZipArchive $zip, $flush = true) {
         $raw = $zip->getFromName(self::MANIFEST);
         $manifest = $this->parseManifest(preg_replace('/\r\n/', "\n", $raw));
         $entries = $this->findPluginEntries($manifest);
-        $plugins = [];
-        foreach ($entries as $entry) {
-            $xml = $this->getPluginXml($zip, $entry);
-            $plugins[] = $this->buildPlugin($xml);
+        if(count($entries) === 0) {
+            throw new Exception("No LOCKSS entries found in manifest.");
         }
-        return $plugins;
+        if(count($entries) > 1) {
+            throw new Exception("Too many LOCKSS entries in plugin manifest.");
+        }
+        $xml = $this->getPluginXml($zip, $entries[0]);
+        if($flush) {
+            $this->em->flush();
+        }
+        return $this->buildPlugin($xml);
     }
 
 }
