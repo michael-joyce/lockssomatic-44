@@ -207,7 +207,8 @@ class PluginImporterTest extends BaseTestCase {
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $this->importer->buildPlugin($xml);
         $this->assertInstanceOf(Plugin::class, $plugin);
-        $this->assertNotNull($plugin->getId()); // make sure it was flushed to the db.
+        $this->em->flush(); // make sure it was flushes to the db.
+        $this->assertNotNull($plugin->getId()); 
     }
     
     /**
@@ -226,7 +227,15 @@ class PluginImporterTest extends BaseTestCase {
     public function testBuildPluginDuplicate() {
         $xml = simplexml_load_string($this->xmlData());
         $this->importer->buildPlugin($xml);
+        $this->em->flush();
         $this->importer->buildPlugin($xml);
+    }
+    
+    public function testImport() {
+        $zipArchive = $this->getArchiveStub();
+        $plugin = $this->importer->import($zipArchive);
+        $this->assertInstanceOf(Plugin::class, $plugin);
+        $this->assertEquals('ca.sfu.lib.plugin.coppul.WestVaultPlugin', $plugin->getIdentifier());
     }
     
     public function manifestData() {

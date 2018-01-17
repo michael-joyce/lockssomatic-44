@@ -14,7 +14,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use SimpleXMLElement;
 use SplFileInfo;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use ZipArchive;
 
 /**
