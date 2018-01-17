@@ -49,7 +49,7 @@
         }
         
         $("#uuid-generator").click(function () {
-            $("#content_provider_uuid").val(guid());
+            $("#content_provider_uuid").val(guid().toUpperCase());
         });
     </script>
 {% endblock %}

@@ -31,7 +31,8 @@ class ContentProvider extends AbstractEntity {
      * as the content.
      *
      * @var string
-     *
+     * 
+     * @Assert\Url()
      * @ORM\Column(name="permissionUrl", type="string", length=255, nullable=false)
      */
     private $permissionurl;
@@ -130,7 +131,7 @@ class ContentProvider extends AbstractEntity {
      * @return ContentProvider
      */
     public function setUuid($uuid) {
-        $this->uuid = $uuid;
+        $this->uuid = strtoupper($uuid);
 
         return $this;
     }

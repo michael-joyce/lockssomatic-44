@@ -37,21 +37,27 @@ class ContentProviderType extends AbstractType {
         ));
         $builder->add('maxFileSize', null, array(
             'label' => 'Max File Size',
-            'required' => false,
+            'required' => true,
             'attr' => array(
                 'help_block' => 'Mazimum file size allowed, in kb (1,000 bytes).',
             ),
         ));
         $builder->add('maxAuSize', null, array(
             'label' => 'Max Au Size',
-            'required' => false,
+            'required' => true,
             'attr' => array(
                 'help_block' => 'Mazimum AU size allowed, in kb (1,000 bytes).',
             ),
         ));
-        $builder->add('contentOwner');
-        $builder->add('pln');
-        $builder->add('plugin');
+        $builder->add('contentOwner', null, array(
+            'required' => true,
+        ));
+        $builder->add('pln', null, array(
+            'required' => true,
+        ));
+        $builder->add('plugin', null, array(
+            'required' => true,
+        ));
     }
 
     /**
