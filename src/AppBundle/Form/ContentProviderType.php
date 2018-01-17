@@ -3,9 +3,8 @@
 namespace AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContentProviderType extends AbstractType {
@@ -22,8 +21,8 @@ class ContentProviderType extends AbstractType {
                 'help_block' => '',
             ),
         ));
-        $builder->add('permissionurl', null, array(
-            'label' => 'Permissionurl',
+        $builder->add('permissionurl', UrlType::class, array(
+            'label' => 'Permission Url',
             'required' => true,
             'attr' => array(
                 'help_block' => '',
@@ -40,14 +39,14 @@ class ContentProviderType extends AbstractType {
             'label' => 'Max File Size',
             'required' => false,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'Mazimum file size allowed, in kb (1,000 bytes).',
             ),
         ));
         $builder->add('maxAuSize', null, array(
             'label' => 'Max Au Size',
             'required' => false,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'Mazimum AU size allowed, in kb (1,000 bytes).',
             ),
         ));
         $builder->add('contentOwner');

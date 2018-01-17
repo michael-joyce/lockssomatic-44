@@ -29,7 +29,7 @@
                 <td>{{ contentProvider.uuid }}</td>
             </tr>
             <tr>
-                <th>Permissionurl</th>
+                <th>Permission Url</th>
                 <td>{{ contentProvider.permissionurl }}</td>
             </tr>
             <tr>
@@ -53,9 +53,9 @@
                 <td>{% if contentProvider.updated %}{{ contentProvider.updated|date }}{% endif %}</td>
             </tr>        
             <tr>
-                <th>Contentowner</th>
+                <th>Content Owner</th>
                 <td>
-                    <a href="{{ path('contentOwner_show', { 'id': contentProvider.contentOwner.id}) }}">
+                    <a href="{{ path('content_owner_show', { 'id': contentProvider.contentOwner.id}) }}">
                         {{ contentProvider.contentOwner }}
                     </a>
                 </td>

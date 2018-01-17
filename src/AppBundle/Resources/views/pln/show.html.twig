@@ -91,12 +91,12 @@
         </ul>
     {% endif %}
     {% if pln.contentProviders | length > 0 %}    
-        <h2>Contentproviders</h2>
+        <h2>Content Providers</h2>
         <ul>
-            {% for contentProviders in pln.contentProviders %}
+            {% for contentProvider in pln.contentProviders %}
                 <li>
-                    <a href="{{ path("contentProviders_show", {"id":contentProviders.id}) }}">
-                        {{ contentProviders }}
+                    <a href="{{ path("content_provider_show", {"id":contentProvider.id}) }}">
+                        {{ contentProvider }}
                     </a>
                 </li>
             {% endfor %} 

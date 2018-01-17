@@ -14,7 +14,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Description of LoadBox
+ * Description of LoadPlugin
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
