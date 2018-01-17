@@ -2,18 +2,24 @@
 
 namespace AppBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AppBundle\Entity\Deposit;
+use AppBundle\Entity\Pln;
 use AppBundle\Form\DepositType;
+use DateTime;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Deposit controller.
  *
+ * @Security("has_role('ROLE_USER')")
  * @Route("/pln/{plnId}/deposit")
+ * @ParamConverter("pln", options={"id"="plnId"})
  */
 class DepositController extends Controller {
 
@@ -25,7 +31,7 @@ class DepositController extends Controller {
      * @Template()
      * @param Request $request
      */
-    public function indexAction(Request $request) {
+    public function indexAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
         $qb->select('e')->from(Deposit::class, 'e')->orderBy('e.id', 'ASC');
@@ -35,6 +41,7 @@ class DepositController extends Controller {
 
         return array(
             'deposits' => $deposits,
+            'pln' => $pln,
         );
     }
 
@@ -58,7 +65,7 @@ class DepositController extends Controller {
      * @Template()
      * @param Request $request
      */
-    public function searchAction(Request $request) {
+    public function searchAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('AppBundle:Deposit');
         $q = $request->query->get('q');
@@ -73,6 +80,7 @@ class DepositController extends Controller {
         return array(
             'deposits' => $deposits,
             'q' => $q,
+            'pln' => $pln,
         );
     }
 
@@ -104,7 +112,7 @@ class DepositController extends Controller {
      * @param Request $request
      * @return array
      */
-    public function fulltextAction(Request $request) {
+    public function fulltextAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('AppBundle:Deposit');
         $q = $request->query->get('q');
@@ -119,23 +127,26 @@ class DepositController extends Controller {
         return array(
             'deposits' => $deposits,
             'q' => $q,
+            'pln' => $pln,
         );
     }
 
     /**
      * Creates a new Deposit entity.
      *
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="deposit_new")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
      */
-    public function newAction(Request $request) {
+    public function newAction(Request $request, Pln $pln) {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'You must login to access this page.');
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
         $deposit = new Deposit();
+        $deposit->setDateDeposited(new DateTime());
         $form = $this->createForm(DepositType::class, $deposit);
         $form->handleRequest($request);
 
@@ -145,12 +156,13 @@ class DepositController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new deposit was created.');
-            return $this->redirectToRoute('deposit_show', array('id' => $deposit->getId()));
+            return $this->redirectToRoute('deposit_show', array('plnId' => $pln->getId(), 'id' => $deposit->getId()));
         }
 
         return array(
             'deposit' => $deposit,
             'form' => $form->createView(),
+            'pln' => $pln,
         );
     }
 
@@ -162,23 +174,25 @@ class DepositController extends Controller {
      * @Template()
      * @param Deposit $deposit
      */
-    public function showAction(Deposit $deposit) {
+    public function showAction(Deposit $deposit, Pln $pln) {
 
         return array(
             'deposit' => $deposit,
+            'pln' => $pln,
         );
     }
 
     /**
      * Displays a form to edit an existing Deposit entity.
      *
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="deposit_edit")
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
      * @param Deposit $deposit
      */
-    public function editAction(Request $request, Deposit $deposit) {
+    public function editAction(Request $request, Deposit $deposit, Pln $pln) {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'You must login to access this page.');
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -190,24 +204,26 @@ class DepositController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The deposit has been updated.');
-            return $this->redirectToRoute('deposit_show', array('id' => $deposit->getId()));
+            return $this->redirectToRoute('deposit_show', array('plnId' => $pln->getId(), 'id' => $deposit->getId()));
         }
 
         return array(
             'deposit' => $deposit,
             'edit_form' => $editForm->createView(),
+            'pln' => $pln,
         );
     }
 
     /**
      * Deletes a Deposit entity.
      *
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="deposit_delete")
      * @Method("GET")
      * @param Request $request
      * @param Deposit $deposit
      */
-    public function deleteAction(Request $request, Deposit $deposit) {
+    public function deleteAction(Request $request, Deposit $deposit, Pln $pln) {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'You must login to access this page.');
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -217,7 +233,7 @@ class DepositController extends Controller {
         $em->flush();
         $this->addFlash('success', 'The deposit was deleted.');
 
-        return $this->redirectToRoute('deposit_index');
+        return $this->redirectToRoute('deposit_index', ['plnId' => $pln->getId()]);
     }
 
 }

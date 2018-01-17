@@ -6,6 +6,7 @@ use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UserBundle\Entity\User;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Deposit
@@ -20,6 +21,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
      *
      * @var string
      *
+     * @Assert\Uuid(versions = {"Uuid:V4_RANDOM"}, strict=false)
      * @ORM\Column(name="uuid", type="string", length=36, nullable=false)
      */
     private $uuid;
@@ -108,7 +110,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
      * @return Deposit
      */
     public function setUuid($uuid) {
-        $this->uuid = $uuid;
+        $this->uuid = strtoupper($uuid);
 
         return $this;
     }
