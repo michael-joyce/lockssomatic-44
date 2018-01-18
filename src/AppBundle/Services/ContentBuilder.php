@@ -45,29 +45,6 @@ class ContentBuilder {
     }
 
     /**
-     * Build a property for the content. If $this->em is set, the property
-     * is persisted to the database.
-     *
-     * @param Content $content
-     * @param string $key
-     * @param string $value
-     *
-     * @return ContentProperty
-     */
-    public function buildProperty(Content $content, $key, $value) {
-        $contentProperty = new ContentProperty();
-        $content->addContentProperty($contentProperty);
-        $contentProperty->setContent($content);
-        $contentProperty->setPropertyKey($key);
-        $contentProperty->setPropertyValue($value);
-        if ($this->em !== null) {
-            $this->em->persist($contentProperty);
-        }
-
-        return $contentProperty;
-    }
-
-    /**
      * Build a content item from some XML. Persists to the database if
      * $this->em is set.
      *
@@ -82,15 +59,16 @@ class ContentBuilder {
         $content->setChecksumValue((string) $xml->attributes()->checksumValue);
         $content->setUrl(trim((string) $xml));
         $content->setDateDeposited();
-        $this->buildProperty($content, 'journalTitle', (string) $xml->attributes('pkp', true)->journalTitle);
-        $this->buildProperty($content, 'publisher', (string) $xml->attributes('pkp', true)->publisher);
+        $content->setProperty('journalTitle', (string) $xml->attributes('pkp', true)->journalTitle);
+        $content->setProperty('publisher', (string) $xml->attributes('pkp', true)->publisher);
         $content->setTitle((string) $xml->attributes('pkp', true)->journalTitle);
-        if ($this->em !== null) {
-            $this->em->persist($content);
-        }
 
         foreach ($xml->xpath('lom:property') as $node) {
-            $this->buildProperty($content, (string) $node->attributes()->name, (string) $node->attributes()->value);
+            $content->setProperty((string) $node->attributes()->name, (string) $node->attributes()->value);
+        }
+        
+        if ($this->em !== null) {
+            $this->em->persist($content);
         }
 
         return $content;
@@ -117,14 +95,13 @@ class ContentBuilder {
         }
         $content->setDateDeposited();
 
+        foreach ($record as $key => $value) {
+            $content->setProperty($key, $value);
+        }
+
         if ($this->em !== null) {
             $this->em->persist($content);
         }
-
-        foreach (array_keys($record) as $key) {
-            $this->buildProperty($content, $key, $record[$key]);
-        }
-
         return $content;
     }
 

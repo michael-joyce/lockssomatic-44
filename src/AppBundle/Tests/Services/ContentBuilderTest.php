@@ -27,28 +27,6 @@ class ContentBuilderTest extends KernelTestCase {
         $this->assertInstanceOf(ContentBuilder::class, $this->builder);
     }
 
-    public function testBuildSimpleProperty() {
-        $content = new Content();
-        $property = $this->builder->buildProperty($content, "t1", "value");
-        $this->assertInstanceOf(ContentProperty::class, $property);
-        $this->assertEquals('t1', $property->getPropertyKey());
-        $this->assertFalse($property->getIsList());
-        $this->assertEquals('value', $property->getPropertyValue());
-        $this->assertEquals($content, $property->getContent());
-        $this->assertTrue($content->getContentProperties()->contains($property));
-    }
-
-    public function testBuildListProperty() {
-        $content = new Content();
-        $property = $this->builder->buildProperty($content, "t1", ["value 1", 'value 2']);
-        $this->assertInstanceOf(ContentProperty::class, $property);
-        $this->assertEquals('t1', $property->getPropertyKey());
-        $this->assertTrue($property->getIsList());
-        $this->assertEquals(["value 1", 'value 2'], $property->getPropertyValue());
-        $this->assertEquals($content, $property->getContent());
-        $this->assertTrue($content->getContentProperties()->contains($property));
-    }
-
     public function testFromArrayNoTitle() {
         $data = $this->getArrayData();
         $content = $this->builder->fromArray($data);
@@ -59,13 +37,10 @@ class ContentBuilderTest extends KernelTestCase {
         $this->assertEquals('ABC', $content->getChecksumValue());
         $this->assertEquals('http://example.com/path/to/thing', $content->getUrl());
         $this->assertInstanceOf(DateTime::class, $content->getDateDeposited());
-        $properties = $content->getContentProperties();
-        $this->assertEquals(6, $properties->count());
-        foreach ($properties as $property) {
-            $key = $property->getPropertyKey();
-            $this->assertInstanceOf(ContentProperty::class, $property);
-            $this->assertArrayHasKey($key, $data);
-            $this->assertEquals($data[$key], $property->getPropertyValue());
+        $properties = $content->getProperties();
+        $this->assertEquals(6, count($properties));
+        foreach ($properties as $key) {
+            $this->assertEquals($data[$key], $content->getProperty($key));
         }
     }
 
@@ -80,13 +55,10 @@ class ContentBuilderTest extends KernelTestCase {
         $this->assertEquals('ABC', $content->getChecksumValue());
         $this->assertEquals('http://example.com/path/to/thing', $content->getUrl());
         $this->assertInstanceOf(DateTime::class, $content->getDateDeposited());
-        $properties = $content->getContentProperties();
-        $this->assertEquals(7, $properties->count());
-        foreach ($properties as $property) {
-            $key = $property->getPropertyKey();
-            $this->assertInstanceOf(ContentProperty::class, $property);
-            $this->assertArrayHasKey($key, $data);
-            $this->assertEquals($data[$key], $property->getPropertyValue());
+        $properties = $content->getProperties();
+        $this->assertEquals(7, count($properties));
+        foreach ($properties as $key) {
+            $this->assertEquals($data[$key], $content->getProperty($key));
         }
     }
 
@@ -112,12 +84,12 @@ class ContentBuilderTest extends KernelTestCase {
         $this->assertEquals('http://example.com/path/to/deposit.zip', $content->getUrl());
         $this->assertInstanceOf(DateTime::class, $content->getDateDeposited());
 
-        $this->assertEquals('Hello World', $content->getContentPropertyValue('journalTitle'));
-        $this->assertEquals('PLN Publisher', $content->getContentPropertyValue('publisher'));
-        $this->assertEquals('http://example.com', $content->getContentPropertyValue('base_url'));
-        $this->assertEquals('http://example.com/permission', $content->getContentPropertyValue('permission_url'));
-        $this->assertEquals(3, $content->getContentPropertyValue('container_number'));
-        $this->assertEquals('http://example.com', $content->getContentPropertyValue('base_url'));
+        $this->assertEquals('Hello World', $content->getProperty('journalTitle'));
+        $this->assertEquals('PLN Publisher', $content->getProperty('publisher'));
+        $this->assertEquals('http://example.com', $content->getProperty('base_url'));
+        $this->assertEquals('http://example.com/permission', $content->getProperty('permission_url'));
+        $this->assertEquals(3, $content->getProperty('container_number'));
+        $this->assertEquals('http://example.com', $content->getProperty('base_url'));
     }
 
     private function getXmlData() {

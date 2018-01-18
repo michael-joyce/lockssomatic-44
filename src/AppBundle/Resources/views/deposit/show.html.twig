@@ -77,7 +77,7 @@
         <ul>
             {% for content in deposit.content %}
                 <li>
-                    <a href="{{ path("content_show", {"id":content.id, 'plnId': pln.id, 'depositId': deposit.id}) }}">
+                    <a href="{{ path("deposit_content_show", {"id":content.id, 'plnId': pln.id, 'depositId': deposit.id}) }}">
                         {{ content }}
                     </a>
                 </li>
@@ -89,7 +89,7 @@
         <ul>
             {% for status in deposit.status %}
                 <li>
-                    <a href="{{ path("status_show", {"id":status.id, 'plnId': pln.id, 'depositId': deposit.id}) }}">
+                    <a href="{{ path("deposit_status_show", {"id":status.id, 'plnId': pln.id, 'depositId': deposit.id}) }}">
                         {{ status }}
                     </a>
                 </li>
