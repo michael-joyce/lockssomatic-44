@@ -46,16 +46,17 @@
             </tr>        
         </tbody>
     </table>
+                    
     {% if boxStatus.caches | length > 0 %}    
-        <h2>Caches</h2>
-        <ul>
-            {% for caches in boxStatus.caches %}
-                <li>
-                    <a href="{{ path("caches_show", {"id":caches.id}) }}">
-                        {{ caches }}
-                    </a>
-                </li>
+        <h2>Cache Status</h2>
+            {% for cache in boxStatus.caches %}
+                <dl class="dl-horizontal">
+                    {% for key,value in cache.response %}
+                        <dt>{{ key }}</dt>
+                        <dd>{{ value }}</dd>                        
+                    {% endfor %}
+                </dl>
             {% endfor %} 
-        </ul>
     {% endif %}
+    
 {% endblock %}

@@ -48,96 +48,9 @@ class ContentController extends Controller {
     }
 
     /**
-     * Search for Content entities.
-     *
-     * To make this work, add a method like this one to the 
-     * AppBundle:Content repository. Replace the fieldName with
-     * something appropriate, and adjust the generated search.html.twig
-     * template.
-     * 
-      //    public function searchQuery($q) {
-      //        $qb = $this->createQueryBuilder('e');
-      //        $qb->where("e.fieldName like '%$q%'");
-      //        return $qb->getQuery();
-      //    }
-     *
-     *
-     * @Route("/search", name="deposit_content_search")
-     * @Method("GET")
-     * @Template()
-     * @param Request $request
-     */
-    public function searchAction(Request $request, Pln $pln, Deposit $deposit) {
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('AppBundle:Content');
-        $q = $request->query->get('q');
-        if ($q) {
-            $query = $repo->searchQuery($q);
-            $paginator = $this->get('knp_paginator');
-            $contents = $paginator->paginate($query, $request->query->getInt('page', 1), 25);
-        } else {
-            $contents = array();
-        }
-
-        return array(
-            'contents' => $contents,
-            'q' => $q,
-            'pln' => $pln, 
-            'deposit' => $deposit,
-        );
-    }
-
-    /**
-     * Full text search for Content entities.
-     *
-     * To make this work, add a method like this one to the 
-     * AppBundle:Content repository. Replace the fieldName with
-     * something appropriate, and adjust the generated fulltext.html.twig
-     * template.
-     * 
-      //    public function fulltextQuery($q) {
-      //        $qb = $this->createQueryBuilder('e');
-      //        $qb->addSelect("MATCH_AGAINST (e.name, :q 'IN BOOLEAN MODE') as score");
-      //        $qb->add('where', "MATCH_AGAINST (e.name, :q 'IN BOOLEAN MODE') > 0.5");
-      //        $qb->orderBy('score', 'desc');
-      //        $qb->setParameter('q', $q);
-      //        return $qb->getQuery();
-      //    }
-     * 
-     * Requires a MatchAgainst function be added to doctrine, and appropriate
-     * fulltext indexes on your Content entity.
-     *     ORM\Index(name="alias_name_idx",columns="name", flags={"fulltext"})
-     *
-     *
-     * @Route("/fulltext", name="deposit_content_fulltext")
-     * @Method("GET")
-     * @Template()
-     * @param Request $request
-     * @return array
-     */
-    public function fulltextAction(Request $request, Pln $pln, Deposit $deposit) {
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('AppBundle:Content');
-        $q = $request->query->get('q');
-        if ($q) {
-            $query = $repo->fulltextQuery($q);
-            $paginator = $this->get('knp_paginator');
-            $contents = $paginator->paginate($query, $request->query->getInt('page', 1), 25);
-        } else {
-            $contents = array();
-        }
-
-        return array(
-            'contents' => $contents,
-            'q' => $q,
-            'pln' => $pln, 
-            'deposit' => $deposit,
-        );
-    }
-
-    /**
      * Creates a new Content entity.
      *
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="deposit_content_new")
      * @Method({"GET", "POST"})
      * @Template()
@@ -194,6 +107,7 @@ class ContentController extends Controller {
     /**
      * Displays a form to edit an existing Content entity.
      *
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="deposit_content_edit")
      * @Method({"GET", "POST"})
      * @Template()
@@ -230,6 +144,7 @@ class ContentController extends Controller {
     /**
      * Deletes a Content entity.
      *
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="deposit_content_delete")
      * @Method("GET")
      * @param Request $request
