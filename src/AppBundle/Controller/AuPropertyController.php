@@ -136,10 +136,6 @@ class AuPropertyController extends Controller {
      * @param Request $request
      */
     public function newAction(Request $request) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $auProperty = new AuProperty();
         $form = $this->createForm(AuPropertyType::class, $auProperty);
         $form->handleRequest($request);
@@ -184,10 +180,6 @@ class AuPropertyController extends Controller {
      * @param AuProperty $auProperty
      */
     public function editAction(Request $request, AuProperty $auProperty) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $editForm = $this->createForm(AuPropertyType::class, $auProperty);
         $editForm->handleRequest($request);
 
@@ -213,10 +205,6 @@ class AuPropertyController extends Controller {
      * @param AuProperty $auProperty
      */
     public function deleteAction(Request $request, AuProperty $auProperty) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $em = $this->getDoctrine()->getManager();
         $em->remove($auProperty);
         $em->flush();

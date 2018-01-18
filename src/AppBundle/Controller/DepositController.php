@@ -141,10 +141,6 @@ class DepositController extends Controller {
      * @param Request $request
      */
     public function newAction(Request $request, Pln $pln) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $deposit = new Deposit();
         $deposit->setDateDeposited(new DateTime());
         $form = $this->createForm(DepositType::class, $deposit);
@@ -193,10 +189,6 @@ class DepositController extends Controller {
      * @param Deposit $deposit
      */
     public function editAction(Request $request, Deposit $deposit, Pln $pln) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $editForm = $this->createForm(DepositType::class, $deposit);
         $editForm->handleRequest($request);
 
@@ -224,10 +216,6 @@ class DepositController extends Controller {
      * @param Deposit $deposit
      */
     public function deleteAction(Request $request, Deposit $deposit, Pln $pln) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $em = $this->getDoctrine()->getManager();
         $em->remove($deposit);
         $em->flush();

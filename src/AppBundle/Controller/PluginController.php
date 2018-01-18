@@ -55,10 +55,6 @@ class PluginController extends Controller {
      * @param Request $request
      */
     public function newAction(Request $request, PluginImporter $pluginImporter, FilePaths $filePaths) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $form = $this->createForm(FileUploadType::class, null, [
             'help' => 'Select a LOCKSS plugin .jar file.',
             'label' => 'JAR File',

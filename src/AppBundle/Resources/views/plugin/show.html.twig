@@ -72,10 +72,10 @@
     {% if plugin.aus | length > 0 %}    
         <h2>Aus</h2>
         <ul>
-            {% for aus in plugin.aus %}
+            {% for au in plugin.aus %}
                 <li>
-                    <a href="{{ path("aus_show", {"id":aus.id}) }}">
-                        {{ aus }}
+                    <a href="{{ path("au_show", {"id":au.id, 'plnId': au.pln.id}) }}">
+                        {{ au }}
                     </a>
                 </li>
             {% endfor %} 
@@ -84,10 +84,10 @@
     {% if plugin.contentProviders | length > 0 %}    
         <h2>Contentproviders</h2>
         <ul>
-            {% for contentProviders in plugin.contentProviders %}
+            {% for provider in plugin.contentProviders %}
                 <li>
-                    <a href="{{ path("contentProviders_show", {"id":contentProviders.id}) }}">
-                        {{ contentProviders }}
+                    <a href="{{ path("content_provider_show", {"id":provider.id}) }}">
+                        {{ provider }}
                     </a>
                 </li>
             {% endfor %} 

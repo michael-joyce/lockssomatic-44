@@ -57,10 +57,6 @@ class ContentController extends Controller {
      * @param Request $request
      */
     public function newAction(Request $request, Pln $pln, Deposit $deposit) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $content = new Content();
         $content->setDateDeposited($deposit->getDateDeposited());
         $form = $this->createForm(ContentType::class, $content);
@@ -115,10 +111,6 @@ class ContentController extends Controller {
      * @param Content $content
      */
     public function editAction(Request $request, Content $content, Pln $pln, Deposit $deposit) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $editForm = $this->createForm(ContentType::class, $content);
         $editForm->handleRequest($request);
 
@@ -151,10 +143,6 @@ class ContentController extends Controller {
      * @param Content $content
      */
     public function deleteAction(Request $request, Content $content, Pln $pln, Deposit $deposit) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $em = $this->getDoctrine()->getManager();
         $em->remove($content);
         $em->flush();

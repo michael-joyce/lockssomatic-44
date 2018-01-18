@@ -50,10 +50,6 @@ class ContentProviderController extends Controller {
      * @param Request $request
      */
     public function newAction(Request $request) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $contentProvider = new ContentProvider();
         $form = $this->createForm(ContentProviderType::class, $contentProvider);
         $form->handleRequest($request);
@@ -99,10 +95,6 @@ class ContentProviderController extends Controller {
      * @param ContentProvider $contentProvider
      */
     public function editAction(Request $request, ContentProvider $contentProvider) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $editForm = $this->createForm(ContentProviderType::class, $contentProvider);
         $editForm->handleRequest($request);
 
@@ -129,10 +121,6 @@ class ContentProviderController extends Controller {
      * @param ContentProvider $contentProvider
      */
     public function deleteAction(Request $request, ContentProvider $contentProvider) {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $em = $this->getDoctrine()->getManager();
         $em->remove($contentProvider);
         $em->flush();
