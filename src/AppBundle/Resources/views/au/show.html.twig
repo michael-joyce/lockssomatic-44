@@ -1,5 +1,28 @@
 {% extends 'base.html.twig' %}
 
+{% macro plugin_props(props) %}
+    {% import _self as macros %}
+    <ul>
+        {% for prop in props %}
+            <li>{{ prop.propertyKey }}:
+                {% if prop.hasChildren() %}
+                    {{ macros.plugin_props(prop.children) }}
+                {% else %}
+                    {% if prop.propertyValue is iterable %}
+                        <ul>
+                            {% for v in prop.propertyValue %}
+                                <li>{{ v }} </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        {{ prop.propertyValue }}
+                    {% endif %}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
 {% block title %}Au{% endblock %}
 
 {% block pageheader %} 
@@ -62,20 +85,13 @@
             </tr>        
         </tbody>
     </table>
-                    
+
     {% if au.auProperties | length > 0 %}    
-        <h2>Auproperties</h2>
-        <ul>
-            {% for auProperty in au.auProperties %}
-                <li>
-                    <a href="{{ path("au_property_show", {"id":auProperties.id, 'plnId': pln.id, 'auId': au.id }) }}">
-                        {{ auProperties }}
-                    </a>
-                </li>
-            {% endfor %} 
-        </ul>
+        <h2>All Plugin Properties</h2>
+        {% import _self as macros %}
+        {{ macros.plugin_props(au.rootAuProperties) }}
     {% endif %}
-    
+
     {% if au.auStatus | length > 0 %}    
         <h2>Austatus</h2>
         <ul>
@@ -88,13 +104,13 @@
             {% endfor %} 
         </ul>
     {% endif %}
-    
+
     {% if au.content | length > 0 %}    
         <h2>Content</h2>
         <ul>
             {% for content in au.content %}
                 <li>
-                    <a href="{{ path("content_show", {"id":content.id, 'plnId': pln.id, 'depositId': content.deposit.id }) }}">
+                    <a href="{{ path("deposit_content_show", {"id":content.id, 'plnId': pln.id, 'depositId': content.deposit.id }) }}">
                         {{ content }}
                     </a>
                 </li>

@@ -35,7 +35,7 @@ class LoadAu extends Fixture implements DependentFixtureInterface {
         $au2->setPln($this->getReference('pln.1'));
         $au2->setPlugin($this->getReference('plugin.1'));        
         $em->persist($au2);        
-        $this->setReference('au.1', $au2);
+        $this->setReference('au.2', $au2);
         
         $em->flush();
     }

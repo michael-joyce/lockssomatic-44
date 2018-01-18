@@ -268,6 +268,12 @@ class Au extends AbstractEntity {
     public function getAuProperties() {
         return $this->auProperties;
     }
+    
+    public function getRootAuProperties() {
+        return $this->auProperties->filter(function(AuProperty $p){
+            return $p->getParent() === null;
+        });
+    }
 
     /**
      * Add auStatus

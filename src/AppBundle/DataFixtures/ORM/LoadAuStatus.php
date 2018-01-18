@@ -39,9 +39,6 @@ class LoadAuStatus extends Fixture implements DependentFixtureInterface {
         $this->setReference('auStatus.1', $status1);
         
         $status2 = new AuStatus();
-        $status2->setErrors([
-            'Cannot contact host foo.example.com',
-        ]);
         $status2->setQueryDate(new \DateTime('2017-01-02'));
         $status2->setStatus([
             'localhost' => [

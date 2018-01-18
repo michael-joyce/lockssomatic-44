@@ -186,5 +186,9 @@ class AuProperty extends AbstractEntity {
     public function getChildren() {
         return $this->children;
     }
+    
+    public function hasChildren() {
+        return $this->children->count() > 0;
+    }
 
 }
