@@ -14,6 +14,10 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  */
 class Pln extends AbstractEntity {
 
+    const KEYSTORE_MIMETYPES = array(
+        'application/x-java-keystore',
+    );
+    
     /**
      * LOCKSS will only recognize these properties in an XML file if they
      * are lists.

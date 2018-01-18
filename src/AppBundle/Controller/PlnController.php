@@ -22,10 +22,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PlnController extends Controller {
 
-    const KEYSTORE_MIMETYPES = array(
-        'application/x-java-keystore',
-    );
-    
     /**
      * Lists all Pln entities.
      *
@@ -95,7 +91,7 @@ class PlnController extends Controller {
         if($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $file = $data['file'];
-            if( ! in_array($file->getMimeType(), self::KEYSTORE_MIMETYPES)) {
+            if( ! in_array($file->getMimeType(), Pln::KEYSTORE_MIMETYPES)) {
                 throw new Exception("Upload does not look like a keystore. Mime type is {$file->getMimeType()}");
             }
             if(!preg_match('/^[a-zA-Z0-9 .-]+\.keystore$/', $file->getClientOriginalName())) {
