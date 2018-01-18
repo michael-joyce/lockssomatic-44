@@ -24,38 +24,29 @@ class LoadDepositStatus extends Fixture implements DependentFixtureInterface {
 
     public function load(ObjectManager $em) {
         $status1 = new DepositStatus();
-        $status1->setAgreement(0.25);
+        $status1->setAgreement(0.5);
         $status1->setDeposit($this->getReference('deposit.1'));
         $status1->setQueryDate(new \DateTime('2018-01-01'));
         $status1->setStatus([
-            'localhost' => '0.20',
-            'otherhost' => '0.30',
+            'expected' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',
+            'localhost' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',
+            'otherhost' => '*',
         ]);        
         $this->setReference('deposit.status.1', $status1);
         $em->persist($status1);
         
         $status2 = new DepositStatus();
-        $status2->setAgreement(0.45);
+        $status2->setAgreement(1.0);
         $status2->setDeposit($this->getReference('deposit.1'));
-        $status2->setQueryDate(new \DateTime('2018-01-01'));
+        $status2->setQueryDate(new \DateTime('2018-01-02'));
         $status2->setStatus([
-            'localhost' => '0.5',
-            'otherhost' => '0.4',
+            'expected' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',
+            'localhost' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',
+            'otherhost' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',
         ]);        
         $this->setReference('deposit.status.1', $status2);
         $em->persist($status2);
-        
-        $status3 = new DepositStatus();
-        $status3->setAgreement(1.0);
-        $status3->setDeposit($this->getReference('deposit.1'));
-        $status3->setQueryDate(new \DateTime('2018-01-01'));
-        $status3->setStatus([
-            'localhost' => '1.0',
-            'otherhost' => '1.0',
-        ]);        
-        $this->setReference('deposit.status.1', $status3);
-        $em->persist($status3);
-        
+                
         $em->flush();
     }
 
