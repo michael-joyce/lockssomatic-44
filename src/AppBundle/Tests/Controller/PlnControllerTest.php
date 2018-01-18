@@ -149,6 +149,39 @@ class PlnControllerTest extends BaseTestCase {
         // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
     }
 
+    public function testAnonKeystore() {
+        $client = $this->makeClient();
+        $crawler = $client->request('GET', '/pln/1/keystore');
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+    }
+
+    public function testUserKeystore() {
+        $client = $this->makeClient([
+            'username' => 'user@example.com',
+            'password' => 'secret',
+        ]);
+        $crawler = $client->request('GET', '/pln/1/keystore');
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminKeystore() {
+        $client = $this->makeClient([
+            'username' => 'admin@example.com',
+            'password' => 'supersecret',
+        ]);
+        $formCrawler = $client->request('GET', '/pln/1/keystore');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $form = $formCrawler->selectButton('Create')->form();
+        $form['file_upload[file]']->upload('src/AppBundle/Tests/Data/dummy.keystore');
+        
+        $client->submit($form);
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $responseCrawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertContains('dummy.keystore', $responseCrawler->text());
+    }
+
     public function testAnonDelete() {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/pln/1/delete');

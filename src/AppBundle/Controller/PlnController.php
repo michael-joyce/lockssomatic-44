@@ -102,7 +102,6 @@ class PlnController extends Controller {
                 throw new Exception("Upload does not look like a keystore. File name is strange.");
             }
             $filename = $file->getClientOriginalName();
-            dump($filePaths->getLockssKeystoreDir($pln));
             $file->move($filePaths->getLockssKeystoreDir($pln), $filename);
             $pln->setKeystore($filePaths->getLockssKeystoreDir($pln) . '/' . $filename);
 
