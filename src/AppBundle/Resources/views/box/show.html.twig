@@ -83,7 +83,7 @@
         <ul>
             {% for status in box.status %}
                 <li>
-                    <a href="{{ path("status_show", {'boxId': box.id, 'plnId': pln.id, "id":status.id}) }}">
+                    <a href="{{ path("box_status_show", {'boxId': box.id, 'plnId': pln.id, "id":status.id}) }}">
                         {{ status }}
                     </a>
                 </li>

@@ -11,37 +11,22 @@
 
 {% block body %}
 
-    <div class='btn-toolbar pull-right'>
-        <div class='btn-group'>
-            {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('box_status_new') }}" class="btn btn-default">
-                    <span class="glyphicon glyphicon-plus"></span> New
-                </a>
-            {% endif %}
-            <a href="{{ path('box_status_search') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search
-            </a>
-        </div>
-    </div>
-
     <table class="table table-bordered table-condensed table-hover table-striped">
         <thead>
             <tr>
                 <th>Query Date</th>
                 <th>Success</th>
-                <th>Errors</th>
             </tr>
         </thead>
         <tbody>
             {% for boxStatus in boxStatuses %}
                 <tr>
                     <td>
-                        <a href="{{ path('box_status_show', { 'id': boxStatus.id }) }}">
-                            {{ boxStatus.queryDate }}
+                        <a href="{{ path('box_status_show', { 'id': boxStatus.id, 'plnId': pln.id, 'boxId': box.id }) }}">
+                            {{ boxStatus.queryDate|date }}
                         </a>
                     </td>
                     <td>{% if boxStatus.success %}Yes{% else %}No{% endif %}</td>
-                    <td>{{ boxStatus.errors }}</td>
                 </tr>
             {% endfor %}
         </tbody>
