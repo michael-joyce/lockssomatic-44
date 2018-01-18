@@ -2,14 +2,17 @@
 
 namespace AppBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use AppBundle\Entity\Pln;
+use AppBundle\Form\FileUploadType;
+use AppBundle\Form\PlnType;
+use AppBundle\Services\FilePaths;
+use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use AppBundle\Entity\Pln;
-use AppBundle\Form\PlnType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Pln controller.
@@ -19,6 +22,10 @@ use AppBundle\Form\PlnType;
  */
 class PlnController extends Controller {
 
+    const KEYSTORE_MIMETYPES = array(
+        'application/x-java-keystore',
+    );
+    
     /**
      * Lists all Pln entities.
      *
@@ -66,6 +73,49 @@ class PlnController extends Controller {
         return array(
             'pln' => $pln,
             'form' => $form->createView(),
+        );
+    }
+    
+    /**
+     * Upload and add/replace the java keystore file for the Pln's plugins.
+     * 
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("/{id}/keystore", name="pln_keystore")
+     * @Method({"GET", "POST"})
+     * @Template()
+     * @param Request $request
+     */
+    public function keystoreAction(Request $request, Pln $pln, FilePaths $filePaths) {
+        $form = $this->createForm(FileUploadType::class, null, [
+            'help' => 'Select a java keystore file.',
+            'label' => 'Keystore File',
+        ]);
+        $form->handleRequest($request);
+        
+        if($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $file = $data['file'];
+            if( ! in_array($file->getMimeType(), self::KEYSTORE_MIMETYPES)) {
+                throw new Exception("Upload does not look like a keystore. Mime type is {$file->getMimeType()}");
+            }
+            if(!preg_match('/^[a-zA-Z0-9 .-]+\.keystore$/', $file->getClientOriginalName())) {
+                throw new Exception("Upload does not look like a keystore. File name is strange.");
+            }
+            $filename = $file->getClientOriginalName();
+            dump($filePaths->getLockssKeystoreDir($pln));
+            $file->move($filePaths->getLockssKeystoreDir($pln), $filename);
+            $pln->setKeystore($filePaths->getLockssKeystoreDir($pln) . '/' . $filename);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+
+            $this->addFlash('success', 'The keystore has been updated.');
+            return $this->redirectToRoute('pln_show', array('id' => $pln->getId()));
+        }
+        
+        return array(
+            'form' => $form->createView(),
+            'pln' => $pln,
         );
     }
 

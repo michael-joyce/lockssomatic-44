@@ -97,11 +97,7 @@ class Pln extends AbstractEntity {
     /**
      * Java Keystore file.
      * 
-     * @TODO move the keystore fields to the PLN entity where they belong.
-     *
-     * @var Keystore
-     * @ORM\OneToOne(targetEntity="Keystore", inversedBy="pln")
-     * @ORM\JoinColumn(name="keystore_id", referencedColumnName="id")
+     * @ORM\Column(name="keystore_path", type="string", length=255, nullable=true)
      */
     private $keystore;
 
@@ -357,7 +353,7 @@ class Pln extends AbstractEntity {
      *
      * @return Pln
      */
-    public function setKeystore(Keystore $keystore = null) {
+    public function setKeystore($keystore) {
         $this->keystore = $keystore;
 
         return $this;
@@ -370,6 +366,11 @@ class Pln extends AbstractEntity {
      */
     public function getKeystore() {
         return $this->keystore;
+    }
+    
+    public function getKeystoreFilename() {
+        $fileinfo = new \SplFileInfo($this->keystore);
+        return $fileinfo->getBasename();
     }
 
     /**

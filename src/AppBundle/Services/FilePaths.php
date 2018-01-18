@@ -2,11 +2,11 @@
 
 namespace AppBundle\Services;
 
-use LOCKSSOMatic\CrudBundle\Entity\Au;
-use LOCKSSOMatic\CrudBundle\Entity\Content;
-use LOCKSSOMatic\CrudBundle\Entity\ContentProvider;
-use LOCKSSOMatic\CrudBundle\Entity\Pln;
-use LOCKSSOMatic\CrudBundle\Entity\Plugin;
+use AppBundle\Entity\Au;
+use AppBundle\Entity\Content;
+use AppBundle\Entity\ContentProvider;
+use AppBundle\Entity\Pln;
+use AppBundle\Entity\Plugin;
 use Monolog\Logger;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -114,6 +114,16 @@ class FilePaths {
             'plugins',
         ));
 
+        return $path;
+    }
+    
+    public function getLockssKeystoreDir(Pln $pln) {
+        $path = implode('/', array(
+            $this->getLockssDir(),
+            'keystores',
+            $pln->getId(),
+        ));
+        
         return $path;
     }
     

@@ -41,6 +41,10 @@
                 <td><i>not shown</i></td>
             </tr>
             <tr>
+                <th>Keystore</th>
+                <td>{{ pln.getKeystoreFilename() }}</td>
+            </tr>
+            <tr>
                 <th>Enable Content Ui</th>
                 <td>{% if pln.enableContentUi %}Yes{% else %}No{% endif %}</td>
             </tr>
@@ -69,10 +73,10 @@
     {% if pln.aus | length > 0 %}    
         <h2>Aus</h2>
         <ul>
-            {% for aus in pln.aus %}
+            {% for au in pln.aus %}
                 <li>
-                    <a href="{{ path("aus_show", {"id":aus.id}) }}">
-                        {{ aus }}
+                    <a href="{{ path("au_show", {"id":au.id, 'plnId': pln.id}) }}">
+                        {{ au }}
                     </a>
                 </li>
             {% endfor %} 
