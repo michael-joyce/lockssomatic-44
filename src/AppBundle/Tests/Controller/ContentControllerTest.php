@@ -85,8 +85,7 @@ class ContentControllerTest extends BaseTestCase {
             'password' => 'secret',
         ]);
         $crawler = $client->request('GET', '/pln/1/deposit/1/content/1/edit');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminEdit() {
@@ -124,7 +123,7 @@ class ContentControllerTest extends BaseTestCase {
             'password' => 'secret',
         ]);
         $crawler = $client->request('GET', '/pln/1/deposit/1/content/new');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminNew() {
@@ -162,8 +161,7 @@ class ContentControllerTest extends BaseTestCase {
             'password' => 'secret',
         ]);
         $crawler = $client->request('GET', '/pln/1/deposit/1/content/1/delete');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect('/login'));
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
     public function testAdminDelete() {
