@@ -74,16 +74,13 @@
             </tr>        
         </tbody>
     </table>
-    {% if content.contentProperties | length > 0 %}    
+    {% if content.properties | length > 0 %}    
         <h2>Content Properties</h2>
-        <ul>
-            {% for contentProperty in content.contentProperties %}
-                <li>
-                    <a href="{{ path("content_property_show", {"id":contentProperty.id, 'plnId': pln.id, 'depositId': deposit.id}) }}">
-                        {{ contentProperties }}
-                    </a>
-                </li>
+        <dl class="dl-horizontal">
+            {% for key in content.properties %}
+                <dt>{{ key }}</dt>
+                <dd>{{ content.getProperty(key) }}</dd>
             {% endfor %} 
-        </ul>
+        </dl>
     {% endif %}
 {% endblock %}

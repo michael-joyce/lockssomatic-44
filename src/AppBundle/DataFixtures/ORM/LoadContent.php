@@ -30,6 +30,8 @@ class LoadContent extends Fixture implements DependentFixtureInterface {
         $content1->setDateDeposited(new \DateTime);
         $content1->setDeposit($this->getReference('deposit.1'));
         $content1->setAu($this->getReference('au.1'));
+        $content1->setProperty('title', 'Title 1');
+        $content1->setProperty('publisher', 'Publisher');
         $em->persist($content1);                
         $this->setReference('content.1', $content1);        
         
@@ -42,6 +44,8 @@ class LoadContent extends Fixture implements DependentFixtureInterface {
         $content2->setDateDeposited(new \DateTime);
         $content2->setDeposit($this->getReference('deposit.1'));
         $content2->setAu($this->getReference('au.1'));
+        $content2->setProperty('title', 'Title 2');
+        $content2->setProperty('publisher', 'Publisher');
         $em->persist($content2);                
         $this->setReference('content.2', $content2);        
 
@@ -54,6 +58,8 @@ class LoadContent extends Fixture implements DependentFixtureInterface {
         $content3->setDateDeposited(new \DateTime);
         $content3->setDeposit($this->getReference('deposit.1'));
         $content3->setAu($this->getReference('au.1'));
+        $content3->setProperty('title', 'Title 3');
+        $content3->setProperty('publisher', 'Publisher');
         $em->persist($content3);                
         $this->setReference('content.3', $content3);        
 

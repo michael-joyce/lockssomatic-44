@@ -74,6 +74,14 @@ class Content extends AbstractEntity {
      * @ORM\Column(name="checksum_value", type="string", length=255, nullable=true)
      */
     private $checksumValue;
+    
+    /**
+     * Key/value array of content properties.
+     *
+     * @var array
+     * @ORM\Column(name="properties", type="array", nullable=false)
+     */
+    private $properties;
 
     /**
      * The deposit that registered this content in the database.
@@ -93,18 +101,9 @@ class Content extends AbstractEntity {
      */
     private $au;
 
-    /**
-     * The contentProperties associated with this content.
-     *
-     * @ORM\OneToMany(targetEntity="ContentProperty", mappedBy="content")
-     *
-     * @var Collection|ContentProperty[]
-     */
-    private $contentProperties;
-
     public function __construct() {
         parent::__construct();
-        $this->contentProperties = new ArrayCollection();
+        $this->properties = array();
     }
 
     public function __toString() {
@@ -290,32 +289,19 @@ class Content extends AbstractEntity {
     /**
      * Add contentProperty
      *
-     * @param ContentProperty $contentProperty
+     * @param string $key
+     * @param mixed $value
      *
      * @return Content
      */
-    public function addContentProperty(ContentProperty $contentProperty) {
-        $this->contentProperties[] = $contentProperty;
+    public function setProperty($key, $value) {
+        $this->properties[$key] = $value;
 
         return $this;
     }
 
-    /**
-     * Remove contentProperty
-     *
-     * @param ContentProperty $contentProperty
-     */
-    public function removeContentProperty(ContentProperty $contentProperty) {
-        $this->contentProperties->removeElement($contentProperty);
-    }
-
-    /**
-     * Get contentProperties
-     *
-     * @return Collection
-     */
-    public function getContentProperties() {
-        return $this->contentProperties;
+    public function getProperties() {
+        return array_keys($this->properties);
     }
 
     /**
@@ -326,23 +312,15 @@ class Content extends AbstractEntity {
      * @param bool $encoded
      * @return string
      */
-    public function getContentPropertyValue($key, $encoded = false) {
-        $value = null;
-        foreach ($this->getContentProperties() as $prop) {
-            if ($prop->getPropertyKey() === $key) {
-                $value = $prop->getPropertyValue();
-                break;
-            }
-        }
+    public function getProperty($key, $encoded = false) {
+        $value = $this->properties[$key];
         if ($encoded === false || $value === null) {
             return $value;
         }
         $callback = function ($matches) {
-            $char = ord($matches[0]);
-
+            $char = ord($matches[0]);            
             return '%' . strtoupper(sprintf('%02x', $char));
         };
-
         return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
     }
 
