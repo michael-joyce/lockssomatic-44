@@ -35,7 +35,7 @@ class PluginPropertyTest extends BaseTestCase {
         $this->assertFalse($this->property->isList());
         $internal = $this->reflection->getProperty('propertyValue');
         $internal->setAccessible(true);
-        $this->assertEquals('fancypants', $this->property->getPropertyValue($this->property));
+        $this->assertEquals('fancypants', $internal->getValue($this->property));
     }
     
     public function testSetPropertyValueList() {

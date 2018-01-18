@@ -53,7 +53,7 @@
                 <td>{% if deposit.updated %}{{ deposit.updated|date }}{% endif %}</td>
             </tr>        
             <tr>
-                <th>Contentprovider</th>
+                <th>Content Provider</th>
                 <td>
                     <a href="{{ path('content_provider_show', { 'id': deposit.contentProvider.id}) }}">
                         {{ deposit.contentProvider }}

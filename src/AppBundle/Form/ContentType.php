@@ -31,13 +31,6 @@ class ContentType extends AbstractType {
         ));
         $builder->add('size', null, array(
             'label' => 'Size',
-            'required' => false,
-            'attr' => array(
-                'help_block' => '',
-            ),
-        ));
-        $builder->add('dateDeposited', null, array(
-            'label' => 'Date Deposited',
             'required' => true,
             'attr' => array(
                 'help_block' => '',
@@ -57,8 +50,12 @@ class ContentType extends AbstractType {
                 'help_block' => '',
             ),
         ));
-        $builder->add('deposit');
-        $builder->add('au');
+        $builder->add('deposit', null, array(
+            'required' => true,
+        ));
+        $builder->add('au', null, array(
+            'required' => true,
+        ));
     }
 
     /**

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Content
@@ -23,6 +24,7 @@ class Content extends AbstractEntity {
      *
      * @var string
      *
+     * @Assert\URL()
      * @ORM\Column(name="url", type="string", length=255, nullable=false)
      */
     private $url;
@@ -66,8 +68,6 @@ class Content extends AbstractEntity {
 
     /**
      * The value of the checksum.
-     *
-     * TODO should this be uppercase?
      *
      * @var string
      *
@@ -229,7 +229,7 @@ class Content extends AbstractEntity {
      * @return Content
      */
     public function setChecksumValue($checksumValue) {
-        $this->checksumValue = $checksumValue;
+        $this->checksumValue = strtoupper($checksumValue);
 
         return $this;
     }

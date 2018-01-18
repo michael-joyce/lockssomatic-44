@@ -2,18 +2,25 @@
 
 namespace AppBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AppBundle\Entity\Content;
+use AppBundle\Entity\Deposit;
+use AppBundle\Entity\Pln;
 use AppBundle\Form\ContentType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Content controller.
  *
+ * @Security("has_role('ROLE_USER')")
  * @Route("/pln/{plnId}/deposit/{depositId}/content")
+ * @ParamConverter("pln", options={"id"="plnId"})
+ * @ParamConverter("deposit", options={"id"="depositId"})
  */
 class ContentController extends Controller {
 
@@ -25,7 +32,7 @@ class ContentController extends Controller {
      * @Template()
      * @param Request $request
      */
-    public function indexAction(Request $request) {
+    public function indexAction(Request $request, Pln $pln, Deposit $deposit) {
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
         $qb->select('e')->from(Content::class, 'e')->orderBy('e.id', 'ASC');
@@ -35,6 +42,8 @@ class ContentController extends Controller {
 
         return array(
             'contents' => $contents,
+            'pln' => $pln, 
+            'deposit' => $deposit,
         );
     }
 
@@ -58,7 +67,7 @@ class ContentController extends Controller {
      * @Template()
      * @param Request $request
      */
-    public function searchAction(Request $request) {
+    public function searchAction(Request $request, Pln $pln, Deposit $deposit) {
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('AppBundle:Content');
         $q = $request->query->get('q');
@@ -73,6 +82,8 @@ class ContentController extends Controller {
         return array(
             'contents' => $contents,
             'q' => $q,
+            'pln' => $pln, 
+            'deposit' => $deposit,
         );
     }
 
@@ -104,7 +115,7 @@ class ContentController extends Controller {
      * @param Request $request
      * @return array
      */
-    public function fulltextAction(Request $request) {
+    public function fulltextAction(Request $request, Pln $pln, Deposit $deposit) {
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('AppBundle:Content');
         $q = $request->query->get('q');
@@ -119,6 +130,8 @@ class ContentController extends Controller {
         return array(
             'contents' => $contents,
             'q' => $q,
+            'pln' => $pln, 
+            'deposit' => $deposit,
         );
     }
 
@@ -130,12 +143,13 @@ class ContentController extends Controller {
      * @Template()
      * @param Request $request
      */
-    public function newAction(Request $request) {
+    public function newAction(Request $request, Pln $pln, Deposit $deposit) {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'You must login to access this page.');
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
         $content = new Content();
+        $content->setDateDeposited($deposit->getDateDeposited());
         $form = $this->createForm(ContentType::class, $content);
         $form->handleRequest($request);
 
@@ -145,12 +159,18 @@ class ContentController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new content was created.');
-            return $this->redirectToRoute('deposit_content_show', array('id' => $content->getId()));
+            return $this->redirectToRoute('deposit_content_show', array(
+                'id' => $content->getId(),
+                'plnId' => $pln->getId(),
+                'depositId' => $deposit->getId(),
+            ));
         }
 
         return array(
             'content' => $content,
             'form' => $form->createView(),
+            'pln' => $pln, 
+            'deposit' => $deposit,
         );
     }
 
@@ -162,10 +182,12 @@ class ContentController extends Controller {
      * @Template()
      * @param Content $content
      */
-    public function showAction(Content $content) {
+    public function showAction(Content $content, Pln $pln, Deposit $deposit) {
 
         return array(
             'content' => $content,
+            'pln' => $pln, 
+            'deposit' => $deposit,
         );
     }
 
@@ -178,7 +200,7 @@ class ContentController extends Controller {
      * @param Request $request
      * @param Content $content
      */
-    public function editAction(Request $request, Content $content) {
+    public function editAction(Request $request, Content $content, Pln $pln, Deposit $deposit) {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'You must login to access this page.');
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -190,12 +212,18 @@ class ContentController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The content has been updated.');
-            return $this->redirectToRoute('deposit_content_show', array('id' => $content->getId()));
+            return $this->redirectToRoute('deposit_content_show', array(
+                'id' => $content->getId(),
+                'plnId' => $pln->getId(),
+                'depositId' => $deposit->getId(),
+            ));
         }
 
         return array(
             'content' => $content,
             'edit_form' => $editForm->createView(),
+            'pln' => $pln, 
+            'deposit' => $deposit,
         );
     }
 
@@ -207,7 +235,7 @@ class ContentController extends Controller {
      * @param Request $request
      * @param Content $content
      */
-    public function deleteAction(Request $request, Content $content) {
+    public function deleteAction(Request $request, Content $content, Pln $pln, Deposit $deposit) {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'You must login to access this page.');
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -217,7 +245,10 @@ class ContentController extends Controller {
         $em->flush();
         $this->addFlash('success', 'The content was deleted.');
 
-        return $this->redirectToRoute('deposit_content_index');
+        return $this->redirectToRoute('deposit_content_index', array(
+                'plnId' => $pln->getId(),
+                'depositId' => $deposit->getId(),            
+        ));
     }
 
 }

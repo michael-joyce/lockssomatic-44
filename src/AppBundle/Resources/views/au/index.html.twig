@@ -11,22 +11,10 @@
 
 {% block body %}
 
-    <div class='btn-toolbar pull-right'>
-        <div class='btn-group'>
-            {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('au_new') }}" class="btn btn-default">
-                    <span class="glyphicon glyphicon-plus"></span> New
-                </a>
-            {% endif %}
-            <a href="{{ path('au_search') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search
-            </a>
-        </div>
-    </div>
-
     <table class="table table-bordered table-condensed table-hover table-striped">
         <thead>
             <tr>
+                <th>AU</th>
                 <th>Managed</th>
                 <th>Auid</th>
                 <th>Comment</th>
@@ -36,10 +24,11 @@
             {% for au in aus %}
                 <tr>
                     <td>
-                        <a href="{{ path('au_show', { 'id': au.id }) }}">
-                            {{ au.managed }}
+                        <a href="{{ path('au_show', { 'id': au.id, 'plnId': pln.id }) }}">
+                            {{ pln }}
                         </a>
                     </td>
+                    <td>{% if au.managed %} Yes {% else %} No {% endif %}</td>
                     <td>{{ au.auid }}</td>
                     <td>{{ au.comment }}</td>
                 </tr>

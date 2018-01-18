@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
@@ -93,6 +94,13 @@ class Au extends AbstractEntity {
      * @var Content[]|Collection
      */
     private $content;
+    
+    public function __construct() {
+        $this->managed = false;
+        $this->auProperties = new ArrayCollection();
+        $this->auStatus = new ArrayCollection();
+        $this->auContent = new ArrayCollection();        
+    }
 
     public function __toString() {
         return "AU #" . $this->id;

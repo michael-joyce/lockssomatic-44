@@ -21,13 +21,13 @@ class LoadPln extends Fixture {
     
     public function load(ObjectManager $em) {
         $pln1 = new Pln();
-        $pln1->setName('pln1');
+        $pln1->setName('Network Test');
         $pln1->setEnableContentUi(false);
         $em->persist($pln1);
         $this->setReference('pln.1', $pln1);
         
         $pln2 = new Pln();
-        $pln2->setName('pln2');
+        $pln2->setName('Testing Network');
         $pln2->setEnableContentUi(false);
         $em->persist($pln2);
         $this->setReference('pln.2', $pln2);
