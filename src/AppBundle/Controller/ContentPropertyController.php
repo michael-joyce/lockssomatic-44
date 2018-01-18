@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AppBundle\Entity\ContentProperty;
@@ -13,7 +14,11 @@ use AppBundle\Form\ContentPropertyType;
 /**
  * ContentProperty controller.
  *
+ * @Security("has_role('ROLE_USER')")
  * @Route("/pln/{plnId}/deposit/{depositId}/content/{contentId}/property")
+ * @ParamConverter("pln", options={"id"="plnId"})
+ * @ParamConverter("deposit", options={"id"="depositId"})
+ * @ParamConverter("content", options={"id"="contentId"})
  */
 class ContentPropertyController extends Controller {
 
