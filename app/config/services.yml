@@ -49,6 +49,12 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
             
+    Nines\UserBundle\Menu\Builder:
+        public: true
+        arguments: ['@knp_menu.factory', '@security.authorization_checker', '@security.token_storage']
+        tags:
+            - { name: knp_menu.menu_builder, method: userNavMenu, alias: user}
+            
     AppBundle\Services\FilePaths:
         public: true
         arguments: ['@logger', '%kernel.project_dir%', '%lom.download_dir%']
