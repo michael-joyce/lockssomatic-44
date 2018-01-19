@@ -71,6 +71,7 @@ class ImportPluginCommand extends ContainerAwareCommand
                 continue;
             }
             $filename = basename($file, '.jar') . '-v' . $plugin->getVersion() . '.jar';
+            mkdir($this->filePaths->getPluginsDir(), 0777, true);
             $path = $this->filePaths->getPluginsDir() . '/' . $filename;
             copy($file, $path);
             $plugin->setPath($path);

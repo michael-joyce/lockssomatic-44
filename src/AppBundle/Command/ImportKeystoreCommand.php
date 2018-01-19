@@ -58,7 +58,7 @@ class ImportKeystoreCommand extends ContainerAwareCommand
         }
         $dir = $this->filePaths->getLockssKeystoreDir($pln);
         if( !file_exists($dir)) {
-            mkdir($dir);
+            mkdir($dir, 0777, true);
         }
         $newPath = $dir . '/' . $basename;
         copy($path, $newPath);
