@@ -96,6 +96,7 @@ class Au extends AbstractEntity {
     private $content;
     
     public function __construct() {
+        parent::__construct();
         $this->managed = false;
         $this->auProperties = new ArrayCollection();
         $this->auStatus = new ArrayCollection();
@@ -269,10 +270,53 @@ class Au extends AbstractEntity {
         return $this->auProperties;
     }
     
+    /**
+     * @return Collection|AuProperty[]
+     */
     public function getRootAuProperties() {
         return $this->auProperties->filter(function(AuProperty $p){
             return $p->getParent() === null;
         });
+    }
+    
+    /**
+     * @return AuProperty|null
+     */
+    public function getAuProperty($name) {
+        foreach($this->auProperties as $property) {
+            if($property->getPropertyKey() === 'key' && $property->getPropertyValue() === $name) {
+                return $property->getParent();
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * @param string $key
+     * @param bool $encoded
+     * @return string
+     */
+    public function getAuPropertyValue($key, $encoded = false) {
+        $value = '';
+        $property = $this->getAuProperty($key);
+        if($property === null) {
+            return $value;
+        }
+        foreach($property->getChildren() as $child) {
+            if($child->getPropertyKey() === 'value') {
+                $value = $child->getPropertyValue();  
+                break;
+            }
+        }
+        if($encoded === false) {
+            return $value;
+        }
+        $callback = function ($matches) {
+            $char = ord($matches[0]);
+            return '%'.strtoupper(sprintf('%02x', $char));
+        };
+
+        return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
     }
 
     /**

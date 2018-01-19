@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
@@ -63,6 +64,11 @@ class AuProperty extends AbstractEntity {
      * @var Collection|AuProperty[]
      */
     private $children;
+    
+    public function __construct() {
+        parent::__construct();
+        $this->children = new ArrayCollection();
+    }
 
     public function __toString() {
         return $this->propertyKey;
