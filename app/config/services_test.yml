@@ -1,0 +1,48 @@
+# Learn more about services, parameters and containers at
+# https://symfony.com/doc/current/service_container.html
+parameters:
+    container.autowiring.strict_mode: true
+
+services:
+    _defaults:
+        public: true
+
+    AppBundle\EventListener\BoxListener:
+        public: true
+        arguments: ['@logger']
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+        
+    AppBundle\Menu\Builder:
+        public: true
+        arguments: 
+            - '@knp_menu.factory'
+            - '@security.authorization_checker' 
+            - '@security.token_storage'
+            - '@doctrine.orm.entity_manager'
+        tags:
+            - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
+            
+    Nines\UserBundle\Menu\Builder:
+        public: true
+        arguments: 
+            - '@knp_menu.factory'
+            - '@security.authorization_checker'
+            - '@security.token_storage'
+        tags:
+            - { name: knp_menu.menu_builder, method: userNavMenu, alias: user}
+            
+    AppBundle\Services\AuPropertyGenerator:
+        public: true
+        
+    AppBundle\Services\ContentBuilder:
+        public: true
+        
+    AppBundle\Services\Encoder:
+        public: true
+
+    AppBundle\Services\FilePaths:
+        public: true
+        arguments: ['@logger', '%kernel.project_dir%', '%lom.download_dir%']
+        
