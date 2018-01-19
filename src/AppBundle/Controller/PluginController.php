@@ -53,6 +53,8 @@ class PluginController extends Controller {
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
+     * @param PluginImporter $pluginImporter 
+     * @param FilePaths $filePaths
      */
     public function newAction(Request $request, PluginImporter $pluginImporter, FilePaths $filePaths) {
         $form = $this->createForm(FileUploadType::class, null, [

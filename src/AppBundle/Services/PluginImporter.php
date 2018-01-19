@@ -23,20 +23,28 @@ use ZipArchive;
  */
 class PluginImporter {
 
+    /**
+     * Allowed plugin file mime types.
+     */
     const MIMETYPES = array(
         'application/java-archive',
         'application/zip',
     );
     
+    /**
+     * Location of the manifest file inside a .jar file.
+     */
     const MANIFEST = 'META-INF/MANIFEST.MF';
    
+    /**
+     * Name of the manifest key that identifes a lockss plugin xml file 
+     * inside a jar.
+     */
     const PLUGIN_KEY = 'lockss-plugin';
 
     /**
      * Names of the prop strings in the plugin's XML configuration file which
      * should be imported.
-     *
-     * @var array
      */
     const PROP_STRINGS = array(
         'au_name',
@@ -64,12 +72,26 @@ class PluginImporter {
         'plugin_config_props',
     );
 
+    /**
+     * @var EntityManagerInterface
+     */
     private $em;
 
+    /**
+     * Set up the service.
+     * 
+     * @param EntityManagerInterface $em
+     */
     public function __construct(EntityManagerInterface $em) {
         $this->em = $em;
     }
 
+    /**
+     * Get the manifest data from the archive.
+     * 
+     * @param ZipArchive $zipArchive
+     * @return array
+     */
     public function getManifest(ZipArchive $zipArchive) {
         $raw = $zipArchive->getFromName(self::MANIFEST);
         $data = preg_replace('/\r\n/', "\n", $raw);
@@ -78,6 +100,12 @@ class PluginImporter {
         return $manifest;
     }
 
+    /**
+     * Fidn the plugin XML file entries in a manifest.
+     * 
+     * @param array $manifest
+     * @return array
+     */
     public function findPluginEntries($manifest) {
         $entries = [];
         foreach ($manifest as $section) {
@@ -89,6 +117,14 @@ class PluginImporter {
         return $entries;
     }
 
+    /**
+     * Get the plugin XML from the archive at the $entry path.
+     * 
+     * @param ZipArchive $zipArchive
+     * @param string $entry
+     * @return SimpleXMLElement
+     * @throws Exception
+     */
     public function getPluginXml(ZipArchive $zipArchive, $entry) {
         $raw = $zipArchive->getFromName($entry);
         $xml = simplexml_load_string($raw);
@@ -98,6 +134,12 @@ class PluginImporter {
         return $xml;
     }
 
+    /**
+     * Parse a manifest string.
+     * 
+     * @param string $raw
+     * @return array 
+     */
     public function parseManifest($raw) {
         $manifest = preg_replace('/\r\n/', "\n", $raw);
         $sections = [];
@@ -129,9 +171,7 @@ class PluginImporter {
      *
      * @param SimpleXMLElement $xml
      * @param string $propName
-     *
      * @return string
-     *
      * @throws Exception
      */
     public function findXmlPropString(SimpleXMLElement $xml, $propName) {
@@ -166,6 +206,13 @@ class PluginImporter {
         throw new Exception('Too many entry elements for property element' . $propName);
     }
 
+    /**
+     * Import data from $value as children of $property.
+     * 
+     * @param PluginProperty $property
+     * @param SimpleXMLElement $value
+     * @return PluginProperty
+     */
     public function importChildren(PluginProperty $property, SimpleXMLElement $value) {
         $childProperty = new PluginProperty();
         $childProperty->setParent($property);
@@ -188,6 +235,15 @@ class PluginImporter {
         return $childProperty;
     }
 
+    /**
+     * Import plugin configuration data from the $name element in $value, as 
+     * properties of $plugin.
+     * 
+     * @param Plugin $plugin
+     * @param string $name
+     * @param SimpleXMLElement $value
+     * @return PluginProperty
+     */
     public function newPluginConfig(Plugin $plugin, $name, SimpleXMLElement $value) {
         $property = new PluginProperty();
         $property->setPlugin($plugin);
@@ -201,13 +257,14 @@ class PluginImporter {
     }
 
     /**
-     * Generate and persist a new Plugins object.
+     * Generate and persist a new plugin property object named $name and value
+     * $value.
      *
      * @param Plugin $plugin
      * @param string $name
      * @param SimpleXMLElement|string $value
-     *
      * @return PluginProperty
+     * @throws Exception
      */
     public function newPluginProperty(Plugin $plugin, $name, $value = null) {
         $property = new PluginProperty();
@@ -266,14 +323,10 @@ class PluginImporter {
     }
     
     /**
-     * Build a plugin entity and return it.
+     * Build a plugin entity from the XML data and return it.
      *
      * @param SimpleXMLElement $xml
-     * @param SplFileInfo $jarInfo
-     * @param boolean $copy
-     *
      * @return Plugin
-     *
      * @throws Exception
      */
     public function buildPlugin(SimpleXMLElement $xml) {
@@ -300,10 +353,13 @@ class PluginImporter {
     }
 
     /**
+     * Import the plugin data from a zip archive, and optionallly flush it into
+     * the database.
+     * 
      * @param ZipArchive $zip
      * @param bool $flush
-     * 
      * @return Plugin
+     * @throws Exception
      */
     public function import(ZipArchive $zip, $flush = true) {
         $raw = $zip->getFromName(self::MANIFEST);

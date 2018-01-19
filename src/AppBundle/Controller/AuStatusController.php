@@ -30,6 +30,8 @@ class AuStatusController extends Controller {
      * @Method("GET")
      * @Template()
      * @param Request $request
+     * @param Pln $pln
+     * @param Au $au
      */
     public function indexAction(Request $request, Pln $pln, Au $au) {
         $em = $this->getDoctrine()->getManager();
@@ -53,6 +55,8 @@ class AuStatusController extends Controller {
      * @Method("GET")
      * @Template()
      * @param AuStatus $auStatus
+     * @param Pln $pln
+     * @param Au $au
      */
     public function showAction(AuStatus $auStatus, Pln $pln, Au $au) {
 

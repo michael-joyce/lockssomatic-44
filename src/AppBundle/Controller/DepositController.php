@@ -30,6 +30,7 @@ class DepositController extends Controller {
      * @Method("GET")
      * @Template()
      * @param Request $request
+     * @param Pln $pln
      */
     public function indexAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
@@ -64,6 +65,7 @@ class DepositController extends Controller {
      * @Method("GET")
      * @Template()
      * @param Request $request
+     * @param Pln $pln
      */
     public function searchAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
@@ -110,6 +112,7 @@ class DepositController extends Controller {
      * @Method("GET")
      * @Template()
      * @param Request $request
+     * @param Pln $pln
      * @return array
      */
     public function fulltextAction(Request $request, Pln $pln) {
@@ -139,6 +142,7 @@ class DepositController extends Controller {
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
+     * @param Pln $pln
      */
     public function newAction(Request $request, Pln $pln) {
         $deposit = new Deposit();
@@ -169,6 +173,7 @@ class DepositController extends Controller {
      * @Method("GET")
      * @Template()
      * @param Deposit $deposit
+     * @param Pln $pln
      */
     public function showAction(Deposit $deposit, Pln $pln) {
 
@@ -187,6 +192,7 @@ class DepositController extends Controller {
      * @Template()
      * @param Request $request
      * @param Deposit $deposit
+     * @param Pln $pln
      */
     public function editAction(Request $request, Deposit $deposit, Pln $pln) {
         $editForm = $this->createForm(DepositType::class, $deposit);
@@ -214,6 +220,7 @@ class DepositController extends Controller {
      * @Method("GET")
      * @param Request $request
      * @param Deposit $deposit
+     * @param Pln $pln
      */
     public function deleteAction(Request $request, Deposit $deposit, Pln $pln) {
         $em = $this->getDoctrine()->getManager();

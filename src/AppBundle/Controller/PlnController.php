@@ -80,6 +80,8 @@ class PlnController extends Controller {
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
+     * @param Pln $pln
+     * @param FilePaths $filePaths
      */
     public function keystoreAction(Request $request, Pln $pln, FilePaths $filePaths) {
         $form = $this->createForm(FileUploadType::class, null, [

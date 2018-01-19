@@ -34,7 +34,7 @@ class ImportPluginCommand extends ContainerAwareCommand
     private $filePaths;
     
     /**
-     * {@inheritDoc}
+     * Build the import plugin command.
      * 
      * @param EntityManagerInterface $em
      * @param PluginImporter $importer

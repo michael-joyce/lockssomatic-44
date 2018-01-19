@@ -30,6 +30,8 @@ class BoxStatusController extends Controller {
      * @Method("GET")
      * @Template()
      * @param Request $request
+     * @param Pln $pln
+     * @param Box $box
      */
     public function indexAction(Request $request, Pln $pln, Box $box) {
         $em = $this->getDoctrine()->getManager();
@@ -53,6 +55,8 @@ class BoxStatusController extends Controller {
      * @Method("GET")
      * @Template()
      * @param BoxStatus $boxStatus
+     * @param Pln $pln
+     * @param Box $box
      */
     public function showAction(BoxStatus $boxStatus, Pln $pln, Box $box) {
 

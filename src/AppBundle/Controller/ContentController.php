@@ -31,6 +31,8 @@ class ContentController extends Controller {
      * @Method("GET")
      * @Template()
      * @param Request $request
+     * @param Pln $pln
+     * @param Deposit $deposit
      */
     public function indexAction(Request $request, Pln $pln, Deposit $deposit) {
         $em = $this->getDoctrine()->getManager();
@@ -55,6 +57,8 @@ class ContentController extends Controller {
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
+     * @param Pln $pln
+     * @param Deposit $deposit
      */
     public function newAction(Request $request, Pln $pln, Deposit $deposit) {
         $content = new Content();
@@ -90,6 +94,8 @@ class ContentController extends Controller {
      * @Method("GET")
      * @Template()
      * @param Content $content
+     * @param Pln $pln
+     * @param Deposit $deposit
      */
     public function showAction(Content $content, Pln $pln, Deposit $deposit) {
 
@@ -109,6 +115,8 @@ class ContentController extends Controller {
      * @Template()
      * @param Request $request
      * @param Content $content
+     * @param Pln $pln
+     * @param Deposit $deposit
      */
     public function editAction(Request $request, Content $content, Pln $pln, Deposit $deposit) {
         $editForm = $this->createForm(ContentType::class, $content);
@@ -141,6 +149,8 @@ class ContentController extends Controller {
      * @Method("GET")
      * @param Request $request
      * @param Content $content
+     * @param Pln $pln
+     * @param Deposit $deposit
      */
     public function deleteAction(Request $request, Content $content, Pln $pln, Deposit $deposit) {
         $em = $this->getDoctrine()->getManager();

@@ -27,7 +27,7 @@ class ImportKeystoreCommand extends ContainerAwareCommand
     private $filePaths;
     
     /**
-     * {@inheritDoc}
+     * Build the import keystore command.
      * 
      * @param EntityManagerInterface $em
      * @param FilePaths $filePaths

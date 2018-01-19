@@ -28,6 +28,7 @@ class AuController extends Controller {
      * @Method("GET")
      * @Template()
      * @param Request $request
+     * @param Pln $pln
      */
     public function indexAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
@@ -50,6 +51,7 @@ class AuController extends Controller {
      * @Method("GET")
      * @Template()
      * @param Au $au
+     * @param Pln $pln
      */
     public function showAction(Au $au, Pln $pln) {
 

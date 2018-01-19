@@ -30,6 +30,7 @@ class BoxController extends Controller {
      * @Method("GET")
      * @Template()
      * @param Request $request
+     * @param Pln $pln
      */
     public function indexAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
@@ -52,6 +53,7 @@ class BoxController extends Controller {
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
+     * @param Pln $pln
      */
     public function newAction(Request $request, Pln $pln) {
         $box = new Box();
@@ -81,6 +83,7 @@ class BoxController extends Controller {
      * @Route("/{id}", name="box_show")
      * @Method("GET")
      * @Template()
+     * @param Pln $pln
      * @param Box $box
      */
     public function showAction(Pln $pln, Box $box) {
@@ -101,6 +104,7 @@ class BoxController extends Controller {
      * @Method({"GET", "POST"})
      * @Template()
      * @param Request $request
+     * @param Pln $pln
      * @param Box $box
      */
     public function editAction(Request $request, Pln $pln, Box $box) {
@@ -131,6 +135,7 @@ class BoxController extends Controller {
      * @Route("/{id}/delete", name="box_delete")
      * @Method("GET")
      * @param Request $request
+     * @param Pln $pln
      * @param Box $box
      */
     public function deleteAction(Request $request, Pln $pln, Box $box) {

@@ -30,6 +30,8 @@ class DepositStatusController extends Controller {
      * @Method("GET")
      * @Template()
      * @param Request $request
+     * @param Pln $pln
+     * @param Deposit $deposit
      */
     public function indexAction(Request $request, Pln $pln, Deposit $deposit) {
         $em = $this->getDoctrine()->getManager();
@@ -53,6 +55,8 @@ class DepositStatusController extends Controller {
      * @Method("GET")
      * @Template()
      * @param DepositStatus $depositStatus
+     * @param Pln $pln
+     * @param Deposit $deposit
      */
     public function showAction(DepositStatus $depositStatus, Pln $pln, Deposit $deposit) {
 
