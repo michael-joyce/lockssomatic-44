@@ -15,22 +15,33 @@ namespace AppBundle\Services;
  */
 class Encoder {
     
+    /**
+     * LOCKSS does a percent-encoding for some things. It's very similar to the
+     * result or rawurlencode(), but the set of characters encoded is slightly 
+     * different.
+     * 
+     * @param string $string
+     * @return string
+     */
     public function encode($string) {
         $callback = function ($matches) {
             $char = ord($matches[0]);
             return '%'.strtoupper(sprintf('%02x', $char));
         };
 
-        return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $string);
+        $encoded = preg_replace_callback('/[^a-zA-Z0-9_* -]/', $callback, $string);
+        return str_replace(' ', '+', $encoded);
     }
     
+    /**
+     * The encoding is compatible with URL encoding.
+     * 
+     * @param type $string
+     * @return type
+     */
     public function decode($string) {
-        $callback = function ($matches) {
-            $char = chr(hexdec($matches[0]));
-            return $char;
-        };
-
-        return preg_replace_callback('/%([:xdigit:]{2})/', $callback, $string);
+        $decoded = str_replace('+', ' ', $string);
+        return rawurldecode($decoded);
     }
     
 }
