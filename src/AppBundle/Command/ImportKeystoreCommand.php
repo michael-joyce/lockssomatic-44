@@ -10,6 +10,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Import a java keystore for use in a PLN.
+ */
 class ImportKeystoreCommand extends ContainerAwareCommand
 {
     
@@ -23,12 +26,21 @@ class ImportKeystoreCommand extends ContainerAwareCommand
      */
     private $filePaths;
     
+    /**
+     * {@inheritDoc}
+     * 
+     * @param EntityManagerInterface $em
+     * @param FilePaths $filePaths
+     */
     public function __construct(EntityManagerInterface $em, FilePaths $filePaths) {
         $this->em = $em;
         $this->filePaths = $filePaths;
         parent::__construct();
     }
     
+    /**
+     * {@inheritDoc}
+     */
     protected function configure()
     {
         $this
@@ -39,6 +51,13 @@ class ImportKeystoreCommand extends ContainerAwareCommand
         ;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return null
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $plnId = $input->getArgument('plnId');

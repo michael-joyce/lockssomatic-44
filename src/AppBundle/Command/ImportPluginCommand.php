@@ -12,9 +12,15 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use ZipArchive;
 
+/**
+ * Import one or more LOCKSS plugins.
+ */
 class ImportPluginCommand extends ContainerAwareCommand
 {
     
+    /**
+     * @var EntityManagerInterface
+     */
     private $em;
     
     /**
@@ -27,6 +33,13 @@ class ImportPluginCommand extends ContainerAwareCommand
      */
     private $filePaths;
     
+    /**
+     * {@inheritDoc}
+     * 
+     * @param EntityManagerInterface $em
+     * @param PluginImporter $importer
+     * @param FilePaths $filePaths
+     */
     public function __construct(EntityManagerInterface $em, PluginImporter $importer, FilePaths $filePaths) {
         $this->em = $em;
         $this->importer = $importer;
@@ -34,6 +47,9 @@ class ImportPluginCommand extends ContainerAwareCommand
         parent::__construct();
     }
     
+    /**
+     * {@inheritDoc}
+     */
     protected function configure()
     {
         $this
@@ -43,6 +59,12 @@ class ImportPluginCommand extends ContainerAwareCommand
         ;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $files = $input->getArgument('files');
