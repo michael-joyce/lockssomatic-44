@@ -36,7 +36,7 @@ class BoxListenerTest extends BaseTestCase {
         $box = new Box();
         $box->setHostname($hostname);
         $box->setIpAddress($ip);
-        $args = new LifecycleEventArgs($box, $this->em);
+        $args = new LifecycleEventArgs($box, $this->getDoctrine());
         $this->listener->prePersist($args);
         $this->assertEquals($expected, $box->getIpAddress());
     }
@@ -55,7 +55,7 @@ class BoxListenerTest extends BaseTestCase {
         $box = new Box();
         $box->setHostname($hostname);
         $box->setIpAddress($ip);
-        $args = new LifecycleEventArgs($box, $this->em);
+        $args = new LifecycleEventArgs($box, $this->getDoctrine());
         $this->listener->preUpdate($args);
         $this->assertEquals($expected, $box->getIpAddress());
     }

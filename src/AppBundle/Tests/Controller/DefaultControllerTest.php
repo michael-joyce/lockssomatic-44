@@ -20,16 +20,16 @@ class DefaultControllerTest extends WebTestCase {
     }
 
     public function testAnonHomePage() {
-        $client = $this->createClient();
+        $client = $this->makeClient();
         $crawler = $client->request('GET', '/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertContains('LOCKSSOMatic', $crawler->filter('.page-header h1')->text());
     }
 
     public function testUserHomePage() {
-        $client = $this->createClient([
-            'user' => 'user@example.com',
-            'pass' => 'secret',
+        $client = $this->makeClient([
+            'username' => 'user@example.com',
+            'password' => 'secret',
         ]);
         $crawler = $client->request('GET', '/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
@@ -37,9 +37,9 @@ class DefaultControllerTest extends WebTestCase {
     }
 
     public function testAdminHomePage() {
-        $client = $this->createClient([
-            'user' => 'admin@example.com',
-            'pass' => 'supersecret',
+        $client = $this->makeClient([
+            'username' => 'admin@example.com',
+            'password' => 'supersecret',
         ]);
         $crawler = $client->request('GET', '/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());

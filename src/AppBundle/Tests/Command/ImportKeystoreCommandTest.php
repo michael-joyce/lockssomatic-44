@@ -38,7 +38,7 @@ class ImportKeystoreCommandTest extends BaseTestCase
             'plnId' => 1,
             'path' => self::KEYSTORE,
         ]);
-        $pln = $this->em->find(Pln::class, 1);
+        $pln = $this->getDoctrine()->find(Pln::class, 1);
         $this->assertEquals(basename(self::KEYSTORE), $pln->getKeystoreFilename());
     }
 }

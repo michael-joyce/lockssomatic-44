@@ -12,6 +12,8 @@ doctrine:
             default:
                 driver:   pdo_sqlite
                 path:     %kernel.cache_dir%/test.db
+                logging:  false
+                profiling: false
                 
 security:
     encoders:
@@ -27,6 +29,15 @@ framework:
     profiler:
         collect: false
 
+monolog:
+    use_microseconds: false
+    handlers:
+        main:
+            type: stream
+            path: '%kernel.logs_dir%/%kernel.environment%.log'
+            level: error
+            channels: ['!event', '!doctrine', '!console', '!translation']
+            
 web_profiler:
     toolbar: false
     intercept_redirects: false

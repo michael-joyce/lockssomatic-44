@@ -192,14 +192,16 @@ class PluginImporterTest extends BaseTestCase {
     }
     
     public function testAddProperties() {
+        $em = $this->getDoctrine();
+        
         $xml = simplexml_load_string($this->xmlData());
         $plugin = new Plugin();
         $plugin->setName('test plugin');
         $plugin->setVersion(2);
         $plugin->setIdentifier('com.example.lockss.plugin');
-        $this->em->persist($plugin);
+        $em->persist($plugin);
         $this->importer->addProperties($plugin, $xml);
-        $this->em->flush();
+        $em->flush();
         $this->assertEquals(45, count($plugin->getPluginProperties()));
     }
     
@@ -207,7 +209,7 @@ class PluginImporterTest extends BaseTestCase {
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $this->importer->buildPlugin($xml);
         $this->assertInstanceOf(Plugin::class, $plugin);
-        $this->em->flush(); // make sure it was flushes to the db.
+        $this->getDoctrine()->flush(); // make sure it was flushes to the db.
         $this->assertNotNull($plugin->getId()); 
     }
     
@@ -227,7 +229,7 @@ class PluginImporterTest extends BaseTestCase {
     public function testBuildPluginDuplicate() {
         $xml = simplexml_load_string($this->xmlData());
         $this->importer->buildPlugin($xml);
-        $this->em->flush();
+        $this->getDoctrine()->flush();
         $this->importer->buildPlugin($xml);
     }
     
