@@ -37,24 +37,4 @@ class ContentTest extends BaseTestCase {
         $this->assertEquals('ABC123', $internal->getValue($this->content));
     }
     
-    /**
-     * @dataProvider getPropertyValueData
-     */
-    public function testGetPropertyValue($expected, $value, $encoded) {
-        $content = new Content();
-        $content->setProperty('test', $value);
-        $this->assertEquals($expected, $content->getProperty('test', $encoded));
-    }
-    
-    public function getPropertyValueData() {
-        return [
-            ['abc', 'abc', false],
-            ['abc def', 'abc def', false],
-            ['abc%20def', 'abc def', true],
-            ['abc%7Edef', 'abc~def', true],
-            ['abc%2Fdef', 'abc/def', true],
-            ['abc%2Edef', 'abc.def', true],
-        ];
-    }
-    
 }

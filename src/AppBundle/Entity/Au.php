@@ -293,10 +293,9 @@ class Au extends AbstractEntity {
     
     /**
      * @param string $key
-     * @param bool $encoded
      * @return string
      */
-    public function getAuPropertyValue($key, $encoded = false) {
+    public function getAuPropertyValue($key) {
         $value = '';
         $property = $this->getAuProperty($key);
         if($property === null) {
@@ -308,15 +307,7 @@ class Au extends AbstractEntity {
                 break;
             }
         }
-        if($encoded === false) {
-            return $value;
-        }
-        $callback = function ($matches) {
-            $char = ord($matches[0]);
-            return '%'.strtoupper(sprintf('%02x', $char));
-        };
-
-        return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
+        return $value;
     }
 
     /**

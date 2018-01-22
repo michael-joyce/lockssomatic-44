@@ -312,16 +312,12 @@ class Content extends AbstractEntity {
      * @param bool $encoded
      * @return string
      */
-    public function getProperty($key, $encoded = false) {
-        $value = $this->properties[$key];
-        if ($encoded === false || $value === null) {
-            return $value;
-        }
-        $callback = function ($matches) {
-            $char = ord($matches[0]);            
-            return '%' . strtoupper(sprintf('%02x', $char));
-        };
-        return preg_replace_callback('/[^-_*a-zA-Z0-9]/', $callback, $value);
+    public function getProperty($key) {
+        return $this->properties[$key];
+    }
+    
+    public function hasProperty($key) {
+        return isset($this->properties[$key]);
     }
 
 }
