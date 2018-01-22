@@ -14,7 +14,7 @@ class EncoderTest extends BaseTestCase {
 
     protected function setUp() {
         parent::setUp();
-        $this->encoder = static::$kernel->getContainer()->get(Encoder::class);
+        $this->encoder = $this->container->get(Encoder::class);
     }
 
     public function testSanity() {

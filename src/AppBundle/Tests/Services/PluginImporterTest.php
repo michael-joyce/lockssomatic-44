@@ -8,6 +8,7 @@
 
 namespace AppBundle\Tests\Services;
 
+use AppBundle\DataFixtures\ORM\LoadEmptyFixture;
 use AppBundle\Entity\Plugin;
 use AppBundle\Entity\PluginProperty;
 use AppBundle\Services\PluginImporter;
@@ -28,9 +29,13 @@ class PluginImporterTest extends BaseTestCase {
      */
     private $importer;
     
+    protected function getFixtures() {
+        return [];
+    }
+    
     protected function setUp() {
         parent::setUp();
-        $this->importer = static::$kernel->getContainer()->get(PluginImporter::class);
+        $this->importer = $this->container->get(PluginImporter::class);
     }
     
     protected function getArchiveStub() {
@@ -209,7 +214,7 @@ class PluginImporterTest extends BaseTestCase {
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $this->importer->buildPlugin($xml);
         $this->assertInstanceOf(Plugin::class, $plugin);
-        $this->getDoctrine()->flush(); // make sure it was flushes to the db.
+        $this->getDoctrine()->flush(); // make sure it was flushed to the db.
         $this->assertNotNull($plugin->getId()); 
     }
     

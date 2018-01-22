@@ -27,7 +27,7 @@ class AuPropertyGeneratorTest extends BaseTestCase {
     
     public function setUp() {
         parent::setUp();
-        $this->generator = static::$kernel->getContainer()->get(AuPropertyGenerator::class);
+        $this->generator = $this->container->get(AuPropertyGenerator::class);
     }
     
     public function testSanity() {

@@ -3,21 +3,25 @@
 namespace AppBundle\Tests\Services;
 
 use AppBundle\Services\FilePaths;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
-class FilePathsTest extends KernelTestCase {
+class FilePathsTest extends BaseTestCase {
 
     /**
      * @var FilePaths
      */
     private $filePaths;
+    
+    /**
+     * @var string
+     */
     private $root;
 
     protected function setUp() {
         parent::setUp();
         self::bootKernel();
-        $this->filePaths = static::$kernel->getContainer()->get(FilePaths::class);
-        $this->root = static::$kernel->getContainer()->getParameter('kernel.project_dir');
+        $this->filePaths = $this->container->get(FilePaths::class);
+        $this->root = $this->container->getParameter('kernel.project_dir');
     }
 
     public function testSanity() {

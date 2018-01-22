@@ -3,14 +3,13 @@
 namespace AppBundle\Tests\Services;
 
 use AppBundle\Entity\Content;
-use AppBundle\Entity\ContentProperty;
 use AppBundle\Services\ContentBuilder;
 use AppBundle\Utilities\Namespaces;
 use DateTime;
+use Nines\UtilBundle\Tests\Util\BaseTestCase;
 use SimpleXMLElement;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class ContentBuilderTest extends KernelTestCase {
+class ContentBuilderTest extends BaseTestCase {
 
     /**
      * @var ContentBuilder
@@ -20,7 +19,7 @@ class ContentBuilderTest extends KernelTestCase {
     public function setUp() {
         parent::setUp();
         self::bootKernel();
-        $this->builder = static::$kernel->getContainer()->get('AppBundle\Services\ContentBuilder');
+        $this->builder = $this->container->get('AppBundle\Services\ContentBuilder');
     }
 
     public function testInstace() {

@@ -27,20 +27,14 @@ class DefaultControllerTest extends WebTestCase {
     }
 
     public function testUserHomePage() {
-        $client = $this->makeClient([
-            'username' => 'user@example.com',
-            'password' => 'secret',
-        ]);
+        $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertContains('LOCKSSOMatic', $crawler->filter('.page-header h1')->text());
     }
 
     public function testAdminHomePage() {
-        $client = $this->makeClient([
-            'username' => 'admin@example.com',
-            'password' => 'supersecret',
-        ]);
+        $client = $this->makeClient(LoadUser::ADMIN);
         $crawler = $client->request('GET', '/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertContains('LOCKSSOMatic', $crawler->filter('.page-header h1')->text());
