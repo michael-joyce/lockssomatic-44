@@ -1,11 +1,5 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Plugin;
@@ -17,9 +11,7 @@ use SplFileInfo;
 use ZipArchive;
 
 /**
- * Description of PluginImporter
- *
- * @author Michael Joyce <ubermichael@gmail.com>
+ * Import plugin configuration from a Java .jar file.
  */
 class PluginImporter {
 

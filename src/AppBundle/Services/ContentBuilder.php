@@ -10,49 +10,48 @@ use SimpleXMLElement;
 use Symfony\Bridge\Monolog\Logger;
 
 /**
- * Description of ContentBuilder
- *
- * @author Michael Joyce <ubermichael@gmail.com>
+ * Build a content object.
  */
 class ContentBuilder {
 
     /**
+     * Psr/Logger compatible logger.
      * @var Logger
      */
     private $logger;
 
     /**
-     * @var ObjectManager
+     * Doctrine entity manager.
+     *
+     * @var EntityManagerInterface
      */
     private $em;
-
+    
     /**
-     * Set the logger
+     * Construct the service.
      *
-     * @param Logger $logger
+     * @param LoggerInterface $logger
+     *   Logger for warnings etc.
+     * @param EntityManagerInterface $em
+     *   Doctrine instance to persist properties.
      */
-    public function setLogger(Logger $logger) {
+    public function __construct(LoggerInterface $logger, EntityManagerInterface $em) {
         $this->logger = $logger;
+        $this->em = $em;
     }
 
     /**
-     * Set the entity manager via a poorly named function.
-     *
-     * @param Registry $registry
-     */
-    public function setRegistry(Registry $registry) {
-        $this->em = $registry->getManager();
-    }
-
-    /**
-     * Build a content item from some XML. Persists to the database if
-     * $this->em is set.
+     * Build a content item from some XML.
+     * 
+     * Persists, but does not flush, the object to the database.
      *
      * @param SimpleXMLElement $xml
+     *   The XML data.
      *
      * @return Content
+     *   The constructed content object.
      */
-    public function fromSimpleXML(SimpleXMLElement $xml) {
+    public function fromSimpleXml(SimpleXMLElement $xml) {
         $content = new Content();
         $content->setSize((string) $xml->attributes()->size);
         $content->setChecksumType((string) $xml->attributes()->checksumType);
@@ -75,14 +74,19 @@ class ContentBuilder {
     }
 
     /**
-     * Build a content item from an array, probably from a CSV file. The $record
-     * requires size, checksum type, checksum value, url. Title, is optional
-     * and anything required by the relevant LOCKSS plugin is also required.
+     * Build a content item from an array, probably from a CSV file. 
+     * 
+     * The $record requires size, checksum type, checksum value, url. Title 
+     * is optional and anything required by the relevant LOCKSS plugin is 
+     * also required.
      *
      * @param array $record
+     *   The data to build the object.
+     * 
      * @return Content
+     *   The built object.
      */
-    public function fromArray($record) {
+    public function fromArray(array $record) {
         $content = new Content();
         $content->setSize($record['size']);
         $content->setChecksumType($record['checksum type']);

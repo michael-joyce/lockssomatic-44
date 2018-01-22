@@ -1,7 +1,7 @@
 {
     "name": "michael/lom2",
     "license": "proprietary",
-    "type": "project",
+    "type": "MIT",
     "autoload": {
         "psr-4": {
             "": "src/"
