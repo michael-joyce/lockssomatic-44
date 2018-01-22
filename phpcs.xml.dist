@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<ruleset name="Custom Standard" namespace="LOM2">
+
+ <description>Coding standards for LOCKSSOMatic version 2</description>
+
+ <file>src/AppBundle</file>
+ 
+ <exclude-pattern>src/AppBundle/Test</exclude-pattern>
+
+ <arg value="s"/>
+ <!-- <arg value="p"/> -->
+
+ <config name="installed_paths" value="vendor/drupal/coder/coder_sniffer"/>
+ 
+ 
+ <ini name="memory_limit" value="-1"/>
+
+ <autoload>vendor/autoload.php</autoload>
+
+ <rule ref="vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml">
+   <exclude name="Drupal.Commenting.DataTypeNamespace.DataTypeNamespace"/>
+   <exclude name="Drupal.Commenting.FileComment.NamespaceNoFileDoc"/>
+ </rule>
+ 
+ <rule ref="vendor/drupal/coder/coder_sniffer/DrupalPractice/ruleset.xml"/>
+
+ <rule ref="Drupal.WhiteSpace.ScopeIndent">
+   <properties>
+     <property name="indent" value="4"/>
+   </properties>
+ </rule>
+ 
+ <rule ref="Generic.Commenting.Todo.CommentFound">
+  <message>Please review this TODO comment: %s</message>
+ </rule>
+ 
+ <rule ref="Generic.Files.LineLength">
+   <properties>
+     <property name="lineLimit" value="80"/>
+   </properties>
+ </rule>
+ 
+</ruleset>
