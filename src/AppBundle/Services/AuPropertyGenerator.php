@@ -80,4 +80,5 @@ class AuPropertyGenerator {
 
         return $property;
     }
+
 }

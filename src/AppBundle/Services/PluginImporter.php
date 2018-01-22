@@ -7,7 +7,6 @@ use AppBundle\Entity\PluginProperty;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use SimpleXMLElement;
-use SplFileInfo;
 use ZipArchive;
 
 /**
@@ -29,14 +28,12 @@ class PluginImporter {
     const MANIFEST = 'META-INF/MANIFEST.MF';
    
     /**
-     * Name of the manifest key that identifes a lockss plugin xml file 
-     * inside a jar.
+     * Name of the manifest key that identifes a lockss plugin xml file.
      */
     const PLUGIN_KEY = 'lockss-plugin';
 
     /**
-     * Names of the prop strings in the plugin's XML configuration file which
-     * should be imported.
+     * Names of the prop strings which should be imported.
      */
     const PROP_STRINGS = array(
         'au_name',
@@ -52,27 +49,32 @@ class PluginImporter {
 
     /**
      * List of the property lists which should be imported.
-     *
-     * @var array
      */
     const PROP_LISTS = array(
         'au_permission_url',
         'au_crawlrules',
         'au_start_url',
     );
+    
+    /**
+     * Property trees to import from a plugin's XML.
+     */
     const PROP_TREES = array(
         'plugin_config_props',
     );
 
     /**
+     * Doctrine instance.
+     *
      * @var EntityManagerInterface
      */
     private $em;
 
     /**
      * Set up the service.
-     * 
+     *
      * @param EntityManagerInterface $em
+     *   Doctrine manager instance.
      */
     public function __construct(EntityManagerInterface $em) {
         $this->em = $em;
@@ -80,9 +82,12 @@ class PluginImporter {
 
     /**
      * Get the manifest data from the archive.
-     * 
+     *
      * @param ZipArchive $zipArchive
+     *   Archive with the data.
+     *
      * @return array
+     *   Manifest data, each stanza as an array.
      */
     public function getManifest(ZipArchive $zipArchive) {
         $raw = $zipArchive->getFromName(self::MANIFEST);
@@ -94,15 +99,18 @@ class PluginImporter {
 
     /**
      * Fidn the plugin XML file entries in a manifest.
-     * 
+     *
      * @param array $manifest
+     *   Array of manifest stanzas.
+     *
      * @return array
+     *   List of plugin XML files.
      */
-    public function findPluginEntries($manifest) {
+    public function findPluginEntries(array $manifest) {
         $entries = [];
         foreach ($manifest as $section) {
             if (isset($section[self::PLUGIN_KEY]) && $section[self::PLUGIN_KEY] === 'true') {
-                // the comparison above must be string, not boolean.
+                // The comparison above must be string, not boolean.
                 $entries[] = $section['name'];
             }
         }
@@ -111,10 +119,15 @@ class PluginImporter {
 
     /**
      * Get the plugin XML from the archive at the $entry path.
-     * 
+     *
      * @param ZipArchive $zipArchive
+     *   Archive containing the XML.
      * @param string $entry
+     *   Location of the XML.
+     *
      * @return SimpleXMLElement
+     *   Constructed XML object
+     *
      * @throws Exception
      */
     public function getPluginXml(ZipArchive $zipArchive, $entry) {
@@ -128,9 +141,12 @@ class PluginImporter {
 
     /**
      * Parse a manifest string.
-     * 
+     *
      * @param string $raw
-     * @return array 
+     *   Raw manifest data.
+     *
+     * @return array
+     *   Parsed manifest data.
      */
     public function parseManifest($raw) {
         $manifest = preg_replace('/\r\n/', "\n", $raw);
@@ -162,8 +178,13 @@ class PluginImporter {
      * Find a property string in a LOCKSS plugin.xml file.
      *
      * @param SimpleXMLElement $xml
+     *   XML object containing the data.
      * @param string $propName
-     * @return string
+     *   Property to find.
+     *
+     * @return string|null
+     *   The data found.
+     *
      * @throws Exception
      */
     public function findXmlPropString(SimpleXMLElement $xml, $propName) {
@@ -172,7 +193,7 @@ class PluginImporter {
             return (string) $data[0];
         }
         if (count($data) === 0) {
-            return;
+            return null;
         }
         throw new Exception('Too many entry elements for property string ' . $propName);
     }
@@ -181,9 +202,12 @@ class PluginImporter {
      * Find a list element in a LOCKSS plugin.xml file.
      *
      * @param SimpleXMLElement $xml
-     * @param type $propName
+     *   The XML object containing the data.
+     * @param string $propName
+     *   Name of the property to extract.
      *
-     * @return SimpleXMLElement
+     * @return SimpleXMLElement|null
+     *   Extracted XML data.
      *
      * @throws Exception
      */
@@ -193,17 +217,21 @@ class PluginImporter {
             return $data[0];
         }
         if (count($data) === 0) {
-            return;
+            return null;
         }
         throw new Exception('Too many entry elements for property element' . $propName);
     }
 
     /**
      * Import data from $value as children of $property.
-     * 
+     *
      * @param PluginProperty $property
+     *   Parent property.
      * @param SimpleXMLElement $value
+     *   XML value to import.
+     *
      * @return PluginProperty
+     *   The constructed and persisted property.
      */
     public function importChildren(PluginProperty $property, SimpleXMLElement $value) {
         $childProperty = new PluginProperty();
@@ -228,13 +256,20 @@ class PluginImporter {
     }
 
     /**
-     * Import plugin configuration data from the $name element in $value, as 
+     * Build a new plugin configuration tree.
+     *
+     * Import plugin configuration data from the $name element in $value, as
      * properties of $plugin.
-     * 
+     *
      * @param Plugin $plugin
+     *   Plugin for which the configuration data is being imported.
      * @param string $name
+     *   Name of the property to import.
      * @param SimpleXMLElement $value
+     *   Data to import.
+     *
      * @return PluginProperty
+     *   Constructed property, assigned to $plugin.
      */
     public function newPluginConfig(Plugin $plugin, $name, SimpleXMLElement $value) {
         $property = new PluginProperty();
@@ -249,13 +284,18 @@ class PluginImporter {
     }
 
     /**
-     * Generate and persist a new plugin property object named $name and value
-     * $value.
+     * Generate and persist a new plugin property object.
      *
      * @param Plugin $plugin
+     *   Plugin for the new property.
      * @param string $name
+     *   Name of the new property.
      * @param SimpleXMLElement|string $value
+     *   Data to add to the property.
+     *
      * @return PluginProperty
+     *   Constructed property.
+     *
      * @throws Exception
      */
     public function newPluginProperty(Plugin $plugin, $name, $value = null) {
@@ -272,10 +312,11 @@ class PluginImporter {
             return $property;
         }
         switch ($value->getName()) {
-            // this is the name of the XML element defining the property.
+            // This is the name of the XML element defining the property.
             case 'string':
                 $property->setPropertyValue((string) $value);
                 break;
+
             case 'list':
                 $values = array();
                 foreach ($value->children() as $child) {
@@ -283,6 +324,7 @@ class PluginImporter {
                 }
                 $property->setPropertyValue($values);
                 break;
+
             default:
                 throw new Exception("Cannot import simple property {$name}.");
         }
@@ -290,12 +332,15 @@ class PluginImporter {
     }
 
     /**
-     * Import the data from the plugin. Does not create content
-     * owners for the plugins, that's handled by the titledb import
-     * command.
+     * Import the data from the plugin.
+     *
+     * Does not create content owners for the plugins, that's handled by the
+     * titledb import command.
      *
      * @param Plugin $plugin
+     *   Plugin for the properties to import to.
      * @param SimpleXMLElement $xml
+     *   Data to import.
      */
     public function addProperties(Plugin $plugin, SimpleXMLElement $xml) {
         foreach (self::PROP_STRINGS as $propName) {
@@ -318,7 +363,11 @@ class PluginImporter {
      * Build a plugin entity from the XML data and return it.
      *
      * @param SimpleXMLElement $xml
+     *   Data to use to construct the plugin.
+     *
      * @return Plugin
+     *   The constructed, persisted plugin.
+     *
      * @throws Exception
      */
     public function buildPlugin(SimpleXMLElement $xml) {
@@ -345,27 +394,31 @@ class PluginImporter {
     }
 
     /**
-     * Import the plugin data from a zip archive, and optionallly flush it into
-     * the database.
-     * 
+     * Import the plugin data from a zip archive.
+     *
      * @param ZipArchive $zip
+     *   Archive to import.
      * @param bool $flush
+     *   If true, flush the plugin to the database.
+     *
      * @return Plugin
+     *   The constructed and populated plugin.
+     *
      * @throws Exception
      */
     public function import(ZipArchive $zip, $flush = true) {
         $raw = $zip->getFromName(self::MANIFEST);
         $manifest = $this->parseManifest(preg_replace('/\r\n/', "\n", $raw));
         $entries = $this->findPluginEntries($manifest);
-        if(count($entries) === 0) {
+        if (count($entries) === 0) {
             throw new Exception("No LOCKSS entries found in manifest.");
         }
-        if(count($entries) > 1) {
+        if (count($entries) > 1) {
             throw new Exception("Too many LOCKSS entries in plugin manifest.");
         }
         $xml = $this->getPluginXml($zip, $entries[0]);
         $plugin = $this->buildPlugin($xml);
-        if($flush) {
+        if ($flush) {
             $this->em->flush();
         }
         return $plugin;

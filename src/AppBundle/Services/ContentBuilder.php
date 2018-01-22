@@ -15,6 +15,7 @@ class ContentBuilder {
 
     /**
      * Psr/Logger compatible logger.
+     *
      * @var Logger
      */
     private $logger;
@@ -25,7 +26,7 @@ class ContentBuilder {
      * @var EntityManagerInterface
      */
     private $em;
-    
+
     /**
      * Construct the service.
      *
@@ -41,7 +42,7 @@ class ContentBuilder {
 
     /**
      * Build a content item from some XML.
-     * 
+     *
      * Persists, but does not flush, the object to the database.
      *
      * @param SimpleXMLElement $xml
@@ -64,7 +65,7 @@ class ContentBuilder {
         foreach ($xml->xpath('lom:property') as $node) {
             $content->setProperty((string) $node->attributes()->name, (string) $node->attributes()->value);
         }
-        
+
         if ($this->em !== null) {
             $this->em->persist($content);
         }
@@ -73,15 +74,15 @@ class ContentBuilder {
     }
 
     /**
-     * Build a content item from an array, probably from a CSV file. 
-     * 
-     * The $record requires size, checksum type, checksum value, url. Title 
-     * is optional and anything required by the relevant LOCKSS plugin is 
+     * Build a content item from an array, probably from a CSV file.
+     *
+     * The $record requires size, checksum type, checksum value, url. Title
+     * is optional and anything required by the relevant LOCKSS plugin is
      * also required.
      *
      * @param array $record
      *   The data to build the object.
-     * 
+     *
      * @return Content
      *   The built object.
      */

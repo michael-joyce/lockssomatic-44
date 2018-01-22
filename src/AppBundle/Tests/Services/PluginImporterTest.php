@@ -1,14 +1,7 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace AppBundle\Tests\Services;
 
-use AppBundle\DataFixtures\ORM\LoadEmptyFixture;
 use AppBundle\Entity\Plugin;
 use AppBundle\Entity\PluginProperty;
 use AppBundle\Services\PluginImporter;
@@ -19,8 +12,6 @@ use ZipArchive;
 
 /**
  * Description of PluginImporterTest
- *
- * @author Michael Joyce <ubermichael@gmail.com>
  */
 class PluginImporterTest extends BaseTestCase {
     
