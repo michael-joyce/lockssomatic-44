@@ -16,9 +16,8 @@ class ContentBuilderTest extends BaseTestCase {
      */
     private $builder;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
-        self::bootKernel();
         $this->builder = $this->container->get('AppBundle\Services\ContentBuilder');
     }
 

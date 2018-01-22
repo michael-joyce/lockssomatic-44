@@ -3,9 +3,8 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Content;
-use AppBundle\Entity\ContentProperty;
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use SimpleXMLElement;
 use Symfony\Bridge\Monolog\Logger;
 

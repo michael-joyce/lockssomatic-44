@@ -19,7 +19,6 @@ class FilePathsTest extends BaseTestCase {
 
     protected function setUp() {
         parent::setUp();
-        self::bootKernel();
         $this->filePaths = $this->container->get(FilePaths::class);
         $this->root = $this->container->getParameter('kernel.project_dir');
     }
