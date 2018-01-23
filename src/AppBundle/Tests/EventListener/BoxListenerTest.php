@@ -1,5 +1,12 @@
 <?php
 
+/*
+ *  This file is licensed under the MIT License version 3 or
+ *  later. See the LICENSE file for details.
+ *
+ *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ */
+
 namespace AppBundle\EventListener;
 
 // Mock the gethostbyname function in the AppBundle\EventListener namespace to 

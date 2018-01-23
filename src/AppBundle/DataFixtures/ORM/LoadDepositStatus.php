@@ -1,9 +1,10 @@
 <?php
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  This file is licensed under the MIT License version 3 or
+ *  later. See the LICENSE file for details.
+ *
+ *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
  */
 
 namespace AppBundle\DataFixtures\ORM;
