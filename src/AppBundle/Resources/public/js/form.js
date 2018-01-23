@@ -1,3 +1,7 @@
+/**
+ * @file
+ */
+
 (function ($, window) {
 
     var hostname = window.location.hostname.replace('www.', '');
