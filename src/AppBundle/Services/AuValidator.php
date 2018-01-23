@@ -53,49 +53,50 @@ class AuValidator {
     
     /**
      * Validate the AU content.
-     * 
+     *
      * Checks that every content item in the AU has the same set
      * of definitional configuration parameters, and returns the
      * number of errors.
-     * 
+     *
      * @param Au $au
-     * The AU to check.
+     *   The AU to check.
+     *
      * @return int
-     * The number of errors found.
-     * 
+     *   The number of errors found.
+     *
      * @throws \Exception
      */
     public function validate(Au $au) {
         $errors = 0;
         $plugin = $au->getPlugin();
-        if( ! $plugin) {
+        if (!$plugin) {
             throw new \Exception("Cannot validate an AU without a plugin.");
         }
         $definitional = $plugin->getDefinitionalProperties();
-        if( ! $definitional || count($definitional) === 0) {
+        if (!$definitional || count($definitional) === 0) {
             throw new \Exception("Cannot validate AU with plugin without definitional properties.");
         }
         
-        $repo = $this->em->getRepository(Content::class);        
+        $repo = $this->em->getRepository(Content::class);
         $iterator = $repo->auQuery($au)->iterate();
         
         $first = $iterator->next()[0];
         $base = [];
-        foreach($definitional as $name) {
+        foreach ($definitional as $name) {
             $base[$name] = $first->getProperty($name);
         }
         
         $i = 0;
         while (($row = $iterator->next()) !== false) {
             $content = $row[0];
-            foreach($definitional as $name) {
-                if($content->getProperty($name) !== $base[$name]) {
+            foreach ($definitional as $name) {
+                if ($content->getProperty($name) !== $base[$name]) {
                     $errors++;
                 }
             }
 
             $i++;
-            if($i % self::BATCHSIZE === 0) {
+            if ($i % self::BATCHSIZE === 0) {
                 $this->em->clear();
             }
         }
