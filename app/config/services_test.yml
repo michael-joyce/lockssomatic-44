@@ -38,6 +38,9 @@ services:
     AppBundle\Services\AuPropertyGenerator:
         public: true
         
+    AppBundle\Services\AuValidator:
+        public: true
+        
     AppBundle\Services\ContentBuilder:
         public: true
         

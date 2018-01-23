@@ -297,7 +297,30 @@ class Plugin extends AbstractEntity {
     }
     
     /**
-     * Convenience method. Get the definitional plugin parameter names.
+     * Get a list of the configparamdescr plugin properties.
+     *
+     * @return PluginProperties[]
+     */
+    public function getPluginConfigParams() {
+        $properties = array();
+        foreach ($this->getPluginProperties() as $prop) {
+            /** @var PluginProperties $prop */
+            if ($prop->getPropertyKey() !== 'plugin_config_props') {
+                continue;
+            }
+            foreach ($prop->getChildren() as $child) {
+                if ($child->getPropertyKey() !== 'org.lockss.daemon.ConfigParamDescr') {
+                    continue;
+                }
+                $properties[] = $child;
+            }
+        }
+
+        return $properties;
+    }
+    
+    /**
+     * Get the definitional plugin parameter names.
      *
      * @return ArrayCollection|PluginProperty[]
      */
