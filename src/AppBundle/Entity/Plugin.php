@@ -12,7 +12,6 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
-use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Plugin
@@ -22,6 +21,10 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class Plugin extends AbstractEntity {
 
+    const CONFIG_PROPS = 'plugin_config_props';
+    
+    const DESCR_NAME = 'org.lockss.daemon.ConfigParamDescr';
+    
     /**
      * Name of the plugin.
      *
@@ -312,11 +315,11 @@ class Plugin extends AbstractEntity {
         $properties = array();
         foreach ($this->getPluginProperties() as $prop) {
             /** @var PluginProperties $prop */
-            if ($prop->getPropertyKey() !== 'plugin_config_props') {
+            if ($prop->getPropertyKey() !== self::CONFIG_PROPS) {
                 continue;
             }
             foreach ($prop->getChildren() as $child) {
-                if ($child->getPropertyKey() !== 'org.lockss.daemon.ConfigParamDescr') {
+                if ($child->getPropertyKey() !== self::DESCR_NAME) {
                     continue;
                 }
                 $properties[] = $child;

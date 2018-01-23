@@ -16,7 +16,7 @@ use Nines\UtilBundle\Tests\Util\BaseTestCase;
 /**
  * Description of PluginPropertyTest
  */
-class AuTest extends BaseTestCase {
+class PluginTest extends BaseTestCase {
     
     protected function getFixtures() {
         return [
