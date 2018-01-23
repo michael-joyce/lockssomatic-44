@@ -2,21 +2,20 @@
 
 namespace AppBundle\Tests\Controller;
 
-use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Nines\UserBundle\DataFixtures\ORM\LoadUser;
+use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 /**
  * Description of DefaultControllerTest
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class DefaultControllerTest extends WebTestCase {
+class DefaultControllerTest extends BaseTestCase {
 
-    public function setUp() {
-        parent::setUp();
-        $this->loadFixtures([
+    public function getFixtures() {
+        return [
             LoadUser::class
-        ]);
+        ];
     }
 
     public function testAnonHomePage() {

@@ -278,5 +278,84 @@ class Plugin extends AbstractEntity {
             return $p->getParent() === null;
         });
     }
+    
+    /**
+     * Get a Property object.
+     *
+     * @param type $propertyKey
+     *
+     * @return PluginProperty|null
+     */
+    public function getProperty($propertyKey) {
+        foreach ($this->getPluginProperties() as $property) {
+            if ($property->getPropertyKey() === $propertyKey) {
+                return $property;
+            }
+        }
 
+        return null;
+    }
+    
+    /**
+     * Convenience method. Get the definitional plugin parameter names.
+     *
+     * @return ArrayCollection|PluginProperty[]
+     */
+    public function getDefinitionalProperties() {
+        $properties = array();
+
+        foreach ($this->getPluginConfigParams() as $prop) {
+            $key = '';
+            $definitional = false;
+            foreach ($prop->getChildren() as $child) {
+                if ($child->getPropertyKey() === 'key') {
+                    $key = $child->getPropertyValue();
+                }
+                if ($child->getPropertyKey() !== 'definitional') {
+                    continue;
+                }
+                if ($child->getPropertyValue() === 'true') {
+                    $definitional = true;
+                }
+            }
+            if ($key !== '' && $definitional === true) {
+                $properties[] = $key;
+            }
+        }
+
+        return $properties;
+    }
+
+    /**
+     * Convenience method. Get the plugin parameter names which are not
+     * definitonal.
+     *
+     * @return ArrayCollection|PluginProperty[]
+     */
+    public function getNonDefinitionalProperties() {
+        $properties = array();
+
+        foreach ($this->getPluginConfigParams() as $prop) {
+            $key = '';
+            $nonDefinitional = false;
+            foreach ($prop->getChildren() as $child) {
+                if ($child->getPropertyKey() === 'key') {
+                    $key = $child->getPropertyValue();
+                }
+                if ($child->getPropertyKey() !== 'definitional') {
+                    continue;
+                }
+                if ($child->getPropertyValue() === 'false') {
+                    $nonDefinitional = true;
+                }
+            }
+            if ($key !== '' && $nonDefinitional === true) {
+                $properties[] = $key;
+            }
+        }
+
+        return $properties;
+    }
+    
+    
 }
