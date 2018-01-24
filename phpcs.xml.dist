@@ -39,6 +39,7 @@
     <rule ref="vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml">
         <exclude name="Drupal.Array.Array.ArrayIndentation"/>
         <exclude name="Drupal.WhiteSpace.ScopeClosingBrace.BreakIndent"/>
+        <exclude name="Drupal.Classes.UnusedUseStatement.UnusedUse"/>
         <exclude name="Drupal.ControlStructures.ControlSignature.NewlineAfterCloseBrace"/>
         <exclude name="Drupal.Commenting.DataTypeNamespace.DataTypeNamespace"/>
         <exclude name="Drupal.Commenting.FileComment.NamespaceNoFileDoc"/>

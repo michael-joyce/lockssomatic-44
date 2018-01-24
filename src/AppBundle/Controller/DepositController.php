@@ -33,11 +33,14 @@ class DepositController extends Controller {
     /**
      * Lists all Deposit entities.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The PLN, determined from the URL.
+     *
      * @Route("/", name="deposit_index")
      * @Method("GET")
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
      */
     public function indexAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
@@ -56,23 +59,25 @@ class DepositController extends Controller {
     /**
      * Search for Deposit entities.
      *
-     * To make this work, add a method like this one to the 
+     * To make this work, add a method like this one to the
      * AppBundle:Deposit repository. Replace the fieldName with
      * something appropriate, and adjust the generated search.html.twig
      * template.
-     * 
-      //    public function searchQuery($q) {
-      //        $qb = $this->createQueryBuilder('e');
-      //        $qb->where("e.fieldName like '%$q%'");
-      //        return $qb->getQuery();
-      //    }
      *
+     * //    public function searchQuery($q) {
+     * //        $qb = $this->createQueryBuilder('e');
+     * //        $qb->where("e.fieldName like '%$q%'");
+     * //        return $qb->getQuery();
+     * //    }
+     *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The PLN, determined from the URL.
      *
      * @Route("/search", name="deposit_search")
      * @Method("GET")
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
      */
     public function searchAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
@@ -96,31 +101,27 @@ class DepositController extends Controller {
     /**
      * Full text search for Deposit entities.
      *
-     * To make this work, add a method like this one to the 
+     * To make this work, add a method like this one to the
      * AppBundle:Deposit repository. Replace the fieldName with
      * something appropriate, and adjust the generated fulltext.html.twig
      * template.
-     * 
-      //    public function fulltextQuery($q) {
-      //        $qb = $this->createQueryBuilder('e');
-      //        $qb->addSelect("MATCH_AGAINST (e.name, :q 'IN BOOLEAN MODE') as score");
-      //        $qb->add('where', "MATCH_AGAINST (e.name, :q 'IN BOOLEAN MODE') > 0.5");
-      //        $qb->orderBy('score', 'desc');
-      //        $qb->setParameter('q', $q);
-      //        return $qb->getQuery();
-      //    }
-     * 
+     *
+     * //    public function fulltextQuery($q) {
+     * //        $qb = $this->createQueryBuilder('e');
+     * //        $qb->addSelect("MATCH_AGAINST (e.name, :q 'IN BOOLEAN MODE') as score");
+     * //        $qb->add('where', "MATCH_AGAINST (e.name, :q 'IN BOOLEAN MODE') > 0.5");
+     * //        $qb->orderBy('score', 'desc');
+     * //        $qb->setParameter('q', $q);
+     * //        return $qb->getQuery();
+     * //    }
+     *
      * Requires a MatchAgainst function be added to doctrine, and appropriate
      * fulltext indexes on your Deposit entity.
      *     ORM\Index(name="alias_name_idx",columns="name", flags={"fulltext"})
      *
-     *
      * @Route("/fulltext", name="deposit_fulltext")
      * @Method("GET")
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
-     * @return array
      */
     public function fulltextAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
@@ -144,12 +145,15 @@ class DepositController extends Controller {
     /**
      * Creates a new Deposit entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The PLN, as determined by the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="deposit_new")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
      */
     public function newAction(Request $request, Pln $pln) {
         $deposit = new Deposit();
@@ -176,11 +180,14 @@ class DepositController extends Controller {
     /**
      * Finds and displays a Deposit entity.
      *
+     * @param Deposit $deposit
+     *   The deposit, as determined by the URL.
+     * @param Pln $pln
+     *   The PLN, as determined by the URL.
+     *
      * @Route("/{id}", name="deposit_show")
      * @Method("GET")
      * @Template()
-     * @param Deposit $deposit
-     * @param Pln $pln
      */
     public function showAction(Deposit $deposit, Pln $pln) {
 
@@ -193,13 +200,17 @@ class DepositController extends Controller {
     /**
      * Displays a form to edit an existing Deposit entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Deposit $deposit
+     *   The deposit, as determined by the URL.
+     * @param Pln $pln
+     *   The PLN, as determined by the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="deposit_edit")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
-     * @param Deposit $deposit
-     * @param Pln $pln
      */
     public function editAction(Request $request, Deposit $deposit, Pln $pln) {
         $editForm = $this->createForm(DepositType::class, $deposit);
@@ -222,12 +233,16 @@ class DepositController extends Controller {
     /**
      * Deletes a Deposit entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Deposit $deposit
+     *   The deposit, as determined by the URL.
+     * @param Pln $pln
+     *   The PLN, as determined by the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="deposit_delete")
      * @Method("GET")
-     * @param Request $request
-     * @param Deposit $deposit
-     * @param Pln $pln
      */
     public function deleteAction(Request $request, Deposit $deposit, Pln $pln) {
         $em = $this->getDoctrine()->getManager();

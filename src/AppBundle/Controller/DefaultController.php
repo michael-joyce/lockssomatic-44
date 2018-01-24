@@ -14,9 +14,17 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Default controller for LOCKSSOMatic. Totally open to the public.
+ */
 class DefaultController extends Controller {
 
     /**
+     * LOCKSSOMatic home page.
+     *
+     * @param Request $request
+     *   The HTTP Request.
+     *
      * @Route("/", name="homepage")
      * @Template()
      */

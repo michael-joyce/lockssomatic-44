@@ -33,12 +33,16 @@ class DepositStatusController extends Controller {
     /**
      * Lists all DepositStatus entities.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     * @param Deposit $deposit
+     *   The deposit, determined from the URL.
+     *
      * @Route("/", name="deposit_status_index")
      * @Method("GET")
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
-     * @param Deposit $deposit
      */
     public function indexAction(Request $request, Pln $pln, Deposit $deposit) {
         $em = $this->getDoctrine()->getManager();
@@ -58,12 +62,16 @@ class DepositStatusController extends Controller {
     /**
      * Finds and displays a DepositStatus entity.
      *
+     * @param DepositStatus $depositStatus
+     *   The deposit status, determined from the URL.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     * @param Deposit $deposit
+     *   The deposit, determined from the URL.
+     *
      * @Route("/{id}", name="deposit_status_show")
      * @Method("GET")
      * @Template()
-     * @param DepositStatus $depositStatus
-     * @param Pln $pln
-     * @param Deposit $deposit
      */
     public function showAction(DepositStatus $depositStatus, Pln $pln, Deposit $deposit) {
 

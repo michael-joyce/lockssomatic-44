@@ -33,12 +33,16 @@ class BoxStatusController extends Controller {
     /**
      * Lists all BoxStatus entities.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     * @param Box $box
+     *   The box, determined by the URL.
+     *
      * @Route("/", name="box_status_index")
      * @Method("GET")
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
-     * @param Box $box
      */
     public function indexAction(Request $request, Pln $pln, Box $box) {
         $em = $this->getDoctrine()->getManager();
@@ -58,12 +62,16 @@ class BoxStatusController extends Controller {
     /**
      * Finds and displays a BoxStatus entity.
      *
+     * @param BoxStatus $boxStatus
+     *   The box status to show.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     * @param Box $box
+     *   The box, determined by the URL.
+     *
      * @Route("/{id}", name="box_status_show")
      * @Method("GET")
      * @Template()
-     * @param BoxStatus $boxStatus
-     * @param Pln $pln
-     * @param Box $box
      */
     public function showAction(BoxStatus $boxStatus, Pln $pln, Box $box) {
 

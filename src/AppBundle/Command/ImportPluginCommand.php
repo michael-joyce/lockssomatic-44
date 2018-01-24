@@ -22,30 +22,38 @@ use ZipArchive;
 /**
  * Import one or more LOCKSS plugins.
  */
-class ImportPluginCommand extends ContainerAwareCommand
-{
-    
+class ImportPluginCommand extends ContainerAwareCommand {
+
     /**
+     * Doctrine instance.
+     *
      * @var EntityManagerInterface
      */
     private $em;
-    
+
     /**
+     * Importer service.
+     *
      * @var PluginImporter
      */
     private $importer;
-    
+
     /**
+     * Calculate file paths and locations.
+     *
      * @var FilePaths
      */
     private $filePaths;
-    
+
     /**
      * Build the import plugin command.
-     * 
+     *
      * @param EntityManagerInterface $em
+     *   Dependency injected doctrine.
      * @param PluginImporter $importer
+     *   Dependency injected plugin importer service.
      * @param FilePaths $filePaths
+     *   Dependency injected file path service.
      */
     public function __construct(EntityManagerInterface $em, PluginImporter $importer, FilePaths $filePaths) {
         $this->em = $em;
@@ -53,54 +61,47 @@ class ImportPluginCommand extends ContainerAwareCommand
         $this->filePaths = $filePaths;
         parent::__construct();
     }
-    
+
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function configure()
-    {
-        $this
-            ->setName('lom:import:plugin')
-            ->setDescription('Import one or more LOCKSS .jar plugins.')
-            ->addArgument('files', InputArgument::IS_ARRAY, 'List of .jar files')
-        ;
+    protected function configure() {
+        $this->setName('lom:import:plugin');
+        $this->setDescription('Import one or more LOCKSS .jar plugins.');
+        $this->addArgument('files', InputArgument::IS_ARRAY, 'List of .jar files');
     }
 
     /**
-     * {@inheritDoc}
-     * 
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) {
         $files = $input->getArgument('files');
-        foreach($files as $file) {
+        foreach ($files as $file) {
             $output->writeln($file);
             $type = mime_content_type($file);
-            if(!in_array($type, PluginImporter::MIMETYPES)) {
+            if (!in_array($type, PluginImporter::MIMETYPES)) {
                 $output->writeln("{$file} does not look like a .jar file: Mime type {$type} is unexpected.");
                 continue;
             }
-            if(!preg_match('/^[a-zA-Z0-9 .-]+\.jar$/', basename($file))) {
+            if (!preg_match('/^[a-zA-Z0-9 .-]+\.jar$/', basename($file))) {
                 $output->writeln("{$file} does not look like a Java .jar file. File name is strange. Skipped.");
                 continue;
             }
-            
+
             $zipArchive = new ZipArchive();
             $res = $zipArchive->open($file);
-            if($res !== true) {
+            if ($res !== true) {
                 $output->writeln("Cannot open {$file} as a zip archive: " . $res);
                 continue;
             }
             try {
                 $plugin = $this->importer->import($zipArchive, false);
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 $output->writeln("Cannot import {$file}: {$e->getMessage()}.");
                 continue;
             }
             $filename = basename($file, '.jar') . '-v' . $plugin->getVersion() . '.jar';
-            if( ! file_exists($this->filePaths->getPluginsDir())) {
+            if (!file_exists($this->filePaths->getPluginsDir())) {
                 mkdir($this->filePaths->getPluginsDir(), 0777, true);
             }
             $path = $this->filePaths->getPluginsDir() . '/' . $filename;

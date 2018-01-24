@@ -33,12 +33,16 @@ class AuStatusController extends Controller {
     /**
      * Lists all AuStatus entities.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The PLN, determined by the URL.
+     * @param Au $au
+     *   The AU, determined by the URL.
+     *
      * @Route("/", name="au_status_index")
      * @Method("GET")
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
-     * @param Au $au
      */
     public function indexAction(Request $request, Pln $pln, Au $au) {
         $em = $this->getDoctrine()->getManager();
@@ -58,12 +62,16 @@ class AuStatusController extends Controller {
     /**
      * Finds and displays a AuStatus entity.
      *
+     * @param AuStatus $auStatus
+     *   The Au Status to show.
+     * @param Pln $pln
+     *   The PLN, determined by the URL.
+     * @param Au $au
+     *   The AU, determined by the URL.
+     *
      * @Route("/{id}", name="au_status_show")
      * @Method("GET")
      * @Template()
-     * @param AuStatus $auStatus
-     * @param Pln $pln
-     * @param Au $au
      */
     public function showAction(AuStatus $auStatus, Pln $pln, Au $au) {
 

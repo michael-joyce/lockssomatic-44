@@ -29,10 +29,12 @@ class ContentOwnerController extends Controller {
     /**
      * Lists all ContentOwner entities.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     *
      * @Route("/", name="content_owner_index")
      * @Method("GET")
      * @Template()
-     * @param Request $request
      */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -50,11 +52,13 @@ class ContentOwnerController extends Controller {
     /**
      * Creates a new ContentOwner entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="content_owner_new")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
      */
     public function newAction(Request $request) {
         $contentOwner = new ContentOwner();
@@ -79,10 +83,12 @@ class ContentOwnerController extends Controller {
     /**
      * Finds and displays a ContentOwner entity.
      *
+     * @param ContentOwner $contentOwner
+     *   Content owner to show, determined by the URL.
+     *
      * @Route("/{id}", name="content_owner_show")
      * @Method("GET")
      * @Template()
-     * @param ContentOwner $contentOwner
      */
     public function showAction(ContentOwner $contentOwner) {
 
@@ -94,12 +100,15 @@ class ContentOwnerController extends Controller {
     /**
      * Displays a form to edit an existing ContentOwner entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param ContentOwner $contentOwner
+     *   Content owner to show, determined by the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="content_owner_edit")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
-     * @param ContentOwner $contentOwner
      */
     public function editAction(Request $request, ContentOwner $contentOwner) {
         $editForm = $this->createForm(ContentOwnerType::class, $contentOwner);
@@ -121,11 +130,14 @@ class ContentOwnerController extends Controller {
     /**
      * Deletes a ContentOwner entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param ContentOwner $contentOwner
+     *   Content owner to show, determined by the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="content_owner_delete")
      * @Method("GET")
-     * @param Request $request
-     * @param ContentOwner $contentOwner
      */
     public function deleteAction(Request $request, ContentOwner $contentOwner) {
         $em = $this->getDoctrine()->getManager();

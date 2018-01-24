@@ -33,11 +33,14 @@ class BoxController extends Controller {
     /**
      * Lists all Box entities.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     *
      * @Route("/", name="box_index")
      * @Method("GET")
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
      */
     public function indexAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
@@ -55,12 +58,15 @@ class BoxController extends Controller {
     /**
      * Creates a new Box entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="box_new")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
      */
     public function newAction(Request $request, Pln $pln) {
         $box = new Box();
@@ -87,14 +93,17 @@ class BoxController extends Controller {
     /**
      * Finds and displays a Box entity.
      *
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     * @param Box $box
+     *   The box to show, determined from the URL.
+     *
      * @Route("/{id}", name="box_show")
      * @Method("GET")
      * @Template()
-     * @param Pln $pln
-     * @param Box $box
      */
     public function showAction(Pln $pln, Box $box) {
-        if($pln->getId() !== $box->getId()) {
+        if ($pln->getId() !== $box->getId()) {
             throw new NotFoundHttpException("No such box.");
         }
         return array(
@@ -106,16 +115,20 @@ class BoxController extends Controller {
     /**
      * Displays a form to edit an existing Box entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     * @param Box $box
+     *   The box to show, determined from the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="box_edit")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
-     * @param Box $box
      */
     public function editAction(Request $request, Pln $pln, Box $box) {
-        if($pln->getId() !== $box->getId()) {
+        if ($pln->getId() !== $box->getId()) {
             throw new NotFoundHttpException("No such box.");
         }
         $editForm = $this->createForm(BoxType::class, $box);
@@ -138,15 +151,19 @@ class BoxController extends Controller {
     /**
      * Deletes a Box entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     * @param Box $box
+     *   The box to show, determined from the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="box_delete")
      * @Method("GET")
-     * @param Request $request
-     * @param Pln $pln
-     * @param Box $box
      */
     public function deleteAction(Request $request, Pln $pln, Box $box) {
-        if($pln->getId() !== $box->getId()) {
+        if ($pln->getId() !== $box->getId()) {
             throw new NotFoundHttpException("No such box.");
         }
         $em = $this->getDoctrine()->getManager();

@@ -31,11 +31,14 @@ class AuController extends Controller {
     /**
      * Lists all Au entities.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     *
      * @Route("/", name="au_index")
      * @Method("GET")
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
      */
     public function indexAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
@@ -54,11 +57,14 @@ class AuController extends Controller {
     /**
      * Finds and displays a Au entity.
      *
+     * @param Au $au
+     *   The AU to show.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     *
      * @Route("/{id}", name="au_show")
      * @Method("GET")
      * @Template()
-     * @param Au $au
-     * @param Pln $pln
      */
     public function showAction(Au $au, Pln $pln) {
 

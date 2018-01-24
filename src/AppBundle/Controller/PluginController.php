@@ -15,9 +15,7 @@ use AppBundle\Services\FilePaths;
 use AppBundle\Services\PluginImporter;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,14 +28,16 @@ use ZipArchive;
  * @Route("/plugin")
  */
 class PluginController extends Controller {
-    
+
     /**
      * Lists all Plugin entities.
+     *
+     * @param Request $request
+     *   The HTTP request instance.
      *
      * @Route("/", name="plugin_index")
      * @Method("GET")
      * @Template()
-     * @param Request $request
      */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -55,13 +55,17 @@ class PluginController extends Controller {
     /**
      * Creates a new Plugin entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param PluginImporter $pluginImporter
+     *   Dependency injected plugin importer service.
+     * @param FilePaths $filePaths
+     *   Dependency injected file path service.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="plugin_new")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
-     * @param PluginImporter $pluginImporter 
-     * @param FilePaths $filePaths
      */
     public function newAction(Request $request, PluginImporter $pluginImporter, FilePaths $filePaths) {
         $form = $this->createForm(FileUploadType::class, null, [
@@ -73,15 +77,15 @@ class PluginController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $file = $data['file'];
-            if(! in_array($file->getMimeType(), PluginImporter::MIMETYPES)) {
-                throw new Exception("Uploaded file does not look like a Java .jar file. Mime type is {$file->getMimeType()}");
+            if (!in_array($file->getMimeType(), PluginImporter::MIMETYPES)) {
+                throw new Exception("Uploaded file has bad mimetype is {$file->getMimeType()}");
             }
-            if(!preg_match('/^[a-zA-Z0-9 .-]+\.jar$/', $file->getClientOriginalName())) {
-                throw new Exception("Uploaded file does not look like a Java .jar file. File name is strange.");
+            if (!preg_match('/^[a-zA-Z0-9 .-]+\.jar$/', $file->getClientOriginalName())) {
+                throw new Exception("Uploaded file name name is strange.");
             }
             $zipArchive = new ZipArchive();
             $result = $zipArchive->open($file->getPathName());
-            if($result !== true) {
+            if ($result !== true) {
                 throw new Exception("Cannot read from uploaded file: " . $result);
             }
             $plugin = $pluginImporter->import($zipArchive, false);
@@ -103,10 +107,12 @@ class PluginController extends Controller {
     /**
      * Finds and displays a Plugin entity.
      *
+     * @param Plugin $plugin
+     *   Plugin to show.
+     *
      * @Route("/{id}", name="plugin_show")
      * @Method("GET")
      * @Template()
-     * @param Plugin $plugin
      */
     public function showAction(Plugin $plugin) {
 
@@ -114,4 +120,5 @@ class PluginController extends Controller {
             'plugin' => $plugin,
         );
     }
+
 }

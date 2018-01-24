@@ -32,10 +32,12 @@ class PlnController extends Controller {
     /**
      * Lists all Pln entities.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     *
      * @Route("/", name="pln_index")
      * @Method("GET")
      * @Template()
-     * @param Request $request
      */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -53,11 +55,13 @@ class PlnController extends Controller {
     /**
      * Creates a new Pln entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="pln_new")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
      */
     public function newAction(Request $request) {
         $pln = new Pln();
@@ -70,7 +74,9 @@ class PlnController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new pln was created.');
-            return $this->redirectToRoute('pln_show', array('id' => $pln->getId()));
+            return $this->redirectToRoute('pln_show', array(
+                'id' => $pln->getId(),
+            ));
         }
 
         return array(
@@ -78,17 +84,21 @@ class PlnController extends Controller {
             'form' => $form->createView(),
         );
     }
-    
+
     /**
      * Upload and add/replace the java keystore file for the Pln's plugins.
-     * 
+     *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     * @param FilePaths $filePaths
+     *   Dependency injected file path service.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/keystore", name="pln_keystore")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
-     * @param FilePaths $filePaths
      */
     public function keystoreAction(Request $request, Pln $pln, FilePaths $filePaths) {
         $form = $this->createForm(FileUploadType::class, null, [
@@ -96,14 +106,14 @@ class PlnController extends Controller {
             'label' => 'Keystore File',
         ]);
         $form->handleRequest($request);
-        
-        if($form->isSubmitted() && $form->isValid()) {
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $file = $data['file'];
-            if( ! in_array($file->getMimeType(), Pln::KEYSTORE_MIMETYPES)) {
+            if (!in_array($file->getMimeType(), Pln::KEYSTORE_MIMETYPES)) {
                 throw new Exception("Upload does not look like a keystore. Mime type is {$file->getMimeType()}");
             }
-            if(!preg_match('/^[a-zA-Z0-9 .-]+\.keystore$/', $file->getClientOriginalName())) {
+            if (!preg_match('/^[a-zA-Z0-9 .-]+\.keystore$/', $file->getClientOriginalName())) {
                 throw new Exception("Upload does not look like a keystore. File name is strange.");
             }
             $filename = $file->getClientOriginalName();
@@ -114,9 +124,11 @@ class PlnController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The keystore has been updated.');
-            return $this->redirectToRoute('pln_show', array('id' => $pln->getId()));
+            return $this->redirectToRoute('pln_show', array(
+                'id' => $pln->getId(),
+            ));
         }
-        
+
         return array(
             'form' => $form->createView(),
             'pln' => $pln,
@@ -126,10 +138,12 @@ class PlnController extends Controller {
     /**
      * Finds and displays a Pln entity.
      *
+     * @param Pln $pln
+     *   Pln to show, as determined by the URL.
+     *
      * @Route("/{id}", name="pln_show")
      * @Method("GET")
      * @Template()
-     * @param Pln $pln
      */
     public function showAction(Pln $pln) {
 
@@ -141,12 +155,15 @@ class PlnController extends Controller {
     /**
      * Displays a form to edit an existing Pln entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   Pln to show, as determined by the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="pln_edit")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
      */
     public function editAction(Request $request, Pln $pln) {
         $editForm = $this->createForm(PlnType::class, $pln);
@@ -156,7 +173,9 @@ class PlnController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The pln has been updated.');
-            return $this->redirectToRoute('pln_show', array('id' => $pln->getId()));
+            return $this->redirectToRoute('pln_show', array(
+                'id' => $pln->getId(),
+            ));
         }
 
         return array(
@@ -168,11 +187,14 @@ class PlnController extends Controller {
     /**
      * Deletes a Pln entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   Pln to delete, as determined by the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="pln_delete")
      * @Method("GET")
-     * @param Request $request
-     * @param Pln $pln
      */
     public function deleteAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();

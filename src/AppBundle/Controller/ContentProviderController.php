@@ -29,10 +29,12 @@ class ContentProviderController extends Controller {
     /**
      * Lists all ContentProvider entities.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     *
      * @Route("/", name="content_provider_index")
      * @Method("GET")
      * @Template()
-     * @param Request $request
      */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -50,11 +52,13 @@ class ContentProviderController extends Controller {
     /**
      * Creates a new ContentProvider entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="content_provider_new")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
      */
     public function newAction(Request $request) {
         $contentProvider = new ContentProvider();
@@ -79,10 +83,12 @@ class ContentProviderController extends Controller {
     /**
      * Finds and displays a ContentProvider entity.
      *
+     * @param ContentProvider $contentProvider
+     *   Content provider to show, determined by the URL.
+     *
      * @Route("/{id}", name="content_provider_show")
      * @Method("GET")
      * @Template()
-     * @param ContentProvider $contentProvider
      */
     public function showAction(ContentProvider $contentProvider) {
 
@@ -94,12 +100,15 @@ class ContentProviderController extends Controller {
     /**
      * Displays a form to edit an existing ContentProvider entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param ContentProvider $contentProvider
+     *   Content provider to show, determined by the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="content_provider_edit")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
-     * @param ContentProvider $contentProvider
      */
     public function editAction(Request $request, ContentProvider $contentProvider) {
         $editForm = $this->createForm(ContentProviderType::class, $contentProvider);
@@ -121,11 +130,14 @@ class ContentProviderController extends Controller {
     /**
      * Deletes a ContentProvider entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param ContentProvider $contentProvider
+     *   Content provider to show, determined by the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="content_provider_delete")
      * @Method("GET")
-     * @param Request $request
-     * @param ContentProvider $contentProvider
      */
     public function deleteAction(Request $request, ContentProvider $contentProvider) {
         $em = $this->getDoctrine()->getManager();

@@ -34,12 +34,16 @@ class ContentController extends Controller {
     /**
      * Lists all Content entities.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     * @param Deposit $deposit
+     *   The deposit determined from the URL.
+     *
      * @Route("/", name="deposit_content_index")
      * @Method("GET")
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
-     * @param Deposit $deposit
      */
     public function indexAction(Request $request, Pln $pln, Deposit $deposit) {
         $em = $this->getDoctrine()->getManager();
@@ -51,7 +55,7 @@ class ContentController extends Controller {
 
         return array(
             'contents' => $contents,
-            'pln' => $pln, 
+            'pln' => $pln,
             'deposit' => $deposit,
         );
     }
@@ -59,13 +63,17 @@ class ContentController extends Controller {
     /**
      * Creates a new Content entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     * @param Deposit $deposit
+     *   The deposit determined from the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="deposit_content_new")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
-     * @param Pln $pln
-     * @param Deposit $deposit
      */
     public function newAction(Request $request, Pln $pln, Deposit $deposit) {
         $content = new Content();
@@ -80,16 +88,16 @@ class ContentController extends Controller {
 
             $this->addFlash('success', 'The new content was created.');
             return $this->redirectToRoute('deposit_content_show', array(
-                'id' => $content->getId(),
-                'plnId' => $pln->getId(),
-                'depositId' => $deposit->getId(),
+                        'id' => $content->getId(),
+                        'plnId' => $pln->getId(),
+                        'depositId' => $deposit->getId(),
             ));
         }
 
         return array(
             'content' => $content,
             'form' => $form->createView(),
-            'pln' => $pln, 
+            'pln' => $pln,
             'deposit' => $deposit,
         );
     }
@@ -97,18 +105,22 @@ class ContentController extends Controller {
     /**
      * Finds and displays a Content entity.
      *
+     * @param Content $content
+     *   The content to show, determined by the URL.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     * @param Deposit $deposit
+     *   The deposit determined from the URL.
+     *
      * @Route("/{id}", name="deposit_content_show")
      * @Method("GET")
      * @Template()
-     * @param Content $content
-     * @param Pln $pln
-     * @param Deposit $deposit
      */
     public function showAction(Content $content, Pln $pln, Deposit $deposit) {
 
         return array(
             'content' => $content,
-            'pln' => $pln, 
+            'pln' => $pln,
             'deposit' => $deposit,
         );
     }
@@ -116,14 +128,19 @@ class ContentController extends Controller {
     /**
      * Displays a form to edit an existing Content entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Content $content
+     *   The content item, determined from the URL.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     * @param Deposit $deposit
+     *   The deposit determined from the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="deposit_content_edit")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
-     * @param Content $content
-     * @param Pln $pln
-     * @param Deposit $deposit
      */
     public function editAction(Request $request, Content $content, Pln $pln, Deposit $deposit) {
         $editForm = $this->createForm(ContentType::class, $content);
@@ -134,16 +151,16 @@ class ContentController extends Controller {
             $em->flush();
             $this->addFlash('success', 'The content has been updated.');
             return $this->redirectToRoute('deposit_content_show', array(
-                'id' => $content->getId(),
-                'plnId' => $pln->getId(),
-                'depositId' => $deposit->getId(),
+                        'id' => $content->getId(),
+                        'plnId' => $pln->getId(),
+                        'depositId' => $deposit->getId(),
             ));
         }
 
         return array(
             'content' => $content,
             'edit_form' => $editForm->createView(),
-            'pln' => $pln, 
+            'pln' => $pln,
             'deposit' => $deposit,
         );
     }
@@ -151,13 +168,18 @@ class ContentController extends Controller {
     /**
      * Deletes a Content entity.
      *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Content $content
+     *   The content item, determined from the URL.
+     * @param Pln $pln
+     *   The pln, determined from the URL.
+     * @param Deposit $deposit
+     *   The deposit determined from the URL.
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="deposit_content_delete")
      * @Method("GET")
-     * @param Request $request
-     * @param Content $content
-     * @param Pln $pln
-     * @param Deposit $deposit
      */
     public function deleteAction(Request $request, Content $content, Pln $pln, Deposit $deposit) {
         $em = $this->getDoctrine()->getManager();
@@ -166,8 +188,8 @@ class ContentController extends Controller {
         $this->addFlash('success', 'The content was deleted.');
 
         return $this->redirectToRoute('deposit_content_index', array(
-                'plnId' => $pln->getId(),
-                'depositId' => $deposit->getId(),            
+                    'plnId' => $pln->getId(),
+                    'depositId' => $deposit->getId(),
         ));
     }
 
