@@ -11,7 +11,7 @@ namespace AppBundle\EventListener;
 
 use AppBundle\Entity\Box;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Symfony\Bridge\Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Description of BoxListener
@@ -21,11 +21,11 @@ use Symfony\Bridge\Monolog\Logger;
 class BoxListener {
     
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     private $logger;
     
-    public function __construct(Logger $logger) {
+    public function __construct(LoggerInterface $logger) {
         $this->logger = $logger;
     }
     

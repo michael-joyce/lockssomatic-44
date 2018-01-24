@@ -37,25 +37,15 @@ services:
 
             
     AppBundle\EventListener\BoxListener:
-        arguments: ['@logger']
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
 
     AppBundle\Menu\Builder:
-        arguments: 
-            - '@knp_menu.factory'
-            - '@security.authorization_checker' 
-            - '@security.token_storage'
-            - '@doctrine.orm.entity_manager'
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
             
     Nines\UserBundle\Menu\Builder:
-        arguments: 
-            - '@knp_menu.factory'
-            - '@security.authorization_checker'
-            - '@security.token_storage'
         tags:
             - { name: knp_menu.menu_builder, method: userNavMenu, alias: user}
             
