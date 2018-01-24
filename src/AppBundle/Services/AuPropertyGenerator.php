@@ -11,6 +11,7 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\Au;
 use AppBundle\Entity\AuProperty;
+use AppBundle\Entity\Content;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -61,6 +62,8 @@ class AuPropertyGenerator {
 
     /**
      * Build a property.
+     * 
+     * The property is persisted, but not flushed, to the database.
      *
      * @param Au $au
      *   AU for which the property will be built.
@@ -131,7 +134,7 @@ class AuPropertyGenerator {
         }
         return vsprintf($formatStr, $values);
     }
-    
+
     /**
      * Generate a symbol, according to a LOCKSS vstring-like property.
      *
@@ -165,6 +168,101 @@ class AuPropertyGenerator {
         }
 
         return $values;
+    }
+    
+    /**
+     * Generate the base properties, required for any AU.
+     * 
+     * @param Au $au
+     * @param AuProperty $root
+     * @param Content $content
+     */
+    public function baseProperties(Au $au, AuProperty $root, Content $content) {
+        $this->buildProperty($au, 'journalTitle', $content->getProperty('journalTitle'), $root);
+        $this->buildProperty($au, 'title', 'LOCKSSOMatic AU '.$content->getTitle().' '.$content->getDeposit()->getTitle(), $root);
+        $this->buildProperty($au, 'plugin', $au->getPlugin()->getIdentifier(), $root);
+        $this->buildProperty($au, 'attributes.publisher', $content->getProperty('publisher'), $root);
+    }
+    
+    /**
+     * Generate the configuration parameters for an AU.
+     * 
+     * @param array $propertyNames
+     * @param Au $au
+     * @param AuProperty $root
+     * @param Content $content
+     */
+    public function configProperties(array $propertyNames, Au $au, AuProperty $root, Content $content) {
+        foreach($propertyNames as $index => $name) {
+//            if ($name === 'manifest_url') {
+//                $value = $this->router->generate('configs_manifest', array(
+//                    'plnId' => $au->getPln()->getId(),
+//                    'ownerId' => $au->getContentprovider()->getContentOwner()->getId(),
+//                    'providerId' => $au->getContentprovider()->getId(),
+//                    'auId' => $au->getId(),
+//                ), Router::ABSOLUTE_URL);
+//            } else {
+                $value = $content->getProperty($name);
+//            }
+            $grouping = $this->buildProperty($au, "param.{$index}", null, $root);
+            $this->buildProperty($au, 'key', $name, $grouping);
+            $this->buildProperty($au, 'value', $value, $grouping);
+        }
+    }
+    
+    /**
+     * Generate the content properties for the AU.
+     * 
+     * @param Au $au
+     * @param AuProperty $root
+     * @param Content $content
+     */
+    public function contentProperties(Au $au, AuProperty $root, Content $content) {
+        foreach ($content->getProperties() as $name) {
+            $value = $content->getProperty($name);
+            if (is_array($value)) {
+                $this->logger->warning("AU {$au->getId()} has unsupported property value list {$name}");
+                continue;
+            }
+            $this->buildProperty($au, "attributes.pkppln.{$name}", $value, $root);
+        }
+    }
+
+    /**
+     * Generate and return all the properties for an AU.
+     * 
+     * Persists, but does not flush, properties to the database. You should
+     * use the AuValidator to check that the content makes sense before
+     * generating all properties.
+     * 
+     * @see AuValidator::validate
+     * 
+     * @param Au $au
+     *   Generate properties for this AU.
+     * @param type $clear
+     *   If true, remove any properties the AU already has.
+     */
+    public function generateProperties(Au $au, $clear = false) {
+        if ($clear) {
+            foreach ($au->getAuProperties() as $prop) {
+                $au->removeAuProperty($prop);
+                $this->em->remove($prop);
+            }
+        }
+        $rootName = str_replace('.', '', uniqid('lockssomatic', true));
+        $content = $au->getContent()[0];
+        $root = $this->buildProperty($au, $rootName);
+
+        
+        // definitional properties must go first.
+        $propertyNames = array_merge(
+            $au->getPlugin()->getDefinitionalProperties(), 
+            $au->getPlugin()->getNonDefinitionalProperties()
+        );
+        
+        $this->baseProperties($au, $root, $content);
+        $this->configProperties($propertyNames, $au, $root, $content);
+        $this->contentProperties($au, $root, $content);
     }
 
 }

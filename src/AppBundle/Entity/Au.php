@@ -285,6 +285,15 @@ class Au extends AbstractEntity {
             return $p->getParent() === null;
         });
     }
+     
+    public function getSimpleAuProperty($name) {
+        foreach($this->auProperties as $property) {
+            if($property->getPropertyKey() === $name) {
+                return $property->getPropertyValue();
+            }
+        }
+        return null;
+    }
     
     /**
      * @return AuProperty|null
