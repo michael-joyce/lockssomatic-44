@@ -15,12 +15,18 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Load some plugin properties.
- * 
- * @author Michael Joyce <ubermichael@gmail.com>
+ * Load some AU properties.
+ *
+ * They're totally unrealistic.
  */
 class LoadAuProperty extends Fixture implements DependentFixtureInterface {
     
+    /**
+     * Load the objects.
+     *
+     * @param ObjectManager $em
+     *   Doctrine object manager.
+     */
     public function load(ObjectManager $em) {
         $property1 = new AuProperty();
         $property1->setPropertyKey("test_1");
@@ -62,6 +68,9 @@ class LoadAuProperty extends Fixture implements DependentFixtureInterface {
         $em->flush();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDependencies() {
         return [
             LoadAu::class,

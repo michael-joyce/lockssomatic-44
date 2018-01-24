@@ -15,12 +15,16 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Description of LoadBox
- *
- * @author Michael Joyce <ubermichael@gmail.com>
+ * Load some content providers.
  */
 class LoadContentProvider extends Fixture implements DependentFixtureInterface {
 
+    /**
+     * Load the objects.
+     *
+     * @param ObjectManager $em
+     *   Doctrine object manager.
+     */
     public function load(ObjectManager $em) {
         $provider1 = new ContentProvider();
         $provider1->setUuid('29125DE2-E622-416C-93EB-E887B2A3126C');
@@ -49,6 +53,9 @@ class LoadContentProvider extends Fixture implements DependentFixtureInterface {
         $em->flush();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDependencies() {
         return [
             LoadContentOwner::class,

@@ -15,12 +15,16 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Description of LoadPlugin
- *
- * @author Michael Joyce <ubermichael@gmail.com>
+ * Load some plugins.
  */
 class LoadPlugin extends Fixture implements DependentFixtureInterface {
     
+    /**
+     * Load the objects.
+     *
+     * @param ObjectManager $em
+     *   Doctrine object manager.
+     */
     public function load(ObjectManager $em) {
         $plugin1 = new Plugin();
         $plugin1->setName('Test Plugin 1');
@@ -40,6 +44,9 @@ class LoadPlugin extends Fixture implements DependentFixtureInterface {
         $em->flush();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDependencies() {
         return [
             LoadPln::class,

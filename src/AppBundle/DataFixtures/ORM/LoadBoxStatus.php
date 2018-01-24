@@ -16,31 +16,38 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Description of LoadBox
- *
- * @author Michael Joyce <ubermichael@gmail.com>
+ * Load some box statuses.
  */
 class LoadBoxStatus extends Fixture implements DependentFixtureInterface {
     
+    /**
+     * Load the objects.
+     *
+     * @param ObjectManager $em
+     *   Doctrine object manager.
+     */
     public function load(ObjectManager $em) {
         $status1 = new BoxStatus();
         $status1->setQueryDate(new DateTime('2017-01-01'));
         $status1->setSuccess(false);
         $status1->setErrors('Cannot connect to host.');
         $status1->setBox($this->getReference('box.1'));
-        $em->persist($status1);        
+        $em->persist($status1);
         $this->setReference('box.status.1', $status1);
         
         $status2 = new BoxStatus();
         $status2->setQueryDate(new DateTime('2017-01-01'));
         $status2->setSuccess(true);
         $status2->setBox($this->getReference('box.1'));
-        $em->persist($status2);        
+        $em->persist($status2);
         $this->setReference('box.status.2', $status2);
         
         $em->flush();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDependencies() {
         return [
             LoadBox::class,

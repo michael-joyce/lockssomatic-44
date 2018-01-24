@@ -40,6 +40,9 @@ class AuStatusController extends Controller {
      * @param Au $au
      *   The AU, determined by the URL.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/", name="au_status_index")
      * @Method("GET")
      * @Template()
@@ -68,6 +71,9 @@ class AuStatusController extends Controller {
      *   The PLN, determined by the URL.
      * @param Au $au
      *   The AU, determined by the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Route("/{id}", name="au_status_show")
      * @Method("GET")

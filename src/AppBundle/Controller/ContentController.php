@@ -41,6 +41,9 @@ class ContentController extends Controller {
      * @param Deposit $deposit
      *   The deposit determined from the URL.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/", name="deposit_content_index")
      * @Method("GET")
      * @Template()
@@ -69,6 +72,9 @@ class ContentController extends Controller {
      *   The pln, determined from the URL.
      * @param Deposit $deposit
      *   The deposit determined from the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="deposit_content_new")
@@ -112,6 +118,9 @@ class ContentController extends Controller {
      * @param Deposit $deposit
      *   The deposit determined from the URL.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/{id}", name="deposit_content_show")
      * @Method("GET")
      * @Template()
@@ -136,6 +145,9 @@ class ContentController extends Controller {
      *   The pln, determined from the URL.
      * @param Deposit $deposit
      *   The deposit determined from the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="deposit_content_edit")
@@ -176,6 +188,9 @@ class ContentController extends Controller {
      *   The pln, determined from the URL.
      * @param Deposit $deposit
      *   The deposit determined from the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="deposit_content_delete")

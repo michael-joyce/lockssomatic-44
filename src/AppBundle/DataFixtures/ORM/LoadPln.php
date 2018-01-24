@@ -14,12 +14,16 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Description of LoadPln
- *
- * @author Michael Joyce <ubermichael@gmail.com>
+ * Load some PLNs.
  */
 class LoadPln extends Fixture {
     
+    /**
+     * Load the objects.
+     *
+     * @param ObjectManager $em
+     *   Doctrine object manager.
+     */
     public function load(ObjectManager $em) {
         $pln1 = new Pln();
         $pln1->setName('Network Test');
@@ -34,7 +38,6 @@ class LoadPln extends Fixture {
         $this->setReference('pln.2', $pln2);
         
         $em->flush();
-        
     }
     
 }

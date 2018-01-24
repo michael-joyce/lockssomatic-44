@@ -25,6 +25,9 @@ class DefaultController extends Controller {
      * @param Request $request
      *   The HTTP Request.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/", name="homepage")
      * @Template()
      */

@@ -16,11 +16,15 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Load some plugin properties.
- * 
- * @author Michael Joyce <ubermichael@gmail.com>
  */
 class LoadPluginProperty extends Fixture implements DependentFixtureInterface {
     
+    /**
+     * Load the objects.
+     *
+     * @param ObjectManager $em
+     *   Doctrine object manager.
+     */
     public function load(ObjectManager $em) {
         $property1 = new PluginProperty();
         $property1->setPropertyKey("test_1");
@@ -62,6 +66,9 @@ class LoadPluginProperty extends Fixture implements DependentFixtureInterface {
         $em->flush();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDependencies() {
         return [
             LoadPlugin::class,

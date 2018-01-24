@@ -15,12 +15,18 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Description of LoadBox
+ * Load a few boxes.
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
 class LoadBox extends Fixture implements DependentFixtureInterface {
     
+    /**
+     * Load the objects.
+     *
+     * @param ObjectManager $em
+     *   Doctrine object manager.
+     */
     public function load(ObjectManager $em) {
         $box1 = new Box();
         $box1->setHostname('localhost');
@@ -30,7 +36,7 @@ class LoadBox extends Fixture implements DependentFixtureInterface {
         $box1->setSendNotifications(false);
         $box1->setActive(false);
         $box1->setPln($this->getReference('pln.1'));
-        $em->persist($box1);        
+        $em->persist($box1);
         $this->setReference('box.1', $box1);
         
         $box2 = new Box();
@@ -41,11 +47,14 @@ class LoadBox extends Fixture implements DependentFixtureInterface {
         $box2->setSendNotifications(false);
         $box2->setActive(false);
         $box2->setPln($this->getReference('pln.2'));
-        $em->persist($box2);        
+        $em->persist($box2);
         $this->setReference('box.2', $box2);
         $em->flush();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDependencies() {
         return [
             LoadPln::class,

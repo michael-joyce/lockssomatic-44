@@ -38,6 +38,9 @@ class DepositController extends Controller {
      * @param Pln $pln
      *   The PLN, determined from the URL.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/", name="deposit_index")
      * @Method("GET")
      * @Template()
@@ -64,16 +67,21 @@ class DepositController extends Controller {
      * something appropriate, and adjust the generated search.html.twig
      * template.
      *
-     * //    public function searchQuery($q) {
-     * //        $qb = $this->createQueryBuilder('e');
-     * //        $qb->where("e.fieldName like '%$q%'");
-     * //        return $qb->getQuery();
-     * //    }
+     * <code><pre>
+     *     public function searchQuery($q) {
+     *         $qb = $this->createQueryBuilder('e');
+     *         $qb->where("e.fieldName like '%$q%'");
+     *         return $qb->getQuery();
+     *     }
+     * </pre></code>
      *
      * @param Request $request
      *   The HTTP request instance.
      * @param Pln $pln
      *   The PLN, determined from the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Route("/search", name="deposit_search")
      * @Method("GET")
@@ -106,15 +114,17 @@ class DepositController extends Controller {
      * something appropriate, and adjust the generated fulltext.html.twig
      * template.
      *
-     * //    public function fulltextQuery($q) {
-     * //        $qb = $this->createQueryBuilder('e');
-     * //        $qb->addSelect("MATCH_AGAINST (e.name, :q 'IN BOOLEAN MODE') as score");
-     * //        $qb->add('where', "MATCH_AGAINST (e.name, :q 'IN BOOLEAN MODE') > 0.5");
-     * //        $qb->orderBy('score', 'desc');
-     * //        $qb->setParameter('q', $q);
-     * //        return $qb->getQuery();
-     * //    }
-     *
+     * <code><pre>
+     *     public function fulltextQuery($q) {
+     *         $qb = $this->createQueryBuilder('e');
+     *         $qb->addSelect("MATCH_AGAINST (e.name, :q 'IN BOOLEAN MODE') as score");
+     *         $qb->add('where', "MATCH_AGAINST (e.name, :q 'IN BOOLEAN MODE') > 0.5");
+     *         $qb->orderBy('score', 'desc');
+     *         $qb->setParameter('q', $q);
+     *         return $qb->getQuery();
+     *     }
+     * </pre></code>
+     * 
      * Requires a MatchAgainst function be added to doctrine, and appropriate
      * fulltext indexes on your Deposit entity.
      *     ORM\Index(name="alias_name_idx",columns="name", flags={"fulltext"})
@@ -149,6 +159,9 @@ class DepositController extends Controller {
      *   The HTTP request instance.
      * @param Pln $pln
      *   The PLN, as determined by the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="deposit_new")
@@ -185,6 +198,9 @@ class DepositController extends Controller {
      * @param Pln $pln
      *   The PLN, as determined by the URL.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/{id}", name="deposit_show")
      * @Method("GET")
      * @Template()
@@ -206,6 +222,9 @@ class DepositController extends Controller {
      *   The deposit, as determined by the URL.
      * @param Pln $pln
      *   The PLN, as determined by the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="deposit_edit")
@@ -239,6 +258,9 @@ class DepositController extends Controller {
      *   The deposit, as determined by the URL.
      * @param Pln $pln
      *   The PLN, as determined by the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="deposit_delete")

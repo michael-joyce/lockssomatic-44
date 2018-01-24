@@ -32,6 +32,9 @@ class ContentProviderController extends Controller {
      * @param Request $request
      *   The HTTP request instance.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/", name="content_provider_index")
      * @Method("GET")
      * @Template()
@@ -54,6 +57,9 @@ class ContentProviderController extends Controller {
      *
      * @param Request $request
      *   The HTTP request instance.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="content_provider_new")
@@ -86,6 +92,9 @@ class ContentProviderController extends Controller {
      * @param ContentProvider $contentProvider
      *   Content provider to show, determined by the URL.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/{id}", name="content_provider_show")
      * @Method("GET")
      * @Template()
@@ -104,6 +113,9 @@ class ContentProviderController extends Controller {
      *   The HTTP request instance.
      * @param ContentProvider $contentProvider
      *   Content provider to show, determined by the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="content_provider_edit")
@@ -134,6 +146,9 @@ class ContentProviderController extends Controller {
      *   The HTTP request instance.
      * @param ContentProvider $contentProvider
      *   Content provider to show, determined by the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="content_provider_delete")

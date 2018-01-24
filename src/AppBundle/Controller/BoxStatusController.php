@@ -40,6 +40,9 @@ class BoxStatusController extends Controller {
      * @param Box $box
      *   The box, determined by the URL.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/", name="box_status_index")
      * @Method("GET")
      * @Template()
@@ -68,6 +71,9 @@ class BoxStatusController extends Controller {
      *   The pln, determined from the URL.
      * @param Box $box
      *   The box, determined by the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Route("/{id}", name="box_status_show")
      * @Method("GET")

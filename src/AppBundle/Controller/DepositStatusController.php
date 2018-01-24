@@ -40,6 +40,9 @@ class DepositStatusController extends Controller {
      * @param Deposit $deposit
      *   The deposit, determined from the URL.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/", name="deposit_status_index")
      * @Method("GET")
      * @Template()
@@ -68,6 +71,9 @@ class DepositStatusController extends Controller {
      *   The pln, determined from the URL.
      * @param Deposit $deposit
      *   The deposit, determined from the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Route("/{id}", name="deposit_status_show")
      * @Method("GET")

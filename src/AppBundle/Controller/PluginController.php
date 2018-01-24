@@ -35,6 +35,9 @@ class PluginController extends Controller {
      * @param Request $request
      *   The HTTP request instance.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/", name="plugin_index")
      * @Method("GET")
      * @Template()
@@ -61,6 +64,9 @@ class PluginController extends Controller {
      *   Dependency injected plugin importer service.
      * @param FilePaths $filePaths
      *   Dependency injected file path service.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="plugin_new")
@@ -109,6 +115,9 @@ class PluginController extends Controller {
      *
      * @param Plugin $plugin
      *   Plugin to show.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Route("/{id}", name="plugin_show")
      * @Method("GET")

@@ -17,12 +17,16 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Description of LoadBox
- *
- * @author Michael Joyce <ubermichael@gmail.com>
+ * Load some deposit status entities.
  */
 class LoadDepositStatus extends Fixture implements DependentFixtureInterface {
 
+    /**
+     * Load the objects.
+     *
+     * @param ObjectManager $em
+     *   Doctrine object manager.
+     */
     public function load(ObjectManager $em) {
         $status1 = new DepositStatus();
         $status1->setAgreement(0.5);
@@ -32,7 +36,7 @@ class LoadDepositStatus extends Fixture implements DependentFixtureInterface {
             'expected' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',
             'localhost' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',
             'otherhost' => '*',
-        ]);        
+        ]);
         $this->setReference('deposit.status.1', $status1);
         $em->persist($status1);
         
@@ -44,13 +48,16 @@ class LoadDepositStatus extends Fixture implements DependentFixtureInterface {
             'expected' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',
             'localhost' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',
             'otherhost' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',
-        ]);        
+        ]);
         $this->setReference('deposit.status.1', $status2);
         $em->persist($status2);
                 
         $em->flush();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDependencies() {
         return [
             LoadDeposit::class,

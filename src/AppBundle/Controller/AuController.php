@@ -36,6 +36,9 @@ class AuController extends Controller {
      * @param Pln $pln
      *   The pln, determined from the URL.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/", name="au_index")
      * @Method("GET")
      * @Template()
@@ -61,6 +64,9 @@ class AuController extends Controller {
      *   The AU to show.
      * @param Pln $pln
      *   The pln, determined from the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Route("/{id}", name="au_show")
      * @Method("GET")

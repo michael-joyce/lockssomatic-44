@@ -14,12 +14,16 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Description of LoadBox
- *
- * @author Michael Joyce <ubermichael@gmail.com>
+ * Load some content owners.
  */
 class LoadContentOwner extends Fixture {
     
+    /**
+     * Load the objects.
+     *
+     * @param ObjectManager $em
+     *   Doctrine object manager.
+     */
     public function load(ObjectManager $em) {
         $owner1 = new ContentOwner();
         $owner1->setName("Owner 1");

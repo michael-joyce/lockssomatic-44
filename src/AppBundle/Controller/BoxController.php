@@ -38,6 +38,9 @@ class BoxController extends Controller {
      * @param Pln $pln
      *   The pln, determined from the URL.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/", name="box_index")
      * @Method("GET")
      * @Template()
@@ -62,6 +65,9 @@ class BoxController extends Controller {
      *   The HTTP request instance.
      * @param Pln $pln
      *   The pln, determined from the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="box_new")
@@ -98,6 +104,9 @@ class BoxController extends Controller {
      * @param Box $box
      *   The box to show, determined from the URL.
      *
+     * @return array
+     *   Array data for the template processor.
+     *
      * @Route("/{id}", name="box_show")
      * @Method("GET")
      * @Template()
@@ -121,6 +130,9 @@ class BoxController extends Controller {
      *   The pln, determined from the URL.
      * @param Box $box
      *   The box to show, determined from the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="box_edit")
@@ -157,6 +169,9 @@ class BoxController extends Controller {
      *   The pln, determined from the URL.
      * @param Box $box
      *   The box to show, determined from the URL.
+     *
+     * @return array
+     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="box_delete")

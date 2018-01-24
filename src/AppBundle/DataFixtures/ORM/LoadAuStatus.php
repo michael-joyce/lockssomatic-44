@@ -15,12 +15,16 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Description of LoadBox
- *
- * @author Michael Joyce <ubermichael@gmail.com>
+ * Load some AU status objects.
  */
 class LoadAuStatus extends Fixture implements DependentFixtureInterface {
     
+    /**
+     * Load the objects.
+     *
+     * @param ObjectManager $em
+     *   Doctrine object manager.
+     */
     public function load(ObjectManager $em) {
         $status1 = new AuStatus();
         $status1->setErrors([
@@ -33,10 +37,10 @@ class LoadAuStatus extends Fixture implements DependentFixtureInterface {
                 'contentSize' => 1234568,
                 'journalTitle' => 'Some Deposits from a Journal',
                 'repository' => '/cache1/gamma/cache/a/',
-            ]
+            ],
         ]);
         $status1->setAu($this->getReference('au.1'));
-        $em->persist($status1);        
+        $em->persist($status1);
         $this->setReference('auStatus.1', $status1);
         
         $status2 = new AuStatus();
@@ -47,15 +51,18 @@ class LoadAuStatus extends Fixture implements DependentFixtureInterface {
                 'contentSize' => 2234568,
                 'journalTitle' => 'Some Deposits from a Journal',
                 'repository' => '/cache1/gamma/cache/a/',
-            ]
+            ],
         ]);
         $status2->setAu($this->getReference('au.1'));
-        $em->persist($status2);        
+        $em->persist($status2);
         $this->setReference('auStatus.2', $status2);
         
         $em->flush();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDependencies() {
         return [
             LoadAu::class,
