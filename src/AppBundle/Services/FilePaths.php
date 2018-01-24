@@ -15,6 +15,7 @@ use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Pln;
 use AppBundle\Entity\Plugin;
 use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -25,7 +26,7 @@ class FilePaths {
     /**
      * PSR/Log compatible logger.
      *
-     * @var Logger
+     * @var LoggerInterface
      */
     private $logger;
 
@@ -60,7 +61,7 @@ class FilePaths {
      * @param string $downloadDir
      *   Location fo the download directory in the application root.
      */
-    public function __construct(Logger $logger, $root, $downloadDir) {
+    public function __construct(LoggerInterface $logger, $root, $downloadDir) {
         $this->fs = new Filesystem();
         $this->logger = $logger;
         $this->root = $root;

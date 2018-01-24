@@ -10,18 +10,15 @@ services:
         public: true
 
     AppBundle\EventListener\BoxListener:
-        public: true
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
         
     AppBundle\Menu\Builder:
-        public: true
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
             
     Nines\UserBundle\Menu\Builder:
-        public: true
         tags:
             - { name: knp_menu.menu_builder, method: userNavMenu, alias: user}
             
