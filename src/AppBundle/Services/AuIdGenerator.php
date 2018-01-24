@@ -39,6 +39,9 @@ class AuIdGenerator {
         sort($names);
         $encoder = new Encoder();
         foreach($names as $name) {
+            // content may not have been assigned to an AU yet. If that's 
+            // the case, then any property that depends on AU's database ID
+            // (like manifest_url) will cause a problem.
             $value = $content->getProperty($name);
             if( ! $value) {
                 throw new Exception("Cannot generate AUID without definitional property {$name}.");

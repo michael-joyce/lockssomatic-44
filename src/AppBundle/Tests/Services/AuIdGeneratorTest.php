@@ -7,7 +7,7 @@
  *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
  */
 
-namespace AppBundle\Test\Services;
+namespace AppBundle\Tests\Services;
 
 use AppBundle\Entity\Au;
 use AppBundle\Entity\Content;

@@ -204,8 +204,12 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
      *
      * @return Deposit
      */
-    public function setDateDeposited($dateDeposited) {
-        $this->dateDeposited = $dateDeposited;
+    public function setDateDeposited(DateTime $dateDeposited = null) {
+        if($dateDeposited) {
+            $this->dateDeposited = $dateDeposited;
+        } else {
+            $this->dateDeposited = new DateTime();
+        }
 
         return $this;
     }

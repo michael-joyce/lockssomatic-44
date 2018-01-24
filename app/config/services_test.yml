@@ -35,6 +35,9 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: userNavMenu, alias: user}
             
+    AppBundle\Services\AuBuilder:
+        public: true
+            
     AppBundle\Services\AuIdGenerator:
         public: true
         
@@ -45,6 +48,9 @@ services:
         public: true
         
     AppBundle\Services\ContentBuilder:
+        public: true
+        
+    AppBundle\Services\DepositBuilder:
         public: true
         
     AppBundle\Services\FilePaths:
