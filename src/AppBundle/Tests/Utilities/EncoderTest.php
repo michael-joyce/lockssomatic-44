@@ -10,9 +10,9 @@
 namespace AppBundle\Tests\Utilities;
 
 use AppBundle\Utilities\Encoder;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use PHPUnit\Framework\TestCase;
 
-class EncoderTest extends BaseTestCase {
+class EncoderTest extends TestCase {
 
     /**
      * @var Encoder
@@ -21,7 +21,7 @@ class EncoderTest extends BaseTestCase {
 
     protected function setUp() {
         parent::setUp();
-        $this->encoder = $this->container->get(Encoder::class);
+        $this->encoder = new Encoder();
     }
 
     public function testSanity() {
@@ -52,6 +52,8 @@ class EncoderTest extends BaseTestCase {
             ['abc%3A123', 'abc:123'],
             ['abc%25123', 'abc%123'],
             ['abc%7E123', 'abc~123'],
+            ['abc%26123', 'abc&123'],
+            ['abc%7C123', 'abc|123'],
         ];
     }
 

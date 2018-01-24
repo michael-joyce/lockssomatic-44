@@ -47,9 +47,6 @@ services:
     AppBundle\Services\ContentBuilder:
         public: true
         
-    AppBundle\Services\Encoder:
-        public: true
-
     AppBundle\Services\FilePaths:
         public: true
         arguments: ['@logger', '%kernel.project_dir%', '%lom.download_dir%']
