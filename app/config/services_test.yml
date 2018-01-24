@@ -35,6 +35,9 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: userNavMenu, alias: user}
             
+    AppBundle\Services\AuIdGenerator:
+        public: true
+        
     AppBundle\Services\AuPropertyGenerator:
         public: true
         

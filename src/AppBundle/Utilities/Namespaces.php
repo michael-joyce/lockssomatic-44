@@ -9,7 +9,6 @@
 
 namespace AppBundle\Utilities;
 
-use ReflectionClass;
 use SimpleXMLElement;
 
 /**

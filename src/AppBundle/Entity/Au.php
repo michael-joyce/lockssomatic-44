@@ -107,7 +107,7 @@ class Au extends AbstractEntity {
         $this->managed = false;
         $this->auProperties = new ArrayCollection();
         $this->auStatus = new ArrayCollection();
-        $this->auContent = new ArrayCollection();        
+        $this->content = new ArrayCollection();        
     }
 
     public function __toString() {

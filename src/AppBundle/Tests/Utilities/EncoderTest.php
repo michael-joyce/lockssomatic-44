@@ -7,9 +7,9 @@
  *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
  */
 
-namespace AppBundle\Tests\Services;
+namespace AppBundle\Tests\Utilities;
 
-use AppBundle\Services\Encoder;
+use AppBundle\Utilities\Encoder;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 class EncoderTest extends BaseTestCase {

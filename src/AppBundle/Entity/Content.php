@@ -10,8 +10,6 @@
 namespace AppBundle\Entity;
 
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -291,6 +289,18 @@ class Content extends AbstractEntity {
      */
     public function getAu() {
         return $this->au;
+    }
+    
+    public function getPlugin() {
+        if($this->au && $this->au->getPlugin()) {
+            return $this->au->getPlugin();
+        }
+        if($this->deposit 
+                && $this->deposit->getContentProvider() 
+                && $this->deposit->getContentProvider()->getPlugin()) {
+            return $this->au->getPlugin();
+        }
+        return null;
     }
 
     /**

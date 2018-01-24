@@ -7,7 +7,7 @@
  *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
  */
 
-namespace AppBundle\Services;
+namespace AppBundle\Utilities;
 
 /**
  * Encode/decode LOCKSS URL-encoded data.
