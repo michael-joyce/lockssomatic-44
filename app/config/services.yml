@@ -14,6 +14,16 @@ services:
         # if you need to do this, you can override this setting on individual services
         public: false
 
+    Nines\UserBundle\:
+        resource: '../../src/Nines/UserBundle/*'
+        # you can exclude directories or files
+        # but if a service is unused, it's removed anyway
+        exclude: '../../src/Nines/UserBundle/{Entity,Repository,Resources,Tests}'
+        
+    Nines\UserBundle\Menu\Builder:
+        tags:
+            - { name: knp_menu.menu_builder, method: userNavMenu, alias: user}
+            
     # makes classes in src/AppBundle available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     AppBundle\:
@@ -22,12 +32,6 @@ services:
         # but if a service is unused, it's removed anyway
         exclude: '../../src/AppBundle/{Entity,Repository,Resources,Tests}'
 
-    Nines\UserBundle\:
-        resource: '../../src/Nines/UserBundle/*'
-        # you can exclude directories or files
-        # but if a service is unused, it's removed anyway
-        exclude: '../../src/Nines/UserBundle/{Entity,Repository,Resources,Tests}'
-        
     # controllers are imported separately to make sure they're public
     # and have a tag that allows actions to type-hint services
     AppBundle\Controller\:
@@ -49,10 +53,6 @@ services:
     AppBundle\Menu\Builder:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
-            
-    Nines\UserBundle\Menu\Builder:
-        tags:
-            - { name: knp_menu.menu_builder, method: userNavMenu, alias: user}
             
     AppBundle\Services\FilePaths:
         arguments: ['@logger', '%kernel.project_dir%', '%lom.download_dir%']
