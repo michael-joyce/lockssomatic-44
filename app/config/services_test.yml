@@ -14,6 +14,11 @@ services:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
         
+    AppBundle\EventListener\SwordExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+            - {name: kernel.event_listener, event: kernel.controller }
+            
     AppBundle\Menu\Builder:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}

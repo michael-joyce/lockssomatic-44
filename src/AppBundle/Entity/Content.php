@@ -29,7 +29,7 @@ class Content extends AbstractEntity {
      *
      * @var string
      *
-     * @Assert\URL()
+     * @Assert\Url()
      * @ORM\Column(name="url", type="string", length=255, nullable=false)
      */
     private $url;

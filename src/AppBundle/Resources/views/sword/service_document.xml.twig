@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<service xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:sword="http://purl.org/net/sword/"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:lom="http://lockssomatic.info/SWORD2"
+    xmlns="http://www.w3.org/2007/app">
+    
+    <sword:version>2.0</sword:version>
+    
+    <!-- sword:maxUploadSize is the maximum file size in content element, measured in kB (1,000 bytes). -->
+    <sword:maxUploadSize>{{ provider.maxFileSize }}</sword:maxUploadSize>
+    <lom:uploadChecksumType>
+        {%- for m in hashMethods %}{{ m }}{% if not loop.last %} {% endif -%}
+        {% endfor -%}
+    </lom:uploadChecksumType>
+    <workspace>
+        <atom:title>LOCKSSOMatic</atom:title>     
+        <collection> {# href="{{ url('sword_collection', {'providerUuid': contentProvider.uuid}) }}">#}
+            <lom:pluginIdentifier id="{{ plugin.identifier }}"/>
+            <atom:title>{{ provider.name }}</atom:title>
+            <accept>application/atom+xml;type=entry</accept> 
+            <sword:mediation>true</sword:mediation>
+            {% for p in plugin.getDefinitionalProperties() %}
+                <lom:property name="{{ p }}" definitional="true" />
+            {% endfor %}
+            {%- for p in plugin.getNonDefinitionalProperties() %}
+                <lom:property name="{{ p }}" definitional="false" />
+            {% endfor -%}
+        </collection>
+    </workspace>
+</service>

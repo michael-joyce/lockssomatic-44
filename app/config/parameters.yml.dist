@@ -26,3 +26,4 @@ parameters:
 
     # LOCKSSOMatic configuration
     lom.download_dir: data/download
+    lom.hash_methods: [ 'SHA1', 'MD5' ]
