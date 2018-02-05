@@ -2,14 +2,27 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Au;
 use AppBundle\Entity\ContentProvider;
+use AppBundle\Entity\Deposit;
+use AppBundle\Entity\Plugin;
+use AppBundle\Services\AuBuilder;
+use AppBundle\Services\AuIdGenerator;
+use AppBundle\Services\ContentBuilder;
+use AppBundle\Services\DepositBuilder;
+use AppBundle\Utilities\Namespaces;
+use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Sword controller.
@@ -63,7 +76,7 @@ class SwordController extends Controller {
             'uuid' => $uuid,
         ));
         if( ! $provider) {
-            throw new NotFoundHttpException("Content provider not found."); 
+            throw new NotFoundHttpException("Content provider not found.", null, Response::HTTP_NOT_FOUND); 
         }
         return $provider;
     }
@@ -79,7 +92,7 @@ class SwordController extends Controller {
      */
     public function serviceDocumentAction(Request $request) {
         $uuid = $this->fetchHeader($request, 'On-Behalf-Of', true);
-        $provider = $this->getProvider($uuid);
+        $provider = $this->getProvider(strtoupper($uuid));
         $plugin = $provider->getPlugin();
         $hashMethods = $this->getParameter('lom.hash_methods');
         return array(
@@ -87,6 +100,189 @@ class SwordController extends Controller {
             'provider' => $provider,
             'hashMethods' => $hashMethods,
         );
+    }
+    
+    /**
+     * Make sure that the required content properties exist in the XML for a
+     * plugin.
+     *
+     * @param SimpleXMLElement $content
+     * @param Plugin $plugin
+     * @throws BadRequestException
+     */
+    private function precheckContentProperties(SimpleXMLElement $content, Plugin $plugin) {
+        foreach ($plugin->getDefinitionalProperties() as $property) {
+            $nodes = $content->xpath("lom:property[@name='$property']");
+            if (count($nodes) === 0) {
+                throw new BadRequestException("{$property} is a required property.", null, Response::HTTP_BAD_REQUEST);
+            }
+            if (count($nodes) > 1) {
+                throw new BadRequestException("{$property} must be unique.", null, Response::HTTP_BAD_REQUEST);
+            }
+            $property = $nodes[0];
+            if (!$property->attributes()->value) {
+                throw new BadRequestException("{$property} must have a value.", null, Response::HTTP_BAD_REQUEST);
+            }
+        }
+    }
+    
+    /**
+     * Precheck a deposit for the required properties and make sure the properties
+     * all make some sense.
+     *
+     * @param SimpleXMLElement $atom
+     * @param ContentProvider $provider
+     *
+     * @throws BadRequestException
+     * @throws HostMismatchException
+     * @throws MaxUploadSizeExceededException
+     */
+    private function precheckDeposit(SimpleXMLElement $atom, ContentProvider $provider) {
+        if (count($atom->xpath('//lom:content')) === 0) {
+            throw new BadRequestException('Empty deposits are not allowed.', null, Response::HTTP_BAD_REQUEST);
+        }
+        $plugin = $provider->getPlugin();
+
+        $permissionHost = $provider->getPermissionHost();
+        foreach ($atom->xpath('//lom:content') as $content) {
+            // check required properties.
+            $this->precheckContentProperties($content, $plugin);
+            $url = trim((string) $content);
+            $host = parse_url($url, PHP_URL_HOST);
+            if ($permissionHost !== $host) {
+                throw new HostMismatchException("Content host:{$host} Permission host: {$permissionHost}", null, Response::HTTP_BAD_REQUEST);
+            }
+
+            if ($content->attributes()->size > $provider->getMaxFileSize()) {
+                $size = $content->attributes()->size;
+                $max = $provider->getMaxFileSize();
+                throw new MaxUploadSizeExceededException("Content size {$size} exceeds provider's maximum: {$max}", null, Response::HTTP_BAD_REQUEST);
+            }
+        }
+    }
+    
+    /**
+     * Given a deposit and content provider, render a deposit reciept.
+     *
+     * @param ContentProvider $contentProvider
+     * @param Deposit $deposit
+     *
+     * @return Response containing the XML.
+     */
+    private function renderDepositReceipt(ContentProvider $contentProvider, Deposit $deposit) {
+        // @TODO this should be a call to render depositReceiptAction() or something.
+        // Return the deposit receipt.
+        $response = $this->render(
+            'LOCKSSOMaticSwordBundle:Sword:depositReceipt.xml.twig',
+            array(
+            'contentProvider' => $contentProvider,
+            'deposit' => $deposit,
+            )
+        );
+        $response->headers->set('Content-Type', 'text/xml');
+
+        return $response;
+    }
+    
+    private function getXml($string) {
+        $xml = simplexml_load_string($string);
+        Namespaces::registerNamespaces($xml);
+        return $xml;
+    }
+    
+    /**
+     * Create a deposit by posting XML to this URL, aka col-iri.
+     *
+     * @Route("/col-iri/{providerUuid}", name="sword_collection", requirements={
+     *      "providerUuid": ".{36}"
+     * })
+     * @Method({"POST"})
+     * @ParamConverter("provider", class="AppBundle:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
+     *
+     * @param Request $request
+     * @param ContentProvider $provider
+     * @param EntityManagerInterface $em
+     * @param DepositBuilder $depositBuilder
+     * @param ContentBuilder $contentBuilder
+     * @param AuBuilder $auBuilder
+     * @param AuIdGenerator $idGenerator
+     *
+     * @throws BadRequestException
+     * @throws HostMismatchException
+     * @throws MaxUploadSizeExceededException
+     * 
+     * @return Response
+     */
+    public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, ContentBuilder $contentBuilder, AuBuilder $auBuilder, AuIdGenerator $idGenerator) {
+        $atom = $this->getXml($request->getContent());
+        $this->precheckDeposit($atom, $provider);        
+        $deposit = $depositBuilder->fromXml($atom, $provider);
+        foreach($atom->xpath('lom:content') as $node) {
+            $content = $contentBuilder->fromXml($node);
+            dump($content);
+            $content->setDeposit($deposit);
+            $auid = $idGenerator->fromContent($content);
+            $au = $em->getRepository(Au::class)->findOneBy(array(
+                'auid' => $auid,
+            ));
+            if( ! $au) {
+                $au = $auBuilder->fromContent($content);
+            }
+            $content->setAu($au);            
+        }
+        $em->flush();
+        $response = $this->render('sword/deposit_receipt.xml.twig', array(
+            'provider' => $provider,
+            'deposit' => $deposit,
+        ));
+        $response->headers->set('Location', $this->generateUrl('sword_reciept', array(
+            'providerUuid' => $provider->getUuid(),
+            'depositUuid' => $deposit->getUuid(),
+        ), UrlGeneratorInterface::ABSOLUTE_URL));
+        $response->setStatusCode(Response::HTTP_CREATED);
+        return $response;        
+    }
+    
+    /**
+     * Get a deposit statement, showing the status of the deposit in LOCKSS,
+     * from this URL. Also known as state-iri. Includes a sword:originalDeposit element for
+     * each content item in the deposit.
+     *
+     * @Route("/cont-iri/{providerUuid}/{depositUuid}/state", name="sword_statement", requirements={
+     *      "providerUuid": ".{36}",
+     *      "depositUuid": ".{36}"
+     * })
+     * @Method({"GET"})
+     * @ParamConverter("provider", options={"uuid"="providerUuid"})
+     * @ParamConverter("deposit", options={"uuid"="depositUuid"})
+     *
+     * @param string $providerUuid
+     * @param string $depositUuid
+     *
+     * @return Response
+     */
+    public function statementAction(Request $request, ContentProvider $provider, Deposit $deposit) {
+        
+    }
+    
+    /**
+     * Get a deposit receipt from this URL, also known as the edit-iri.
+     *
+     * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_reciept", requirements={
+     *      "providerUuid": ".{36}",
+     *      "depositUuid": ".{36}"
+     * })
+     * @Method({"GET"})
+     * @ParamConverter("provider", options={"uuid"="providerUuid"})
+     * @ParamConverter("deposit", options={"uuid"="depositUuid"})
+     *
+     * @param string $providerUuid
+     * @param string $depositUuid
+     *
+     * @return Response
+     */    
+    public function receiptAction(Request $request, ContentProvider $provider, Deposit $deposit) {
+        
     }
     
 }

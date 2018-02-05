@@ -15,7 +15,7 @@
     </lom:uploadChecksumType>
     <workspace>
         <atom:title>LOCKSSOMatic</atom:title>     
-        <collection> {# href="{{ url('sword_collection', {'providerUuid': contentProvider.uuid}) }}">#}
+        <collection href="{{ url('sword_collection', {'providerUuid': provider.uuid}) }}">
             <lom:pluginIdentifier id="{{ plugin.identifier }}"/>
             <atom:title>{{ provider.name }}</atom:title>
             <accept>application/atom+xml;type=entry</accept> 

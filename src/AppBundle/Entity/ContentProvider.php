@@ -173,6 +173,10 @@ class ContentProvider extends AbstractEntity {
     public function getPermissionurl() {
         return $this->permissionurl;
     }
+    
+    public function getPermissionHost() {
+        return parse_url($this->getPermissionUrl(), PHP_URL_HOST);        
+    }
 
     /**
      * Set name

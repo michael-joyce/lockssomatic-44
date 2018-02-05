@@ -80,7 +80,7 @@ class ContentBuilderTest extends BaseTestCase {
 
     public function testFromSimpleXml() {
         $xml = $this->getXmlData();
-        $content = $this->builder->fromSimpleXml($xml);
+        $content = $this->builder->fromXml($xml);
         $this->assertInstanceOf(Content::class, $content);
         $this->assertEquals(123, $content->getSize());
         $this->assertEquals('Hello World', $content->getTitle());

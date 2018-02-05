@@ -25,8 +25,11 @@ class SwordExceptionListener {
     
     private $templating;
     
-    public function __construct(EngineInterface $templating) {
+    private $env;
+    
+    public function __construct($env, EngineInterface $templating) {
         $this->templating = $templating;
+        $this->env = $env;
     }
     
     /**
@@ -54,7 +57,8 @@ class SwordExceptionListener {
         }
         $response->headers->set('Content-Type', 'text/xml');
         $response->setContent($this->templating->render('AppBundle:Sword:exception_document.xml.twig', array(
-            'exception' => $exception,            
+            'exception' => $exception,        
+            'env' => $this->env,
         )));
         $event->setResponse($response);
     }

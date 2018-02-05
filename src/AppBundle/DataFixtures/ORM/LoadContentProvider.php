@@ -19,6 +19,9 @@ use Doctrine\Common\Persistence\ObjectManager;
  */
 class LoadContentProvider extends Fixture implements DependentFixtureInterface {
 
+    const PROVIDER_UUID_1 = '29125DE2-E622-416C-93EB-E887B2A3126C';
+    const PROVIDER_UUID_2 = 'E5DDD2AB-C971-4492-AD7C-7182111BD367';
+    
     /**
      * Load the objects.
      *
@@ -27,7 +30,7 @@ class LoadContentProvider extends Fixture implements DependentFixtureInterface {
      */
     public function load(ObjectManager $em) {
         $provider1 = new ContentProvider();
-        $provider1->setUuid('29125DE2-E622-416C-93EB-E887B2A3126C');
+        $provider1->setUuid(self::PROVIDER_UUID_1);
         $provider1->setPermissionurl('http://example.com/path/to/permission');
         $provider1->setName('Test Provider 1');
         $provider1->setMaxFileSize(10000);
@@ -39,7 +42,7 @@ class LoadContentProvider extends Fixture implements DependentFixtureInterface {
         $this->setReference('provider.1', $provider1);
         
         $provider2 = new ContentProvider();
-        $provider2->setUuid('29225DE2-E622-426C-93EB-E887B2A3226C');
+        $provider2->setUuid(self::PROVIDER_UUID_2);
         $provider2->setPermissionurl('http://example.com/path/to/permission');
         $provider2->setName('Test Provider 2');
         $provider2->setMaxFileSize(20000);

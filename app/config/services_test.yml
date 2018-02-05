@@ -15,9 +15,10 @@ services:
             - { name: doctrine.event_listener, event: preUpdate }
         
     AppBundle\EventListener\SwordExceptionListener:
+        arguments: ["%kernel.environment%"]
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
-            - {name: kernel.event_listener, event: kernel.controller }
+            - { name: kernel.event_listener, event: kernel.controller }
             
     AppBundle\Menu\Builder:
         tags:

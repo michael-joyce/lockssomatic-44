@@ -298,7 +298,7 @@ class Content extends AbstractEntity {
         if($this->deposit 
                 && $this->deposit->getContentProvider() 
                 && $this->deposit->getContentProvider()->getPlugin()) {
-            return $this->au->getPlugin();
+            return $this->deposit->getContentProvider()->getPlugin();
         }
         return null;
     }

@@ -58,7 +58,7 @@ class ContentBuilder {
      * @return Content
      *   The constructed content object.
      */
-    public function fromSimpleXml(SimpleXMLElement $xml) {
+    public function fromXml(SimpleXMLElement $xml) {
         $content = new Content();
         $content->setSize((string) $xml->attributes()->size);
         $content->setChecksumType((string) $xml->attributes()->checksumType);
