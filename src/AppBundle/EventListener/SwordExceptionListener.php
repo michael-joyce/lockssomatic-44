@@ -43,7 +43,7 @@ class SwordExceptionListener {
         if (!$this->controller[0] instanceof SwordController) {
             return;
         }
-                
+        
         $exception = $event->getException();
         $response = new Response();
         if ($exception instanceof HttpExceptionInterface) {
