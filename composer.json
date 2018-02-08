@@ -33,7 +33,7 @@
         "sensio/framework-extra-bundle": "^5.0.0",
         "symfony/monolog-bundle": "^3.1.0",
         "symfony/polyfill-apcu": "^1.0",
-        "symfony/swiftmailer-bundle": "^2.6.4",
+        "symfony/swiftmailer-bundle": "^2.6.4 <3.0",
         "symfony/symfony": "3.4.*",
         "symfony/templating": "^3.4",
         "twig/extensions": "^1.5",
@@ -45,7 +45,7 @@
         "liip/functional-test-bundle": "^1.8",
         "phpunit/phpunit": "^5.7",
         "sensio/generator-bundle": "^3.0",
-        "squizlabs/php_codesniffer": "^2.9",
+        "squizlabs/php_codesniffer": "^2.9.1 <3.0",
         "symfony/phpunit-bridge": "^4.0"
     },
     "scripts": {
