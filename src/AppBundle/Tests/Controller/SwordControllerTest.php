@@ -29,7 +29,7 @@ class SwordControllerTest extends BaseTestCase {
     private function getData($filename) {
         $path = dirname(dirname(__FILE__)).'/data/'.$filename;
         if( !file_exists($path)) {
-            throw new Exception("Cannot find data file {$filename}");
+            throw new Exception("Cannot find data file {$path}");
         }
         return file_get_contents($path);
     }
@@ -61,22 +61,7 @@ class SwordControllerTest extends BaseTestCase {
     public function testServiceDocument() {
         $client = static::createClient();
         $crawler = $client->request('GET', '/api/sword/2.0/sd-iri', array(), array(), array(
-            'HTTP_ON-Behalf-Of' => LoadContentProvider::PROVIDER_UUID_1,
-        ));
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $xml = $this->getXml($client->getResponse()->getContent());
-        $this->assertXpath(
-                'com.example.text', $xml, '//lom:pluginIdentifier/@id'
-        );
-        $this->assertXpath(
-                '/api/sword/2.0/col-iri/29125DE2-E622-416C-93EB-E887B2A3126C', $xml, '//app:collection/@href', 'assertStringEndsWith'
-        );
-    }
-    
-    public function testServiceDocumentXVariant() {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/api/sword/2.0/sd-iri', array(), array(), array(
-            'HTTP_X-ON-Behalf-Of' => LoadContentProvider::PROVIDER_UUID_1,
+            'HTTP_On-Behalf-Of' => LoadContentProvider::PROVIDER_UUID_1,
         ));
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $xml = $this->getXml($client->getResponse()->getContent());
@@ -89,9 +74,9 @@ class SwordControllerTest extends BaseTestCase {
     }
     
     public function testCreateDeposit() {
-        $provider = $this->getReferences('provider.1');
+        $provider = $this->getReference('provider.1');
         $client = static::createClient();
-        $data = $this->getData('depositSingle.xml');
+        $data = $this->getData('Sword/depositSingle.xml');
         $crawler = $client->request('POST', '/api/sword/2.0/col-iri/' . $provider->getUuid());
         $response = $client->getResponse();
         $this->assertEquals(201, $response->getStatusCode());

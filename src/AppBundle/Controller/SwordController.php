@@ -51,9 +51,6 @@ class SwordController extends Controller {
         if($request->headers->has($key)) {
             return $request->headers->get($key);
         }
-        if($request->headers->has('X-' . $key)) {
-            return $request->get('X-' . $key);
-        }
         if($this->getParameter('kernel.environment') === 'dev'
                 && $request->query->has($key)) {
             return $request->query->get($key);
