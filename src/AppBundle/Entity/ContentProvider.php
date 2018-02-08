@@ -79,7 +79,7 @@ class ContentProvider extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="ContentOwner", inversedBy="contentProviders")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="content_owner_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="content_owner_id", referencedColumnName="id", nullable=false)
      * })
      */
     private $contentOwner;
@@ -91,7 +91,7 @@ class ContentProvider extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="Pln", inversedBy="contentProviders")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="pln_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="pln_id", referencedColumnName="id", nullable=false)
      * })
      */
     private $pln;
@@ -103,7 +103,7 @@ class ContentProvider extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="contentProviders")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id", nullable=false)
      * })
      */
     private $plugin;

@@ -73,6 +73,7 @@ class Box extends AbstractEntity {
      * @var Pln
      *
      * @ORM\ManyToOne(targetEntity="Pln", inversedBy="boxes")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $pln;
 

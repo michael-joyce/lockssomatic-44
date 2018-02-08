@@ -46,6 +46,7 @@ class AuStatus extends AbstractEntity {
      * @var Au
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="auStatus")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $au;
 

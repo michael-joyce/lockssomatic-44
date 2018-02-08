@@ -25,6 +25,7 @@ class DepositStatus extends AbstractEntity {
      * @var Deposit
      *
      * @ORM\ManyToOne(targetEntity="Deposit", inversedBy="status")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $deposit;
 

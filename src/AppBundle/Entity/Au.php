@@ -54,6 +54,7 @@ class Au extends AbstractEntity {
      * @var Pln
      *
      * @ORM\ManyToOne(targetEntity="Pln", inversedBy="aus")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $pln;
 
@@ -65,6 +66,7 @@ class Au extends AbstractEntity {
      * @var ContentProvider
      *
      * @ORM\ManyToOne(targetEntity="ContentProvider", inversedBy="aus")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $contentProvider;
 
@@ -76,6 +78,7 @@ class Au extends AbstractEntity {
      * @var Plugin
      *
      * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="aus")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $plugin;
 

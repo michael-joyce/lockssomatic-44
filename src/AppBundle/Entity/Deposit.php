@@ -75,6 +75,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
      * @var ContentProvider
      *
      * @ORM\ManyToOne(targetEntity="ContentProvider", inversedBy="deposits")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $contentProvider;
 

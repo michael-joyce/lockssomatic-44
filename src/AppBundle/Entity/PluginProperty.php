@@ -55,11 +55,12 @@ class PluginProperty extends AbstractEntity {
      * @var Plugin
      *
      * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="pluginProperties")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $plugin;
 
     /**
-     * The parent of the property.
+     * The parent of the property. Optional.
      *
      * @var PluginProperty
      *

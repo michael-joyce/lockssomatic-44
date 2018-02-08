@@ -24,6 +24,7 @@ class CacheStatus extends AbstractEntity {
      * @var BoxStatus
      *
      * @ORM\ManyToOne(targetEntity="BoxStatus", inversedBy="caches")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $boxStatus;
 

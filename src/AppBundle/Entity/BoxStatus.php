@@ -26,6 +26,7 @@ class BoxStatus extends AbstractEntity {
      * @var Box
      *
      * @ORM\ManyToOne(targetEntity="Box", inversedBy="status")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $box;
 

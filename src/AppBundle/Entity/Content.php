@@ -79,7 +79,7 @@ class Content extends AbstractEntity {
      * @ORM\Column(name="checksum_value", type="string", length=255, nullable=true)
      */
     private $checksumValue;
-    
+
     /**
      * Key/value array of content properties.
      *
@@ -94,6 +94,7 @@ class Content extends AbstractEntity {
      * @var Deposit
      *
      * @ORM\ManyToOne(targetEntity="Deposit", inversedBy="content")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $deposit;
 
@@ -103,6 +104,7 @@ class Content extends AbstractEntity {
      * @var Au
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="content")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $au;
 
@@ -290,14 +292,12 @@ class Content extends AbstractEntity {
     public function getAu() {
         return $this->au;
     }
-    
+
     public function getPlugin() {
-        if($this->au && $this->au->getPlugin()) {
+        if ($this->au && $this->au->getPlugin()) {
             return $this->au->getPlugin();
         }
-        if($this->deposit 
-                && $this->deposit->getContentProvider() 
-                && $this->deposit->getContentProvider()->getPlugin()) {
+        if ($this->deposit && $this->deposit->getContentProvider() && $this->deposit->getContentProvider()->getPlugin()) {
             return $this->deposit->getContentProvider()->getPlugin();
         }
         return null;
@@ -332,7 +332,7 @@ class Content extends AbstractEntity {
     public function getProperty($key) {
         return $this->properties[$key];
     }
-    
+
     public function hasProperty($key) {
         return isset($this->properties[$key]);
     }
