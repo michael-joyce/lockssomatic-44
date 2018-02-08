@@ -114,14 +114,14 @@ class SwordController extends Controller {
         foreach ($plugin->getDefinitionalProperties() as $property) {
             $nodes = $content->xpath("lom:property[@name='$property']");
             if (count($nodes) === 0) {
-                throw new BadRequestException("{$property} is a required property.", null, Response::HTTP_BAD_REQUEST);
+                throw new BadRequestHttpException("{$property} is a required property.", null, Response::HTTP_BAD_REQUEST);
             }
             if (count($nodes) > 1) {
-                throw new BadRequestException("{$property} must be unique.", null, Response::HTTP_BAD_REQUEST);
+                throw new BadRequestHttpException("{$property} must be unique.", null, Response::HTTP_BAD_REQUEST);
             }
             $property = $nodes[0];
             if (!$property->attributes()->value) {
-                throw new BadRequestException("{$property} must have a value.", null, Response::HTTP_BAD_REQUEST);
+                throw new BadRequestHttpException("{$property} must have a value.", null, Response::HTTP_BAD_REQUEST);
             }
         }
     }
@@ -139,7 +139,7 @@ class SwordController extends Controller {
      */
     private function precheckDeposit(SimpleXMLElement $atom, ContentProvider $provider) {
         if (count($atom->xpath('//lom:content')) === 0) {
-            throw new BadRequestException('Empty deposits are not allowed.', null, Response::HTTP_BAD_REQUEST);
+            throw new BadRequestHttpException('Empty deposits are not allowed.', null, Response::HTTP_BAD_REQUEST);
         }
         $plugin = $provider->getPlugin();
 
@@ -184,10 +184,18 @@ class SwordController extends Controller {
         return $response;
     }
     
-    private function getXml($string) {
-        $xml = simplexml_load_string($string);
-        Namespaces::registerNamespaces($xml);
-        return $xml;
+    private function getXml(Request $request) {
+        $content = $request->getContent();
+        if( ! $content || !is_string($content)) {
+            throw new BadRequestHttpException("Expected request body. Found none.", null, Response::HTTP_BAD_REQUEST);
+        }
+        try {
+            $xml = simplexml_load_string($content);
+            Namespaces::registerNamespaces($xml);
+            return $xml;
+        } catch(\Exception $e) {
+            throw new BadRequestHttpException("Cannot parse request XML.", $e, Response::HTTP_BAD_REQUEST);
+        }
     }
     
     /**
@@ -214,7 +222,7 @@ class SwordController extends Controller {
      * @return Response
      */
     public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, ContentBuilder $contentBuilder, AuBuilder $auBuilder, AuIdGenerator $idGenerator) {
-        $atom = $this->getXml($request->getContent());
+        $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);        
         $deposit = $depositBuilder->fromXml($atom, $provider);
         foreach($atom->xpath('lom:content') as $node) {

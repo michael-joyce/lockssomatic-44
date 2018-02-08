@@ -308,10 +308,8 @@ class AuPropertyGeneratorTest extends BaseTestCase {
         $importer = $this->container->get(PluginImporter::class);
         $plugin = $importer->buildPlugin($xml);
         $au = new Au();
-        $this->em->persist($au);
         $au->setPlugin($plugin);
         $this->buildContentItems($au);
-        $this->em->flush();
 
         $this->generator->generateProperties($au);
         $this->assertEquals(23, count($au->getAuProperties()));
