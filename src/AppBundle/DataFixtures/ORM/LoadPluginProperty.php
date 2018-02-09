@@ -26,6 +26,7 @@ class LoadPluginProperty extends Fixture implements DependentFixtureInterface {
      *   Doctrine object manager.
      */
     public function load(ObjectManager $em) {     
+        $this->generate($em, 'plugin_identifier', 'ca.example.lockss.plugin');
         $this->generate($em, 'au_name', '"Dummy AU %d", container_number');
         $this->generate($em, 'plugin_version', 301);
         $this->generate($em, 'au_permission_url', array(

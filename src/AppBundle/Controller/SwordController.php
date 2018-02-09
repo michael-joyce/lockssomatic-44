@@ -84,10 +84,15 @@ class SwordController extends Controller {
      * @param Request $request
      * @return array
      * 
-     * @Route("/sd-iri.{_format}", name="sword_service_document", defaults={"_format": "xml"})
+     * @Route("/sd-iri.{_format}", 
+     *  name="sword_service_document", 
+     *  defaults={"_format": "xml"}, 
+     *  requirements={"_format": "xml"}
+     * )
      * @Template()
      */
-    public function serviceDocumentAction(Request $request) {
+    public function serviceDocumentAction(Request $request) {        
+        $this->logger->info("Service Document - " . $request->getClientIp());
         $uuid = $this->fetchHeader($request, 'On-Behalf-Of', true);
         $provider = $this->getProvider(strtoupper($uuid));
         $plugin = $provider->getPlugin();
@@ -224,7 +229,6 @@ class SwordController extends Controller {
         $deposit = $depositBuilder->fromXml($atom, $provider);
         foreach($atom->xpath('lom:content') as $node) {
             $content = $contentBuilder->fromXml($node);
-            dump($content);
             $content->setDeposit($deposit);
             $auid = $idGenerator->fromContent($content);
             $au = $em->getRepository(Au::class)->findOneBy(array(
