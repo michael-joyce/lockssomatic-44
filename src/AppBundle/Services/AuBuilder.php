@@ -56,10 +56,9 @@ class AuBuilder {
         $au->setPln($provider->getPln());
         $au->setPlugin($provider->getPlugin());
         $this->em->persist($au);
-//        $this->em->flush($au);
-//        
-//        $this->propertyGenerator->generateProperties($au);
-//        $this->idGenerator->fromAu($au);
+        
+        $this->propertyGenerator->generateProperties($au);
+        $this->idGenerator->fromAu($au);
         return $au;
     }
     

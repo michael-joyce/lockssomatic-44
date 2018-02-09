@@ -52,12 +52,22 @@ class AuIdGenerator {
         return $id;
     }
     
+    /**
+     * Sets the AU id based on the first content item in the AU and returns it.
+     * 
+     * Assumes that the AU properties are already generated.
+     * 
+     * @param Au $au
+     * @return string|null
+     */
     public function fromAu(Au $au) {
         $content = $au->getContent()->first();
         if($content === null) {
             return null;
         }
-        return $this->fromContent($content);
+        $auid = $this->fromContent($content);
+        $au->setAuid($auid);
+        return $auid;
     }
     
 }
