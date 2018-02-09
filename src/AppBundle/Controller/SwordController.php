@@ -253,6 +253,50 @@ class SwordController extends Controller {
     }
     
     /**
+     * HTTP PUT to this URL to edit a deposit. This URL is the same as the
+     * recieptAction URL (aka edit-iri) but requires an HTTP PUT.
+     *
+     * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_edit", requirements={
+     *      "providerUuid": ".{36}",
+     *      "depositUuid": ".{36}"
+     * })
+     * @Method({"PUT"})
+     * @ParamConverter("provider", class="AppBundle:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
+     * @ParamConverter("deposit", class="AppBundle:Deposit", options={"mapping": {"depositUuid"="uuid"}})
+     *
+     * @param Request $request
+     * @param Provider $provider
+     * @param Deposit $deposit
+     *
+     * @return Response
+     */
+    public function editDepositAction(Request $request, Provider $provider, Deposit $deposit) {
+        
+    }
+    
+    /**
+     * HTTP PUT to this URL to edit a deposit. This URL is the same as the
+     * recieptAction URL (aka edit-iri) but requires an HTTP PUT.
+     *
+     * @Route("/cont-iri/{providerUuid}/{depositUuid}", name="sword_view", requirements={
+     *      "providerUuid": ".{36}",
+     *      "depositUuid": ".{36}"
+     * })
+     * @Method({"GET"})
+     * @ParamConverter("provider", class="AppBundle:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
+     * @ParamConverter("deposit", class="AppBundle:Deposit", options={"mapping": {"depositUuid"="uuid"}})
+     *
+     * @param Request $request
+     * @param Provider $provider
+     * @param Deposit $deposit
+     *
+     * @return Response
+     */
+    public function viewDepositAction(Request $request, Provider $provider, Deposit $deposit) {
+        
+    }
+    
+    /**
      * Get a deposit statement, showing the status of the deposit in LOCKSS,
      * from this URL. Also known as state-iri. Includes a sword:originalDeposit element for
      * each content item in the deposit.
