@@ -7,18 +7,17 @@ use Symfony\Component\Finder\Finder;
 $dir = __DIR__;
 
 $iterator = Finder::create()
-    ->files()
-    ->name('*.php')
-    ->exclude('Resources')
-    ->exclude('Tests')
-    ->in($dir . '/src')
-;
+        ->files()
+        ->name('*.php')
+        ->exclude('Resources')
+        ->exclude('Tests')
+        ->in($dir . '/src');
 
 $options = array(
-	// 'theme' => 'symfony',
-	'title' => 'LOCKSSOMatic Internals',
-	'build_dir' => $dir . '/docs/api/sami',
-	'cache_dir' => $dir . '/var/cache/sami',
+    // 'theme' => 'symfony',
+    'title' => 'LOCKSSOMatic Internals',
+    'build_dir' => $dir . '/web/docs/api/sami',
+    'cache_dir' => $dir . '/var/cache/sami',
     'remote_repository' => new GitHubRemoteRepository('ubermichael/lom', $dir),
     'default_opened_level' => 2,
     'include_parent_data' => true,
