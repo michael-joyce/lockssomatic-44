@@ -92,7 +92,6 @@ class SwordController extends Controller {
      * @Template()
      */
     public function serviceDocumentAction(Request $request) {        
-        $this->logger->info("Service Document - " . $request->getClientIp());
         $uuid = $this->fetchHeader($request, 'On-Behalf-Of', true);
         $provider = $this->getProvider(strtoupper($uuid));
         $plugin = $provider->getPlugin();
@@ -166,21 +165,18 @@ class SwordController extends Controller {
     /**
      * Given a deposit and content provider, render a deposit reciept.
      *
-     * @param ContentProvider $contentProvider
+     * @param ContentProvider $provider
      * @param Deposit $deposit
      *
      * @return Response containing the XML.
      */
-    private function renderDepositReceipt(ContentProvider $contentProvider, Deposit $deposit) {
+    private function renderDepositReceipt(ContentProvider $provider, Deposit $deposit) {
         // @TODO this should be a call to render depositReceiptAction() or something.
-        // Return the deposit receipt.
-        $response = $this->render(
-            'LOCKSSOMaticSwordBundle:Sword:depositReceipt.xml.twig',
-            array(
-            'contentProvider' => $contentProvider,
+        // Return the deposit receipt.        
+        $response = $this->render('sword/deposit_receipt.xml.twig', array(
+            'provider' => $provider,
             'deposit' => $deposit,
-            )
-        );
+        ));
         $response->headers->set('Content-Type', 'text/xml');
 
         return $response;
@@ -240,10 +236,7 @@ class SwordController extends Controller {
             $content->setAu($au);            
         }
         $em->flush();
-        $response = $this->render('sword/deposit_receipt.xml.twig', array(
-            'provider' => $provider,
-            'deposit' => $deposit,
-        ));
+        $response = $this->renderDepositReceipt($provider, $deposit);
         $response->headers->set('Location', $this->generateUrl('sword_reciept', array(
             'providerUuid' => $provider->getUuid(),
             'depositUuid' => $deposit->getUuid(),
@@ -265,12 +258,12 @@ class SwordController extends Controller {
      * @ParamConverter("deposit", class="AppBundle:Deposit", options={"mapping": {"depositUuid"="uuid"}})
      *
      * @param Request $request
-     * @param Provider $provider
+     * @param ContentProvider $provider
      * @param Deposit $deposit
      *
      * @return Response
      */
-    public function editDepositAction(Request $request, Provider $provider, Deposit $deposit) {
+    public function editDepositAction(Request $request, ContentProvider $provider, Deposit $deposit) {
         
     }
     
@@ -287,12 +280,12 @@ class SwordController extends Controller {
      * @ParamConverter("deposit", class="AppBundle:Deposit", options={"mapping": {"depositUuid"="uuid"}})
      *
      * @param Request $request
-     * @param Provider $provider
+     * @param ContentProvider $provider
      * @param Deposit $deposit
      *
      * @return Response
      */
-    public function viewDepositAction(Request $request, Provider $provider, Deposit $deposit) {
+    public function viewDepositAction(Request $request, ContentProvider $provider, Deposit $deposit) {
         
     }
     

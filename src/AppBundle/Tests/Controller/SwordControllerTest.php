@@ -31,7 +31,11 @@ class SwordControllerTest extends BaseTestCase {
         if( !file_exists($path)) {
             throw new Exception("Cannot find data file {$path}");
         }
-        return file_get_contents($path);
+        $data = file_get_contents($path);
+        if($data === false) {
+            throw new Exception("Cannot read data file {$path}");
+        }
+        return $data;
     }
 
     public function testServiceDocumentMissingOnBehalfOf() {
@@ -73,11 +77,29 @@ class SwordControllerTest extends BaseTestCase {
         );
     }
     
-    public function testCreateDeposit() {
+    public function testCreateDepositSingle() {
         $provider = $this->getReference('provider.1');
         $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
-        $crawler = $client->request('POST', '/api/sword/2.0/col-iri/' . $provider->getUuid());
+        $crawler = $client->request(
+                'POST', 
+                '/api/sword/2.0/col-iri/' . $provider->getUuid(), array(), array(), array(),
+                $data
+        );
+        $response = $client->getResponse();
+        $this->assertEquals(201, $response->getStatusCode());
+        $this->assertStringEndsWith('/edit', $response->headers->get('Location'));
+    }
+    
+    public function testCreateDepositMultiple() {
+        $provider = $this->getReference('provider.1');
+        $client = static::createClient();
+        $data = $this->getData('Sword/depositMultiple.xml');
+        $crawler = $client->request(
+                'POST', 
+                '/api/sword/2.0/col-iri/' . $provider->getUuid(), array(), array(), array(),
+                $data
+        );
         $response = $client->getResponse();
         $this->assertEquals(201, $response->getStatusCode());
         $this->assertStringEndsWith('/edit', $response->headers->get('Location'));

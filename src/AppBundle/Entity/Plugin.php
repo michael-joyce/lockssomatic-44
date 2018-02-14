@@ -9,9 +9,11 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
+use SplFileInfo;
 
 /**
  * Plugin
@@ -142,7 +144,7 @@ class Plugin extends AbstractEntity {
      * @return string
      */
     public function getFilename() {
-        $fileinfo = new \SplFileInfo($this->path);
+        $fileinfo = new SplFileInfo($this->path);
         return $fileinfo->getBasename();
     }
 
