@@ -59,6 +59,12 @@ class Plugin extends AbstractEntity {
      * @ORM\Column(name="identifier", type="string", length=255)
      */
     private $identifier;
+    
+    /**
+     * @var array
+     * @ORM\Column(name="ignored_params", type="array", nullable=false)
+     */
+    private $ignoredParams;
 
     /**
      * AUs created for this plugin.
@@ -87,6 +93,14 @@ class Plugin extends AbstractEntity {
      */
     private $pluginProperties;
 
+    public function __construct() {
+        parent::__construct();
+        $this->aus = new ArrayCollection();
+        $this->ignoredParams = array();
+        $this->contentProviders = new ArrayCollection();
+        $this->pluginProperties = new ArrayCollection();
+    }
+    
     public function __toString() {
         if($this->name) {
             return $this->name;

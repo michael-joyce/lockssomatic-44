@@ -43,6 +43,8 @@ class AuBuilderTest extends BaseTestCase {
         $deposit = new Deposit();
         $deposit->setContentProvider($provider);
         $content = new Content();
+        $content->setProperty('journalTitle', 'Some Title');
+        $content->setProperty('publisher', 'Some publisher');
         $content->setDeposit($deposit);
         
         $au = $this->builder->fromContent($content);
