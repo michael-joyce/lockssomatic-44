@@ -22,6 +22,9 @@ use Nines\UtilBundle\Tests\Util\BaseTestCase;
  */
 class AuBuilderTest extends BaseTestCase {
 
+    /**
+     * @var AuBuilder
+     */
     private $builder;
     
     protected function setUp() {
@@ -48,6 +51,7 @@ class AuBuilderTest extends BaseTestCase {
         $this->assertEquals($plugin, $au->getPlugin());
         $this->assertEquals(1, count($au->getContent()));
         $this->assertEquals($provider, $au->getContentProvider());
+        $this->assertEquals('', $au->getAuId());
     }
     
 }
