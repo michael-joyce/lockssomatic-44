@@ -9,9 +9,11 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
+use SplFileInfo;
 
 /**
  * Pln
@@ -88,6 +90,22 @@ class Pln extends AbstractEntity {
     private $contentPort;
 
     /**
+     * Java Keystore file.
+     * 
+     * @ORM\Column(name="keystore_path", type="string", length=255, nullable=true)
+     */
+    private $keystore;
+
+    /**
+     * PLN Properties, as defined by the lockss.xml file and LOCKSSOMatic.
+     *
+     * @ORM\Column(name="property", type="array", nullable=false);
+     *
+     * @var array
+     */
+    private $properties;
+
+    /**
      * A list of all AUs in the PLN. Probably very large.
      *
      * @ORM\OneToMany(targetEntity="Au", mappedBy="pln")
@@ -106,22 +124,6 @@ class Pln extends AbstractEntity {
     private $boxes;
 
     /**
-     * Java Keystore file.
-     * 
-     * @ORM\Column(name="keystore_path", type="string", length=255, nullable=true)
-     */
-    private $keystore;
-
-    /**
-     * PLN Properties, as defined by the lockss.xml file and LOCKSSOMatic.
-     *
-     * @ORM\Column(name="property", type="array", nullable=true);
-     *
-     * @var array
-     */
-    private $properties;
-
-    /**
      * List of content providers for this PLN. Each provider is associated with
      * exactly one PLN.
      *
@@ -135,6 +137,10 @@ class Pln extends AbstractEntity {
         parent::__construct();
         $this->enableContentUi = false;
         $this->contentPort = '8080';
+        $this->properties = array();
+        $this->contentProviders = new ArrayCollection();
+        $this->boxes = new ArrayCollection();
+        $this->aus = new ArrayCollection();
     }
 
     public function __toString() {
@@ -298,12 +304,14 @@ class Pln extends AbstractEntity {
     /**
      * Add aus
      *
-     * @param Au $aus
+     * @param Au $au
      *
      * @return Pln
      */
-    public function addAus(Au $aus) {
-        $this->aus[] = $aus;
+    public function addAu(Au $au) {
+        if( ! $this->aus->contains($au)) {
+            $this->aus->add($au);
+        }
 
         return $this;
     }
@@ -311,10 +319,10 @@ class Pln extends AbstractEntity {
     /**
      * Remove aus
      *
-     * @param Au $aus
+     * @param Au $au
      */
-    public function removeAus(Au $aus) {
-        $this->aus->removeElement($aus);
+    public function removeAu(Au $au) {
+        $this->aus->removeElement($au);
     }
 
     /**
@@ -380,7 +388,7 @@ class Pln extends AbstractEntity {
     }
     
     public function getKeystoreFilename() {
-        $fileinfo = new \SplFileInfo($this->keystore);
+        $fileinfo = new SplFileInfo($this->keystore);
         return $fileinfo->getBasename();
     }
 

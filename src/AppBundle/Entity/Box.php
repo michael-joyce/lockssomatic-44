@@ -68,16 +68,6 @@ class Box extends AbstractEntity {
     private $ipAddress;
 
     /**
-     * The PLN this box is a part of.
-     *
-     * @var Pln
-     *
-     * @ORM\ManyToOne(targetEntity="Pln", inversedBy="boxes")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $pln;
-
-    /**
      * Name of the box admin.
      *
      * @var string
@@ -125,6 +115,16 @@ class Box extends AbstractEntity {
      */
     private $active;
 
+    /**
+     * The PLN this box is a part of.
+     *
+     * @var Pln
+     *
+     * @ORM\ManyToOne(targetEntity="Pln", inversedBy="boxes")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $pln;
+    
     public function __toString() {
         if ($this->hostname) {
             return $this->hostname;

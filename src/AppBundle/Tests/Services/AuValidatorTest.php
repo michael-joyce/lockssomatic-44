@@ -9,10 +9,16 @@
 
 namespace AppBundle\Tests\Services;
 
+use AppBundle\DataFixtures\ORM\LoadDeposit;
+use AppBundle\DataFixtures\ORM\LoadPln;
 use AppBundle\Entity\Au;
 use AppBundle\Entity\Content;
+use AppBundle\Entity\ContentProvider;
+use AppBundle\Entity\Deposit;
+use AppBundle\Entity\Pln;
 use AppBundle\Services\AuValidator;
 use AppBundle\Services\PluginImporter;
+use DateTime;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 /**
@@ -28,7 +34,10 @@ class AuValidatorTest extends BaseTestCase {
     private $validator;
 
     protected function getFixtures() {
-        return [];
+        return [
+            LoadPln::class,
+            LoadDeposit::class,
+        ];
     }
     
     public function setUp() {
@@ -40,18 +49,29 @@ class AuValidatorTest extends BaseTestCase {
         $this->assertInstanceOf(AuValidator::class, $this->validator);
     }
 
+    /*
+     * The references to fixtures in the test below keep getting lost, resulting
+     * in strange error messages like
+     * "Undefined index: 00000000763d670d000000016f52a1c9"
+     * 
+     * So manually fetch all the content from the database for this test.
+     */
     public function testValidateSingle() {
         $importer = $this->container->get(PluginImporter::class);
         $xml = simplexml_load_string($this->xmlData());
-        $plugin = $importer->buildPlugin($xml);
+        $plugin = $importer->buildPlugin($xml);        
         $au = new Au();
+        // should be $this->getReference('provider.1') but that fails.
+        $au->setContentProvider($this->em->find(ContentProvider::class, 1));
+        $au->setPln($this->em->find(Pln::class, 1));
         $au->setPlugin($plugin);
         $this->em->persist($au);
         
         $content = new Content();
+        $content->setDeposit($this->em->find(Deposit::class, 1));
         $content->setUrl("http://example.com/path/1");
         $content->setTitle("Item 1");
-        $content->setDateDeposited(new \DateTime());
+        $content->setDateDeposited(new DateTime());
         $content->setProperty('base_url', 'http://example.com/path');
         $content->setProperty('container_number', 1);
         $content->setProperty('permission_url', "http://example.com/permission/1");
@@ -62,19 +82,30 @@ class AuValidatorTest extends BaseTestCase {
         $this->assertEquals(0, $this->validator->validate($au));
     }
 
+    /*
+     * The references to fixtures in the test below keep getting lost, resulting
+     * in strange error messages like
+     * "Undefined index: 00000000763d670d000000016f52a1c9"
+     * 
+     * So manually fetch all the content from the database for this test.
+     */
     public function testValidate() {
         $importer = $this->container->get(PluginImporter::class);
         $xml = simplexml_load_string($this->xmlData());
-        $plugin = $importer->buildPlugin($xml);
+        $plugin = $importer->buildPlugin($xml);        
         $au = new Au();
+        // should be $this->getReference('provider.1') but that fails.
+        $au->setContentProvider($this->em->find(ContentProvider::class, 1));
+        $au->setPln($this->em->find(Pln::class, 1));
         $au->setPlugin($plugin);
         $this->em->persist($au);
         
         for($i = 0; $i < 10; $i++) {
             $content = new Content();
+            $content->setDeposit($this->em->find(Deposit::class, 1));
             $content->setUrl("http://example.com/path/{$i}");
             $content->setTitle("Item {$i}");
-            $content->setDateDeposited(new \DateTime());
+            $content->setDateDeposited(new DateTime());
             $content->setProperty('base_url', 'http://example.com/path');
             $content->setProperty('container_number', 1);
             $content->setProperty('permission_url', "http://example.com/permission/{$i}");
@@ -89,16 +120,20 @@ class AuValidatorTest extends BaseTestCase {
     public function testValidateFail() {
         $importer = $this->container->get(PluginImporter::class);
         $xml = simplexml_load_string($this->xmlData());
-        $plugin = $importer->buildPlugin($xml);
+        $plugin = $importer->buildPlugin($xml);        
         $au = new Au();
+        // should be $this->getReference('provider.1') but that fails.
+        $au->setContentProvider($this->em->find(ContentProvider::class, 1));
+        $au->setPln($this->em->find(Pln::class, 1));
         $au->setPlugin($plugin);
         $this->em->persist($au);
         
         for($i = 0; $i < 10; $i++) {
             $content = new Content();
+            $content->setDeposit($this->em->find(Deposit::class, 1));
             $content->setUrl("http://example.com/path/{$i}");
             $content->setTitle("Item {$i}");
-            $content->setDateDeposited(new \DateTime());
+            $content->setDateDeposited(new DateTime());
             $content->setProperty('base_url', "http://example.com/path/{$i}");
             $content->setProperty('container_number', 1);
             $content->setProperty('permission_url', "http://example.com/permission/{$i}");
