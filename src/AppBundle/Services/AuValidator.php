@@ -12,6 +12,7 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Au;
 use AppBundle\Entity\Content;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Monolog\Logger;
 
@@ -64,17 +65,17 @@ class AuValidator {
      * @return int
      *   The number of errors found.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function validate(Au $au) {
         $errors = 0;
         $plugin = $au->getPlugin();
         if (!$plugin) {
-            throw new \Exception("Cannot validate an AU without a plugin.");
+            throw new Exception("Cannot validate an AU without a plugin.");
         }
         $definitional = $plugin->getDefinitionalProperties();
         if (!$definitional || count($definitional) === 0) {
-            throw new \Exception("Cannot validate AU with plugin without definitional properties.");
+            throw new Exception("Cannot validate AU for plugin without definitional properties.");
         }
         
         $repo = $this->em->getRepository(Content::class);
