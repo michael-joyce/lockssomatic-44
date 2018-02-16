@@ -27,3 +27,25 @@ parameters:
     # LOCKSSOMatic configuration
     lom.download_dir: data/download
     lom.hash_methods: [ 'SHA1', 'MD5' ]
+
+    # IPs that are allowed to access LOCKSS configs, in addition to the boxes.
+    # IPs or CIDRs are allowed.
+    lom.allowed_ips:
+        - 127.0.0.1
+        - 10.0.0.0/8
+
+    # Number of AUs to include in a titledb.xml file.
+    lom.aus_per_titledb: 50
+
+    # LOM will ignore some definitional ConfigParamDescr settings in order
+    # to figure out which AU content goes into.
+    lom.nondefinitional_cpds:
+        com.example.LockssPlugin:
+            - manifest_url
+            - permission_url
+
+    # When boxes are unreachable LOM can send a notice to the box manager. These
+    # settings configure the message.
+    lom.boxstatus.subject: 'LOCKSSOMatic Box Status'
+    lom.boxstatus.sender: noreply@example.com
+    lom.boxstatus.helpcontact: lom@example.com
