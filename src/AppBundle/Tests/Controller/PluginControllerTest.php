@@ -89,4 +89,31 @@ class PluginControllerTest extends BaseTestCase {
         $this->assertContains('plugin.DummyPlugin', $responseCrawler->text());
     }
 
+    public function testAnonEdit() {
+        $client = $this->makeClient();
+        $crawler = $client->request('GET', '/plugin/1/edit');
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+    }
+
+    public function testUserEdit() {
+        $client = $this->makeClient(LoadUser::USER);
+        $crawler = $client->request('GET', '/plugin/1/edit');
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminEdit() {
+        $client = $this->makeClient(LoadUser::ADMIN);
+        $formCrawler = $client->request('GET', '/plugin/1/edit');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        
+        $form = $formCrawler->selectButton('Update')->form(array(
+            'plugin[generateManifests]' => 0,
+        ));
+
+        $client->submit($form);
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $responseCrawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertContains('settings have been updated.', $responseCrawler->text());
+    }
 }

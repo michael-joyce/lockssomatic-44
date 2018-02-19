@@ -31,6 +31,10 @@ class LoadPlugin extends Fixture implements DependentFixtureInterface {
         $plugin1->setPath('/path/to/plugin1.jar');
         $plugin1->setVersion('31');
         $plugin1->setIdentifier('com.example.text');
+        $plugin1->setGenerateManifests(true);
+        $plugin1->setGeneratedParams([
+            'manifest_url',
+        ]);
         $em->persist($plugin1);
         $this->setReference('plugin.1', $plugin1);
         

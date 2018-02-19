@@ -142,6 +142,7 @@ class PluginController extends Controller {
      * @param Plugin $plugin
      *   Dependency injected plugin being edited.
      * 
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="plugin_edit")
      * @Method({"GET","POST"})
      * @Template()
