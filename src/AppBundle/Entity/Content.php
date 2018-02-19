@@ -330,7 +330,10 @@ class Content extends AbstractEntity {
      * @return string
      */
     public function getProperty($key) {
-        return $this->properties[$key];
+        if($this->hasProperty($key)) {
+            return $this->properties[$key];
+        }
+        return null;
     }
 
     public function hasProperty($key) {

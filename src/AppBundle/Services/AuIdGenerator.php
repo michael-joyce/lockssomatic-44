@@ -28,7 +28,7 @@ class AuIdGenerator {
         $this->logger = $logger;
     }
     
-    public function fromContent(Content $content) {
+    public function fromContent(Content $content, $lockssAuid = true) {
         $plugin = $content->getPlugin();
         if($plugin === null) {
             return null;
@@ -38,10 +38,14 @@ class AuIdGenerator {
         $names = $plugin->getDefinitionalProperties();
         sort($names);
         $encoder = new Encoder();
+        $this->logger->warning("generated params: " . print_r($plugin->getGeneratedParams(), true));
         foreach($names as $name) {
-            // content may not have been assigned to an AU yet. If that's 
-            // the case, then any property that depends on AU's database ID
-            // (like manifest_url) will cause a problem.
+            $this->logger->warning("Generating {$name}");
+            if( ! $lockssAuid && in_array($name, $plugin->getGeneratedParams())) {
+                $this->logger->warning("Skipping.");
+                // skip any properties that LOM will generate later.
+                continue;
+            }
             $value = $content->getProperty($name);
             if( ! $value) {
                 throw new Exception("Cannot generate AUID without definitional property {$name}.");
@@ -60,13 +64,12 @@ class AuIdGenerator {
      * @param Au $au
      * @return string|null
      */
-    public function fromAu(Au $au) {
+    public function fromAu(Au $au, $lockssAuid = true) {
         $content = $au->getContent()->first();
         if($content === null) {
             return null;
         }
-        $auid = $this->fromContent($content);
-        $au->setAuid($auid);
+        $auid = $this->fromContent($content, $lockssAuid);
         return $auid;
     }
     

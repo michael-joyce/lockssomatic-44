@@ -57,7 +57,7 @@ class AuBuilder {
         $au->setPlugin($provider->getPlugin());
         $this->em->persist($au);
         $this->propertyGenerator->generateProperties($au);
-        $au->setAuid($this->idGenerator->fromAu($au));
+        //$au->setAuid($this->idGenerator->fromAu($au));
         return $au;
     }
     

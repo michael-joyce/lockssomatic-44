@@ -113,6 +113,10 @@ class SwordController extends Controller {
      */
     private function precheckContentProperties(SimpleXMLElement $content, Plugin $plugin) {
         foreach ($plugin->getDefinitionalProperties() as $property) {
+            if(in_array($property, $plugin->getGeneratedParams())) {
+                // skip any parameters that LOM will generate later.
+                continue;
+            }
             $nodes = $content->xpath("lom:property[@name='$property']");
             if (count($nodes) === 0) {
                 throw new BadRequestHttpException("{$property} is a required property.", null, Response::HTTP_BAD_REQUEST);
@@ -226,12 +230,13 @@ class SwordController extends Controller {
         foreach($atom->xpath('lom:content') as $node) {
             $content = $contentBuilder->fromXml($node);
             $content->setDeposit($deposit);
-            $auid = $idGenerator->fromContent($content);
+            $auid = $idGenerator->fromContent($content, false);
             $au = $em->getRepository(Au::class)->findOneBy(array(
                 'auid' => $auid,
             ));
             if( ! $au) {
                 $au = $auBuilder->fromContent($content);
+                $au->setAuid($auid);
             }
             $content->setAu($au);            
         }
