@@ -11,6 +11,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Plugin;
 use AppBundle\Form\FileUploadType;
+use AppBundle\Form\PluginType;
 use AppBundle\Services\FilePaths;
 use AppBundle\Services\PluginImporter;
 use Exception;
@@ -131,4 +132,36 @@ class PluginController extends Controller {
         );
     }
 
+    /**
+     * The edit action lets a user configure the plugin's settings inside
+     * LOCKSSOMatic. To add a new version of the plugin JAR file use the new 
+     * action.
+     * 
+     * @param Request $request
+     *   Dependency injected request.
+     * @param Plugin $plugin
+     *   Dependency injected plugin being edited.
+     * 
+     * @Route("/{id}/edit", name="plugin_edit")
+     * @Method({"GET","POST"})
+     * @Template()
+     */
+    public function editAction(Request $request, Plugin $plugin) {
+        $editForm = $this->createForm(PluginType::class, $plugin, array(
+            'plugin' => $plugin,
+        ));
+        $editForm->handleRequest($request);
+        
+        if($editForm->isSubmitted() && $editForm->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+            $this->addFlash('success', 'The plugin settings have been updated.');
+            return $this->redirectToRoute('plugin_show', array('id' => $plugin->getId()));
+        }
+        return array(
+            'plugin' => $plugin,
+            'edit_form' => $editForm->createView(),
+        );
+    }
+    
 }

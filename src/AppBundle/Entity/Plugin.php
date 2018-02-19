@@ -61,10 +61,18 @@ class Plugin extends AbstractEntity {
     private $identifier;
     
     /**
-     * @var array
-     * @ORM\Column(name="ignored_params", type="array", nullable=false)
+     * If true, LOCKSSOMatic will generate manifest files for this plugin's AUs.
+     * 
+     * @var boolean
+     * @ORM\Column(name="generate_manifests", type="boolean", nullable=false)
      */
-    private $ignoredParams;
+    private $generateManifests;
+    
+    /**
+     * @var array
+     * @ORM\Column(name="generated_params", type="array", nullable=false)
+     */
+    private $generatedParams;
 
     /**
      * AUs created for this plugin.
@@ -95,8 +103,9 @@ class Plugin extends AbstractEntity {
 
     public function __construct() {
         parent::__construct();
+        $this->generatedParams = array();
+        $this->generateManifests = false;
         $this->aus = new ArrayCollection();
-        $this->ignoredParams = array();
         $this->contentProviders = new ArrayCollection();
         $this->pluginProperties = new ArrayCollection();
     }
@@ -329,7 +338,7 @@ class Plugin extends AbstractEntity {
      */
     public function getPluginConfigParams() {
         $properties = array();
-        foreach ($this->getPluginProperties() as $prop) {
+        foreach ($this->getPluginProperties()->toArray() as $prop) {
             /** @var PluginProperties $prop */
             if ($prop->getPropertyKey() !== self::CONFIG_PROPS) {
                 continue;
@@ -341,9 +350,32 @@ class Plugin extends AbstractEntity {
                 $properties[] = $child;
             }
         }
+        return $properties;
+    }
+    
+    /**
+     * Get the definitional plugin parameter names.
+     *
+     * @return ArrayCollection|PluginProperty[]
+     */
+    public function getConfigPropertyNames() {
+        $properties = array();
+
+        foreach ($this->getPluginConfigParams() as $prop) {
+            $key = '';
+            foreach ($prop->getChildren() as $child) {
+                if ($child->getPropertyKey() === 'key') {
+                    $key = $child->getPropertyValue();
+                }
+            }
+            if ($key !== '') {
+                $properties[] = $key;
+            }
+        }
 
         return $properties;
     }
+    
     
     /**
      * Get the definitional plugin parameter names.
@@ -405,6 +437,52 @@ class Plugin extends AbstractEntity {
 
         return $properties;
     }
-    
-    
+
+    /**
+     * Set generateManifests
+     *
+     * @param boolean $generateManifests
+     *
+     * @return Plugin
+     */
+    public function setGenerateManifests($generateManifests)
+    {
+        $this->generateManifests = $generateManifests;
+
+        return $this;
+    }
+
+    /**
+     * Get generateManifests
+     *
+     * @return boolean
+     */
+    public function getGenerateManifests()
+    {
+        return $this->generateManifests;
+    }
+
+    /**
+     * Set generatedParams
+     *
+     * @param array $generatedParams
+     *
+     * @return Plugin
+     */
+    public function setGeneratedParams($generatedParams)
+    {
+        $this->generatedParams = $generatedParams;
+
+        return $this;
+    }
+
+    /**
+     * Get generatedParams
+     *
+     * @return array
+     */
+    public function getGeneratedParams()
+    {
+        return $this->generatedParams;
+    }
 }

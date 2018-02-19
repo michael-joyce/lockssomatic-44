@@ -34,15 +34,15 @@ class LoadPluginProperty extends Fixture implements DependentFixtureInterface {
             '"%s", permission_url',
         ));
         $props = $this->generate($em, 'plugin_config_props');
-        $cpd1 = $this->generate($em, 'org.lockss.daemon.configParamDescr', null, $props);
+        $cpd1 = $this->generate($em, 'org.lockss.daemon.ConfigParamDescr', null, $props);
         $this->generate($em, 'key', 'base_url', $cpd1);
         $this->generate($em, 'definitional', 'true', $cpd1);
         
-        $cpd2 = $this->generate($em, 'org.lockss.daemon.configParamDescr', null, $props);
+        $cpd2 = $this->generate($em, 'org.lockss.daemon.ConfigParamDescr', null, $props);
         $this->generate($em, 'key', 'manifest_url', $cpd2);
         $this->generate($em, 'definitional', 'true', $cpd2);
         
-        $cpd3 = $this->generate($em, 'org.lockss.daemon.configParamDescr', null, $props);
+        $cpd3 = $this->generate($em, 'org.lockss.daemon.ConfigParamDescr', null, $props);
         $this->generate($em, 'key', 'container_number', $cpd3);
         $this->generate($em, 'definitional', 'true', $cpd3);
         

@@ -12,7 +12,7 @@
                         <ul>
                             {% for v in prop.propertyValue %}
                                 <li>{{ v }} </li>
-                            {% endfor %}
+                                {% endfor %}
                         </ul>
                     {% else %}
                         {{ prop.propertyValue }}
@@ -42,6 +42,22 @@
             <tr>
                 <th>Name</th>
                 <td>{{ plugin.name }}</td>
+            </tr>
+            <tr>
+                <th>Generate Manifests</th>
+                <td>{% if plugin.generateManifests %} Yes {% else %} No {% endif %}</td>
+            </tr>
+            <tr>
+                <th>Generated Parameters</th>
+                <td>
+                    {% if plugin.generatedParams | length %}
+                        <ul>
+                            {% for name in plugin.generatedParams %}
+                                <li>{{ name }}</li>
+                                {% endfor %}
+                        </ul>
+                    {% endif %}
+                </td>
             </tr>
             <tr>
                 <th>Path</th>
@@ -93,11 +109,11 @@
             {% endfor %} 
         </ul>
     {% endif %}
-    
+
     {% if plugin.pluginProperties | length > 0 %}    
-    <h2>All Plugin Properties</h2>
-    {% import _self as macros %}
-    {{ macros.plugin_props(plugin.rootPluginProperties) }}
-    
+        <h2>All Plugin Properties</h2>
+        {% import _self as macros %}
+        {{ macros.plugin_props(plugin.rootPluginProperties) }}
+
     {% endif %}
 {% endblock %}
