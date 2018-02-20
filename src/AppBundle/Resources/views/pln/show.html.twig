@@ -16,6 +16,9 @@
                 <a href="{{ path('pln_edit', { 'id': pln.id }) }}" class="btn btn-default">
                     <span class='glyphicon glyphicon-edit'></span> Edit
                 </a>
+                <a href="{{ path('pln_keystore', {'id': pln.id}) }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-briefcase"></span> Keystore
+                </a>
                 <a href="{{ path('pln_delete', { 'id': pln.id }) }}" class="btn btn-default" data-confirm="Are you sure you want to delete this Pln?">
                     <span class='glyphicon glyphicon-remove'></span> Delete
                 </a>
@@ -53,6 +56,18 @@
                 <td>{{ pln.contentPort }}</td>
             </tr>
             <tr>
+                <th>Config URL</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>Plugin Registry</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>SWORD URI</th>
+                <td></td>
+            </tr>
+            <tr>
                 <th>Created</th>
                 <td>{% if pln.created %}{{ pln.created|date }}{% endif %}</td>
             </tr>
@@ -85,8 +100,10 @@
                                 </li>
                             {% endfor %}
                         </ul>
-                    {% else %}
+                    {% elseif values is iterable %}
                         {{ values[0] }}
+                    {% else %}
+                        {{ values }}
                     {% endif %}
                 </li>
             {% endfor %}
