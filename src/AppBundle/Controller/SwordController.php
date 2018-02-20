@@ -321,13 +321,18 @@ class SwordController extends Controller {
     }
     
     /**
-     * HTTP PUT to this URL to edit a deposit. This URL is the same as the
-     * recieptAction URL (aka edit-iri) but requires an HTTP PUT.
+     * Fetch a representation of the deposit from this URL, aka cont-iri.
      *
-     * @Route("/cont-iri/{providerUuid}/{depositUuid}", name="sword_view", requirements={
+     * @todo needs testing.
+     * 
+     * @Route("/cont-iri/{providerUuid}/{depositUuid}.{_format}", 
+     *  name="sword_view", 
+     *  defaults={"_format": "xml"},
+     *  requirements={
      *      "providerUuid": ".{36}",
-     *      "depositUuid": ".{36}"
-     * })
+     *      "depositUuid": ".{36}",
+     *      "_format": "xml"
+     *  })
      * @Method({"GET"})
      * @ParamConverter("provider", class="AppBundle:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
      * @ParamConverter("deposit", class="AppBundle:Deposit", options={"mapping": {"depositUuid"="uuid"}})
@@ -336,10 +341,14 @@ class SwordController extends Controller {
      * @param ContentProvider $provider
      * @param Deposit $deposit
      *
-     * @return Response
+     * @Template
+     * @return array
      */
     public function viewDepositAction(Request $request, ContentProvider $provider, Deposit $deposit) {
-        
+        return array(
+            'provider' => $provider,
+            'deposit' => $deposit,
+        );
     }
     
     /**
@@ -347,6 +356,8 @@ class SwordController extends Controller {
      * from this URL. Also known as state-iri. Includes a sword:originalDeposit element for
      * each content item in the deposit.
      *
+     * @todo finish this action.
+     * 
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/state", name="sword_statement", requirements={
      *      "providerUuid": ".{36}",
      *      "depositUuid": ".{36}"
