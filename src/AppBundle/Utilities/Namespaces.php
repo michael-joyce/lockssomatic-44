@@ -35,7 +35,7 @@ class Namespaces {
      *   The URI or null.
      */
     public static function getNamespace($prefix) {
-        if(array_key_exists($prefix, self::NS)) {
+        if (array_key_exists($prefix, self::NS)) {
             return self::NS[$prefix];
         }
         return null;

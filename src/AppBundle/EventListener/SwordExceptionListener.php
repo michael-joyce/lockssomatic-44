@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 /**
- * Description of SwordExceptionListener
+ * Description of SwordExceptionListener.
  */
 class SwordExceptionListener {
 
@@ -27,6 +27,9 @@ class SwordExceptionListener {
     
     private $env;
     
+    /**
+     *
+     */
     public function __construct($env, EngineInterface $templating) {
         $this->templating = $templating;
         $this->env = $env;
@@ -42,6 +45,9 @@ class SwordExceptionListener {
         $this->controller = $event->getController();
     }
     
+    /**
+     *
+     */
     public function onKernelException(GetResponseForExceptionEvent $event) {
         if (!$this->controller[0] instanceof SwordController) {
             return;
@@ -53,11 +59,11 @@ class SwordExceptionListener {
             $response->setStatusCode($exception->getStatusCode());
             $response->headers->replace($exception->getHeaders());
         } else {
-            $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);            
+            $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         $response->headers->set('Content-Type', 'text/xml');
         $response->setContent($this->templating->render('AppBundle:Sword:exception_document.xml.twig', array(
-            'exception' => $exception,        
+            'exception' => $exception,
             'env' => $this->env,
         )));
         $event->setResponse($response);

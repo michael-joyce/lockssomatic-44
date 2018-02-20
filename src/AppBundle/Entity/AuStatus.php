@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
- * AuStatus
+ * AuStatus.
  *
  * @ORM\Table(name="au_status")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AuStatusRepository")
@@ -50,12 +50,15 @@ class AuStatus extends AbstractEntity {
      */
     private $au;
 
+    /**
+     *
+     */
     public function __toString() {
         return $this->queryDate->format('c') . ' - Errors: ' . count($this->errors);
     }
 
     /**
-     * Set queryDate
+     * Set queryDate.
      *
      * @param \DateTime $queryDate
      *
@@ -68,7 +71,7 @@ class AuStatus extends AbstractEntity {
     }
 
     /**
-     * Get queryDate
+     * Get queryDate.
      *
      * @return \DateTime
      */
@@ -77,7 +80,7 @@ class AuStatus extends AbstractEntity {
     }
 
     /**
-     * Set status
+     * Set status.
      *
      * @param array $status
      *
@@ -90,7 +93,7 @@ class AuStatus extends AbstractEntity {
     }
 
     /**
-     * Get status
+     * Get status.
      *
      * @return array
      */
@@ -99,7 +102,7 @@ class AuStatus extends AbstractEntity {
     }
 
     /**
-     * Set errors
+     * Set errors.
      *
      * @param array $errors
      *
@@ -112,7 +115,7 @@ class AuStatus extends AbstractEntity {
     }
 
     /**
-     * Get errors
+     * Get errors.
      *
      * @return array
      */
@@ -121,7 +124,7 @@ class AuStatus extends AbstractEntity {
     }
 
     /**
-     * Set au
+     * Set au.
      *
      * @param Au $au
      *
@@ -134,7 +137,7 @@ class AuStatus extends AbstractEntity {
     }
 
     /**
-     * Get au
+     * Get au.
      *
      * @return Au
      */

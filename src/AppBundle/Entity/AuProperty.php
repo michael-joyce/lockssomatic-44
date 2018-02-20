@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
- * AuProperty
+ * AuProperty.
  *
  * @ORM\Table(name="au_property")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AuPropertyRepository")
@@ -46,7 +46,7 @@ class AuProperty extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="AuProperty", inversedBy="children")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $parent;
@@ -58,7 +58,7 @@ class AuProperty extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="auProperties")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="au_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="au_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * })
      */
     private $au;
@@ -72,17 +72,23 @@ class AuProperty extends AbstractEntity {
      */
     private $children;
     
+    /**
+     *
+     */
     public function __construct() {
         parent::__construct();
         $this->children = new ArrayCollection();
     }
 
+    /**
+     *
+     */
     public function __toString() {
         return $this->propertyKey;
     }
 
     /**
-     * Set propertyKey
+     * Set propertyKey.
      *
      * @param string $propertyKey
      *
@@ -95,7 +101,7 @@ class AuProperty extends AbstractEntity {
     }
 
     /**
-     * Get propertyKey
+     * Get propertyKey.
      *
      * @return string
      */
@@ -104,7 +110,7 @@ class AuProperty extends AbstractEntity {
     }
 
     /**
-     * Set propertyValue
+     * Set propertyValue.
      *
      * @param string $propertyValue
      *
@@ -117,7 +123,7 @@ class AuProperty extends AbstractEntity {
     }
 
     /**
-     * Get propertyValue
+     * Get propertyValue.
      *
      * @return string
      */
@@ -126,7 +132,7 @@ class AuProperty extends AbstractEntity {
     }
 
     /**
-     * Set parent
+     * Set parent.
      *
      * @param AuProperty $parent
      *
@@ -139,7 +145,7 @@ class AuProperty extends AbstractEntity {
     }
 
     /**
-     * Get parent
+     * Get parent.
      *
      * @return AuProperty
      */
@@ -148,7 +154,7 @@ class AuProperty extends AbstractEntity {
     }
 
     /**
-     * Set au
+     * Set au.
      *
      * @param Au $au
      *
@@ -161,7 +167,7 @@ class AuProperty extends AbstractEntity {
     }
 
     /**
-     * Get au
+     * Get au.
      *
      * @return Au
      */
@@ -170,7 +176,7 @@ class AuProperty extends AbstractEntity {
     }
 
     /**
-     * Add child
+     * Add child.
      *
      * @param AuProperty $child
      *
@@ -183,7 +189,7 @@ class AuProperty extends AbstractEntity {
     }
 
     /**
-     * Remove child
+     * Remove child.
      *
      * @param AuProperty $child
      */
@@ -192,7 +198,7 @@ class AuProperty extends AbstractEntity {
     }
 
     /**
-     * Get children
+     * Get children.
      *
      * @return Collection
      */
@@ -200,6 +206,9 @@ class AuProperty extends AbstractEntity {
         return $this->children;
     }
     
+    /**
+     *
+     */
     public function hasChildren() {
         return $this->children->count() > 0;
     }

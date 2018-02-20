@@ -20,8 +20,9 @@ class ContentRepository extends EntityRepository {
     
     /**
      * Get a query for the content items in an AU.
-     * 
+     *
      * @param Au $au
+     *
      * @return Query
      */
     public function auQuery(Au $au) {

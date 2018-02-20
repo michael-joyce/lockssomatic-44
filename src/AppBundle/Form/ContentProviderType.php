@@ -14,6 +14,9 @@ use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ *
+ */
 class ContentProviderType extends AbstractType {
 
     /**
@@ -72,7 +75,7 @@ class ContentProviderType extends AbstractType {
      */
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\ContentProvider'
+            'data_class' => 'AppBundle\Entity\ContentProvider',
         ));
     }
 

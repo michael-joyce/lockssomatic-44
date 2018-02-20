@@ -26,7 +26,7 @@ class AuPropertyGenerator {
     /**
      * Psr\Log compatible logger for the service.
      *
-     * @var Logger
+     * @var LoggerInterface
      */
     private $logger;
 
@@ -62,7 +62,7 @@ class AuPropertyGenerator {
 
     /**
      * Build a property.
-     * 
+     *
      * The property is persisted, but not flushed, to the database.
      *
      * @param Au $au
@@ -172,38 +172,36 @@ class AuPropertyGenerator {
     
     /**
      * Generate the base properties, required for any AU.
-     * 
+     *
      * @param Au $au
+     *   Archival unit to generate properties for.
      * @param AuProperty $root
+     *   Root of the AU properties.
      * @param Content $content
+     *   Content with the property values for the AU.
      */
     public function baseProperties(Au $au, AuProperty $root, Content $content) {
         $this->buildProperty($au, 'journalTitle', $content->getProperty('journalTitle'), $root);
-        $this->buildProperty($au, 'title', 'LOCKSSOMatic AU '.$content->getTitle().' '.$content->getDeposit()->getTitle(), $root);
+        $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $content->getTitle() . ' ' . $content->getDeposit()->getTitle(), $root);
         $this->buildProperty($au, 'plugin', $au->getPlugin()->getIdentifier(), $root);
         $this->buildProperty($au, 'attributes.publisher', $content->getProperty('publisher'), $root);
     }
     
     /**
      * Generate the configuration parameters for an AU.
-     * 
+     *
      * @param array $propertyNames
+     *   List of property names to generate.
      * @param Au $au
+     *   Archival unit to generate properties for.
      * @param AuProperty $root
+     *   Root of the AU properties.
      * @param Content $content
+     *   Content with the property values for the AU.
      */
     public function configProperties(array $propertyNames, Au $au, AuProperty $root, Content $content) {
-        foreach($propertyNames as $index => $name) {
-//            if ($name === 'manifest_url') {
-//                $value = $this->router->generate('configs_manifest', array(
-//                    'plnId' => $au->getPln()->getId(),
-//                    'ownerId' => $au->getContentprovider()->getContentOwner()->getId(),
-//                    'providerId' => $au->getContentprovider()->getId(),
-//                    'auId' => $au->getId(),
-//                ), Router::ABSOLUTE_URL);
-//            } else {
-                $value = $content->getProperty($name);
-//            }
+        foreach ($propertyNames as $index => $name) {
+            $value = $content->getProperty($name);
             $grouping = $this->buildProperty($au, "param.{$index}", null, $root);
             $this->buildProperty($au, 'key', $name, $grouping);
             $this->buildProperty($au, 'value', $value, $grouping);
@@ -212,10 +210,13 @@ class AuPropertyGenerator {
     
     /**
      * Generate the content properties for the AU.
-     * 
+     *
      * @param Au $au
+     *   Archival unit to generate properties for.
      * @param AuProperty $root
+     *   Root of the AU properties.
      * @param Content $content
+     *   Content with the property values for the AU.
      */
     public function contentProperties(Au $au, AuProperty $root, Content $content) {
         foreach ($content->getProperties() as $name) {
@@ -230,17 +231,17 @@ class AuPropertyGenerator {
 
     /**
      * Generate and return all the properties for an AU.
-     * 
+     *
      * Persists, but does not flush, properties to the database. You should
      * use the AuValidator to check that the content makes sense before
      * generating all properties.
-     * 
-     * @see AuValidator::validate
-     * 
+     *
      * @param Au $au
      *   Generate properties for this AU.
-     * @param type $clear
+     * @param mixed $clear
      *   If true, remove any properties the AU already has.
+     *
+     * @see AuValidator::validate
      */
     public function generateProperties(Au $au, $clear = false) {
         if ($clear) {
@@ -253,10 +254,9 @@ class AuPropertyGenerator {
         $content = $au->getContent()[0];
         $root = $this->buildProperty($au, $rootName);
 
-        
-        // definitional properties must go first.
+        // Definitional properties must go first.
         $propertyNames = array_merge(
-            $au->getPlugin()->getDefinitionalProperties(), 
+            $au->getPlugin()->getDefinitionalProperties(),
             $au->getPlugin()->getNonDefinitionalProperties()
         );
         

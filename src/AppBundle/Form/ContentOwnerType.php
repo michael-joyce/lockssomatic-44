@@ -15,6 +15,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ *
+ */
 class ContentOwnerType extends AbstractType {
 
     /**
@@ -43,7 +46,7 @@ class ContentOwnerType extends AbstractType {
      */
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\ContentOwner'
+            'data_class' => 'AppBundle\Entity\ContentOwner',
         ));
     }
 

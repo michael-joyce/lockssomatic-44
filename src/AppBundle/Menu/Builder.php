@@ -17,10 +17,14 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class Builder  implements ContainerAwareInterface {
+/**
+ *
+ */
+class Builder implements ContainerAwareInterface {
     use ContainerAwareTrait;
 
-    const CARET = ' ▾'; // U+25BE, black down-pointing small triangle.
+    // U+25BE, black down-pointing small triangle.
+    const CARET = ' ▾';
     
     /**
      * @var FactoryInterface
@@ -42,6 +46,9 @@ class Builder  implements ContainerAwareInterface {
      */
     private $em;
 
+    /**
+     *
+     */
     public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, EntityManagerInterface $em) {
         $this->factory = $factory;
         $this->authChecker = $authChecker;
@@ -49,6 +56,9 @@ class Builder  implements ContainerAwareInterface {
         $this->em = $em;
     }
 
+    /**
+     *
+     */
     private function hasRole($role) {
         if (!$this->tokenStorage->getToken()) {
             return false;
@@ -56,6 +66,9 @@ class Builder  implements ContainerAwareInterface {
         return $this->authChecker->isGranted($role);
     }
 
+    /**
+     *
+     */
     public function mainMenu(array $options) {
         $menu = $this->factory->createItem('root');
         $menu->setChildrenAttributes(array(
@@ -67,7 +80,7 @@ class Builder  implements ContainerAwareInterface {
             'route' => 'homepage',
         ));
         
-        if( ! $this->hasRole('ROLE_USER')) {
+        if (!$this->hasRole('ROLE_USER')) {
             return $menu;
         }
         
@@ -81,16 +94,16 @@ class Builder  implements ContainerAwareInterface {
         $menu['lockss']->setChildrenAttribute('class', 'dropdown-menu');
         
         $menu['lockss']->addChild('Content Owners', array(
-            'route' => 'content_owner_index'
+            'route' => 'content_owner_index',
         ));
         $menu['lockss']->addChild('Networks', array(
-            'route' => 'pln_index'
+            'route' => 'pln_index',
         ));
         $menu['lockss']->addChild('LOCKSS Plugins', array(
-            'route' => 'plugin_index'
+            'route' => 'plugin_index',
         ));
         $menu['lockss']->addChild('Content Providers', array(
-            'route' => 'content_provider_index'
+            'route' => 'content_provider_index',
         ));
         
         $networkMenu = $menu->addChild('networks', array(
@@ -103,11 +116,11 @@ class Builder  implements ContainerAwareInterface {
         $networkMenu->setChildrenAttribute('class', 'dropdown-menu');
         
         $networks = $this->em->getRepository(Pln::class)->findAll();
-        foreach($networks as $pln) {
+        foreach ($networks as $pln) {
             $id = 'network_' . $pln->getId();
             $item = $networkMenu->addChild($id, array(
-                'uri' => '#',
-                'label' => $pln->getName(),
+            'uri' => '#',
+            'label' => $pln->getName(),
             ));
             $item->setAttribute('class', 'dropdown-submenu');
             $item->setChildrenAttribute('class', 'dropdown-menu');
@@ -115,32 +128,32 @@ class Builder  implements ContainerAwareInterface {
             $item->setLinkAttribute('class', 'dropdown-toggle');
             
             $item->addChild($pln->getName(), array(
-                'route' => 'pln_show', 
+                'route' => 'pln_show',
                 'routeParameters' => array(
-                    'id' => $pln->getId()
-                )
+                'id' => $pln->getId(),
+                ),
             ));
             $item->addChild('Archival Units', array(
-                'route' => 'au_index', 
+                'route' => 'au_index',
                 'routeParameters' => array(
-                    'plnId' => $pln->getId()
-                )
+                'plnId' => $pln->getId(),
+                ),
             ));
             $item->addChild('Boxes', array(
-                'route' => 'box_index', 
+                'route' => 'box_index',
                 'routeParameters' => array(
-                    'plnId' => $pln->getId()
-                )
+                'plnId' => $pln->getId(),
+                ),
             ));
             $item->addChild('Deposits', array(
-                'route' => 'deposit_index', 
+                'route' => 'deposit_index',
                 'routeParameters' => array(
-                    'plnId' => $pln->getId()
-                )
+                'plnId' => $pln->getId(),
+                ),
             ));
         }
         
-        return $menu;        
+        return $menu;
     }
 
 }

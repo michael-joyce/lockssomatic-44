@@ -54,7 +54,7 @@ class FilePaths {
     /**
      * Build the service.
      *
-     * @param Logger $logger
+     * @param LoggerInterface $logger
      *   Logger for warnings.
      * @param string $root
      *   Path to the application root.

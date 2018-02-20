@@ -15,7 +15,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * ContentProvider
+ * ContentProvider.
  *
  * @ORM\Table(name="content_provider")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ContentProviderRepository")
@@ -38,7 +38,7 @@ class ContentProvider extends AbstractEntity {
      * as the content.
      *
      * @var string
-     * 
+     *
      * @Assert\Url()
      * @ORM\Column(name="permissionUrl", type="string", length=255, nullable=false)
      */
@@ -79,7 +79,7 @@ class ContentProvider extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="ContentOwner", inversedBy="contentProviders")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="content_owner_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="content_owner_id", referencedColumnName="id", nullable=false)
      * })
      */
     private $contentOwner;
@@ -91,7 +91,7 @@ class ContentProvider extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="Pln", inversedBy="contentProviders")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="pln_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="pln_id", referencedColumnName="id", nullable=false)
      * })
      */
     private $pln;
@@ -103,7 +103,7 @@ class ContentProvider extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="contentProviders")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="plugin_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="plugin_id", referencedColumnName="id", nullable=false)
      * })
      */
     private $plugin;
@@ -126,12 +126,15 @@ class ContentProvider extends AbstractEntity {
      */
     private $deposits;
 
+    /**
+     *
+     */
     public function __toString() {
         return $this->name;
     }
 
     /**
-     * Set uuid
+     * Set uuid.
      *
      * @param string $uuid
      *
@@ -144,7 +147,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Get uuid
+     * Get uuid.
      *
      * @return string
      */
@@ -153,7 +156,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Set permissionurl
+     * Set permissionurl.
      *
      * @param string $permissionurl
      *
@@ -166,7 +169,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Get permissionurl
+     * Get permissionurl.
      *
      * @return string
      */
@@ -174,12 +177,15 @@ class ContentProvider extends AbstractEntity {
         return $this->permissionurl;
     }
     
+    /**
+     *
+     */
     public function getPermissionHost() {
-        return parse_url($this->getPermissionUrl(), PHP_URL_HOST);        
+        return parse_url($this->getPermissionUrl(), PHP_URL_HOST);
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
@@ -192,7 +198,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -201,9 +207,9 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Set maxFileSize
+     * Set maxFileSize.
      *
-     * @param integer $maxFileSize
+     * @param int $maxFileSize
      *
      * @return ContentProvider
      */
@@ -214,18 +220,18 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Get maxFileSize
+     * Get maxFileSize.
      *
-     * @return integer
+     * @return int
      */
     public function getMaxFileSize() {
         return $this->maxFileSize;
     }
 
     /**
-     * Set maxAuSize
+     * Set maxAuSize.
      *
-     * @param integer $maxAuSize
+     * @param int $maxAuSize
      *
      * @return ContentProvider
      */
@@ -236,16 +242,16 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Get maxAuSize
+     * Get maxAuSize.
      *
-     * @return integer
+     * @return int
      */
     public function getMaxAuSize() {
         return $this->maxAuSize;
     }
 
     /**
-     * Set contentOwner
+     * Set contentOwner.
      *
      * @param ContentOwner $contentOwner
      *
@@ -258,7 +264,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Get contentOwner
+     * Get contentOwner.
      *
      * @return ContentOwner
      */
@@ -267,7 +273,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Set pln
+     * Set pln.
      *
      * @param Pln $pln
      *
@@ -280,7 +286,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Get pln
+     * Get pln.
      *
      * @return Pln
      */
@@ -289,7 +295,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Set plugin
+     * Set plugin.
      *
      * @param Plugin $plugin
      *
@@ -302,7 +308,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Get plugin
+     * Get plugin.
      *
      * @return Plugin
      */
@@ -311,7 +317,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Add aus
+     * Add aus.
      *
      * @param Au $aus
      *
@@ -324,7 +330,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Remove aus
+     * Remove aus.
      *
      * @param Au $aus
      */
@@ -333,7 +339,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Get aus
+     * Get aus.
      *
      * @return Collection
      */
@@ -342,7 +348,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Add deposit
+     * Add deposit.
      *
      * @param Deposit $deposit
      *
@@ -355,7 +361,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Remove deposit
+     * Remove deposit.
      *
      * @param Deposit $deposit
      */
@@ -364,7 +370,7 @@ class ContentProvider extends AbstractEntity {
     }
 
     /**
-     * Get deposits
+     * Get deposits.
      *
      * @return Collection
      */

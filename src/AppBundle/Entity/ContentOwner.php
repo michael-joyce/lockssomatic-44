@@ -15,7 +15,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * ContentOwner
+ * ContentOwner.
  *
  * @ORM\Table(name="content_owner")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ContentOwnerRepository")
@@ -48,12 +48,15 @@ class ContentOwner extends AbstractEntity {
      */
     private $contentProviders;
 
+    /**
+     *
+     */
     public function __toString() {
         return $this->name;
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
@@ -66,7 +69,7 @@ class ContentOwner extends AbstractEntity {
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -75,7 +78,7 @@ class ContentOwner extends AbstractEntity {
     }
 
     /**
-     * Set emailAddress
+     * Set emailAddress.
      *
      * @param string $emailAddress
      *
@@ -88,7 +91,7 @@ class ContentOwner extends AbstractEntity {
     }
 
     /**
-     * Get emailAddress
+     * Get emailAddress.
      *
      * @return string
      */
@@ -97,7 +100,7 @@ class ContentOwner extends AbstractEntity {
     }
 
     /**
-     * Add contentProvider
+     * Add contentProvider.
      *
      * @param ContentProvider $contentProvider
      *
@@ -110,7 +113,7 @@ class ContentOwner extends AbstractEntity {
     }
 
     /**
-     * Remove contentProvider
+     * Remove contentProvider.
      *
      * @param ContentProvider $contentProvider
      */
@@ -119,7 +122,7 @@ class ContentOwner extends AbstractEntity {
     }
 
     /**
-     * Get contentProviders
+     * Get contentProviders.
      *
      * @return Collection
      */

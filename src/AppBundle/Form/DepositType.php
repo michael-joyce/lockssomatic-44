@@ -14,6 +14,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ *
+ */
 class DepositType extends AbstractType {
 
     /**
@@ -60,7 +63,7 @@ class DepositType extends AbstractType {
      */
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Deposit'
+            'data_class' => 'AppBundle\Entity\Deposit',
         ));
     }
 

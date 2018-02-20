@@ -15,7 +15,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Content
+ * Content.
  *
  * @ORM\Table(name="content")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ContentRepository")
@@ -108,17 +108,23 @@ class Content extends AbstractEntity {
      */
     private $au;
 
+    /**
+     *
+     */
     public function __construct() {
         parent::__construct();
         $this->properties = array();
     }
 
+    /**
+     *
+     */
     public function __toString() {
         return $this->url;
     }
 
     /**
-     * Set url
+     * Set url.
      *
      * @param string $url
      *
@@ -131,7 +137,7 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Get url
+     * Get url.
      *
      * @return string
      */
@@ -140,7 +146,7 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Set title
+     * Set title.
      *
      * @param string $title
      *
@@ -153,7 +159,7 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Get title
+     * Get title.
      *
      * @return string
      */
@@ -162,9 +168,9 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Set size
+     * Set size.
      *
-     * @param integer $size
+     * @param int $size
      *
      * @return Content
      */
@@ -175,16 +181,16 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Get size
+     * Get size.
      *
-     * @return integer
+     * @return int
      */
     public function getSize() {
         return $this->size;
     }
 
     /**
-     * Set dateDeposited
+     * Set dateDeposited.
      *
      * @return Content
      */
@@ -197,7 +203,7 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Get dateDeposited
+     * Get dateDeposited.
      *
      * @return DateTime
      */
@@ -206,7 +212,7 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Set checksumType
+     * Set checksumType.
      *
      * @param string $checksumType
      *
@@ -219,7 +225,7 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Get checksumType
+     * Get checksumType.
      *
      * @return string
      */
@@ -228,7 +234,7 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Set checksumValue
+     * Set checksumValue.
      *
      * @param string $checksumValue
      *
@@ -241,7 +247,7 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Get checksumValue
+     * Get checksumValue.
      *
      * @return string
      */
@@ -250,7 +256,7 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Set deposit
+     * Set deposit.
      *
      * @param Deposit $deposit
      *
@@ -263,7 +269,7 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Get deposit
+     * Get deposit.
      *
      * @return Deposit
      */
@@ -272,7 +278,7 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Set au
+     * Set au.
      *
      * @param Au $au
      *
@@ -285,7 +291,7 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Get au
+     * Get au.
      *
      * @return Au
      */
@@ -293,6 +299,9 @@ class Content extends AbstractEntity {
         return $this->au;
     }
 
+    /**
+     *
+     */
     public function getPlugin() {
         if ($this->au && $this->au->getPlugin()) {
             return $this->au->getPlugin();
@@ -304,7 +313,7 @@ class Content extends AbstractEntity {
     }
 
     /**
-     * Add contentProperty
+     * Add contentProperty.
      *
      * @param string $key
      * @param mixed $value
@@ -317,6 +326,9 @@ class Content extends AbstractEntity {
         return $this;
     }
 
+    /**
+     *
+     */
     public function getProperties() {
         return array_keys($this->properties);
     }
@@ -327,15 +339,19 @@ class Content extends AbstractEntity {
      *
      * @param string $key
      * @param bool $encoded
+     *
      * @return string
      */
     public function getProperty($key) {
-        if($this->hasProperty($key)) {
+        if ($this->hasProperty($key)) {
             return $this->properties[$key];
         }
         return null;
     }
 
+    /**
+     *
+     */
     public function hasProperty($key) {
         return isset($this->properties[$key]);
     }

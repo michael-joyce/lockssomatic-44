@@ -9,6 +9,7 @@
 
 namespace AppBundle\Entity;
 
+use Nines\UtilBundle\Entity\AbstractEntity;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,12 +17,12 @@ use Nines\UserBundle\Entity\User;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Deposit
+ * Deposit.
  *
  * @ORM\Table(name="deposit")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\DepositRepository")
  */
-class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
+class Deposit extends AbstractEntity {
 
     /**
      * The UUID for the deposit. Should be UPPERCASE.
@@ -92,7 +93,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
      * The content for the deposit.
      *
      * @ORM\OneToMany(targetEntity="Content", mappedBy="deposit")
-     * 
+     *
      * @var Content[]|Collection
      */
     private $content;
@@ -106,12 +107,15 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
      */
     private $status;
 
+    /**
+     *
+     */
     public function __toString() {
         return $this->title;
     }
 
     /**
-     * Set uuid
+     * Set uuid.
      *
      * @param string $uuid
      *
@@ -124,7 +128,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get uuid
+     * Get uuid.
      *
      * @return string
      */
@@ -133,7 +137,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Set title
+     * Set title.
      *
      * @param string $title
      *
@@ -146,7 +150,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get title
+     * Get title.
      *
      * @return string
      */
@@ -155,7 +159,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Set agreement
+     * Set agreement.
      *
      * @param float $agreement
      *
@@ -168,7 +172,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get agreement
+     * Get agreement.
      *
      * @return float
      */
@@ -177,7 +181,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Set summary
+     * Set summary.
      *
      * @param string $summary
      *
@@ -190,7 +194,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get summary
+     * Get summary.
      *
      * @return string
      */
@@ -199,14 +203,14 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Set dateDeposited
+     * Set dateDeposited.
      *
      * @param DateTime $dateDeposited
      *
      * @return Deposit
      */
     public function setDateDeposited(DateTime $dateDeposited = null) {
-        if($dateDeposited) {
+        if ($dateDeposited) {
             $this->dateDeposited = $dateDeposited;
         } else {
             $this->dateDeposited = new DateTime();
@@ -216,7 +220,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get dateDeposited
+     * Get dateDeposited.
      *
      * @return DateTime
      */
@@ -225,7 +229,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Set contentProvider
+     * Set contentProvider.
      *
      * @param ContentProvider $contentProvider
      *
@@ -238,7 +242,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get contentProvider
+     * Get contentProvider.
      *
      * @return ContentProvider
      */
@@ -247,7 +251,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Set user
+     * Set user.
      *
      * @param User $user
      *
@@ -260,7 +264,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get user
+     * Get user.
      *
      * @return User
      */
@@ -269,7 +273,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Add content
+     * Add content.
      *
      * @param Content $content
      *
@@ -282,7 +286,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Remove content
+     * Remove content.
      *
      * @param Content $content
      */
@@ -291,7 +295,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get content
+     * Get content.
      *
      * @return Collection
      */
@@ -300,7 +304,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Add status
+     * Add status.
      *
      * @param DepositStatus $status
      *
@@ -313,7 +317,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Remove status
+     * Remove status.
      *
      * @param DepositStatus $status
      */
@@ -322,7 +326,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get status
+     * Get status.
      *
      * @return Collection
      */

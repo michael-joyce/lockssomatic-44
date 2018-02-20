@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
- * DepositStatus
+ * DepositStatus.
  *
  * @ORM\Table(name="deposit_status")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\DepositStatusRepository")
@@ -51,12 +51,15 @@ class DepositStatus extends AbstractEntity {
      */
     private $status;
 
+    /**
+     *
+     */
     public function __toString() {
         return $this->deposit . ' ' . $this->queryDate->format('c');
     }
 
     /**
-     * Set agreement
+     * Set agreement.
      *
      * @param float $agreement
      *
@@ -69,7 +72,7 @@ class DepositStatus extends AbstractEntity {
     }
 
     /**
-     * Get agreement
+     * Get agreement.
      *
      * @return float
      */
@@ -78,7 +81,7 @@ class DepositStatus extends AbstractEntity {
     }
 
     /**
-     * Set queryDate
+     * Set queryDate.
      *
      * @param DateTime $queryDate
      *
@@ -91,7 +94,7 @@ class DepositStatus extends AbstractEntity {
     }
 
     /**
-     * Get queryDate
+     * Get queryDate.
      *
      * @return DateTime
      */
@@ -100,7 +103,7 @@ class DepositStatus extends AbstractEntity {
     }
 
     /**
-     * Set status
+     * Set status.
      *
      * @param array $status
      *
@@ -113,7 +116,7 @@ class DepositStatus extends AbstractEntity {
     }
 
     /**
-     * Get status
+     * Get status.
      *
      * @return array
      */
@@ -122,7 +125,7 @@ class DepositStatus extends AbstractEntity {
     }
 
     /**
-     * Set deposit
+     * Set deposit.
      *
      * @param Deposit $deposit
      *
@@ -135,7 +138,7 @@ class DepositStatus extends AbstractEntity {
     }
 
     /**
-     * Get deposit
+     * Get deposit.
      *
      * @return Deposit
      */

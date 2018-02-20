@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
- * PluginProperty
+ * PluginProperty.
  *
  * @ORM\Table(name="plugin_property")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PluginPropertyRepository")
@@ -77,11 +77,17 @@ class PluginProperty extends AbstractEntity {
      */
     private $children;
 
+    /**
+     *
+     */
     public function __construct() {
         parent::__construct();
         $this->isList = false;
     }
 
+    /**
+     *
+     */
     public function __toString() {
         if ($this->propertyKey) {
             return $this->propertyKey;
@@ -90,7 +96,7 @@ class PluginProperty extends AbstractEntity {
     }
 
     /**
-     * Set propertyKey
+     * Set propertyKey.
      *
      * @param string $propertyKey
      *
@@ -103,7 +109,7 @@ class PluginProperty extends AbstractEntity {
     }
 
     /**
-     * Get propertyKey
+     * Get propertyKey.
      *
      * @return string
      */
@@ -144,16 +150,16 @@ class PluginProperty extends AbstractEntity {
     }
 
     /**
-     * Get isList
+     * Get isList.
      *
-     * @return boolean
+     * @return bool
      */
     public function isList() {
         return (bool) $this->isList;
     }
 
     /**
-     * Set plugin
+     * Set plugin.
      *
      * @param Plugin $plugin
      *
@@ -166,7 +172,7 @@ class PluginProperty extends AbstractEntity {
     }
 
     /**
-     * Get plugin
+     * Get plugin.
      *
      * @return Plugin
      */
@@ -175,7 +181,7 @@ class PluginProperty extends AbstractEntity {
     }
 
     /**
-     * Set parent
+     * Set parent.
      *
      * @param PluginProperty $parent
      *
@@ -188,7 +194,7 @@ class PluginProperty extends AbstractEntity {
     }
 
     /**
-     * Get parent
+     * Get parent.
      *
      * @return PluginProperty
      */
@@ -197,7 +203,7 @@ class PluginProperty extends AbstractEntity {
     }
 
     /**
-     * Add child
+     * Add child.
      *
      * @param PluginProperty $child
      *
@@ -210,7 +216,7 @@ class PluginProperty extends AbstractEntity {
     }
 
     /**
-     * Remove child
+     * Remove child.
      *
      * @param PluginProperty $child
      */
@@ -219,7 +225,7 @@ class PluginProperty extends AbstractEntity {
     }
 
     /**
-     * Get children
+     * Get children.
      *
      * @return Collection
      */
@@ -227,6 +233,9 @@ class PluginProperty extends AbstractEntity {
         return $this->children;
     }
     
+    /**
+     *
+     */
     public function hasChildren() {
         return ($this->children && count($this->children));
     }

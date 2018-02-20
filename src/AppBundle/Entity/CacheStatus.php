@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
- * CacheStatus
+ * CacheStatus.
  *
  * @ORM\Table(name="cache_status")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CacheStatusRepository")
@@ -37,12 +37,15 @@ class CacheStatus extends AbstractEntity {
      */
     private $response;
 
+    /**
+     *
+     */
     public function __toString() {
         return (string) $this->boxStatus;
     }
 
     /**
-     * Set response
+     * Set response.
      *
      * @param array $response
      *
@@ -55,7 +58,7 @@ class CacheStatus extends AbstractEntity {
     }
 
     /**
-     * Get response
+     * Get response.
      *
      * @return array
      */
@@ -64,7 +67,7 @@ class CacheStatus extends AbstractEntity {
     }
 
     /**
-     * Set boxStatus
+     * Set boxStatus.
      *
      * @param BoxStatus $boxStatus
      *
@@ -77,7 +80,7 @@ class CacheStatus extends AbstractEntity {
     }
 
     /**
-     * Get boxStatus
+     * Get boxStatus.
      *
      * @return BoxStatus
      */

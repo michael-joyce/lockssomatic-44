@@ -17,27 +17,42 @@ use Ramsey\Uuid\Uuid;
 use SimpleXMLElement;
 
 /**
- * Description of DepositBuilder
+ * Deposit builder.
+ *
+ * This service doesn't also construct the associated content
+ * items.
  */
 class DepositBuilder {
     
     /**
+     * Database manager.
+     *
      * @var EntityManagerInterface
      */
     private $em;
     
+    /**
+     * Construct the builder.
+     *
+     * @param EntityManagerInterface $em
+     *   Dependency injected entity manager.
+     */
     public function __construct(EntityManagerInterface $em) {
         $this->em = $em;
     }
     
     /**
      * Build and persist a deposit from an XML element.
-     * 
+     *
      * The deposit isn't flushed to the database.
      *
      * @param SimpleXMLElement $xml
+     *   Parsed xml data containing the deposit.
+     * @param ContentProvider $provider
+     *   Content provider for the deposit.
      *
      * @return Deposit
+     *   The constructed deposit.
      */
     public function fromXml(SimpleXMLElement $xml, ContentProvider $provider) {
         $deposit = new Deposit();
@@ -58,9 +73,12 @@ class DepositBuilder {
      * Build a deposit from array data.
      *
      * @param array $data
+     *   Data to use to build the deposit.
      * @param ContentProvider $provider
+     *   Content provider for the deposit.
      *
      * @return Deposit
+     *   The constructed deposit.
      */
     public function fromArray(array $data, ContentProvider $provider) {
         $deposit = new Deposit();
@@ -72,10 +90,11 @@ class DepositBuilder {
         if (array_key_exists('uuid', $data) && $data['uuid'] !== null && $data['uuid'] !== '') {
             $deposit->setUuid($data['uuid']);
         } else {
-            $deposit->setUuid((string)Uuid::uuid4());
+            $deposit->setUuid((string) Uuid::uuid4());
         }
         $this->em->persist($deposit);
 
         return $deposit;
     }
+
 }

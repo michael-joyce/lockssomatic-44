@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
- * BoxStatus
+ * BoxStatus.
  *
  * @ORM\Table(name="box_status")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\BoxStatusRepository")
@@ -58,12 +58,15 @@ class BoxStatus extends AbstractEntity {
      */
     private $caches;
 
+    /**
+     *
+     */
     public function __toString() {
         return $this->box . " " . $this->queryDate->format('c');
     }
 
     /**
-     * Set queryDate
+     * Set queryDate.
      *
      * @param DateTime $queryDate
      *
@@ -76,7 +79,7 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Get queryDate
+     * Get queryDate.
      *
      * @return DateTime
      */
@@ -85,9 +88,9 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Set success
+     * Set success.
      *
-     * @param boolean $success
+     * @param bool $success
      *
      * @return BoxStatus
      */
@@ -98,16 +101,16 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Get success
+     * Get success.
      *
-     * @return boolean
+     * @return bool
      */
     public function getSuccess() {
         return $this->success;
     }
 
     /**
-     * Set errors
+     * Set errors.
      *
      * @param string $errors
      *
@@ -120,7 +123,7 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Get errors
+     * Get errors.
      *
      * @return string
      */
@@ -129,7 +132,7 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Set box
+     * Set box.
      *
      * @param Box $box
      *
@@ -142,7 +145,7 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Get box
+     * Get box.
      *
      * @return Box
      */
@@ -151,7 +154,7 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Add cach
+     * Add cach.
      *
      * @param CacheStatus $cach
      *
@@ -164,7 +167,7 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Remove cach
+     * Remove cach.
      *
      * @param CacheStatus $cach
      */
@@ -173,7 +176,7 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Get caches
+     * Get caches.
      *
      * @return Collection
      */
