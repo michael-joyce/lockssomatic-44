@@ -92,16 +92,18 @@
             {% for key, values in pln.properties %}
                 <li>
                     {{ key }}:
-                    {% if values | length > 1 %}
-                        <ul>
-                            {% for v in values %}
-                                <li>
-                                    {{ v }}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% elseif values is iterable %}
-                        {{ values[0] }}
+                    {% if values is iterable %}
+                        {% if values | length > 1 %}
+                            <ul>
+                                {% for v in values %}
+                                    <li>
+                                        {{ v }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            {{ values[0] }}
+                        {% endif %}
                     {% else %}
                         {{ values }}
                     {% endif %}

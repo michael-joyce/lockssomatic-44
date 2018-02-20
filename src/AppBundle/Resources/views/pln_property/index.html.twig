@@ -38,7 +38,7 @@
             <tr>
                 <th>Property Key</th>
                 <th>Property Value</th>
-                <th>Actions</th>
+                <th id="actions">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -48,16 +48,20 @@
                         {{ key }}
                     </td>
                     <td>
-                        {% if values | length > 1 %}
-                            <ul>
-                                {% for v in values %}
-                                    <li>
-                                        {{ v }}
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                        {% if values is iterable %}
+                            {% if values | length > 1 %}
+                                <ul>
+                                    {% for v in values %}
+                                        <li>
+                                            {{ v }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                {{ values[0] }}
+                            {% endif %}
                         {% else %}
-                            {{ values[0] }}
+                            {{ values }}
                         {% endif %}
                     </td>
                     <td>
