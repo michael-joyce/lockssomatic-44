@@ -37,13 +37,6 @@ parameters:
     # Number of AUs to include in a titledb.xml file.
     lom.aus_per_titledb: 50
 
-    # LOM will ignore some definitional ConfigParamDescr settings in order
-    # to figure out which AU content goes into.
-    lom.nondefinitional_cpds:
-        com.example.LockssPlugin:
-            - manifest_url
-            - permission_url
-
     # When boxes are unreachable LOM can send a notice to the box manager. These
     # settings configure the message.
     lom.boxstatus.subject: 'LOCKSSOMatic Box Status'
