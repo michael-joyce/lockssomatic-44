@@ -1,7 +1,5 @@
 <?php
 
-use Doctrine\ORM\EntityRepository;
-
 /*
  *  This file is licensed under the MIT License version 3 or
  *  later. See the LICENSE file for details.
@@ -10,6 +8,8 @@ use Doctrine\ORM\EntityRepository;
  */
 
 namespace AppBundle\Repository;
+
+use Doctrine\ORM\EntityRepository;
 
 /**
  * PlnRepository.

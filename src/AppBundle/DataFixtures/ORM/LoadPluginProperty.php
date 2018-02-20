@@ -59,7 +59,19 @@ class LoadPluginProperty extends Fixture implements DependentFixtureInterface {
     }
     
     /**
+     * Generate a plugin.
      *
+     * @param ObjectManager $em
+     *   Doctrine object manager.
+     * @param string $key
+     *   Name of the property.
+     * @param string $value
+     *   Value of the property.
+     * @param PluginProperty $parent
+     *   Plugin property parent.
+     *
+     * @return PluginProperty
+     *   The constructed plugin property.
      */
     private function generate(ObjectManager $em, $key, $value = null, PluginProperty $parent = null) {
         $property = new PluginProperty();
