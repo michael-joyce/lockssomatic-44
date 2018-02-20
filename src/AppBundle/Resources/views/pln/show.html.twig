@@ -65,9 +65,11 @@
     {% if pln.properties %}
         <h2>Properties</h2>
         <ul>            
-            {% for property in pln.properties %}
-                <li>{{ property }}</li>
-                {% endfor %}
+            {% for key, value in pln.properties %}
+                <li>
+                    {{ property }}
+                </li>
+            {% endfor %}
         </ul>
     {% endif %}
     {% if pln.aus | length > 0 %}    

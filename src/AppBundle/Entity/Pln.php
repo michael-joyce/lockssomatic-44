@@ -306,6 +306,18 @@ class Pln extends AbstractEntity {
     public function getProperties() {
         return $this->properties;
     }
+    
+    public function setProperty($key, $value) {
+        $this->properties[$key] = $value;
+    }
+    
+    public function getProperty($key) {
+        return $this->properties[$key];
+    }
+    
+    public function removeProperty($key) {
+        unset($this->properties[$key]);
+    }
 
     /**
      * Add aus.
