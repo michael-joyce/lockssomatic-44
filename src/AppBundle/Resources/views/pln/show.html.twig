@@ -62,18 +62,48 @@
             </tr>        
         </tbody>
     </table>
+    <h2>Properties</h2>
     {% if pln.properties %}
-        <h2>Properties</h2>
-        <ul>            
-            {% for key, value in pln.properties %}
+        <div class="btn-toolbar">
+            <div class="btn-group pull-right">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('pln_property_index', {'plnId': pln.id}) }}" class="btn btn-default">
+                        <span class="glyphicon glyphicon-th-list"></span> Details
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <ul>
+            {% for key, values in pln.properties %}
                 <li>
-                    {{ property }}
+                    {{ key }}:
+                    {% if values | length > 1 %}
+                        <ul>
+                            {% for v in values %}
+                                <li>
+                                    {{ v }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        {{ values[0] }}
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
     {% endif %}
+
     {% if pln.aus | length > 0 %}    
         <h2>Aus</h2>
+        <div class="btn-toolbar">
+            <div class="btn-group pull-right">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('au_index', {'plnId': pln.id}) }}" class="btn btn-default">
+                        <span class="glyphicon glyphicon-th-list"></span> Details
+                    </a>
+                {% endif %}
+            </div>
+        </div>
         <ul>
             {% for au in pln.aus %}
                 <li>
@@ -86,6 +116,15 @@
     {% endif %}
     {% if pln.boxes | length > 0 %}    
         <h2>Boxes</h2>
+        <div class="btn-toolbar">
+            <div class="btn-group pull-right">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('box_index', {'plnId': pln.id}) }}" class="btn btn-default">
+                        <span class="glyphicon glyphicon-th-list"></span> Details
+                    </a>
+                {% endif %}
+            </div>
+        </div>
         <ul>
             {% for boxes in pln.boxes %}
                 <li>
@@ -98,6 +137,15 @@
     {% endif %}
     {% if pln.contentProviders | length > 0 %}    
         <h2>Content Providers</h2>
+        <div class="btn-toolbar">
+            <div class="btn-group pull-right">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('content_provider_index', {'plnId': pln.id}) }}" class="btn btn-default">
+                        <span class="glyphicon glyphicon-th-list"></span> Details
+                    </a>
+                {% endif %}
+            </div>
+        </div>
         <ul>
             {% for contentProvider in pln.contentProviders %}
                 <li>
