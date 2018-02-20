@@ -338,7 +338,6 @@ class Content extends AbstractEntity {
      * LOCKSS standards.
      *
      * @param string $key
-     * @param bool $encoded
      *
      * @return string
      */
