@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Au;
+use AppBundle\Entity\Content;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Plugin;
@@ -12,6 +13,8 @@ use AppBundle\Services\ContentBuilder;
 use AppBundle\Services\DepositBuilder;
 use AppBundle\Utilities\Namespaces;
 use Doctrine\ORM\EntityManagerInterface;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -31,6 +34,15 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class SwordController extends Controller {
 
+    /**
+     * @var Logger
+     */
+    private $logger;
+    
+    public function __construct(LoggerInterface $logger) {
+        $this->logger = $logger;
+    }
+    
     /**
      * Fetch an HTTP header.
      * 
@@ -79,6 +91,21 @@ class SwordController extends Controller {
     }
     
     /**
+     * Get a content item.
+     * 
+     * @param Deposit $deposit
+     * @param string $url
+     * 
+     * @return Content
+     */
+    private function getContent(Deposit $deposit, $url) {
+        return $this->getDoctrine()->getRepository(Content::class)->findOneBy(array(
+            'deposit' => $deposit,
+            'url' => trim($url),
+        ));
+    }
+    
+    /**
      * SWORD service document.
      * 
      * @param Request $request
@@ -112,21 +139,21 @@ class SwordController extends Controller {
      * @throws BadRequestException
      */
     private function precheckContentProperties(SimpleXMLElement $content, Plugin $plugin) {
-        foreach ($plugin->getDefinitionalProperties() as $property) {
-            if(in_array($property, $plugin->getGeneratedParams())) {
+        foreach ($plugin->getDefinitionalProperties() as $propertyName) {
+            if(in_array($propertyName, $plugin->getGeneratedParams())) {
                 // skip any parameters that LOM will generate later.
                 continue;
             }
-            $nodes = $content->xpath("lom:property[@name='$property']");
+            $nodes = $content->xpath("lom:property[@name='$propertyName']");
             if (count($nodes) === 0) {
-                throw new BadRequestHttpException("{$property} is a required property.", null, Response::HTTP_BAD_REQUEST);
+                throw new BadRequestHttpException("{$propertyName} is a required property.", null, Response::HTTP_BAD_REQUEST);
             }
             if (count($nodes) > 1) {
-                throw new BadRequestHttpException("{$property} must be unique.", null, Response::HTTP_BAD_REQUEST);
+                throw new BadRequestHttpException("{$propertyName} must be unique.", null, Response::HTTP_BAD_REQUEST);
             }
             $property = $nodes[0];
-            if (!$property->attributes()->value) {
-                throw new BadRequestHttpException("{$property} must have a value.", null, Response::HTTP_BAD_REQUEST);
+            if (!(string)$property->attributes()->value) {
+                throw new BadRequestHttpException("{$propertyName} must have a value.", null, Response::HTTP_BAD_REQUEST);
             }
         }
     }
@@ -155,13 +182,13 @@ class SwordController extends Controller {
             $url = trim((string) $content);
             $host = parse_url($url, PHP_URL_HOST);
             if ($permissionHost !== $host) {
-                throw new HostMismatchException("Content host:{$host} Permission host: {$permissionHost}", null, Response::HTTP_BAD_REQUEST);
+                throw new BadRequestHttpException("Permission host does not match content host. Content host:{$host} Permission host: {$permissionHost}", null, Response::HTTP_BAD_REQUEST);
             }
 
             if ($content->attributes()->size > $provider->getMaxFileSize()) {
                 $size = $content->attributes()->size;
                 $max = $provider->getMaxFileSize();
-                throw new MaxUploadSizeExceededException("Content size {$size} exceeds provider's maximum: {$max}", null, Response::HTTP_BAD_REQUEST);
+                throw new BadRequestHttpException("Content size {$size} exceeds provider's maximum: {$max}", null, Response::HTTP_BAD_REQUEST);
             }
         }
     }
@@ -265,11 +292,32 @@ class SwordController extends Controller {
      * @param Request $request
      * @param ContentProvider $provider
      * @param Deposit $deposit
+     * @param EntityManagerInterface $em
      *
+     * @todo what does the recrawl attribute do?
+     * 
      * @return Response
      */
-    public function editDepositAction(Request $request, ContentProvider $provider, Deposit $deposit) {
-        
+    public function editDepositAction(Request $request, ContentProvider $provider, Deposit $deposit, EntityManagerInterface $em) {
+        $atom = $this->getXml($request);
+        $this->precheckDeposit($atom, $provider);        
+        foreach($atom->xpath('lom:content') as $node) {
+            $content = $this->getContent($deposit, (string) $node);  
+            if( ! $content) {
+                $this->logger->warning("Cannot edit content for deposit {$deposit->getId()} with URL " . $node);
+                continue;
+            }
+            $content->setChecksumType($node['checksumType']);
+            $content->setChecksumValue($node['checksumValue']);
+        }
+        $em->flush();
+        $response = $this->renderDepositReceipt($provider, $deposit);
+        $response->headers->set('Location', $this->generateUrl('sword_reciept', array(
+            'providerUuid' => $provider->getUuid(),
+            'depositUuid' => $deposit->getUuid(),
+        ), UrlGeneratorInterface::ABSOLUTE_URL));
+        $response->setStatusCode(Response::HTTP_OK);
+        return $response;        
     }
     
     /**
