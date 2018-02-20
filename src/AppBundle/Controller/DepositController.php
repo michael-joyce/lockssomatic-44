@@ -109,26 +109,6 @@ class DepositController extends Controller {
     /**
      * Full text search for Deposit entities.
      *
-     * To make this work, add a method like this one to the
-     * AppBundle:Deposit repository. Replace the fieldName with
-     * something appropriate, and adjust the generated fulltext.html.twig
-     * template.
-     *
-     * <code><pre>
-     *     public function fulltextQuery($q) {
-     *         $qb = $this->createQueryBuilder('e');
-     *         $qb->addSelect("MATCH_AGAINST (e.name, :q 'IN BOOLEAN MODE') as score");
-     *         $qb->add('where', "MATCH_AGAINST (e.name, :q 'IN BOOLEAN MODE') > 0.5");
-     *         $qb->orderBy('score', 'desc');
-     *         $qb->setParameter('q', $q);
-     *         return $qb->getQuery();
-     *     }
-     * </pre></code>
-     * 
-     * Requires a MatchAgainst function be added to doctrine, and appropriate
-     * fulltext indexes on your Deposit entity.
-     *     ORM\Index(name="alias_name_idx",columns="name", flags={"fulltext"})
-     *
      * @Route("/fulltext", name="deposit_fulltext")
      * @Method("GET")
      * @Template()

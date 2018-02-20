@@ -14,8 +14,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * LOCKSS Controller
- * 
+ * LOCKSS Controller.
+ *
+ * All of the LOCKSS boxes should interact with LOCKSSOMatic with
+ * this controller only.
+ *
  * @Route("/plnconfigs/{plnId}")
  * @ParamConverter("pln", options={"id"="plnId"})
  * @Method("GET")
@@ -23,79 +26,104 @@ use Symfony\Component\HttpFoundation\Request;
 class LockssController extends Controller {
 
     /**
+     * Get a LOCKSS configuration xml file.
+     *
+     * @param Request $request
+     *   Dependency injected http request.
+     * @param \AppBundle\Controller\Pln $pln
+     *   PLN configured by the file.
+     *
      * @Route("/properties/lockss.{_format}", name="lockss_config", requirements={"_format": "xml"})
      * @Method("GET")
-     * 
-     * @param Request $request
-     * @param \AppBundle\Controller\Pln $pln
      */
     public function lockssAction(Request $request, Pln $pln) {
-        
     }
     
     /**
+     * Fetch one title db file.
+     *
+     * @param Request $request
+     *   Dependency injected http request.
+     * @param \AppBundle\Controller\Pln $pln
+     *   PLN configured by the file.
+     * @param ContentOwner $owner
+     *   Content ownter for the title db.
+     * @param ContentProvider $provider
+     *   Content provider for the title db.
+     * @param string $filename
+     *   Name of the title db file.
+     *
      * @Route("/titledbs/{ownerId}/{providerId}/{filename}", name="lockss_titledb")
      * @ParamConverter("owner", options={"id"="ownerId"})
      * @ParamConverter("provider", options={"id"="providerId"})
-     * 
-     * @param Request $request
-     * @param Pln $pln
-     * @param ContentOwner $owner
-     * @param ContentProvider $provider
-     * @param string $filename
      */
     public function titleDbAction(Request $request, Pln $pln, ContentOwner $owner, ContentProvider $provider, $filename) {
-        
     }
     
     /**
+     * Fetch the manifest file for one AU.
+     *
+     * @param Request $request
+     *   Dependency injected http request.
+     * @param \AppBundle\Controller\Pln $pln
+     *   PLN configured by the file.
+     * @param ContentOwner $owner
+     *   Content ownter for the title db.
+     * @param ContentProvider $provider
+     *   Content provider for the title db.
+     * @param Au $au
+     *   The AU containing the content.
+     *
      * @Route("/manifests/{ownerId}/{providerId}/{auId}", name="lockss_manifest")
      * @ParamConverter("owner", options={"id"="ownerId"})
      * @ParamConverter("provider", options={"id"="providerId"})
      * @ParamConverter("au", options={"id"="auId"})
-     * 
-     * @param Request $request
-     * @param Pln $pln
-     * @param ContentOwner $owner
-     * @param ContentProvider $provider
-     * @param Au $au
      */
     public function manifestAction(Request $request, Pln $pln, ContentOwner $owner, ContentProvider $provider, Au $au) {
-        
-    } 
-    
-    /**
-     * @Route("/plugins/lockss.keystore", name="lockss_keystore")
-     * 
-     * @param Request $request
-     * @param Pln $pln
-     */
-    public function keystoreAction(Request $request, Pln $pln) {
-        
     }
     
     /**
+     * Get the java keystore file for the LOCKSS plugins.
+     *
+     * @param Request $request
+     *   Dependency injected http request.
+     * @param \AppBundle\Controller\Pln $pln
+     *   PLN configured by the file.
+     *
+     * @Route("/plugins/lockss.keystore", name="lockss_keystore")
+     */
+    public function keystoreAction(Request $request, Pln $pln) {
+    }
+    
+    /**
+     * Get the plugin manifest.
+     *
+     * @param Request $request
+     *   Dependency injected http request.
+     * @param \AppBundle\Controller\Pln $pln
+     *   PLN configured by the file.
+     *
      * @Route("/plugins/index.html", name="lockss_plugin_list")
      * @Route("/plugins/")
      * @Route("/plugins")
-     * 
-     * @param Request $request
-     * @param Pln $pln
      */
     public function pluginListAction(Request $request, Pln $pln) {
-        
     }
     
     /**
+     * Get one plugin.
+     *
+     * @param Request $request
+     *   Dependency injected http request.
+     * @param \AppBundle\Controller\Pln $pln
+     *   PLN configured by the file.
+     * @param Plugin $plugin
+     *   The plugin to fetch.
+     *
      * @Route("/plugins/{filename}")
      * @ParamConverter("plugin", class="AppBundle:Plugin", options={"mapping": {"filename": "filename"}})
-     *  
-     * @param Request $request
-     * @param Pln $pln
-     * @param Plugin $plugin
      */
     public function pluginAction(Request $request, Pln $pln, Plugin $plugin) {
-        
     }
     
 }

@@ -29,96 +29,121 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Sword controller.
- * 
+ *
  * @Route("/api/sword/2.0")
  */
 class SwordController extends Controller {
 
     /**
+     * Logger for the controller.
+     *
      * @var Logger
      */
     private $logger;
-    
+
+    /**
+     * Build the controller.
+     *
+     * @param LoggerInterface $logger
+     *   Dependency injected logger.
+     */
     public function __construct(LoggerInterface $logger) {
         $this->logger = $logger;
     }
-    
+
     /**
      * Fetch an HTTP header.
-     * 
+     *
      * Checks the HTTP headers for $key and X-$key variant. If the app
-     * is in the dev environment, will also check the query parameters for 
-     * $key. 
-     * 
+     * is in the dev environment, will also check the query parameters for
+     * $key.
+     *
      * If $required is true and the header is not present BadRequestException
      * will be thrown.
-     * 
+     *
      * @param Request $request
+     *   Request which should contain the header.
      * @param string $key
+     *   Name of the header.
      * @param string $required
+     *   If true, an exception will be thrown if the header is missing.
+     *
      * @return string|null
+     *   The value of the header or null if that's OK.
+     *
      * @throws BadRequestException
      */
     private function fetchHeader(Request $request, $key, $required = false) {
-        if($request->headers->has($key)) {
+        if ($request->headers->has($key)) {
             return $request->headers->get($key);
         }
-        if($this->getParameter('kernel.environment') === 'dev'
-                && $request->query->has($key)) {
+        if ($this->getParameter('kernel.environment') === 'dev' && $request->query->has($key)) {
             return $request->query->get($key);
         }
-        if($required) {
+        if ($required) {
             throw new BadRequestHttpException("HTTP header {$key} is required.", null, Response::HTTP_BAD_REQUEST);
         }
         return null;
     }
-    
+
     /**
      * Get a content provider from it's UUID.
-     * 
+     *
      * @param string $uuid
+     *   The UUID of the content provider.
+     *
      * @return ContentProvider
+     *   The content provider.
+     *
+     * @throws NotFoundHttpException
+     *    Throws if the provider is missing.
      */
     private function getProvider($uuid) {
         $em = $this->getDoctrine()->getManager();
         $provider = $em->getRepository(ContentProvider::class)->findOneBy(array(
             'uuid' => $uuid,
         ));
-        if( ! $provider) {
-            throw new NotFoundHttpException("Content provider not found.", null, Response::HTTP_NOT_FOUND); 
+        if (!$provider) {
+            throw new NotFoundHttpException("Content provider not found.", null, Response::HTTP_NOT_FOUND);
         }
         return $provider;
     }
-    
+
     /**
      * Get a content item.
-     * 
+     *
      * @param Deposit $deposit
+     *   Deposit containing the content.
      * @param string $url
-     * 
-     * @return Content
+     *   URL identifying the content.
+     *
+     * @return Content|null
+     *   The content matching the deposit and URL.
      */
     private function getContent(Deposit $deposit, $url) {
         return $this->getDoctrine()->getRepository(Content::class)->findOneBy(array(
-            'deposit' => $deposit,
-            'url' => trim($url),
+                    'deposit' => $deposit,
+                    'url' => trim($url),
         ));
     }
-    
+
     /**
      * SWORD service document.
-     * 
+     *
      * @param Request $request
+     *   Dependency injected request.
+     *
      * @return array
-     * 
-     * @Route("/sd-iri.{_format}", 
-     *  name="sword_service_document", 
-     *  defaults={"_format": "xml"}, 
+     *   The array is passed to the template handler.
+     *
+     * @Route("/sd-iri.{_format}",
+     *  name="sword_service_document",
+     *  defaults={"_format": "xml"},
      *  requirements={"_format": "xml"}
      * )
      * @Template()
      */
-    public function serviceDocumentAction(Request $request) {        
+    public function serviceDocumentAction(Request $request) {
         $uuid = $this->fetchHeader($request, 'On-Behalf-Of', true);
         $provider = $this->getProvider(strtoupper($uuid));
         $plugin = $provider->getPlugin();
@@ -129,19 +154,22 @@ class SwordController extends Controller {
             'hashMethods' => $hashMethods,
         );
     }
-    
+
     /**
-     * Make sure that the required content properties exist in the XML for a
-     * plugin.
+     * Make sure that the required properties exist in the XML.
      *
      * @param SimpleXMLElement $content
+     *   Deposit XML passed in via the SWORD API.
      * @param Plugin $plugin
+     *   The lockss-plugin that will handle the deposit content.
+     *
      * @throws BadRequestException
+     *    If any of the required properties are missing.
      */
     private function precheckContentProperties(SimpleXMLElement $content, Plugin $plugin) {
         foreach ($plugin->getDefinitionalProperties() as $propertyName) {
-            if(in_array($propertyName, $plugin->getGeneratedParams())) {
-                // skip any parameters that LOM will generate later.
+            if (in_array($propertyName, $plugin->getGeneratedParams())) {
+                // Skip any parameters that LOM will generate later.
                 continue;
             }
             $nodes = $content->xpath("lom:property[@name='$propertyName']");
@@ -152,18 +180,21 @@ class SwordController extends Controller {
                 throw new BadRequestHttpException("{$propertyName} must be unique.", null, Response::HTTP_BAD_REQUEST);
             }
             $property = $nodes[0];
-            if (!(string)$property->attributes()->value) {
+            if (!(string) $property->attributes()->value) {
                 throw new BadRequestHttpException("{$propertyName} must have a value.", null, Response::HTTP_BAD_REQUEST);
             }
         }
     }
-    
+
     /**
-     * Precheck a deposit for the required properties and make sure the properties
-     * all make some sense.
+     * Precheck a deposit for the required properties.
+     *
+     * Also makes sure the properties all make some sense.
      *
      * @param SimpleXMLElement $atom
+     *   The deposit data.
      * @param ContentProvider $provider
+     *   The provider making the deposit.
      *
      * @throws BadRequestException
      * @throws HostMismatchException
@@ -177,7 +208,7 @@ class SwordController extends Controller {
 
         $permissionHost = $provider->getPermissionHost();
         foreach ($atom->xpath('//lom:content') as $content) {
-            // check required properties.
+            // Check required properties.
             $this->precheckContentProperties($content, $plugin);
             $url = trim((string) $content);
             $host = parse_url($url, PHP_URL_HOST);
@@ -192,18 +223,21 @@ class SwordController extends Controller {
             }
         }
     }
-    
+
     /**
      * Given a deposit and content provider, render a deposit reciept.
      *
      * @param ContentProvider $provider
+     *   The provider making the deposit.
      * @param Deposit $deposit
+     *   The deposit jsut received.
      *
-     * @return Response containing the XML.
+     * @return Response
+     *   Containing the XML.
      */
     private function renderDepositReceipt(ContentProvider $provider, Deposit $deposit) {
         // @TODO this should be a call to render depositReceiptAction() or something.
-        // Return the deposit receipt.        
+        // Return the deposit receipt.
         $response = $this->render('sword/deposit_receipt.xml.twig', array(
             'provider' => $provider,
             'deposit' => $deposit,
@@ -212,23 +246,49 @@ class SwordController extends Controller {
 
         return $response;
     }
-    
+
+    /**
+     * Get the XML from an HTTP request.
+     *
+     * @param Request $request
+     *   Depedency injected http request.
+     *
+     * @return SimpleXMLElement
+     *   Parsed XML.
+     *
+     * @throws BadRequestHttpException
+     */
     private function getXml(Request $request) {
         $content = $request->getContent();
-        if( ! $content || !is_string($content)) {
+        if (!$content || !is_string($content)) {
             throw new BadRequestHttpException("Expected request body. Found none.", null, Response::HTTP_BAD_REQUEST);
         }
         try {
             $xml = simplexml_load_string($content);
             Namespaces::registerNamespaces($xml);
             return $xml;
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new BadRequestHttpException("Cannot parse request XML.", $e, Response::HTTP_BAD_REQUEST);
         }
     }
-    
+
     /**
      * Create a deposit by posting XML to this URL, aka col-iri.
+     *
+     * @param Request $request
+     *   Dependency injected http request.
+     * @param ContentProvider $provider
+     *   Content provider making the request, determined from the URL.
+     * @param EntityManagerInterface $em
+     *   Entity manager for the database.
+     * @param DepositBuilder $depositBuilder
+     *   Dependency injected deposit builder.
+     * @param ContentBuilder $contentBuilder
+     *   Dependency injected content builder.
+     * @param AuBuilder $auBuilder
+     *   Dependency injected archival unit builder.
+     * @param AuIdGenerator $idGenerator
+     *   Dependency injected AUID generator.
      *
      * @Route("/col-iri/{providerUuid}", name="sword_collection", requirements={
      *      "providerUuid": ".{36}"
@@ -236,50 +296,54 @@ class SwordController extends Controller {
      * @Method({"POST"})
      * @ParamConverter("provider", class="AppBundle:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
      *
-     * @param Request $request
-     * @param ContentProvider $provider
-     * @param EntityManagerInterface $em
-     * @param DepositBuilder $depositBuilder
-     * @param ContentBuilder $contentBuilder
-     * @param AuBuilder $auBuilder
-     * @param AuIdGenerator $idGenerator
-     *
      * @throws BadRequestException
      * @throws HostMismatchException
      * @throws MaxUploadSizeExceededException
-     * 
+     *
      * @return Response
+     *   The HTTP response containing a location header and the SWORD body.
      */
     public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, ContentBuilder $contentBuilder, AuBuilder $auBuilder, AuIdGenerator $idGenerator) {
         $atom = $this->getXml($request);
-        $this->precheckDeposit($atom, $provider);        
+        $this->precheckDeposit($atom, $provider);
         $deposit = $depositBuilder->fromXml($atom, $provider);
-        foreach($atom->xpath('lom:content') as $node) {
+        foreach ($atom->xpath('lom:content') as $node) {
             $content = $contentBuilder->fromXml($node);
             $content->setDeposit($deposit);
             $auid = $idGenerator->fromContent($content, false);
             $au = $em->getRepository(Au::class)->findOneBy(array(
                 'auid' => $auid,
             ));
-            if( ! $au) {
+            if (!$au) {
                 $au = $auBuilder->fromContent($content);
                 $au->setAuid($auid);
             }
-            $content->setAu($au);            
+            $content->setAu($au);
         }
         $em->flush();
         $response = $this->renderDepositReceipt($provider, $deposit);
         $response->headers->set('Location', $this->generateUrl('sword_reciept', array(
-            'providerUuid' => $provider->getUuid(),
-            'depositUuid' => $deposit->getUuid(),
+                    'providerUuid' => $provider->getUuid(),
+                    'depositUuid' => $deposit->getUuid(),
         ), UrlGeneratorInterface::ABSOLUTE_URL));
         $response->setStatusCode(Response::HTTP_CREATED);
-        return $response;        
+        return $response;
     }
-    
+
     /**
-     * HTTP PUT to this URL to edit a deposit. This URL is the same as the
-     * recieptAction URL (aka edit-iri) but requires an HTTP PUT.
+     * HTTP PUT to this URL to edit a deposit.
+     *
+     * This URL is the same as the recieptAction URL (aka
+     * edit-iri) but requires an HTTP PUT.
+     *
+     * @param Request $request
+     *   Dependency injected http request.
+     * @param ContentProvider $provider
+     *   Content provider making the request, determined from the URL.
+     * @param Deposit $deposit
+     *   Deposit being edited.
+     * @param EntityManagerInterface $em
+     *   Database entity manager.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_edit", requirements={
      *      "providerUuid": ".{36}",
@@ -289,21 +353,17 @@ class SwordController extends Controller {
      * @ParamConverter("provider", class="AppBundle:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
      * @ParamConverter("deposit", class="AppBundle:Deposit", options={"mapping": {"depositUuid"="uuid"}})
      *
-     * @param Request $request
-     * @param ContentProvider $provider
-     * @param Deposit $deposit
-     * @param EntityManagerInterface $em
-     *
      * @todo what does the recrawl attribute do?
-     * 
+     *
      * @return Response
+     *   The sword HTTP response with a success message.
      */
     public function editDepositAction(Request $request, ContentProvider $provider, Deposit $deposit, EntityManagerInterface $em) {
         $atom = $this->getXml($request);
-        $this->precheckDeposit($atom, $provider);        
-        foreach($atom->xpath('lom:content') as $node) {
-            $content = $this->getContent($deposit, (string) $node);  
-            if( ! $content) {
+        $this->precheckDeposit($atom, $provider);
+        foreach ($atom->xpath('lom:content') as $node) {
+            $content = $this->getContent($deposit, (string) $node);
+            if (!$content) {
                 $this->logger->warning("Cannot edit content for deposit {$deposit->getId()} with URL " . $node);
                 continue;
             }
@@ -313,20 +373,30 @@ class SwordController extends Controller {
         $em->flush();
         $response = $this->renderDepositReceipt($provider, $deposit);
         $response->headers->set('Location', $this->generateUrl('sword_reciept', array(
-            'providerUuid' => $provider->getUuid(),
-            'depositUuid' => $deposit->getUuid(),
+                    'providerUuid' => $provider->getUuid(),
+                    'depositUuid' => $deposit->getUuid(),
         ), UrlGeneratorInterface::ABSOLUTE_URL));
         $response->setStatusCode(Response::HTTP_OK);
-        return $response;        
+        return $response;
     }
-    
+
     /**
      * Fetch a representation of the deposit from this URL, aka cont-iri.
      *
+     * @param Request $request
+     *   Dependency injected http request.
+     * @param ContentProvider $provider
+     *   Content provider that originally made the deposit.
+     * @param Deposit $deposit
+     *   Deposit being edited.
+     *
+     * @return array
+     *   The templating engine will process the returned data.
+     *
      * @todo needs testing.
-     * 
-     * @Route("/cont-iri/{providerUuid}/{depositUuid}.{_format}", 
-     *  name="sword_view", 
+     *
+     * @Route("/cont-iri/{providerUuid}/{depositUuid}.{_format}",
+     *  name="sword_view",
      *  defaults={"_format": "xml"},
      *  requirements={
      *      "providerUuid": ".{36}",
@@ -337,12 +407,7 @@ class SwordController extends Controller {
      * @ParamConverter("provider", class="AppBundle:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
      * @ParamConverter("deposit", class="AppBundle:Deposit", options={"mapping": {"depositUuid"="uuid"}})
      *
-     * @param Request $request
-     * @param ContentProvider $provider
-     * @param Deposit $deposit
-     *
      * @Template
-     * @return array
      */
     public function viewDepositAction(Request $request, ContentProvider $provider, Deposit $deposit) {
         return array(
@@ -350,14 +415,26 @@ class SwordController extends Controller {
             'deposit' => $deposit,
         );
     }
-    
+
     /**
-     * Get a deposit statement, showing the status of the deposit in LOCKSS,
+     * Get a deposit statement.
+     *
+     * In the SWORD api, the statement shows the status of the deposit in LOCKSS,
      * from this URL. Also known as state-iri. Includes a sword:originalDeposit element for
      * each content item in the deposit.
      *
+     * @param Request $request
+     *   Dependency injected http request.
+     * @param ContentProvider $provider
+     *   Provider that made the deposit.
+     * @param Deposit $deposit
+     *   Deposit for the statement.
+     *
+     * @return Response
+     *   SWORD API resonse with a success message.
+     *
      * @todo finish this action.
-     * 
+     *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/state", name="sword_statement", requirements={
      *      "providerUuid": ".{36}",
      *      "depositUuid": ".{36}"
@@ -365,18 +442,22 @@ class SwordController extends Controller {
      * @Method({"GET"})
      * @ParamConverter("provider", options={"uuid"="providerUuid"})
      * @ParamConverter("deposit", options={"uuid"="depositUuid"})
-     *
-     * @param string $providerUuid
-     * @param string $depositUuid
-     *
-     * @return Response
      */
     public function statementAction(Request $request, ContentProvider $provider, Deposit $deposit) {
-        
     }
-    
+
     /**
      * Get a deposit receipt from this URL, also known as the edit-iri.
+     *
+     * @param Request $request
+     *   Dependency injected http request.
+     * @param ContentProvider $provider
+     *   Provider that made the deposit.
+     * @param Deposit $deposit
+     *   Deposit for the statement.
+     *
+     * @return Response
+     *   The SWORD response with the deposit reciept in the body.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_reciept", requirements={
      *      "providerUuid": ".{36}",
@@ -385,14 +466,8 @@ class SwordController extends Controller {
      * @Method({"GET"})
      * @ParamConverter("provider", options={"uuid"="providerUuid"})
      * @ParamConverter("deposit", options={"uuid"="depositUuid"})
-     *
-     * @param string $providerUuid
-     * @param string $depositUuid
-     *
-     * @return Response
-     */    
+     */
     public function receiptAction(Request $request, ContentProvider $provider, Deposit $deposit) {
-        
     }
-    
+
 }

@@ -133,15 +133,17 @@ class PluginController extends Controller {
     }
 
     /**
+     * Edit a plugin configuration.
+     *
      * The edit action lets a user configure the plugin's settings inside
-     * LOCKSSOMatic. To add a new version of the plugin JAR file use the new 
+     * LOCKSSOMatic. To add a new version of the plugin JAR file use the new
      * action.
-     * 
+     *
      * @param Request $request
      *   Dependency injected request.
      * @param Plugin $plugin
      *   Dependency injected plugin being edited.
-     * 
+     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="plugin_edit")
      * @Method({"GET","POST"})
@@ -153,7 +155,7 @@ class PluginController extends Controller {
         ));
         $editForm->handleRequest($request);
         
-        if($editForm->isSubmitted() && $editForm->isValid()) {
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The plugin settings have been updated.');
