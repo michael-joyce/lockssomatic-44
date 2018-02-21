@@ -106,17 +106,26 @@ class ConfigUpdater {
         $pln->setProperty("{$prefix}.port", $pln->getContentPort());
     }
     
+    public function updatePluginRegistries(Pln $pln) {
+        $url = $this->generator->generate('lockss_plugin_list', array(
+            'plnId' => $pln->getId(),
+        ), UrlGeneratorInterface::ABSOLUTE_URL);
+        $pln->setProperty('org.lockss.plugin.registries', $url);
+    }
+    
     /**
      * Update all the PLN config properties.
      * 
      * @param Pln $pln
      */
     public function update(Pln $pln) {
+        $pln->clearProperties();
         $this->updatePeerList($pln);
         $this->updateTitleDbs($pln);
         $this->updateKeystoreLocation($pln);
         $this->updateAuthentication($pln);
         $this->updateContentUi($pln);
+        $this->updatePluginRegistries($pln);
     }
     
 }

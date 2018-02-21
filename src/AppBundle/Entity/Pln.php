@@ -284,6 +284,11 @@ class Pln extends AbstractEntity {
     public function getContentPort() {
         return $this->contentPort;
     }
+    
+    public function clearProperties() {
+        $this->properties = [];
+        return $this;
+    }
 
     /**
      * Get properties.
@@ -294,29 +299,33 @@ class Pln extends AbstractEntity {
         return $this->properties;
     }
     
-    public function setProperty($key, $value) {
-        if(in_array($key, self::LIST_REQUIRED) && !is_array($value)) {
-            $this->proeprties[$key] = [$value];
+    /**
+     * @param string $key
+     * @param string|array $value
+     * @return Pln
+     */
+    public function setProperty($key, $value) {        
+        if(in_array($key, self::LIST_REQUIRED)) {
+            if(is_array($value)) {
+                $this->properties[$key] = $value;
+            } else {
+                $this->properties[$key] = [$value];
+            }
         } else {
-            $this->properties[$key] = $value;
+            if(is_array($value) && count($value) === 1) {
+                $this->properties[$key] = $value[0];
+            } else {
+                $this->properties[$key] = $value;
+            }
         }
+        return $this;
     }
     
     public function getProperty($key) {
-        if( ! in_array($key, $this->properties)) {
+        if( !array_key_exists($key, $this->properties)) {
             return null;
         }
-        $value = $this->properties[$key];
-        if(in_array($key, self::LIST_REQUIRED)) {
-            if(is_array($value)) {
-                return $value;
-            }
-            return array($value);
-        }
-        if(is_array($value) && count($value) === 1) {
-            return $value[0];
-        }
-        return $value;
+        return $this->properties[$key];
     }
     
     public function removeProperty($key) {
@@ -405,7 +414,7 @@ class Pln extends AbstractEntity {
      *
      * @return Keystore
      */
-    public function getKeystore() {
+    public function getKeystorePath() {
         return $this->keystore;
     }
     
@@ -442,10 +451,23 @@ class Pln extends AbstractEntity {
     /**
      * Get contentProviders.
      *
-     * @return Collection
+     * @return Collection|ContentProvider[]
      */
     public function getContentProviders() {
         return $this->contentProviders;
+    }
+    
+    /**
+     * @return Plugin[]
+     */
+    public function getPlugins() {
+        $plugins = [];
+        foreach($this->contentProviders as $provider) {
+            if( ! in_array($provider->getPlugin(), $plugins)) {
+                $plugins[] = $provider->getPlugin();
+            }
+        }
+        return $plugins;
     }
 
 }

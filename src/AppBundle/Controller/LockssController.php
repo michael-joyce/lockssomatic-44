@@ -74,7 +74,7 @@ class LockssController extends Controller {
      * @param Au $au
      *   The AU containing the content.
      *
-     * @Route("/manifests/{ownerId}/{providerId}/{auId}", name="lockss_manifest")
+     * @Route("/manifests/{ownerId}/{providerId}/manifest_{auId}.html", name="lockss_manifest")
      * @ParamConverter("owner", options={"id"="ownerId"})
      * @ParamConverter("provider", options={"id"="providerId"})
      * @ParamConverter("au", options={"id"="auId"})
@@ -120,7 +120,7 @@ class LockssController extends Controller {
      * @param Plugin $plugin
      *   The plugin to fetch.
      *
-     * @Route("/plugins/{filename}")
+     * @Route("/plugins/{filename}", name="lockss_plugin")
      * @ParamConverter("plugin", class="AppBundle:Plugin", options={"mapping": {"filename": "filename"}})
      */
     public function pluginAction(Request $request, Pln $pln, Plugin $plugin) {

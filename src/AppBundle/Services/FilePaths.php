@@ -147,7 +147,10 @@ class FilePaths {
 
     /**
      * Get a LOCKSS keystore directory.
-     *
+     * 
+     * This is where LOM stores the java keystores. They are served from a 
+     * different location.
+     * 
      * @param Pln $pln
      *   The Pln for the keystore.
      *
@@ -318,6 +321,14 @@ class FilePaths {
             $provider->getId(),
         ));
 
+        return $path;
+    }
+
+    public function getTitleDbPath(ContentProvider $provider) {
+        $path = implode('/', array(
+            $this->getTitleDbDir($provider->getPln(), $provider),
+            'titledb_' . $provider->getId() . '.xml'
+        ));
         return $path;
     }
 
