@@ -286,19 +286,6 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Set properties.
-     *
-     * @param array $properties
-     *
-     * @return Pln
-     */
-    public function setProperties($properties) {
-        $this->properties = $properties;
-
-        return $this;
-    }
-
-    /**
      * Get properties.
      *
      * @return array
@@ -308,11 +295,28 @@ class Pln extends AbstractEntity {
     }
     
     public function setProperty($key, $value) {
-        $this->properties[$key] = $value;
+        if(in_array($key, self::LIST_REQUIRED) && !is_array($value)) {
+            $this->proeprties[$key] = [$value];
+        } else {
+            $this->properties[$key] = $value;
+        }
     }
     
     public function getProperty($key) {
-        return $this->properties[$key];
+        if( ! in_array($key, $this->properties)) {
+            return null;
+        }
+        $value = $this->properties[$key];
+        if(in_array($key, self::LIST_REQUIRED)) {
+            if(is_array($value)) {
+                return $value;
+            }
+            return array($value);
+        }
+        if(is_array($value) && count($value) === 1) {
+            return $value[0];
+        }
+        return $value;
     }
     
     public function removeProperty($key) {

@@ -48,10 +48,8 @@ class ConfigUpdater {
      */
     public function updateTitleDbs(Pln $pln) {
         $urls = [];
-        foreach($pln->getAus() as $au) {
-            $provider = $au->getContentProvider();
+        foreach($pln->getContentProviders() as $provider) {
             $owner = $provider->getContentOwner();
-            
             $url = $this->generator->generate('lockss_titledb', array(
                 'plnId' => $pln->getId(),
                 'ownerId' => $owner->getId(),
@@ -86,9 +84,13 @@ class ConfigUpdater {
      * @param Pln $pln
      */
     public function updateAuthentication(Pln $pln) {
+        $username = $pln->getUsername();
+        if( ! $username) {
+            return;
+        }
         $prefix = 'org.lockss.ui.users.lomauth';
         $hash = hash('SHA256', $pln->getPassword());
-        $pln->setProperty("{$prefix}.user", $pln->getUsername());
+        $pln->setProperty("{$prefix}.user", $username);
         $pln->setProperty("{$prefix}.password", "SHA-256:$hash");
         $pln->setProperty("{$prefix}.roles", 'accessContentRole');
     }

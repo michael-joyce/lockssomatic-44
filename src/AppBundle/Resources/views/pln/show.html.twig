@@ -93,17 +93,13 @@
                 <li>
                     {{ key }}:
                     {% if values is iterable %}
-                        {% if values | length > 1 %}
-                            <ul>
-                                {% for v in values %}
-                                    <li>
-                                        {{ v }}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            {{ values[0] }}
-                        {% endif %}
+                        <ul>
+                            {% for v in values %}
+                                <li>
+                                    {{ v }}
+                                </li>
+                            {% endfor %}
+                        </ul>
                     {% else %}
                         {{ values }}
                     {% endif %}

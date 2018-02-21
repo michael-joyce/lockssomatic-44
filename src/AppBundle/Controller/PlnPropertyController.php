@@ -66,7 +66,16 @@ class PlnPropertyController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $pln->setProperty($data['name'], $data['values']);
+            $name = $data['name'];
+            $values = $data['values'];
+            if(count($values) > 1) {
+                $pln->setProperty($name, $values);
+            } else if(count($values) === 1) {
+                $pln->setProperty($name, $values[0]);
+            } else {
+                // count(values) === 0
+                $pln->removeProperty($name);
+            }
             $this->getDoctrine()->getManager()->flush();
             $this->addFlash('success', 'The property has been added to the PLN.');
             return $this->redirectToRoute('pln_property_index', array(
@@ -105,7 +114,16 @@ class PlnPropertyController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $pln->setProperty($data['name'], $data['values']);
+            $name = $data['name'];
+            $values = $data['values'];
+            if(count($values) > 1) {
+                $pln->setProperty($name, $values);
+            } else if(count($values) === 1) {
+                $pln->setProperty($name, $values[0]);
+            } else {
+                // count(values) === 0
+                $pln->removeProperty($name);
+            }
             $this->getDoctrine()->getManager()->flush();
             $this->addFlash('success', 'The property has been updated.');
             return $this->redirectToRoute('pln_property_index', array(

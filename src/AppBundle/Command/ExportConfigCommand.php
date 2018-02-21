@@ -2,38 +2,56 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Pln;
+use AppBundle\Services\ConfigExporter;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * LomExportConfigCommand command.
  */
-class ExportConfigCommand extends ContainerAwareCommand
-{
-    public function __construct(EntityManagerInterface $em, LoggerInterface $logger, UrlGeneratorInterface $generator) {
-        
+class ExportConfigCommand extends ContainerAwareCommand {
+
+    /**
+     * @var ConfigExporter
+     */
+    private $exporter;
+    
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+    
+    public function __construct(EntityManagerInterface $em, ConfigExporter $exporter) {
+        $this->em = $em;
+        $this->exporter = $exporter;        
         parent::__construct();
     }
-    
+
     /**
      * Configure the command.
      */
-    protected function configure()
-    {
-        $this
-            ->setName('lom:export:config')
-            ->setDescription('...')
-            ->addArgument('argument', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option', null, InputOption::VALUE_NONE, 'Option description')
-        ;
+    protected function configure() {
+        $this->setName('lom:export:config');
+        $this->setDescription('Export the configuration for one or more PLNs.');
+        $this->addArgument('pln', InputArgument::IS_ARRAY, 'Optional list of database PLN IDs to update.');
     }
 
+    /**
+     * @param array $plnIds
+     * @return Pln[]
+     */
+    private function getPlns($plnIds = null) {
+        $repo = $this->em->getRepository(Pln::class);
+        if($plnIds === null || count($plnIds) === 0) {
+            return $repo->findAll();
+        }
+        return $repo->findById($plnIds);
+    }
+    
     /**
      * Execute the command.
      *
@@ -42,15 +60,12 @@ class ExportConfigCommand extends ContainerAwareCommand
      * @param OutputInterface $output
      *   Output destination.
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $argument = $input->getArgument('argument');
-
-        if ($input->getOption('option')) {
-            // ...
+    protected function execute(InputInterface $input, OutputInterface $output) {
+        $plnIds = $input->getArgument('pln');
+        foreach($this->getPlns($plnIds) as $pln) {
+            $output->writeln("exporting {$pln->getName()}");
+            $this->exporter->export($pln);
         }
-
-        $output->writeln('Command result.');
     }
 
 }
