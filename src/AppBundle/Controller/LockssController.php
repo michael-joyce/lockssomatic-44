@@ -203,11 +203,12 @@ class LockssController extends Controller {
      *   The plugin to fetch.
      *
      * @Route("/plugins/{filename}", name="lockss_plugin")
-     * @ParamConverter("plugin", class="AppBundle:Plugin", options={"mapping": {"filename": "filename"}})
      */
-    public function pluginAction(Request $request, Pln $pln, Plugin $plugin) {
+    public function pluginAction(Request $request, Pln $pln, $filename) {
         $this->checkIp($request, $pln);
-        $path = $this->fp->getPluginsExportFile($pln, $plugin);
+        
+        $dir = $this->fp->getPluginsExportDir($pln);
+        $path = $dir . '/' . $filename;
         if( ! $path) {
             throw new NotFoundHttpException('The requested plugin does not exist.');
         }

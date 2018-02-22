@@ -43,7 +43,7 @@ class Plugin extends AbstractEntity {
      * @ORM\Column(name="path", type="string", length=255, nullable=true)
      */
     private $path;
-
+    
     /**
      * Version number for the plugin, from the plugin's Xml config.
      *
@@ -175,6 +175,11 @@ class Plugin extends AbstractEntity {
     public function getFilename() {
         $fileinfo = new SplFileInfo($this->path);
         return $fileinfo->getBasename();
+    }
+    
+    public function getOriginalFilename() {
+        $filename = preg_replace('/-v[0-9]+\.jar$/', '.jar', $this->getFilename());
+        return $filename;
     }
 
     /**

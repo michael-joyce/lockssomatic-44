@@ -57,15 +57,27 @@
             </tr>
             <tr>
                 <th>Config URL</th>
-                <td></td>
+                <td>
+                    <a href="{{ url('lockss_config', {'plnId': pln.id}) }}">
+                        {{ url('lockss_config', {'plnId': pln.id}) }}
+                    </a>
+                </td>
             </tr>
             <tr>
                 <th>Plugin Registry</th>
-                <td></td>
+                <td>
+                    <a href="{{ url('lockss_plugin_list', {'plnId': pln.id}) }}">
+                        {{ url('lockss_plugin_list', {'plnId': pln.id}) }}
+                    </a>
+                </td>
             </tr>
             <tr>
                 <th>SWORD URI</th>
-                <td></td>
+                <td>
+                    <a href="{{ url('sword_service_document') }}">
+                        {{ url('sword_service_document') }}
+                    </a>
+                </td>
             </tr>
             <tr>
                 <th>Created</th>

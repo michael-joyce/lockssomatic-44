@@ -6,7 +6,7 @@
         <h3>{{ pln.name }} Plugin Registry</h3>        
         <ul>
             {% for plugin in pln.plugins -%}
-                <li><a href="{{ url('lockss_plugin', {'plnId': pln.id, 'filename': plugin.filename}) }}">{{ plugin.filename }}</a></li>
+                <li><a href="{{ url('lockss_plugin', {'plnId': pln.id, 'filename': plugin.originalFilename}) }}">{{ plugin.originalFilename }}</a></li>
             {% endfor -%}
         </ul>
         <p>

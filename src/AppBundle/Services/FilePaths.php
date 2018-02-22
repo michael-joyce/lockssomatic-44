@@ -238,7 +238,7 @@ class FilePaths {
     public function getPluginsExportFile(Pln $pln, Plugin $plugin) {
         $path = implode('/', array(
             $this->getPluginsExportDir($pln),
-            $plugin->getFilename(),
+            $plugin->getOriginalFilename(),
         ));
 
         return $path;
