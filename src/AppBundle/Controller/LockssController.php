@@ -97,7 +97,7 @@ class LockssController extends Controller {
      * @param string $id
      *   Name of the title db file.
      *
-     * @Route("/titledbs/{ownerId}/{providerId}/titledb_{id}.{_format}", name="lockss_titledb")
+     * @Route("/titledbs/{ownerId}/{providerId}/titledb_{id}.xml", name="lockss_titledb")
      * @ParamConverter("owner", options={"id"="ownerId"})
      * @ParamConverter("provider", options={"id"="providerId"})
      */

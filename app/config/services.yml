@@ -54,6 +54,12 @@ services:
     AppBundle\Menu\Builder:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
+
+    AppBundle\Services\ConfigExporter:
+        arguments: ['%lom.aus_per_titledb%']
+        
+    AppBundle\Services\ConfigUpdater:
+        arguments: ['%lom.aus_per_titledb%']
             
     AppBundle\Services\FilePaths:
         arguments: ['@logger', '%kernel.project_dir%', '%lom.download_dir%']

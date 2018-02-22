@@ -324,10 +324,10 @@ class FilePaths {
         return $path;
     }
 
-    public function getTitleDbPath(ContentProvider $provider) {
+    public function getTitleDbPath(ContentProvider $provider, $id) {
         $path = implode('/', array(
             $this->getTitleDbDir($provider->getPln(), $provider),
-            'titledb_' . $provider->getId() . '.xml'
+            'titledb_' . $id . '.xml'
         ));
         return $path;
     }
