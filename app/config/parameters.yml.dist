@@ -29,9 +29,11 @@ parameters:
     lom.hash_methods: [ 'SHA1', 'MD5' ]
 
     # IPs that are allowed to access LOCKSS configs, in addition to the boxes.
-    # IPs or CIDRs are allowed.
+    # IPs and CIDRs are allowed, in both v4 and v6. These IPs are allowed to 
+    # access the LOCKSS configs for any network.
     lom.allowed_ips:
         - 127.0.0.1
+        - ::1
         - 10.0.0.0/8
 
     # Number of AUs to include in a titledb.xml file.
