@@ -32,6 +32,12 @@ services:
         resource: '../../src/AppBundle/Services'
         public: true
             
+    AppBundle\Services\ConfigExporter:
+        arguments: ['%lom.aus_per_titledb%']
+        
+    AppBundle\Services\ConfigUpdater:
+        arguments: ['%lom.aus_per_titledb%']
+            
     AppBundle\Services\FilePaths:
         arguments: ['@logger', '%kernel.project_dir%', '%lom.download_dir%']
         
