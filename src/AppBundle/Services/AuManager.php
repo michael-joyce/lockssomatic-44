@@ -14,17 +14,17 @@ use AppBundle\Entity\Content;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Description of AuBuilder.
+ * Description of AuManager.
  */
-class AuBuilder {
-    
+class AuManager {
+
     /**
      * Property generator service.
      *
      * @var AuPropertyGenerator
      */
     private $propertyGenerator;
-    
+
     /**
      * AUID generator service.
      *
@@ -54,7 +54,7 @@ class AuBuilder {
         $this->propertyGenerator = $propertyGenerator;
         $this->idGenerator = $idGenerator;
     }
-    
+
     /**
      * Build the AU from content.
      *
@@ -67,16 +67,18 @@ class AuBuilder {
      *   The new AU.
      */
     public function fromContent(Content $content) {
-        $au = new Au();
+        $au = $this->em->getRepository(Au::class)->findOpenAu($content);
+        if (!$au) {
+            $au = new Au();
+            $provider = $content->getDeposit()->getContentProvider();
+            $au->setContentProvider($provider);
+            $au->setPln($provider->getPln());
+            $au->setPlugin($provider->getPlugin());
+            $this->em->persist($au);
+            $this->propertyGenerator->generateProperties($au);
+        }
         $au->addContent($content);
-        $provider = $content->getDeposit()->getContentProvider();
-        $au->setContentProvider($provider);
-        $au->setPln($provider->getPln());
-        $au->setPlugin($provider->getPlugin());
-        $this->em->persist($au);
-        $this->propertyGenerator->generateProperties($au);
-        // $au->setAuid($this->idGenerator->fromAu($au));
         return $au;
     }
-    
+
 }

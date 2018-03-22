@@ -26,9 +26,9 @@ class Au extends AbstractEntity {
      * True if this AU is managed by LOCKSSOMatic. Defaults to false.
      *
      * @var bool
-     * @ORM\Column(name="managed", type="boolean", nullable=false)
+     * @ORM\Column(name="open", type="boolean", nullable=false)
      */
-    private $managed;
+    private $open;
 
     /**
      * The AU ID, as constructed by LOCKSS strange rules.
@@ -116,7 +116,7 @@ class Au extends AbstractEntity {
      */
     public function __construct() {
         parent::__construct();
-        $this->managed = false;
+        $this->open = true;
         $this->auProperties = new ArrayCollection();
         $this->auStatus = new ArrayCollection();
         $this->content = new ArrayCollection();
@@ -137,26 +137,27 @@ class Au extends AbstractEntity {
     }
 
     /**
-     * Set managed.
+     * Set open.
      *
-     * @param bool $managed
+     * @param bool $open
      *
      * @return Au
      *   Returns $this.
      */
-    public function setManaged($managed) {
-        $this->managed = $managed;
-
+    public function setOpen($open) {
+        if($this->open) {
+            $this->open = $open;
+        }
         return $this;
     }
 
     /**
-     * Get managed.
+     * Get open.
      *
      * @return bool
      */
-    public function getManaged() {
-        return $this->managed;
+    public function isOpen() {
+        return $this->open;
     }
 
     /**
@@ -420,6 +421,19 @@ class Au extends AbstractEntity {
      */
     public function getContent() {
         return $this->content;
+    }
+
+    /**
+     * Get size in kb.
+     *
+     * @return int
+     */
+    public function getSize() {
+        $size = 0;
+        foreach($this->content as $content) {
+            $this->size += $content->getSize();
+        }
+        return $size;
     }
 
 }

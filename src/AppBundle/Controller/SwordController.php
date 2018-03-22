@@ -7,7 +7,7 @@ use AppBundle\Entity\Content;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Plugin;
-use AppBundle\Services\AuBuilder;
+use AppBundle\Services\AuManager;
 use AppBundle\Services\AuIdGenerator;
 use AppBundle\Services\ContentBuilder;
 use AppBundle\Services\DepositBuilder;
@@ -285,7 +285,7 @@ class SwordController extends Controller {
      *   Dependency injected deposit builder.
      * @param ContentBuilder $contentBuilder
      *   Dependency injected content builder.
-     * @param AuBuilder $auBuilder
+     * @param AuManager $auBuilder
      *   Dependency injected archival unit builder.
      * @param AuIdGenerator $idGenerator
      *   Dependency injected AUID generator.
@@ -303,7 +303,7 @@ class SwordController extends Controller {
      * @return Response
      *   The HTTP response containing a location header and the SWORD body.
      */
-    public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, ContentBuilder $contentBuilder, AuBuilder $auBuilder, AuIdGenerator $idGenerator) {
+    public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, ContentBuilder $contentBuilder, AuManager $auBuilder, AuIdGenerator $idGenerator) {
         $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);
         $deposit = $depositBuilder->fromXml($atom, $provider);

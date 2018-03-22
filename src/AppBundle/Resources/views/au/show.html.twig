@@ -25,9 +25,9 @@
 
 {% block title %}Au{% endblock %}
 
-{% block pageheader %} 
+{% block pageheader %}
     <h1>Au</h1>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
     <div class="btn-toolbar">
@@ -40,8 +40,12 @@
     <table class="table table-bordered table-condensed table-hover table-striped">
         <tbody>
             <tr>
-                <th>Managed</th>
-                <td>{% if au.managed %}Yes{% else %}No{% endif %}</td>
+                <th>Open</th>
+                <td>{% if au.open %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Size</th>
+                <td>{{ au.size }}</td>
             </tr>
             <tr>
                 <th>Auid</th>
@@ -58,7 +62,7 @@
             <tr>
                 <th>Updated</th>
                 <td>{% if au.updated %}{{ au.updated|date }}{% endif %}</td>
-            </tr>        
+            </tr>
             <tr>
                 <th>Pln</th>
                 <td>
@@ -66,7 +70,7 @@
                         {{ au.pln }}
                     </a>
                 </td>
-            </tr>        
+            </tr>
             <tr>
                 <th>Content Provider</th>
                 <td>
@@ -74,7 +78,7 @@
                         {{ au.contentProvider }}
                     </a>
                 </td>
-            </tr>        
+            </tr>
             <tr>
                 <th>Plugin</th>
                 <td>
@@ -82,17 +86,17 @@
                         {{ au.plugin }}
                     </a>
                 </td>
-            </tr>        
+            </tr>
         </tbody>
     </table>
 
-    {% if au.auProperties | length > 0 %}    
+    {% if au.auProperties | length > 0 %}
         <h2>All Plugin Properties</h2>
         {% import _self as macros %}
         {{ macros.plugin_props(au.rootAuProperties) }}
     {% endif %}
 
-    {% if au.auStatus | length > 0 %}    
+    {% if au.auStatus | length > 0 %}
         <h2>Au Status</h2>
         <ul>
             {% for auStatus in au.auStatus %}
@@ -101,11 +105,11 @@
                         {{ auStatus }}
                     </a>
                 </li>
-            {% endfor %} 
+            {% endfor %}
         </ul>
     {% endif %}
 
-    {% if au.content | length > 0 %}    
+    {% if au.content | length > 0 %}
         <h2>Content</h2>
         <ul>
             {% for content in au.content %}
@@ -114,7 +118,7 @@
                         {{ content }}
                     </a>
                 </li>
-            {% endfor %} 
+            {% endfor %}
         </ul>
     {% endif %}
 {% endblock %}

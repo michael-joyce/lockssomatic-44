@@ -14,26 +14,26 @@ use AppBundle\Entity\Content;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Plugin;
-use AppBundle\Services\AuBuilder;
+use AppBundle\Services\AuManager;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 /**
- * Description of AuBuilderTest
+ * Description of AuManagerTest
  */
-class AuBuilderTest extends BaseTestCase {
+class AuManagerTest extends BaseTestCase {
 
     /**
-     * @var AuBuilder
+     * @var AuManager
      */
     private $builder;
     
     protected function setUp() {
         parent::setUp();
-        $this->builder = $this->container->get(AuBuilder::class);
+        $this->builder = $this->container->get(AuManager::class);
     }
     
     public function testInstance() {
-        $this->assertInstanceOf(AuBuilder::class, $this->builder);
+        $this->assertInstanceOf(AuManager::class, $this->builder);
     }
     
     public function testFromContent() {
