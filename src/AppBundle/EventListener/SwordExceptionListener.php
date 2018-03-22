@@ -62,7 +62,7 @@ class SwordExceptionListener {
             $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         $response->headers->set('Content-Type', 'text/xml');
-        $response->setContent($this->templating->render('AppBundle:Sword:exception_document.xml.twig', array(
+        $response->setContent($this->templating->render('AppBundle:sword:exception_document.xml.twig', array(
             'exception' => $exception,
             'env' => $this->env,
         )));
