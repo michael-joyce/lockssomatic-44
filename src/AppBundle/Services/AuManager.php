@@ -78,6 +78,7 @@ class AuManager {
             $this->propertyGenerator->generateProperties($au);
         }
         $au->addContent($content);
+        $content->setAu($au);
         return $au;
     }
 

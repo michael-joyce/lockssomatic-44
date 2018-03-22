@@ -31,15 +31,6 @@ class Au extends AbstractEntity {
     private $open;
 
     /**
-     * The AU ID, as constructed by LOCKSS strange rules.
-     *
-     * @var string
-     *
-     * @ORM\Column(name="auid", type="string", length=512, nullable=true)
-     */
-    private $auid;
-
-    /**
      * LOCKSSOMatic comment for this au. Its specific to LOCKSSOMatic.
      *
      * @var string
@@ -158,29 +149,6 @@ class Au extends AbstractEntity {
      */
     public function isOpen() {
         return $this->open;
-    }
-
-    /**
-     * Set auid.
-     *
-     * @param string $auid
-     *
-     * @return Au
-     *   Returns $this.
-     */
-    public function setAuid($auid) {
-        $this->auid = $auid;
-
-        return $this;
-    }
-
-    /**
-     * Get auid.
-     *
-     * @return string
-     */
-    public function getAuid() {
-        return $this->auid;
     }
 
     /**
@@ -431,7 +399,7 @@ class Au extends AbstractEntity {
     public function getSize() {
         $size = 0;
         foreach($this->content as $content) {
-            $this->size += $content->getSize();
+            $size += $content->getSize();
         }
         return $size;
     }

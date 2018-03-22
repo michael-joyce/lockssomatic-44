@@ -7,7 +7,7 @@
     <p class="count">
         Displaying {{ aus|length }} aus of {{ aus.getTotalItemCount }} total.
     </p>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
 
@@ -15,8 +15,7 @@
         <thead>
             <tr>
                 <th>AU</th>
-                <th>Managed</th>
-                <th>Auid</th>
+                <th>Open</th>
                 <th>Comment</th>
             </tr>
         </thead>
@@ -28,8 +27,7 @@
                             {{ pln }}
                         </a>
                     </td>
-                    <td>{% if au.managed %} Yes {% else %} No {% endif %}</td>
-                    <td>{{ au.auid }}</td>
+                    <td>{% if au.open %} Yes {% else %} No {% endif %}</td>
                     <td>{{ au.comment }}</td>
                 </tr>
             {% endfor %}

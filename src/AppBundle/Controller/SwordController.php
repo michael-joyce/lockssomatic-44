@@ -285,7 +285,7 @@ class SwordController extends Controller {
      *   Dependency injected deposit builder.
      * @param ContentBuilder $contentBuilder
      *   Dependency injected content builder.
-     * @param AuManager $auBuilder
+     * @param AuManager $auManager
      *   Dependency injected archival unit builder.
      * @param AuIdGenerator $idGenerator
      *   Dependency injected AUID generator.
@@ -303,22 +303,14 @@ class SwordController extends Controller {
      * @return Response
      *   The HTTP response containing a location header and the SWORD body.
      */
-    public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, ContentBuilder $contentBuilder, AuManager $auBuilder, AuIdGenerator $idGenerator) {
+    public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, ContentBuilder $contentBuilder, AuManager $auManager, AuIdGenerator $idGenerator) {
         $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);
         $deposit = $depositBuilder->fromXml($atom, $provider);
         foreach ($atom->xpath('lom:content') as $node) {
             $content = $contentBuilder->fromXml($node);
             $content->setDeposit($deposit);
-            $auid = $idGenerator->fromContent($content, false);
-            $au = $em->getRepository(Au::class)->findOneBy(array(
-                'auid' => $auid,
-            ));
-            if (!$au) {
-                $au = $auBuilder->fromContent($content);
-                $au->setAuid($auid);
-            }
-            $content->setAu($au);
+            $au = $auManager->fromContent($content);
         }
         $em->flush();
         $response = $this->renderDepositReceipt($provider, $deposit);
