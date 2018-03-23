@@ -74,11 +74,14 @@ class AuManager {
             $au->setContentProvider($provider);
             $au->setPln($provider->getPln());
             $au->setPlugin($provider->getPlugin());
+            $au->addContent($content);
+            $content->setAu($au);
             $this->em->persist($au);
             $this->propertyGenerator->generateProperties($au);
+        } else {
+            $au->addContent($content);
+            $content->setAu($au);
         }
-        $au->addContent($content);
-        $content->setAu($au);
         return $au;
     }
 

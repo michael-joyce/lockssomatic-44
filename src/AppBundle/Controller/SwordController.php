@@ -136,7 +136,7 @@ class SwordController extends Controller {
      * @return array
      *   The array is passed to the template handler.
      *
-     * @Route("/sd-iri.{_format}",
+     * @Route("/sd-iri",
      *  name="sword_service_document",
      *  defaults={"_format": "xml"},
      *  requirements={"_format": "xml"}
@@ -153,37 +153,6 @@ class SwordController extends Controller {
             'provider' => $provider,
             'hashMethods' => $hashMethods,
         );
-    }
-
-    /**
-     * Make sure that the required properties exist in the XML.
-     *
-     * @param SimpleXMLElement $content
-     *   Deposit XML passed in via the SWORD API.
-     * @param Plugin $plugin
-     *   The lockss-plugin that will handle the deposit content.
-     *
-     * @throws BadRequestException
-     *    If any of the required properties are missing.
-     */
-    private function precheckContentProperties(SimpleXMLElement $content, Plugin $plugin) {
-        foreach ($plugin->getDefinitionalProperties() as $propertyName) {
-            if (in_array($propertyName, $plugin->getGeneratedParams())) {
-                // Skip any parameters that LOM will generate later.
-                continue;
-            }
-            $nodes = $content->xpath("lom:property[@name='$propertyName']");
-            if (count($nodes) === 0) {
-                throw new BadRequestHttpException("{$propertyName} is a required property.", null, Response::HTTP_BAD_REQUEST);
-            }
-            if (count($nodes) > 1) {
-                throw new BadRequestHttpException("{$propertyName} must be unique.", null, Response::HTTP_BAD_REQUEST);
-            }
-            $property = $nodes[0];
-            if (!(string) $property->attributes()->value) {
-                throw new BadRequestHttpException("{$propertyName} must have a value.", null, Response::HTTP_BAD_REQUEST);
-            }
-        }
     }
 
     /**
@@ -208,8 +177,6 @@ class SwordController extends Controller {
 
         $permissionHost = $provider->getPermissionHost();
         foreach ($atom->xpath('//lom:content') as $content) {
-            // Check required properties.
-            $this->precheckContentProperties($content, $plugin);
             $url = trim((string) $content);
             $host = parse_url($url, PHP_URL_HOST);
             if ($permissionHost !== $host) {
@@ -387,7 +354,7 @@ class SwordController extends Controller {
      *
      * @todo needs testing.
      *
-     * @Route("/cont-iri/{providerUuid}/{depositUuid}.{_format}",
+     * @Route("/cont-iri/{providerUuid}/{depositUuid}",
      *  name="sword_view",
      *  defaults={"_format": "xml"},
      *  requirements={
@@ -427,15 +394,32 @@ class SwordController extends Controller {
      *
      * @todo finish this action.
      *
-     * @Route("/cont-iri/{providerUuid}/{depositUuid}/state", name="sword_statement", requirements={
+     * @Route("/cont-iri/{providerUuid}/{depositUuid}/state", name="sword_statement",
+     *  defaults={"_format": "xml"},
+     *  requirements={
      *      "providerUuid": ".{36}",
-     *      "depositUuid": ".{36}"
-     * })
+     *      "depositUuid": ".{36}",
+     *      "_format": "xml"
+     *  })
      * @Method({"GET"})
-     * @ParamConverter("provider", options={"uuid"="providerUuid"})
-     * @ParamConverter("deposit", options={"uuid"="depositUuid"})
+     * @Template()
+     * @ParamConverter("provider", class="AppBundle:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
+     * @ParamConverter("deposit", class="AppBundle:Deposit", options={"mapping": {"depositUuid"="uuid"}})
      */
     public function statementAction(Request $request, ContentProvider $provider, Deposit $deposit) {
+        if ($deposit->getAgreement() == 1) {
+            $state = 'agreement';
+            $stateDescription = 'LOCKSS boxes have harvested the content and agree on the checksum.';
+        } else {
+            $state = 'inProgress';
+            $stateDescription = 'LOCKSS boxes have not completed harvesting the content.';
+        }
+        return array(
+            'state' => $state,
+            'stateDescription' => $stateDescription,
+            'provider' => $provider,
+            'deposit' => $deposit,
+        );
     }
 
     /**
@@ -451,15 +435,40 @@ class SwordController extends Controller {
      * @return Response
      *   The SWORD response with the deposit reciept in the body.
      *
-     * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_reciept", requirements={
+     * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_reciept",
+     *  defaults={"_format": "xml"},
+     *  requirements={
+     *      "providerUuid": ".{36}",
+     *      "depositUuid": ".{36}",
+     *      "_format": "xml"
+     *  })
+     *
+     * @Method({"GET"})
+     * @Template()
+     * @ParamConverter("provider", class="AppBundle:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
+     * @ParamConverter("deposit", class="AppBundle:Deposit", options={"mapping": {"depositUuid"="uuid"}})
+     */
+    public function receiptAction(Request $request, ContentProvider $provider, Deposit $deposit) {
+        return array(
+            'provider' => $provider,
+            'deposit' => $deposit,
+        );
+    }
+
+    /**
+     * Attempt to fetch the original deposit from LOCKSS, store it to
+     * the file system in a temp file, and then serve it to the user agent.
+     *
+     * @Route("/cont-iri/{providerUuid}/{depositUuid}/{filename}/original", name="original_deposit", requirements={
      *      "providerUuid": ".{36}",
      *      "depositUuid": ".{36}"
      * })
-     * @Method({"GET"})
+     *
      * @ParamConverter("provider", options={"uuid"="providerUuid"})
      * @ParamConverter("deposit", options={"uuid"="depositUuid"})
      */
-    public function receiptAction(Request $request, ContentProvider $provider, Deposit $deposit) {
+    public function originalDepositAction(ContentProvider $provider, Deposit $deposit, $filename) {
     }
+
 
 }

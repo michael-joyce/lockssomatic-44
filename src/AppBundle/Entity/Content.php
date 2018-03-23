@@ -145,6 +145,10 @@ class Content extends AbstractEntity {
         return $this->url;
     }
 
+    public function getFilename() {
+        return basename($this->url);
+    }
+
     /**
      * Set title.
      *

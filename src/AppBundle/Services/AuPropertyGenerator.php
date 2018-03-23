@@ -169,7 +169,7 @@ class AuPropertyGenerator {
 
         return $values;
     }
-    
+
     /**
      * Generate the base properties, required for any AU.
      *
@@ -186,7 +186,7 @@ class AuPropertyGenerator {
         $this->buildProperty($au, 'plugin', $au->getPlugin()->getIdentifier(), $root);
         $this->buildProperty($au, 'attributes.publisher', $content->getProperty('publisher'), $root);
     }
-    
+
     /**
      * Generate the configuration parameters for an AU.
      *
@@ -207,7 +207,7 @@ class AuPropertyGenerator {
             $this->buildProperty($au, 'value', $value, $grouping);
         }
     }
-    
+
     /**
      * Generate the content properties for the AU.
      *
@@ -251,7 +251,7 @@ class AuPropertyGenerator {
             }
         }
         $rootName = str_replace('.', '', uniqid('lockssomatic', true));
-        $content = $au->getContent()[0];
+        $content = $au->getContent()->first();
         $root = $this->buildProperty($au, $rootName);
 
         // Definitional properties must go first.
@@ -259,7 +259,7 @@ class AuPropertyGenerator {
             $au->getPlugin()->getDefinitionalProperties(),
             $au->getPlugin()->getNonDefinitionalProperties()
         );
-        
+
         $this->baseProperties($au, $root, $content);
         $this->configProperties($propertyNames, $au, $root, $content);
         $this->contentProperties($au, $root, $content);
