@@ -203,9 +203,7 @@ class SwordController extends Controller {
      *   Containing the XML.
      */
     private function renderDepositReceipt(ContentProvider $provider, Deposit $deposit) {
-        // @TODO this should be a call to render depositReceiptAction() or something.
-        // Return the deposit receipt.
-        $response = $this->render('sword/deposit_receipt.xml.twig', array(
+        $response = $this->render('sword/receipt.xml.twig', array(
             'provider' => $provider,
             'deposit' => $deposit,
         ));
