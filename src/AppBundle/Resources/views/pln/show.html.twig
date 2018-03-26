@@ -19,6 +19,11 @@
                 <a href="{{ path('pln_keystore', {'id': pln.id}) }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-briefcase"></span> Keystore
                 </a>
+                    
+                <a href="{{ path('pln_export', {'id': pln.id}) }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-export"></span> Export Config
+                </a>                
+                    
                 <a href="{{ path('pln_delete', { 'id': pln.id }) }}" class="btn btn-default" data-confirm="Are you sure you want to delete this Pln?">
                     <span class='glyphicon glyphicon-remove'></span> Delete
                 </a>
