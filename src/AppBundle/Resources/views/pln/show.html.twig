@@ -89,8 +89,8 @@
             </tr>        
         </tbody>
     </table>
-    <h2>Properties</h2>
     {% if pln.properties %}
+        <h2>Properties</h2>
         <div class="btn-toolbar">
             <div class="btn-group pull-right">
                 {% if is_granted('ROLE_ADMIN') %}
@@ -164,15 +164,6 @@
     {% endif %}
     {% if pln.contentProviders | length > 0 %}    
         <h2>Content Providers</h2>
-        <div class="btn-toolbar">
-            <div class="btn-group pull-right">
-                {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('content_provider_index', {'plnId': pln.id}) }}" class="btn btn-default">
-                        <span class="glyphicon glyphicon-th-list"></span> Details
-                    </a>
-                {% endif %}
-            </div>
-        </div>
         <ul>
             {% for contentProvider in pln.contentProviders %}
                 <li>
