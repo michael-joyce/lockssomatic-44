@@ -14,21 +14,13 @@ use AppBundle\Entity\AuProperty;
 use AppBundle\Entity\Content;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Monolog\Logger;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Generate a LOCKSS archival unit property.
  */
 class AuPropertyGenerator {
-
-    /**
-     * Psr\Log compatible logger for the service.
-     *
-     * @var LoggerInterface
-     */
-    private $logger;
 
     /**
      * Doctrine entity manager.
@@ -47,15 +39,12 @@ class AuPropertyGenerator {
     /**
      * Construct the service.
      *
-     * @param LoggerInterface $logger
-     *   Logger for warnings etc.
      * @param EntityManagerInterface $em
      *   Doctrine instance to persist properties.
      * @param RouterInterface $router
      *   URL generator for some additional properties.
      */
-    public function __construct(LoggerInterface $logger, EntityManagerInterface $em, RouterInterface $router) {
-        $this->logger = $logger;
+    public function __construct(EntityManagerInterface $em, RouterInterface $router) {
         $this->em = $em;
         $this->router = $router;
     }
@@ -200,8 +189,29 @@ class AuPropertyGenerator {
      *   Content with the property values for the AU.
      */
     public function configProperties(array $propertyNames, Au $au, AuProperty $root, Content $content) {
+        $manifestUrl = $this->router->generate('lockss_manifest', array(
+            'plnId' => $au->getPln()->getId(),
+            'ownerId' => $au->getContentProvider()->getContentOwner()->getId(),
+            'providerId' => $au->getContentProvider()->getId(),
+            'auId' => $au->getId(),
+                ), UrlGeneratorInterface::ABSOLUTE_URL);
+
         foreach ($propertyNames as $index => $name) {
-            $value = $content->getProperty($name);
+            switch ($name) {
+                case 'manifest_url':
+                    $value = $manifestUrl;
+                    break;
+                case 'permission_url':
+                    $value = $au->getContentProvider()->getPermissionUrl();
+                    break;
+                case 'base_url':
+                    $p = parse_url($content->getUrl());
+                    $value = "{$p['scheme']}://{$p['host']}" . ($p['port'] ? ":{$p['port']}" : '');
+                    break;
+                default:
+                    $value = $content->getProperty($name);
+                    break;
+            }
             $grouping = $this->buildProperty($au, "param.{$index}", null, $root);
             $this->buildProperty($au, 'key', $name, $grouping);
             $this->buildProperty($au, 'value', $value, $grouping);
@@ -256,8 +266,7 @@ class AuPropertyGenerator {
 
         // Definitional properties must go first.
         $propertyNames = array_merge(
-            $au->getPlugin()->getDefinitionalProperties(),
-            $au->getPlugin()->getNonDefinitionalProperties()
+                $au->getPlugin()->getDefinitionalProperties(), $au->getPlugin()->getNonDefinitionalProperties()
         );
 
         $this->baseProperties($au, $root, $content);

@@ -31,7 +31,7 @@ class LoadContentProvider extends Fixture implements DependentFixtureInterface {
     public function load(ObjectManager $em) {
         $provider1 = new ContentProvider();
         $provider1->setUuid(self::PROVIDER_UUID_1);
-        $provider1->setPermissionurl('http://example.com/path/to/permission');
+        $provider1->setPermissionUrl('http://example.com/path/to/permission');
         $provider1->setName('Test Provider 1');
         $provider1->setMaxFileSize(10000);
         $provider1->setMaxAuSize(1000000);
@@ -43,7 +43,7 @@ class LoadContentProvider extends Fixture implements DependentFixtureInterface {
         
         $provider2 = new ContentProvider();
         $provider2->setUuid(self::PROVIDER_UUID_2);
-        $provider2->setPermissionurl('http://example.com/path/to/permission');
+        $provider2->setPermissionUrl('http://example.com/path/to/permission');
         $provider2->setName('Test Provider 2');
         $provider2->setMaxFileSize(20000);
         $provider2->setMaxAuSize(2000000);

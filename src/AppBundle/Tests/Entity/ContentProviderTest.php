@@ -33,7 +33,7 @@ class ProviderTest extends BaseTestCase {
      * @dataProvider getPermissionHostData
      */
     public function testGetPermissionHost($expected, $url) {
-        $this->provider->setPermissionurl(
+        $this->provider->setPermissionUrl(
                 $url);
         $this->assertEquals($expected, $this->provider->getPermissionHost());
     }

@@ -10,7 +10,6 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Pln;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -18,22 +17,31 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ConfigUpdater {
 
+    /**
+     * @var string
+     */
     private $ausPerTitleDb;
 
     /**
      * @var UrlGeneratorInterface
      */
-    private $generator;
+    private $urlGenerator;
+    
+    /**
+     * @var PropertyGenerator
+     */
+    private $propertyGenerator;
 
     /**
      * 
      * @param int $ausPerTitleDb
      *   Maximum number of AUs to include in a titledb.xml file.
-     * @param UrlGeneratorInterface $generator
+     * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct($ausPerTitleDb, UrlGeneratorInterface $generator) {
+    public function __construct($ausPerTitleDb, UrlGeneratorInterface $urlGenerator, AuPropertyGenerator $propertyGenerator) {
         $this->ausPerTitleDb = $ausPerTitleDb;
-        $this->generator = $generator;
+        $this->urlGenerator = $urlGenerator;
+        $this->propertyGenerator = $propertyGenerator;
     }
 
     /**
@@ -61,7 +69,7 @@ class ConfigUpdater {
             $owner = $provider->getContentOwner();
             $aus = $provider->getAus();
             for ($i = 1; $i <= ceil($aus->count() / $this->ausPerTitleDb); $i++) {
-                $url = $this->generator->generate('lockss_titledb', array(
+                $url = $this->urlGenerator->generate('lockss_titledb', array(
                     'plnId' => $pln->getId(),
                     'ownerId' => $owner->getId(),
                     'providerId' => $provider->getId(),
@@ -71,6 +79,15 @@ class ConfigUpdater {
             }
         }
         $pln->setProperty('org.lockss.titleDbs', $urls);
+    }
+    
+    public function updateAuConfigs(Pln $pln) {
+        foreach($pln->getAus() as $au) {
+            if($au->hasAuProperties()) {
+                continue;
+            }
+            $this->propertyGenerator->generateProperties($au);
+        }
     }
 
     /**
@@ -84,7 +101,7 @@ class ConfigUpdater {
             $pln->removeProperty('org.lockss.plugin.keystore.location');
             return;
         }
-        $url = $this->generator->generate('lockss_keystore', array(
+        $url = $this->urlGenerator->generate('lockss_keystore', array(
             'plnId' => $pln->getId(),
                 ), UrlGeneratorInterface::ABSOLUTE_URL);
         $pln->setProperty('org.lockss.plugin.keystore.location', $url);
@@ -119,7 +136,7 @@ class ConfigUpdater {
     }
 
     public function updatePluginRegistries(Pln $pln) {
-        $url = $this->generator->generate('lockss_plugin_list', array(
+        $url = $this->urlGenerator->generate('lockss_plugin_list', array(
             'plnId' => $pln->getId(),
                 ), UrlGeneratorInterface::ABSOLUTE_URL);
         $pln->setProperty('org.lockss.plugin.registries', $url);
@@ -131,9 +148,9 @@ class ConfigUpdater {
      * @param Pln $pln
      */
     public function update(Pln $pln) {
-        $pln->clearProperties();
         $this->updatePeerList($pln);
         $this->updateTitleDbs($pln);
+        $this->updateAuConfigs($pln);
         $this->updateKeystoreLocation($pln);
         $this->updateAuthentication($pln);
         $this->updateContentUi($pln);

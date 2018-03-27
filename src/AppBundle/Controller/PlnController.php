@@ -15,6 +15,7 @@ use AppBundle\Form\PlnType;
 use AppBundle\Services\ConfigExporter;
 use AppBundle\Services\ConfigUpdater;
 use AppBundle\Services\FilePaths;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -221,9 +222,10 @@ class PlnController extends Controller {
      * @Method({"GET"})
      * @Template()
      */
-    public function exportAction(Request $request, Pln $pln, ConfigExporter $exporter, ConfigUpdater $updater) {
+    public function exportAction(Request $request, Pln $pln, EntityManagerInterface $em, ConfigExporter $exporter, ConfigUpdater $updater) {
         $updater->update($pln);
-        $exporter->export($pln);
+        $em->flush();
+        $exporter->export($pln);        
         $this->addFlash('success', 'The pln configuration has been updated and exported.');
         return $this->redirectToRoute('pln_show', array(
             'id' => $pln->getId(),

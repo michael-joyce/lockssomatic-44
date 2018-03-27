@@ -103,7 +103,7 @@ class LockssController extends Controller {
      */
     public function titleDbAction(Request $request, Pln $pln, ContentOwner $owner, ContentProvider $provider, $id) {
         $this->checkIp($request, $pln);
-        $path = $this->fp->getTitleDbPath($provider);
+        $path = $this->fp->getTitleDbPath($provider, $id);
         if (!file_exists($path)) {
             throw new NotFoundHttpException("The requested file does not exist.");
         }
@@ -152,7 +152,7 @@ class LockssController extends Controller {
      * @param Pln $pln
      *   PLN configured by the file.
      *
-     * @Route("/plugins/lockss.keystore", name="lockss_keystore")
+     * @Route("/plugins/lockssomatic.keystore", name="lockss_keystore")
      */
     public function keystoreAction(Request $request, Pln $pln) {
         $this->checkIp($request, $pln);

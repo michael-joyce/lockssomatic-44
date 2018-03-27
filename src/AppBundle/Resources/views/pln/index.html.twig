@@ -30,7 +30,6 @@
                 <th>Password</th>
                 <th>Enable Content Ui</th>
                 <th>Content Port</th>
-                <th>Property</th>
             </tr>
         </thead>
         <tbody>
@@ -46,7 +45,6 @@
                     <td>{{ pln.password }}</td>
                     <td>{% if pln.enableContentUi %}Yes{% else %}No{% endif %}</td>
                     <td>{{ pln.contentPort }}</td>
-                    <td>{% if pln.properties %}{{ pln.properties|join(', ') }}{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>

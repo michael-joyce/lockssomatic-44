@@ -274,6 +274,10 @@ class Au extends AbstractEntity {
     public function getAuProperties() {
         return $this->auProperties;
     }
+    
+    public function hasAuProperties() {
+        return ! $this->auProperties->isEmpty();
+    }
 
     /**
      * @return Collection|AuProperty[]

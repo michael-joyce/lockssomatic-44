@@ -85,6 +85,7 @@ class ConfigExporter {
     public function exportPlugins(Pln $pln) {
         foreach ($pln->getPlugins() as $plugin) {
             if (!file_exists($plugin->getPath())) {
+                print "Cannot find {$plugin->getPath()}\n";
                 continue;
             }
             $path = $this->fp->getPluginsExportFile($pln, $plugin);
@@ -122,7 +123,7 @@ class ConfigExporter {
     public function exportTitleDbs(Pln $pln) {
         foreach ($pln->getContentProviders() as $provider) {
             $aus = $provider->getAus();
-            for ($i = 0; $i <= ceil($aus->count() / $this->ausPerTitleDb); $i++) {
+            for ($i = 0; $i < ceil($aus->count() / $this->ausPerTitleDb); $i++) {                
                 $slice = $aus->slice($i * $this->ausPerTitleDb, $this->ausPerTitleDb);
                 $titleDbPath = $this->fp->getTitleDbPath($provider, $i+1);
                 $xml = $this->templating->render('AppBundle:lockss:titledb.xml.twig', array(
