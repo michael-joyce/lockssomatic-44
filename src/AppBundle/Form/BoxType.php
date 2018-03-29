@@ -53,6 +53,19 @@ class BoxType extends AbstractType {
                 'help_block' => '',
             ),
         ));
+        $builder->add('webServiceProtocol', ChoiceType::class, array(
+            'label' => 'Web Service Protocol',
+            'required' => true,
+            'attr' => array(
+                'help_block' => '',
+            ),
+            'choices' => array(
+                'http' => 'http',
+                'https' => 'https',
+            ),
+            'expanded' => true,
+            'multiple' => false,
+        ));
         $builder->add('ipAddress', null, array(
             'label' => 'Ip Address',
             'required' => false,

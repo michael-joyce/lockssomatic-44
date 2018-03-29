@@ -25,6 +25,10 @@
     <table class="table table-bordered table-condensed table-hover table-striped">
         <tbody>
             <tr>
+                <th>UI</th>
+                <td><a href="{{ box.getUrl() }}">{{ box.getUrl() }}</a></td>
+            </tr>                    
+            <tr>
                 <th>Hostname</th>
                 <td>{{ box.hostname }}</td>
             </tr>
@@ -39,6 +43,10 @@
             <tr>
                 <th>Ws Port</th>
                 <td>{{ box.webServicePort }}</td>
+            </tr>
+            <tr>
+                <th>Ws Protocol</th>
+                <td>{{ box.webServiceProtocol }}</td>
             </tr>
             <tr>
                 <th>Ip Address</th>

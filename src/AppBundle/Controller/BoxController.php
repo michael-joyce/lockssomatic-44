@@ -150,7 +150,7 @@ class BoxController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The box has been updated.');
-            return $this->redirectToRoute('box_show', array('id' => $box->getId()));
+            return $this->redirectToRoute('box_show', array('id' => $box->getId(), 'plnId' => $pln->getId()));
         }
 
         return array(

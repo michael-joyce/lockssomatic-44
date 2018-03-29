@@ -48,13 +48,24 @@ class Box extends AbstractEntity {
     private $port;
 
     /**
-     * The port to use for webservice requests - usually :80, but may be
-     * different for testing.
+     * The port to use for webservice requests.
+     * 
+     * Usually 8080, but may be different for testing.
      *
      * @var int
      * @ORM\Column(name="ws_port", type="integer", nullable=false)
      */
     private $webServicePort;
+    
+    /**
+     * Protocol for the LOCKSS-UI and webservices.
+     * 
+     * Usually http but may be https.
+     * 
+     * @var type 
+     * @ORM\Column(name="ws_protocol", type="string", length=8, nullable=false)
+     */
+    private $webServiceProtocol;
 
     /**
      * The box's IP address. The class will resolve it automatically from the
@@ -125,14 +136,25 @@ class Box extends AbstractEntity {
      */
     private $pln;
     
+    public function __construct() {
+        parent::__construct();
+        $this->status = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->webServicePort = 8080;
+        $this->webServiceProtocol = 'http';
+    }
+    
     /**
-     *
+     * Return the hostname or IP address.
      */
     public function __toString() {
         if ($this->hostname) {
             return $this->hostname;
         }
         return $this->ipAddress;
+    }
+    
+    public function getUrl() {
+        return "{$this->webServiceProtocol}://{$this}:{$this->webServicePort}";
     }
 
     /**
@@ -386,4 +408,28 @@ class Box extends AbstractEntity {
         return $this->status;
     }
 
+
+    /**
+     * Set webServiceProtocol
+     *
+     * @param string $webServiceProtocol
+     *
+     * @return Box
+     */
+    public function setWebServiceProtocol($webServiceProtocol)
+    {
+        $this->webServiceProtocol = $webServiceProtocol;
+
+        return $this;
+    }
+
+    /**
+     * Get webServiceProtocol
+     *
+     * @return string
+     */
+    public function getWebServiceProtocol()
+    {
+        return $this->webServiceProtocol;
+    }
 }
