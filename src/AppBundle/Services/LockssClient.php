@@ -54,7 +54,7 @@ class LockssClient {
         $wsdl = $box->getUrl() . self::STATUS_SERVICE;
         try {
             $client = new LockssSoapClient($wsdl, array(
-                'logins' => $box->getPln()->getUsername(),
+                'login' => $box->getPln()->getUsername(),
                 'password' => $box->getPln()->getPassword()
             ));
             $result = $client->isDaemonReady();
@@ -65,7 +65,7 @@ class LockssClient {
                     $this->errors[] = $e;
                 }
             }
-            $this->errors[] = $e->getCode() . ":" . $e->getMessage();
+            $this->errors[] = $e->getMessage();
             return false;
         }
     }

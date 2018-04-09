@@ -51,12 +51,12 @@ class LockssSoapClient extends SoapClient {
     }
 
     public function errorHandler($errno, $errstr, $errfile, $errline) {
-        $this->errors[] = $errstr;
+        $this->errors[] = implode(':', [$errfile, $errline, $errno, $errstr]);
         return true;
     }
 
     public function exceptionHandler(Exception $e) {
-        $this->errors[] = $e->getMessage();
+        $this->errors[] = implode(':', [$e->getFile(), $e->getLine(), $e->getCode(), $e->getMessage()]);
         return true;
     }
 
@@ -73,10 +73,6 @@ class LockssSoapClient extends SoapClient {
     }    
     
     public function __doRequest($request, $location, $action, $version, $one_way = 0) {
-        //die("Why isn't this method being called?");
-        //throw new Exception("WTF");
-        //return "HEYO.";
-        
         $client = new Client([
             'headers' => [
                 'User-Agent' => $this->soapOptions['user_agent'],

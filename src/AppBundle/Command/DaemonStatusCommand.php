@@ -70,7 +70,7 @@ class DaemonStatusCommand extends ContainerAwareCommand {
             } else {
                 print "\tNOT READY.\n";
                 foreach($this->client->getErrors() as $e) {
-                    print " - {$e}\n";
+                    print "{$e}\n";
                 }
             }
         }
