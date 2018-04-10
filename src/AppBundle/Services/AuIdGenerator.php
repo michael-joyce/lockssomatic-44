@@ -40,47 +40,6 @@ class AuIdGenerator {
     }
     
     /**
-     * Generate the AUID from a content item.
-     *
-     * @param Content $content
-     *   Content with the property values for the generator.
-     * @param bool $lockssAuid
-     *   If true, then all CPDs will be included.
-     *
-     * @return string|null
-     *   The generated AUID.
-     *
-     * @throws Exception
-     */
-    public function fromContent(Content $content, $lockssAuid = true) {
-        $plugin = $content->getPlugin();
-        if ($plugin === null) {
-            return null;
-        }
-        $pluginId = $plugin->getIdentifier();
-        $id = str_replace('.', '|', $pluginId);
-        $names = $plugin->getDefinitionalProperties();
-        sort($names);
-        $encoder = new Encoder();
-        $this->logger->warning("generated params: " . print_r($plugin->getGeneratedParams(), true));
-        foreach ($names as $name) {
-            $this->logger->warning("Generating {$name}");
-            if (!$lockssAuid && in_array($name, $plugin->getGeneratedParams())) {
-                $this->logger->warning("Skipping.");
-                // Skip any properties that LOM will generate later.
-                continue;
-            }
-            $value = $content->getProperty($name);
-            if (!$value) {
-                throw new Exception("Cannot generate AUID without definitional property {$name}.");
-            }
-            $id .= '&' . $name . '~' . $encoder->encode($value);
-        }
-        
-        return $id;
-    }
-    
-    /**
      * Sets the AU id based on the first content item in the AU and returns it.
      *
      * Assumes that the AU properties are already generated.
@@ -94,12 +53,24 @@ class AuIdGenerator {
      *   The generated AUID.
      */
     public function fromAu(Au $au, $lockssAuid = true) {
-        $content = $au->getContent()->first();
-        if ($content === null) {
+        $plugin = $au->getPlugin();
+        if ($plugin === null) {
             return null;
         }
-        $auid = $this->fromContent($content, $lockssAuid);
-        return $auid;
+        $pluginId = $plugin->getIdentifier();
+        $id = str_replace('.', '|', $pluginId);
+        $names = $plugin->getDefinitionalProperties();
+        sort($names);
+        $encoder = new Encoder();
+        foreach ($names as $name) {
+            $value = $au->getAuPropertyValue($name);
+            if (!$value) {
+                throw new Exception("Cannot generate AUID without definitional property {$name}.");
+            }
+            $id .= '&' . $name . '~' . $encoder->encode($value);
+        }
+        
+        return $id;
     }
     
 }

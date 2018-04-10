@@ -85,15 +85,21 @@ class LockssSoapClient extends SoapClient {
                 'body' => $request,
                 'auth' => [$this->soapOptions['login'], $this->soapOptions['password']],
             ));
+            dump($response->getHeader('Content-Type'));
+//            dump($response);
+//            dump((string)$response->getBody());
+            return (string) $response->getBody();
         } catch (RequestException $e) {
+            if($e->hasResponse()) {
+                return (string)$e->getResponse()->getBody();
+            }
             $code = "unknown";
             $message = $location . ' responded with ' . $e->getMessage();
             if ($e->hasResponse()) {
                 $code = $e->getResponse()->getReasonPhrase();
             }
             throw new SoapFault($code, $message);
-        }
-        return (string) $response->getBody();
+        }        
     }
 
 }

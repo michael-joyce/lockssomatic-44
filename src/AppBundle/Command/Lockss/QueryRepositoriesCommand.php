@@ -7,22 +7,21 @@
  *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
  */
 
-namespace AppBundle\Command;
+namespace AppBundle\Command\Lockss;
 
 use AppBundle\Entity\Box;
 use AppBundle\Services\LockssClient;
-use AppBundle\Services\LockssSoapClient;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use SoapFault;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use function dump;
 
 /**
  * Description of DaemonStatusCommand
  */
-class DaemonStatusCommand extends ContainerAwareCommand {
+class QueryRepositoriesCommand extends ContainerAwareCommand {
 
     /**
      * @var EntityManagerInterface
@@ -44,8 +43,8 @@ class DaemonStatusCommand extends ContainerAwareCommand {
      * Configure the command.
      */
     protected function configure() {
-        $this->setName('lockss:box:status');
-        $this->setDescription('Report the status of a box.');
+        $this->setName('lockss:au:query');
+        $this->setDescription('Report the status of an AU.');
     }
 
     /**
@@ -65,15 +64,11 @@ class DaemonStatusCommand extends ContainerAwareCommand {
         $boxes = $this->getBoxes();
         foreach ($boxes as $box) {
             print $box->getUrl() . "\n";
-            if($this->client->isDaemonReady($box)) {
-                print "\tready.\n";
-            } else {
-                print "\tNOT READY.\n";
-                foreach($this->client->getErrors() as $e) {
-                    print "{$e}\n";
-                }
+            dump($this->client->queryRepositories($box));
+            foreach($this->client->getErrors() as $e) {
+                $output->writeln($e);
             }
         }
-    }
+    }        
 
 }
