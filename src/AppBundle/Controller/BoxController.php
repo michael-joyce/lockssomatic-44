@@ -112,7 +112,7 @@ class BoxController extends Controller {
      * @Template()
      */
     public function showAction(Pln $pln, Box $box) {
-        if ($pln->getId() !== $box->getId()) {
+        if ($pln->getId() !== $box->getPln()->getId()) {
             throw new NotFoundHttpException("No such box.");
         }
         return array(

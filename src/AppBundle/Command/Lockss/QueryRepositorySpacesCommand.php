@@ -56,11 +56,6 @@ class QueryRepositorySpacesCommand extends ContainerAwareCommand {
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
-
-        // dev stuff.
-        ini_set('soap.wsdl_cache_enabled', '0');
-        ini_set('soap.wsdl_cache_ttl', '0');
-
         $boxes = $this->getBoxes();
         foreach ($boxes as $box) {
             print $box->getUrl() . "\n";

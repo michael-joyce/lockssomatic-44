@@ -55,11 +55,6 @@ class FetchFileCommand extends ContainerAwareCommand {
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
-
-        // dev stuff.
-        ini_set('soap.wsdl_cache_enabled', '0');
-        ini_set('soap.wsdl_cache_ttl', '0');
-
         $contents = $this->getContents();
         foreach($contents as $content) {
             $output->writeln($content->getUrl());

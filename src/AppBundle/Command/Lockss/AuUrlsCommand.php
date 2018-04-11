@@ -9,12 +9,10 @@
 
 namespace AppBundle\Command\Lockss;
 
-use AppBundle\Entity\Box;
+use AppBundle\Entity\Au;
 use AppBundle\Services\LockssClient;
-use AppBundle\Services\LockssSoapClient;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use SoapFault;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Description of DaemonStatusCommand
  */
-class DaemonStatusCommand extends ContainerAwareCommand {
+class AuUrlsCommand extends ContainerAwareCommand {
 
     /**
      * @var EntityManagerInterface
@@ -44,31 +42,29 @@ class DaemonStatusCommand extends ContainerAwareCommand {
      * Configure the command.
      */
     protected function configure() {
-        $this->setName('lockss:daemon:status');
-        $this->setDescription('Report the status of a box.');
+        $this->setName('lockss:au:urls');
+        $this->setDescription('Report the urls preserved in an AU.');
     }
 
     /**
-     * @return Collection|Box[]
+     * @return Au[]|Collection
      */
-    protected function getBoxes() {
-        $boxes = $this->em->getRepository(Box::class)->findAll();
-        return $boxes;
+    protected function getAus() {
+        $aus = $this->em->getRepository(Au::class)->findAll();
+        return $aus;
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
-        $boxes = $this->getBoxes();
-        foreach ($boxes as $box) {
-            print $box->getUrl() . "\n";
-            if($this->client->isDaemonReady($box)) {
-                print "\tready.\n";
-            } else {
-                print "\tNOT READY.\n";
+        $aus = $this->getAus();
+        foreach($aus as $au) {
+            $output->writeln($au->getId());
+            foreach($au->getPln()->getBoxes() as $box) {
+                dump($this->client->getAuUrls($box, $au));
                 foreach($this->client->getErrors() as $e) {
-                    print "{$e}\n";
+                    $output->writeln($e);
                 }
             }
         }
-    }
+    }        
 
 }

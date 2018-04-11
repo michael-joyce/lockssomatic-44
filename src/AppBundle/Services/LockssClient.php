@@ -134,7 +134,17 @@ class LockssClient {
                     'auId' => $auid,
         ));
     }
-
+    
+    public function getAuUrls(Box $box, Au $au) {
+        if (!$this->isDaemonReady($box)) {
+            return;
+        }
+        $auid = $this->auIdGenerator->fromAu($au);
+        return $this->call($box, self::STATUS_SERVICE, 'getAuUrls', array(
+                    'auId' => $auid,
+        ));
+    }
+    
     public function queryRepositories(Box $box) {
         if (!$this->isDaemonReady($box)) {
             return;
@@ -153,12 +163,22 @@ class LockssClient {
         ));
     }
 
+    /**
+     * Fetches the hash of a content URL from a box. 
+     * 
+     * May return null if the item hasn't been preserved or if the box isn't 
+     * responding.
+     * 
+     * @param Box $box
+     * @param Content $content
+     * @return string|null
+     */
     public function hash(Box $box, Content $content) {
-        if (!$this->isDaemonReady($box)) {
+        if( ! $this->isUrlCached($box, $content)) {
             return;
         }
         $auid = $this->auIdGenerator->fromAu($content->getAu());
-        return $this->call($box, self::HASHER_SERVICE, 'hash', array(
+        $response = $this->call($box, self::HASHER_SERVICE, 'hash', array(
                     'hasherParams' => array(
                         'recordFilterStream' => true,
                         'hashType' => 'V3File',
@@ -167,6 +187,17 @@ class LockssClient {
                         'auId' => $auid,
                     ),
         ));
+        
+        $block = $response->blockFileDataHandler;
+        $lines = array_values(array_filter(explode("\n", $block), function($s){
+            return strlen($s) > 0 && $s[0] !== '#';
+        }));
+        if(count($lines) !== 1) {
+            return null;
+        }
+        list($checksum, $url) = preg_split("/\s+/", $lines[0]);
+                
+        return strtoupper($checksum);
     }
 
     public function isUrlCached(Box $box, Content $content) {
