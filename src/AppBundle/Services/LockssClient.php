@@ -12,8 +12,11 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Au;
 use AppBundle\Entity\Box;
 use AppBundle\Entity\Content;
-use AppBundle\Utilities\LockssSoapClient;
+use BeSimple\SoapClient\SoapClient;
+use BeSimple\SoapCommon\Cache;
+use BeSimple\SoapCommon\Helper;
 use Exception;
+use ReflectionClass;
 
 /**
  * Description of LockssClient
@@ -21,27 +24,47 @@ use Exception;
 class LockssClient {
 
     /**
-     * @var AuIdGenerator
+     * Default options for SOAP clients.
      */
-    private $auIdGenerator;
-
+    const DEFAULT_OPTS = array(
+        'soap_version' => SOAP_1_1,
+        'cache_wsdl' => Cache::TYPE_NONE,
+        'features' => SOAP_SINGLE_ELEMENT_ARRAYS,
+        'trace' => true,
+        'exceptions' => true,
+        'user_agent' => 'LOCKSSOMatic 1.0',
+        'authentication' => SOAP_AUTHENTICATION_BASIC,
+    );
+    
     // getAuStatus
     // isDaemonReady
     // queryRepositories
     // queryRepositorySpaces
-    const STATUS_SERVICE = '/ws/DaemonStatusService?wsdl';
-    
+    const STATUS_SERVICE = 'ws/DaemonStatusService?wsdl';
     // hash
-    const HASHER_SERVICE = '/ws/HasherService?wsdl';
+    const HASHER_SERVICE = 'ws/HasherService?wsdl';
     // isUrlCached
     // fetchFile
-    const CONTENT_SERVICE = '/ws/ContentService?wsdl';
+    const CONTENT_SERVICE = 'ws/ContentService?wsdl';
 
+    /**
+     * @var AuIdGenerator
+     */
+    private $auIdGenerator;
     private $errors;
 
     public function __construct(AuIdGenerator $auIdGenerator) {
         $this->auIdGenerator = $auIdGenerator;
         $this->errors = array();
+    }
+
+    public function errorHandler($errno, $errstr, $errfile, $errline) {
+        $this->errors[] = implode(':', ['Error', $errstr]);
+    }
+
+    public function exceptionHandler(Exception $e) {
+        $reflection = new ReflectionClass($e);
+        $this->errors[] = implode(':', [$reflection->getShortName(), $e->getCode(), $e->getMessage()]);
     }
 
     public function getErrors() {
@@ -56,25 +79,36 @@ class LockssClient {
         return count($this->errors) > 0;
     }
 
-    public function call($box, $service, $method, $params = array()) {
-        $wsdl = $box->getUrl() . $service;
+    public function call(Box $box, $service, $method, $params = array(), $soapOptions = array()) {
+        set_error_handler(array($this, 'errorHandler'), E_ALL);
+        set_exception_handler(array($this, 'exceptionHandler'));
+
+        $wsdl = "{$box->getWebServiceProtocol()}://{$box->getIpAddress()}:{$box->getWebServicePort()}/{$service}";
+        $options = array_merge(self::DEFAULT_OPTS, $soapOptions, array(
+            'login' => $box->getPln()->getUsername(),
+            'password' => $box->getPln()->getPassword(),
+        ));
+
         $client = null;
+        $response = null;
         try {
-            $client = new LockssSoapClient($wsdl, array(
-                'login' => $box->getPln()->getUsername(),
-                'password' => $box->getPln()->getPassword()
-            ));
-            $result = $client->$method($params);
-            return $result->return;
-        } catch (Exception $e) {
+            $client = @new SoapClient($wsdl, $options);
             if ($client) {
-                foreach ($client->getErrors() as $e) {
-                    $this->errors[] = $e;
-                }
+                $response = $client->$method($params);
             }
-            $this->errors[] = $e->getMessage();
-            return null;
+        } catch (Exception $e) {
+            $this->exceptionHandler($e);
         }
+        restore_error_handler();
+        set_error_handler('var_dump', 0);
+        @trigger_error('');
+
+        restore_error_handler();
+        restore_exception_handler();
+        if($response) {
+            return $response->return;
+        }
+        return null;
     }
 
     public function isDaemonReady(Box $box) {
@@ -82,52 +116,66 @@ class LockssClient {
     }
 
     public function getAuStatus(Box $box, Au $au) {
-        $auid = $this->auIdGenerator->fromAu($au);
-        return $this->call($box, self::STATUS_SERVICE, 'getAuStatus', array(
-                    'auId' => $auid,
-        ));
+        if ($this->isDaemonReady($box)) {
+            $auid = $this->auIdGenerator->fromAu($au);
+            return $this->call($box, self::STATUS_SERVICE, 'getAuStatus', array(
+                        'auId' => $auid,
+            ));
+        }
     }
 
     public function queryRepositories(Box $box) {
-        return $this->call($box, self::STATUS_SERVICE, 'queryRepositories', array(
-                    'repositoryQuery' => 'SELECT *',
-        ));
+        if ($this->isDaemonReady($box)) {
+            return $this->call($box, self::STATUS_SERVICE, 'queryRepositories', array(
+                        'repositoryQuery' => 'SELECT *',
+            ));
+        }
     }
 
     public function queryRepositorySpaces(Box $box) {
-        return $this->call($box, self::STATUS_SERVICE, 'queryRepositorySpaces', array(
-                    'repositorySpaceQuery' => 'SELECT *',
-        ));
+        if ($this->isDaemonReady($box)) {
+            return $this->call($box, self::STATUS_SERVICE, 'queryRepositorySpaces', array(
+                        'repositorySpaceQuery' => 'SELECT *',
+            ));
+        }
     }
 
     public function hash(Box $box, Content $content) {
-        $auid = $this->auIdGenerator->fromAu($content->getAu());
-        return $this->call($box, self::HASHER_SERVICE, 'hash', array(
-            'hasherParams' => array(
-                'recordFilterStream' => true,
-                'hashType' => 'V3File',
-                'algorithm' => $content->getChecksumType(),
-                'url' => $content->getUrl(),
-                'auId' => $auid,
-            ),
-        ));        
+        if ($this->isDaemonReady($box)) {
+            $auid = $this->auIdGenerator->fromAu($content->getAu());
+            return $this->call($box, self::HASHER_SERVICE, 'hash', array(
+                        'hasherParams' => array(
+                            'recordFilterStream' => true,
+                            'hashType' => 'V3File',
+                            'algorithm' => $content->getChecksumType(),
+                            'url' => $content->getUrl(),
+                            'auId' => $auid,
+                        ),
+            ));
+        }
     }
 
     public function isUrlCached(Box $box, Content $content) {
-        $auid = $this->auIdGenerator->fromAu($content->getAu());
-        return $this->call($box, self::CONTENT_SERVICE, 'isUrlCached', array(
-                'url' => $content->getUrl(),
-                'auId' => $auid,
-            ));        
+        if ($this->isDaemonReady($box)) {
+            $auid = $this->auIdGenerator->fromAu($content->getAu());
+            return $this->call($box, self::CONTENT_SERVICE, 'isUrlCached', array(
+                        'url' => $content->getUrl(),
+                        'auId' => $auid,
+            ), array(
+                        'attachment_type' => Helper::ATTACHMENTS_TYPE_MTOM,
+            ));
+        }
     }
 
     public function fetchFile(Box $box, Content $content) {
         throw new \Exception("NOT IMPLEMENTED.");
-        $auid = $this->auIdGenerator->fromAu($content->getAu());
-        return $this->call($box, self::CONTENT_SERVICE, 'fetchFile', array(
-                'url' => $content->getUrl(),
-                'auId' => $auid,
-            ));        
+        if ($this->isDaemonReady($box)) {
+            $auid = $this->auIdGenerator->fromAu($content->getAu());
+            return $this->call($box, self::CONTENT_SERVICE, 'fetchFile', array(
+                        'url' => $content->getUrl(),
+                        'auId' => $auid,
+            ));
+        }
     }
 
 }

@@ -44,7 +44,7 @@ class DaemonStatusCommand extends ContainerAwareCommand {
      * Configure the command.
      */
     protected function configure() {
-        $this->setName('lockss:box:status');
+        $this->setName('lockss:daemon:status');
         $this->setDescription('Report the status of a box.');
     }
 
@@ -58,9 +58,10 @@ class DaemonStatusCommand extends ContainerAwareCommand {
 
     public function execute(InputInterface $input, OutputInterface $output) {
 
-        // dev stuff.
-        ini_set('soap.wsdl_cache_enabled', '0');
-        ini_set('soap.wsdl_cache_ttl', '0');
+        if($this->getContainer()->getParameter("kernel.environment") !== 'prod') {
+            ini_set('soap.wsdl_cache_enabled', '0');
+            ini_set('soap.wsdl_cache_ttl', '0');
+        }
 
         $boxes = $this->getBoxes();
         foreach ($boxes as $box) {
