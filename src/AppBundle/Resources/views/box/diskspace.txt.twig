@@ -1,0 +1,15 @@
+Please do not reply. This is an automatically generated email
+notification.
+
+Your LOCKSS box {{ box.getHostname() }} (box.getIpAddress() }}) is running low
+on disk space. When LOCKSSOMatic checked on the box at {{ boxStatus.created() | date }}
+it reported the disk space remaining as follows:
+{% for data in boxStatus.data %}
+    Cache ID: {{ data.repositorySpaceId }}
+    Percentage Full: {{ data.percentageFull * 100 }}%
+    Disk Size: {{ include('AppBundle:util:size.html.twig', {'bytes': data.size}) }}
+    Free Space: {{ include('AppBundle:util:size.html.twig', {'bytes': data.free}) }}
+    Used Space: {{ include('AppBundle:util:size.html.twig', {'bytes': data.used}) }}    
+{% endfor %}
+If you need assistance or have questions about this email, please 
+contact {{ contact }}.

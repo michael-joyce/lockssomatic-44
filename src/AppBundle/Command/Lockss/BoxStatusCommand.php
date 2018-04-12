@@ -11,10 +11,10 @@ namespace AppBundle\Command\Lockss;
 
 use AppBundle\Entity\Box;
 use AppBundle\Entity\BoxStatus;
+use AppBundle\Services\BoxNotifier;
 use AppBundle\Services\LockssClient;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -26,6 +26,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class BoxStatusCommand extends ContainerAwareCommand {
 
     /**
+     * @var float
+     */
+    private $sizeWarning;
+    
+    /**
      * @var EntityManagerInterface
      */
     private $em;
@@ -36,15 +41,16 @@ class BoxStatusCommand extends ContainerAwareCommand {
     private $client;
     
     /**
-     * @var LoggerInterface
+     * @var BoxNotifier
      */
-    private $logger;
-
-    public function __construct(EntityManagerInterface $em, LockssClient $client, LoggerInterface $logger) {
+    private $notifier;
+    
+    public function __construct($sizeWarning, EntityManagerInterface $em, LockssClient $client, BoxNotifier $notifier) {
         parent::__construct();
+        $this->sizeWarning = $sizeWarning;
         $this->client = $client;
         $this->em = $em;
-        $this->logger = $logger;
+        $this->notifier = $notifier;
     }
 
     /**
@@ -69,6 +75,10 @@ class BoxStatusCommand extends ContainerAwareCommand {
         return $this->em->getRepository(Box::class)->findAll();
     }
 
+    /**
+     * @param Box $box
+     * @return BoxStatus
+     */
     public function getBoxStatus(Box $box) {
         $status = new BoxStatus();
         $this->em->persist($status);
@@ -83,15 +93,20 @@ class BoxStatusCommand extends ContainerAwareCommand {
         $status->setData($response);
         return $status;
     }
-
+    
     public function execute(InputInterface $input, OutputInterface $output) {
         $boxes = $this->getBoxes($input->getOption('box'));
         foreach ($boxes as $box) {            
-            $status = $this->getBoxStatus($box);
-            if($status->getSuccess()) {
+            $boxStatus = $this->getBoxStatus($box);
+            if( ! $boxStatus->getSuccess()) {
+                $this->notifier->unreachable($box, $boxStatus);
                 continue;
             }
-            $this->logger->error($status->getErrors());
+            foreach($boxStatus->getData() as $data) {
+                if($data->percentageFull > $this->sizeWarning) {
+                    $this->notifier->freeSpaceWarning($box, $boxStatus);                    
+                }
+            }
         }
         $this->em->flush();
     }

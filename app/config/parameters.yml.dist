@@ -39,8 +39,12 @@ parameters:
     # Number of AUs to include in a titledb.xml file.
     lom.aus_per_titledb: 50
 
+    # LOM can send a warning to boxes which are using more than this much 
+    # disk space.
+    lom.boxstatus.sizewarning: 0.90
+
     # When boxes are unreachable LOM can send a notice to the box manager. These
     # settings configure the message.
     lom.boxstatus.subject: 'LOCKSSOMatic Box Status'
     lom.boxstatus.sender: noreply@example.com
-    lom.boxstatus.helpcontact: lom@example.com
+    lom.boxstatus.contact: lom@example.com
