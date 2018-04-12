@@ -87,15 +87,9 @@
         </tbody>
     </table>
     {% if box.status | length > 0 %}    
-        <h2>Status</h2>
-        <ul>
-            {% for status in box.status %}
-                <li>
-                    <a href="{{ path("box_status_show", {'boxId': box.id, 'plnId': pln.id, "id":status.id}) }}">
-                        {{ status }}
-                    </a>
-                </li>
-            {% endfor %} 
-        </ul>
+        <h2>Recent Status</h2>
+        <a href="{{ path('box_status_index', {'plnId': box.pln.id, 'boxId': box.id}) }}">
+            {{ box.status.last() }}
+        </a>
     {% endif %}
 {% endblock %}

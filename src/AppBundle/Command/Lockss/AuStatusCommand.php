@@ -55,11 +55,6 @@ class AuStatusCommand extends ContainerAwareCommand {
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
-
-        // dev stuff.
-        ini_set('soap.wsdl_cache_enabled', '0');
-        ini_set('soap.wsdl_cache_ttl', '0');
-
         $aus = $this->getAus();
         foreach($aus as $au) {
             $output->writeln($au->getId());

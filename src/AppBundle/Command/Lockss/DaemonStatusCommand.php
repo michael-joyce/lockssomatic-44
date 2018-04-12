@@ -10,65 +10,47 @@
 namespace AppBundle\Command\Lockss;
 
 use AppBundle\Entity\Box;
-use AppBundle\Services\LockssClient;
-use AppBundle\Services\LockssSoapClient;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityManagerInterface;
-use SoapFault;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use AppBundle\Entity\BoxStatus;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Description of DaemonStatusCommand
  */
-class DaemonStatusCommand extends ContainerAwareCommand {
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-    
-    /**
-     * @var LockssClient
-     */
-    private $client;
-
-    public function __construct(EntityManagerInterface $em, LockssClient $client) {
-        parent::__construct();
-        $this->client = $client;
-        $this->em = $em;
-    }
+class DaemonStatusCommand extends AbstractLockssCommand {
 
     /**
      * Configure the command.
      */
     protected function configure() {
         $this->setName('lockss:daemon:status');
-        $this->setDescription('Report the status of a box.');
+        $this->setDescription('Report the status of the boxes.');
+        parent::configure();
     }
-
-    /**
-     * @return Collection|Box[]
-     */
-    protected function getBoxes() {
-        $boxes = $this->em->getRepository(Box::class)->findAll();
-        return $boxes;
+    
+    public function getBoxStatus(Box $box) {
+        $status = new BoxStatus();
+        $this->em->persist($status);
+        $status->setBox($box);
+        $response = $this->client->queryRepositorySpaces($box);
+        if( ! $response) {
+            $status->setErrors($this->client->getErrors());
+            $this->client->clearErrors();
+            return $status;
+        }
+        $status->setSuccess(true);
+        $status->setData($response);
+        dump($response);
+        return $status;
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
-        $boxes = $this->getBoxes();
-        foreach ($boxes as $box) {
+        $boxes = $this->getBoxes($input->getOption('box'));
+        foreach ($boxes as $box) {            
             print $box->getUrl() . "\n";
-            if($this->client->isDaemonReady($box)) {
-                print "\tready.\n";
-            } else {
-                print "\tNOT READY.\n";
-                foreach($this->client->getErrors() as $e) {
-                    print "{$e}\n";
-                }
-            }
+            $this->getBoxStatus($box);
         }
+        $this->em->flush();
     }
 
 }

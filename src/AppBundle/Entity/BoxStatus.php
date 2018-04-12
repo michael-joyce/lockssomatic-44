@@ -31,13 +31,6 @@ class BoxStatus extends AbstractEntity {
     private $box;
 
     /**
-     * @var DateTime
-     *
-     * @ORM\Column(name="query_date", type="datetime", nullable=false)
-     */
-    private $queryDate;
-
-    /**
      * @var bool
      *
      * @ORM\Column(name="success", type="boolean")
@@ -52,39 +45,23 @@ class BoxStatus extends AbstractEntity {
     private $errors;
 
     /**
-     * @var Collection|CacheStatus
-     *
-     * @ORM\OneToMany(targetEntity="CacheStatus", mappedBy="boxStatus", orphanRemoval=true)
+     * @var array
+     * 
+     * @ORM\Column(name="data", type="array", nullable=false)
      */
-    private $caches;
+    private $data;
+
+    public function __construct() {
+        parent::__construct();
+        $this->success = false;
+        $this->data = array();
+    }
 
     /**
-     *
+     * Generate a string representation of the status.
      */
     public function __toString() {
-        return $this->box . " " . $this->queryDate->format('c');
-    }
-
-    /**
-     * Set queryDate.
-     *
-     * @param DateTime $queryDate
-     *
-     * @return BoxStatus
-     */
-    public function setQueryDate($queryDate) {
-        $this->queryDate = $queryDate;
-
-        return $this;
-    }
-
-    /**
-     * Get queryDate.
-     *
-     * @return DateTime
-     */
-    public function getQueryDate() {
-        return $this->queryDate;
+        return $this->box . " " . $this->created->format('c');
     }
 
     /**
@@ -154,34 +131,25 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Add cach.
+     * Set data
      *
-     * @param CacheStatus $cach
+     * @param array $data
      *
      * @return BoxStatus
      */
-    public function addCach(CacheStatus $cach) {
-        $this->caches[] = $cach;
+    public function setData($data) {
+        $this->data = $data;
 
         return $this;
     }
 
     /**
-     * Remove cach.
+     * Get data
      *
-     * @param CacheStatus $cach
+     * @return array
      */
-    public function removeCach(CacheStatus $cach) {
-        $this->caches->removeElement($cach);
-    }
-
-    /**
-     * Get caches.
-     *
-     * @return Collection
-     */
-    public function getCaches() {
-        return $this->caches;
+    public function getData() {
+        return $this->data;
     }
 
 }
