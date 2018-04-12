@@ -14,6 +14,7 @@ use AppBundle\Entity\Box;
 use AppBundle\Services\LockssClient;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -31,11 +32,17 @@ abstract class AbstractLockssCommand extends ContainerAwareCommand {
      * @var LockssClient
      */
     protected $client;
+    
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
-    public function __construct(EntityManagerInterface $em, LockssClient $client) {
+    public function __construct(EntityManagerInterface $em, LockssClient $client, LoggerInterface $logger) {
         parent::__construct();
         $this->client = $client;
         $this->em = $em;
+        $this->logger = $logger;
     }
 
     /**

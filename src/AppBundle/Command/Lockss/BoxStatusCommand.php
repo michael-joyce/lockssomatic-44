@@ -17,13 +17,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Description of DaemonStatusCommand
  */
-class DaemonStatusCommand extends AbstractLockssCommand {
+class BoxStatusCommand extends AbstractLockssCommand {
 
     /**
      * Configure the command.
      */
     protected function configure() {
-        $this->setName('lockss:daemon:status');
+        $this->setName('lockss:box:status');
         $this->setDescription('Report the status of the boxes.');
         parent::configure();
     }
@@ -40,15 +40,17 @@ class DaemonStatusCommand extends AbstractLockssCommand {
         }
         $status->setSuccess(true);
         $status->setData($response);
-        dump($response);
         return $status;
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
         $boxes = $this->getBoxes($input->getOption('box'));
         foreach ($boxes as $box) {            
-            print $box->getUrl() . "\n";
-            $this->getBoxStatus($box);
+            $status = $this->getBoxStatus($box);
+            if($status->getSuccess()) {
+                continue;
+            }
+            $this->logger->error($status->getErrors());
         }
         $this->em->flush();
     }

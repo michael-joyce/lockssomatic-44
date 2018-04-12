@@ -50,7 +50,7 @@ class BoxStatusController extends Controller {
     public function indexAction(Request $request, Pln $pln, Box $box) {
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
-        $qb->select('e')->from(BoxStatus::class, 'e')->where('e.box = :box')->orderBy('e.id', 'ASC');
+        $qb->select('e')->from(BoxStatus::class, 'e')->where('e.box = :box')->orderBy('e.id', 'DESC');
         $qb->setParameter('box', $box);
         $query = $qb->getQuery();
         $paginator = $this->get('knp_paginator');

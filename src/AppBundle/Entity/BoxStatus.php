@@ -89,12 +89,16 @@ class BoxStatus extends AbstractEntity {
     /**
      * Set errors.
      *
-     * @param string $errors
+     * @param string|array $errors
      *
      * @return BoxStatus
      */
     public function setErrors($errors) {
-        $this->errors = $errors;
+        if(is_array($errors)) {
+            $this->errors = implode("\n", $errors);
+        } else {
+            $this->errors = $errors;
+        }
 
         return $this;
     }
