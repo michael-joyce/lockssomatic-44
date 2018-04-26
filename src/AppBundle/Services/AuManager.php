@@ -66,8 +66,9 @@ class AuManager {
      * @return Au
      *   The new AU.
      */
-    public function findByContent(Content $content) {
-        $au = $this->em->getRepository(Au::class)->findOpenAu($content);
+    public function findOpenAu(Content $content) {
+        $auid = $this->idGenerator->fromContent($content, false);
+        $au = $this->em->getRepository(Au::class)->findOpenAu($auid);
         if (!$au) {
             $au = new Au();
             $provider = $content->getDeposit()->getContentProvider();

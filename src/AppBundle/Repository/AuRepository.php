@@ -9,7 +9,7 @@
 
 namespace AppBundle\Repository;
 
-use AppBundle\Entity\Content;
+use AppBundle\Entity\Au;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -21,14 +21,14 @@ use Doctrine\ORM\EntityRepository;
 class AuRepository extends EntityRepository {
 
     /**
-     * @param Content $content
+     * @param string $auid
      *
      * @return Au|null
      */
-    public function findOpenAu(Content $content) {
+    public function findOpenAu($auid) {
         $qb = $this->createQueryBuilder('au');
-        $qb->andWhere('au.contentProvider = :provider');
-        $qb->setParameter('provider', $content->getDeposit()->getContentProvider());
+        $qb->andWhere('au.auid = :auid');
+        $qb->setParameter('auid', $auid);
         $qb->andWhere('au.open = true');
         $qb->orderBy('au.id', 'ASC');
         $qb->setMaxResults(1);

@@ -30,35 +30,36 @@ class AuIdGenerator {
     private $logger;
     
     /**
-     * LOM non-definitional configuration parameter directive names.
-     * 
-     * LOM will ignore these CPDs when building LOM-specific AUids.
-     *
-     * @var array
-     */
-    private $nonDefinitionalCpds;
-    
-    /**
      * Build the service.
      *
      * @param LoggerInterface $logger
      *   Dependency injected logger.
      */
-    public function __construct($nonDefinitionalCpds, LoggerInterface $logger) {
-        $this->nonDefinitionalCpds = $nonDefinitionalCpds;
+    public function __construct(LoggerInterface $logger) {
         $this->logger = $logger;
     }
     
     public function fromContent(Content $content, $lockssAuid = true) {
-        $plugin = $content->getDeposit()->getContentProvider()->getPlugin();
+        $encoder = new Encoder();
+        $plugin = $content->getPlugin();
         $pluginId = $plugin->getIdentifier();
         $pluginKey = str_replace('.', '|', $pluginId);
         $auKey = '';
         $propNames = $plugin->getDefinitionalPropertyNames();
         sort($propNames);
         foreach($propNames as $name) {
-            
+            if( ! $lockssAuid 
+                    && in_array($name, $plugin->getGeneratedParams())) {
+                continue;
+            }
+            $value = $encoder->encode($content->getProperty($name));
+            if (!$value) {
+                throw new Exception("Cannot generate AUID without definitional property {$name}.");
+            }
+            $auKey .= "&{$name}~{$value}";
         }
+        $id = $pluginKey . $auKey;
+        return $id;
     }
     
     /**
@@ -75,24 +76,16 @@ class AuIdGenerator {
      *   The generated AUID.
      */
     public function fromAu(Au $au, $lockssAuid = true) {
+        if($au->getContent()->count() === 0) {
+            dump("no content.");
+            return;
+        }
         $plugin = $au->getPlugin();
         if ($plugin === null) {
+            dump("no plugin.");
             return null;
         }
-        $pluginId = $plugin->getIdentifier();
-        $id = str_replace('.', '|', $pluginId);
-        $names = $plugin->getDefinitionalPropertyNames();
-        sort($names);
-        $encoder = new Encoder();
-        foreach ($names as $name) {
-            $value = $au->getAuPropertyValue($name);
-            if (!$value) {
-                throw new Exception("Cannot generate AUID without definitional property {$name}.");
-            }
-            $id .= '&' . $name . '~' . $encoder->encode($value);
-        }
-        
-        return $id;
+        return $this->fromContent($au->getContent()->first(), $lockssAuid);
     }
     
 }

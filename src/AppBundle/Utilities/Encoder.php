@@ -25,9 +25,12 @@ class Encoder {
      *   The string to be encoded.
      *
      * @return string
-     *   The result of the encoding.
+     *   The result of the encoding. Returns null if $string is null.
      */
     public function encode($string) {
+        if($string === null) {
+            return null;
+        }
         $callback = function ($matches) {
             $char = ord($matches[0]);
             return '%' . strtoupper(sprintf('%02x', $char));

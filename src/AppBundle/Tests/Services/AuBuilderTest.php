@@ -53,7 +53,7 @@ class AuManagerTest extends BaseTestCase {
         $content->setProperty('publisher', 'Some publisher');
         $content->setDeposit($deposit);
 
-        $au = $this->builder->findByContent($content);
+        $au = $this->builder->findOpenAu($content);
 
         $this->assertInstanceOf(Au::class, $au);
         $this->assertEquals($plugin, $au->getPlugin());

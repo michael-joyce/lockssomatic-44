@@ -29,6 +29,13 @@ class Au extends AbstractEntity {
      * @ORM\Column(name="open", type="boolean", nullable=false)
      */
     private $open;
+    
+    /**
+     * @ORM\Column(name="auid", type="string", length=512, nullable=false)
+     *
+     * @var type 
+     */
+    private $auid;
 
     /**
      * LOCKSSOMatic comment for this au. Its specific to LOCKSSOMatic.
@@ -408,4 +415,27 @@ class Au extends AbstractEntity {
         return $size;
     }
 
+    /**
+     * Set auid
+     *
+     * @param string $auid
+     *
+     * @return Au
+     */
+    public function setAuid($auid)
+    {
+        $this->auid = $auid;
+
+        return $this;
+    }
+
+    /**
+     * Get auid
+     *
+     * @return string
+     */
+    public function getAuid()
+    {
+        return $this->auid;
+    }
 }

@@ -49,7 +49,8 @@ services:
             - { name: doctrine.event_listener, event: preUpdate }
 
     AppBundle\EventListener\SwordExceptionListener:
-        arguments: ["%kernel.environment%"]
+        arguments: 
+            $env: "%kernel.environment%"
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
             - { name: kernel.event_listener, event: kernel.controller }
@@ -58,18 +59,18 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
 
-    AppBundle\Services\AuIdGenerator:
-        arguments:
-            $nonDefinitionalCpds: '%lom.nondefinitional_cpds%'
-
     AppBundle\Services\ConfigExporter:
-        arguments: ['%lom.aus_per_titledb%']
+        arguments:
+            $ausPerTitleDb: '%lom.aus_per_titledb%'
         
     AppBundle\Services\ConfigUpdater:
-        arguments: ['%lom.aus_per_titledb%']
+        arguments: 
+            $ausPerTitleDb: '%lom.aus_per_titledb%'
             
     AppBundle\Services\FilePaths:
-        arguments: ['@logger', '%kernel.project_dir%', '%lom.download_dir%']
+        arguments: 
+            $root: '%kernel.project_dir%'
+            $downloadDir: '%lom.download_dir%'
 
     AppBundle\Services\BoxNotifier:
         arguments:

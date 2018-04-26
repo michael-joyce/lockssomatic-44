@@ -42,6 +42,9 @@ class AuIdGeneratorTest extends BaseTestCase {
         $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
             'foo', 'bar', 'bax'
         ]));
+        $plugin->method('getGeneratedParams')->will($this->returnValue([
+            'bar'
+        ]));
         $content = $this->createMock(Content::class);
         $content->method('getPlugin')->will($this->returnValue($plugin));
         $content->method('getProperty')->will($this->returnValueMap([
@@ -49,7 +52,7 @@ class AuIdGeneratorTest extends BaseTestCase {
             ['bar', 'other.property'],
             ['bax', 'property the third!'],
         ]));
-        $id = $this->generator->fromContent($content);
+        $id = $this->generator->fromContent($content, true);
         $this->assertEquals('ca|example|plugin&bar~other%2Eproperty&bax~property+the+third%21&foo~Some+complex+title', $id);
     }
 
@@ -88,6 +91,7 @@ class AuIdGeneratorTest extends BaseTestCase {
         ]));
         $au = new Au();
         $au->addContent($content);
+        $au->setPlugin($plugin);
         $id = $this->generator->fromAu($au);
         $this->assertEquals('ca|example|plugin&bar~other%2Eproperty&bax~property+the+third%21&foo~Some+complex+title', $id);
     }
@@ -110,6 +114,7 @@ class AuIdGeneratorTest extends BaseTestCase {
         ]));
         $au = new Au();
         $au->addContent($content);
+        $au->setPlugin($plugin);
         $id = $this->generator->fromAu($au, false);
         $this->assertEquals('ca|example|plugin&bax~property+the+third%21&foo~Some+complex+title', $id);
     }
