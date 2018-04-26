@@ -36,13 +36,6 @@ class DepositStatus extends AbstractEntity {
     private $agreement;
 
     /**
-     * @var DateTime
-     *
-     * @ORM\Column(name="query_date", type="datetime", nullable=false)
-     */
-    private $queryDate;
-
-    /**
      * A deposit status is a big array.
      *
      * @var array
@@ -55,7 +48,7 @@ class DepositStatus extends AbstractEntity {
      *
      */
     public function __toString() {
-        return $this->deposit . ' ' . $this->queryDate->format('c');
+        return $this->deposit . ' ' . $this->created->format('c');
     }
 
     /**
@@ -78,28 +71,6 @@ class DepositStatus extends AbstractEntity {
      */
     public function getAgreement() {
         return $this->agreement;
-    }
-
-    /**
-     * Set queryDate.
-     *
-     * @param DateTime $queryDate
-     *
-     * @return DepositStatus
-     */
-    public function setQueryDate($queryDate) {
-        $this->queryDate = $queryDate;
-
-        return $this;
-    }
-
-    /**
-     * Get queryDate.
-     *
-     * @return DateTime
-     */
-    public function getQueryDate() {
-        return $this->queryDate;
     }
 
     /**

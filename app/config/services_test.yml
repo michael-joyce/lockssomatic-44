@@ -41,3 +41,8 @@ services:
     AppBundle\Services\FilePaths:
         arguments: ['@logger', '%kernel.project_dir%', '%lom.download_dir%']
         
+    AppBundle\Services\BoxNotifier:
+        arguments:
+            $sender: '%lom.boxstatus.sender%'
+            $contact: '%lom.boxstatus.contact%'
+        

@@ -22,11 +22,7 @@
             </tr>
             <tr>
                 <th>Query Date</th>
-                <td>{% if depositStatus.queryDate %}{{ depositStatus.queryDate|date }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Created</th>
-                <td>{% if depositStatus.created %}{{ depositStatus.created|date }}{% endif %}</td>
+                <td>{{ depositStatus.created|date }}</td>
             </tr>
             <tr>
                 <th>Updated</th>

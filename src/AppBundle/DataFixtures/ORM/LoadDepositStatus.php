@@ -31,7 +31,6 @@ class LoadDepositStatus extends Fixture implements DependentFixtureInterface {
         $status1 = new DepositStatus();
         $status1->setAgreement(0.5);
         $status1->setDeposit($this->getReference('deposit.1'));
-        $status1->setQueryDate(new \DateTime('2018-01-01'));
         $status1->setStatus([
             'expected' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',
             'localhost' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',
@@ -43,7 +42,6 @@ class LoadDepositStatus extends Fixture implements DependentFixtureInterface {
         $status2 = new DepositStatus();
         $status2->setAgreement(1.0);
         $status2->setDeposit($this->getReference('deposit.1'));
-        $status2->setQueryDate(new \DateTime('2018-01-02'));
         $status2->setStatus([
             'expected' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',
             'localhost' => 'AC16F7E9C409568E6C7F7B51D1DE18D33E9AF690',

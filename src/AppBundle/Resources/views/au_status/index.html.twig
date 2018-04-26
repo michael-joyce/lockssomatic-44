@@ -23,7 +23,7 @@
                 <tr>
                     <td>
                         <a href="{{ path('au_status_show', { 'id': auStatus.id, 'plnId': pln.id, 'auId': au.id }) }}">
-                            {{ auStatus.queryDate|date }}
+                            {{ auStatus.created|date }}
                         </a>
                     </td>
                     <td>

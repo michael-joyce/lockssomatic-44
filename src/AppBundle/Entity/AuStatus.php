@@ -22,13 +22,6 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 class AuStatus extends AbstractEntity {
 
     /**
-     * @var DateTime
-     *
-     * @ORM\Column(name="query_date", type="datetime", nullable=false)
-     */
-    private $queryDate;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="status", type="array")
@@ -54,29 +47,7 @@ class AuStatus extends AbstractEntity {
      *
      */
     public function __toString() {
-        return $this->queryDate->format('c') . ' - Errors: ' . count($this->errors);
-    }
-
-    /**
-     * Set queryDate.
-     *
-     * @param \DateTime $queryDate
-     *
-     * @return AuStatus
-     */
-    public function setQueryDate($queryDate) {
-        $this->queryDate = $queryDate;
-
-        return $this;
-    }
-
-    /**
-     * Get queryDate.
-     *
-     * @return \DateTime
-     */
-    public function getQueryDate() {
-        return $this->queryDate;
+        return $this->created->format('c') . ' - Errors: ' . count($this->errors);
     }
 
     /**
