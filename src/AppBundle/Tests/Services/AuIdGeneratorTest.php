@@ -39,7 +39,7 @@ class AuIdGeneratorTest extends BaseTestCase {
     public function testFromContentLockss() {
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
-        $plugin->method('getDefinitionalProperties')->will($this->returnValue([
+        $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
             'foo', 'bar', 'bax'
         ]));
         $content = $this->createMock(Content::class);
@@ -56,7 +56,7 @@ class AuIdGeneratorTest extends BaseTestCase {
     public function testFromContentNonLockss() {
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
-        $plugin->method('getDefinitionalProperties')->will($this->returnValue([
+        $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
             'foo', 'bar', 'bax'
         ]));
         $plugin->method('getGeneratedParams')->will($this->returnValue([
@@ -76,7 +76,7 @@ class AuIdGeneratorTest extends BaseTestCase {
     public function testFromAuLockss() {
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
-        $plugin->method('getDefinitionalProperties')->will($this->returnValue([
+        $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
             'foo', 'bar', 'bax'
         ]));
         $content = $this->createMock(Content::class);
@@ -95,7 +95,7 @@ class AuIdGeneratorTest extends BaseTestCase {
     public function testFromAuNonLockss() {
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
-        $plugin->method('getDefinitionalProperties')->will($this->returnValue([
+        $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
             'foo', 'bar', 'bax'
         ]));
         $plugin->method('getGeneratedParams')->will($this->returnValue([

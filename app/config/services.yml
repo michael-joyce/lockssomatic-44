@@ -58,6 +58,10 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
 
+    AppBundle\Services\AuIdGenerator:
+        arguments:
+            $nonDefinitionalCpds: '%lom.nondefinitional_cpds%'
+
     AppBundle\Services\ConfigExporter:
         arguments: ['%lom.aus_per_titledb%']
         

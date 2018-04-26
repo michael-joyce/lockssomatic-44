@@ -66,7 +66,7 @@ class AuManager {
      * @return Au
      *   The new AU.
      */
-    public function fromContent(Content $content) {
+    public function findByContent(Content $content) {
         $au = $this->em->getRepository(Au::class)->findOpenAu($content);
         if (!$au) {
             $au = new Au();

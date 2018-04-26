@@ -73,7 +73,7 @@ class AuValidator {
         if (!$plugin) {
             throw new Exception("Cannot validate an AU without a plugin.");
         }
-        $definitional = $plugin->getDefinitionalProperties();
+        $definitional = $plugin->getDefinitionalPropertyNames();
         if (!$definitional || count($definitional) === 0) {
             throw new Exception("Cannot validate AU for plugin without definitional properties.");
         }

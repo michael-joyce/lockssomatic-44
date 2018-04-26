@@ -395,7 +395,7 @@ class Plugin extends AbstractEntity {
      *
      * @return ArrayCollection|PluginProperty[]
      */
-    public function getDefinitionalProperties() {
+    public function getDefinitionalPropertyNames() {
         $properties = array();
 
         foreach ($this->getPluginConfigParams() as $prop) {

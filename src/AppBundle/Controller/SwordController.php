@@ -275,7 +275,7 @@ class SwordController extends Controller {
         foreach ($atom->xpath('lom:content') as $node) {
             $content = $contentBuilder->fromXml($node);
             $content->setDeposit($deposit);
-            $au = $auManager->fromContent($content);
+            $au = $auManager->findByContent($content);
         }
         $em->flush();
         $response = $this->renderDepositReceipt($provider, $deposit);

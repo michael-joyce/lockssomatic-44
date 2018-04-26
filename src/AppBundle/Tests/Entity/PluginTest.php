@@ -83,7 +83,7 @@ class PluginTest extends BaseTestCase {
         $importer = $this->container->get(PluginImporter::class);
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
-        $definitionals = $plugin->getDefinitionalProperties();
+        $definitionals = $plugin->getDefinitionalPropertyNames();
         $this->assertEquals(2, count($definitionals));
         $this->assertEquals('base_url', $definitionals[0]);        
         $this->assertEquals('container_number', $definitionals[1]);

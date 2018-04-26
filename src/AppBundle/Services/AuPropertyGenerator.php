@@ -266,7 +266,7 @@ class AuPropertyGenerator {
 
         // Definitional properties must go first.
         $propertyNames = array_merge(
-                $au->getPlugin()->getDefinitionalProperties(), $au->getPlugin()->getNonDefinitionalProperties()
+                $au->getPlugin()->getDefinitionalPropertyNames(), $au->getPlugin()->getNonDefinitionalProperties()
         );
 
         $this->baseProperties($au, $root, $content);

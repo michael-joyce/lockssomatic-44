@@ -30,13 +30,35 @@ class AuIdGenerator {
     private $logger;
     
     /**
+     * LOM non-definitional configuration parameter directive names.
+     * 
+     * LOM will ignore these CPDs when building LOM-specific AUids.
+     *
+     * @var array
+     */
+    private $nonDefinitionalCpds;
+    
+    /**
      * Build the service.
      *
      * @param LoggerInterface $logger
      *   Dependency injected logger.
      */
-    public function __construct(LoggerInterface $logger) {
+    public function __construct($nonDefinitionalCpds, LoggerInterface $logger) {
+        $this->nonDefinitionalCpds = $nonDefinitionalCpds;
         $this->logger = $logger;
+    }
+    
+    public function fromContent(Content $content, $lockssAuid = true) {
+        $plugin = $content->getDeposit()->getContentProvider()->getPlugin();
+        $pluginId = $plugin->getIdentifier();
+        $pluginKey = str_replace('.', '|', $pluginId);
+        $auKey = '';
+        $propNames = $plugin->getDefinitionalPropertyNames();
+        sort($propNames);
+        foreach($propNames as $name) {
+            
+        }
     }
     
     /**
@@ -59,7 +81,7 @@ class AuIdGenerator {
         }
         $pluginId = $plugin->getIdentifier();
         $id = str_replace('.', '|', $pluginId);
-        $names = $plugin->getDefinitionalProperties();
+        $names = $plugin->getDefinitionalPropertyNames();
         sort($names);
         $encoder = new Encoder();
         foreach ($names as $name) {
