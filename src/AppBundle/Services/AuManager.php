@@ -102,7 +102,6 @@ class AuManager {
         $provider = $content->getContentProvider();
         $auid = $this->idGenerator->fromContent($content, false);
         $au = $this->auRepository->findOpenAu($auid);
-        dump($au);
         if ($au && $this->auSize($au) + $content->getSize() > $provider->getMaxAuSize()) {
             $au->setOpen(false);
             $this->auRepository->flush($au);

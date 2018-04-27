@@ -2,13 +2,12 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Au;
 use AppBundle\Entity\Content;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Plugin;
-use AppBundle\Services\AuManager;
 use AppBundle\Services\AuIdGenerator;
+use AppBundle\Services\AuManager;
 use AppBundle\Services\ContentBuilder;
 use AppBundle\Services\DepositBuilder;
 use AppBundle\Utilities\Namespaces;
@@ -155,6 +154,25 @@ class SwordController extends Controller {
         );
     }
 
+    private function precheckContentProperties(SimpleXMLElement $content, Plugin $plugin) {
+        foreach($plugin->getDefinitionalPropertyNames() as $name) {
+            if(in_array($name, $plugin->getGeneratedParams())) {
+                continue;
+            }
+            $nodes = $content->xpath("lom:property[@name='{$name}']");
+            if(count($nodes) === 0) {
+                throw new BadRequestHttpException("{$name} is a required property.");
+            }
+            if(count($nodes) > 1) {
+                throw new BadRequestHttpException("{$name} cannot be repeated.");
+            }
+            $value = (string)($nodes[0]->attributes()->value);
+            if(  ! $value) {
+                throw new BadRequestHttpException("{$name} must have a value.");
+            }
+        }
+    }
+
     /**
      * Precheck a deposit for the required properties.
      *
@@ -188,6 +206,8 @@ class SwordController extends Controller {
                 $max = $provider->getMaxFileSize();
                 throw new BadRequestHttpException("Content size {$size} exceeds provider's maximum: {$max}", null, Response::HTTP_BAD_REQUEST);
             }
+
+            $this->precheckContentProperties($content, $plugin);
         }
     }
 
