@@ -24,9 +24,9 @@ use SplFileInfo;
 class Plugin extends AbstractEntity {
 
     const CONFIG_PROPS = 'plugin_config_props';
-    
+
     const DESCR_NAME = 'org.lockss.daemon.ConfigParamDescr';
-    
+
     /**
      * Name of the plugin.
      *
@@ -43,7 +43,7 @@ class Plugin extends AbstractEntity {
      * @ORM\Column(name="path", type="string", length=255, nullable=true)
      */
     private $path;
-    
+
     /**
      * Version number for the plugin, from the plugin's Xml config.
      *
@@ -59,7 +59,7 @@ class Plugin extends AbstractEntity {
      * @ORM\Column(name="identifier", type="string", length=255)
      */
     private $identifier;
-    
+
     /**
      * If true, LOCKSSOMatic will generate manifest files for this plugin's AUs.
      *
@@ -67,7 +67,7 @@ class Plugin extends AbstractEntity {
      * @ORM\Column(name="generate_manifests", type="boolean", nullable=false)
      */
     private $generateManifests;
-    
+
     /**
      * @var array
      * @ORM\Column(name="generated_params", type="array", nullable=false)
@@ -112,7 +112,7 @@ class Plugin extends AbstractEntity {
         $this->contentProviders = new ArrayCollection();
         $this->pluginProperties = new ArrayCollection();
     }
-    
+
     /**
      *
      */
@@ -122,7 +122,7 @@ class Plugin extends AbstractEntity {
         }
         return "";
     }
-    
+
     /**
      * Set name.
      *
@@ -176,7 +176,7 @@ class Plugin extends AbstractEntity {
         $fileinfo = new SplFileInfo($this->path);
         return $fileinfo->getBasename();
     }
-    
+
     public function getOriginalFilename() {
         $filename = preg_replace('/-v[0-9]+\.jar$/', '.jar', $this->getFilename());
         return $filename;
@@ -318,7 +318,7 @@ class Plugin extends AbstractEntity {
     public function getPluginProperties() {
         return $this->pluginProperties;
     }
-    
+
     /**
      *
      */
@@ -327,7 +327,7 @@ class Plugin extends AbstractEntity {
             return $p->getParent() === null;
         });
     }
-    
+
     /**
      * Get a Property object.
      *
@@ -344,7 +344,7 @@ class Plugin extends AbstractEntity {
 
         return null;
     }
-    
+
     /**
      * Get a list of the configparamdescr plugin properties.
      *
@@ -366,7 +366,7 @@ class Plugin extends AbstractEntity {
         }
         return $properties;
     }
-    
+
     /**
      * Get the definitional plugin parameter names.
      *

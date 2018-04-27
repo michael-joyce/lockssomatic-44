@@ -59,7 +59,7 @@ class AuManager {
         $this->em = $em;
         $this->propertyGenerator = $propertyGenerator;
         $this->idGenerator = $idGenerator;
-        $this->auRepository = null;
+        $this->auRepository = $em->getRepository(Au::class);
     }
 
     public function setAuRepository(AuRepository $repo) {
@@ -68,17 +68,23 @@ class AuManager {
 
     /**
      * Calculate the size of an AU.
-     * 
+     *
      * @param Au $au
      * @return int
      */
     public function auSize(Au $au) {
-        $repo = $this->auRepository;
-        if (!$repo) {
-            $repo = $this->em->getRepository(Au::class);
-        }
-        $size = $repo->getAuSize($au);
-        return $size;
+        return $this->auRepository->getAuSize($au);
+    }
+
+    public function buildAu(Content $content, $auid) {
+        $provider = $content->getContentProvider();
+        $au = new Au();
+        $au->setContentProvider($provider);
+        $au->setPln($provider->getPln());
+        $au->setAuid($auid);
+        $au->setPlugin($provider->getPlugin());
+        $this->em->persist($au);
+        return $au;
     }
 
     /**
@@ -93,16 +99,17 @@ class AuManager {
      *   The new AU.
      */
     public function findOpenAu(Content $content) {
+        $provider = $content->getContentProvider();
         $auid = $this->idGenerator->fromContent($content, false);
-        $au = $this->em->getRepository(Au::class)->findOpenAu($auid);
+        $au = $this->auRepository->findOpenAu($auid);
+        dump($au);
+        if ($au && $this->auSize($au) + $content->getSize() > $provider->getMaxAuSize()) {
+            $au->setOpen(false);
+            $this->auRepository->flush($au);
+            $au = null;
+        }
         if (!$au) {
-            $au = new Au();
-            $provider = $content->getContentProvider();
-            $au->setContentProvider($provider);
-            $au->setPln($provider->getPln());
-            $au->setAuid($auid);
-            $au->setPlugin($provider->getPlugin());
-            $this->em->persist($au);
+            $au = $this->buildAu($content, $auid);
         }
         $au->addContent($content);
         $content->setAu($au);
