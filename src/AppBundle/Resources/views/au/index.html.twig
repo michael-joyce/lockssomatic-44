@@ -16,6 +16,7 @@
             <tr>
                 <th>AU</th>
                 <th>Open</th>
+                <th>Size</th>
                 <th>Comment</th>
             </tr>
         </thead>
@@ -24,10 +25,11 @@
                 <tr>
                     <td>
                         <a href="{{ path('au_show', { 'id': au.id, 'plnId': pln.id }) }}">
-                            {{ pln }}
+                            {{ au.id }}
                         </a>
                     </td>
                     <td>{% if au.open %} Yes {% else %} No {% endif %}</td>
+                    <td>{{ manager.auSize(au) }}</td>
                     <td>{{ au.comment }}</td>
                 </tr>
             {% endfor %}

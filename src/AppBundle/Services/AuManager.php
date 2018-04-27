@@ -11,6 +11,7 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\Au;
 use AppBundle\Entity\Content;
+use AppBundle\Repository\AuRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -40,6 +41,11 @@ class AuManager {
     private $em;
 
     /**
+     * @var AuRepository
+     */
+    private $auRepository;
+
+    /**
      * Build the builder.
      *
      * @param EntityManagerInterface $em
@@ -53,6 +59,26 @@ class AuManager {
         $this->em = $em;
         $this->propertyGenerator = $propertyGenerator;
         $this->idGenerator = $idGenerator;
+        $this->auRepository = null;
+    }
+
+    public function setAuRepository(AuRepository $repo) {
+        $this->auRepository = $repo;
+    }
+
+    /**
+     * Calculate the size of an AU.
+     * 
+     * @param Au $au
+     * @return int
+     */
+    public function auSize(Au $au) {
+        $repo = $this->auRepository;
+        if (!$repo) {
+            $repo = $this->em->getRepository(Au::class);
+        }
+        $size = $repo->getAuSize($au);
+        return $size;
     }
 
     /**
@@ -71,9 +97,10 @@ class AuManager {
         $au = $this->em->getRepository(Au::class)->findOpenAu($auid);
         if (!$au) {
             $au = new Au();
-            $provider = $content->getDeposit()->getContentProvider();
+            $provider = $content->getContentProvider();
             $au->setContentProvider($provider);
             $au->setPln($provider->getPln());
+            $au->setAuid($auid);
             $au->setPlugin($provider->getPlugin());
             $this->em->persist($au);
         }

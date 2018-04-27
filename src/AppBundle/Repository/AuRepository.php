@@ -10,6 +10,7 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Au;
+use AppBundle\Entity\Content;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -33,6 +34,15 @@ class AuRepository extends EntityRepository {
         $qb->orderBy('au.id', 'ASC');
         $qb->setMaxResults(1);
         return $qb->getQuery()->getOneOrNullResult();
+    }
+    
+    public function getAuSize(Au $au) {
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('SUM(c.size) as size');
+        $qb->from(Content::class, 'c');
+        $qb->where('c.au = :au');
+        $qb->setParameter('au', $au);
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
 }

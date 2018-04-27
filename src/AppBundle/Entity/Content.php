@@ -315,6 +315,13 @@ class Content extends AbstractEntity {
         }
         return null;
     }
+    
+    public function getContentProvider() {
+        if($this->deposit) {
+            return $this->deposit->getContentProvider();            
+        }
+        return null;
+    }
 
     /**
      * Add contentProperty.

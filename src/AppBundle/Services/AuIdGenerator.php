@@ -77,12 +77,10 @@ class AuIdGenerator {
      */
     public function fromAu(Au $au, $lockssAuid = true) {
         if($au->getContent()->count() === 0) {
-            dump("no content.");
             return;
         }
         $plugin = $au->getPlugin();
         if ($plugin === null) {
-            dump("no plugin.");
             return null;
         }
         return $this->fromContent($au->getContent()->first(), $lockssAuid);

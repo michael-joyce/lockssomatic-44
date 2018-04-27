@@ -403,19 +403,6 @@ class Au extends AbstractEntity {
     }
 
     /**
-     * Get size in kb.
-     *
-     * @return int
-     */
-    public function getSize() {
-        $size = 0;
-        foreach($this->content as $content) {
-            $size += $content->getSize();
-        }
-        return $size;
-    }
-
-    /**
      * Set auid
      *
      * @param string $auid
