@@ -69,13 +69,13 @@ class AuPropertyGenerator {
     public function buildProperty(Au $au, $key, $value = null, AuProperty $parent = null) {
         $property = new AuProperty();
         $property->setAu($au);
-        $au->addAuProperty($property);
         $property->setPropertyKey($key);
         $property->setPropertyValue($value);
         if ($parent) {
             $property->setParent($parent);
             $parent->addChild($property);
         }
+        $au->addAuProperty($property);
         $this->em->persist($property);
 
         return $property;
@@ -206,7 +206,7 @@ class AuPropertyGenerator {
                     break;
                 case 'base_url':
                     $p = parse_url($content->getUrl());
-                    $value = "{$p['scheme']}://{$p['host']}" . ($p['port'] ? ":{$p['port']}" : '');
+                    $value = "{$p['scheme']}://{$p['host']}" . (isset($p['port']) ? ":{$p['port']}" : '');
                     break;
                 default:
                     $value = $content->getProperty($name);
