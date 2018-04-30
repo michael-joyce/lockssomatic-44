@@ -194,7 +194,7 @@ class AuPropertyGenerator {
             'ownerId' => $au->getContentProvider()->getContentOwner()->getId(),
             'providerId' => $au->getContentProvider()->getId(),
             'auId' => $au->getId(),
-                ), UrlGeneratorInterface::ABSOLUTE_URL);
+            ), UrlGeneratorInterface::ABSOLUTE_URL);
 
         foreach ($propertyNames as $index => $name) {
             switch ($name) {
@@ -266,7 +266,7 @@ class AuPropertyGenerator {
 
         // Definitional properties must go first.
         $propertyNames = array_merge(
-                $au->getPlugin()->getDefinitionalPropertyNames(), $au->getPlugin()->getNonDefinitionalProperties()
+            $au->getPlugin()->getDefinitionalPropertyNames(), $au->getPlugin()->getNonDefinitionalProperties()
         );
 
         $this->baseProperties($au, $root, $content);

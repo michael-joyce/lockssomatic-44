@@ -86,6 +86,7 @@ class SwordControllerTest extends BaseTestCase {
     }
 
     public function testCreateDepositSingle() {
+        $auCount = count($this->em->getRepository(Au::class)->findAll());
         $provider = $this->getReference('provider.1');
         $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
@@ -95,6 +96,7 @@ class SwordControllerTest extends BaseTestCase {
         $response = $client->getResponse();
         $this->assertEquals(201, $response->getStatusCode());
         $this->assertStringEndsWith('/edit', $response->headers->get('Location'));
+        $this->assertEquals($auCount+1, count($this->em->getRepository(Au::class)->findAll()));
     }
 
     public function testCreateDeposits() {
@@ -105,12 +107,12 @@ class SwordControllerTest extends BaseTestCase {
         $crawler = $client->request(
                 'POST', '/api/sword/2.0/col-iri/' . $provider->getUuid(), array(), array(), array(), $data
         );
-        $this->assertEquals($auCount, count($this->em->getRepository(Au::class)->findAll()));
+        $this->assertEquals($auCount+1, count($this->em->getRepository(Au::class)->findAll()));
         $crawler = $client->request(
                 'POST', '/api/sword/2.0/col-iri/' . $provider->getUuid(), array(), array(), array(), $data
         );
         // same AU.
-        $this->assertEquals($auCount, count($this->em->getRepository(Au::class)->findAll()));
+        $this->assertEquals($auCount+1, count($this->em->getRepository(Au::class)->findAll()));
     }
 
     public function testCreateEmptyDeposit() {
