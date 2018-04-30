@@ -39,7 +39,7 @@ class AuValidatorTest extends BaseTestCase {
             LoadDeposit::class,
         ];
     }
-    
+
     public function setUp() {
         parent::setUp();
         $this->validator = $this->container->get(AuValidator::class);
@@ -53,20 +53,21 @@ class AuValidatorTest extends BaseTestCase {
      * The references to fixtures in the test below keep getting lost, resulting
      * in strange error messages like
      * "Undefined index: 00000000763d670d000000016f52a1c9"
-     * 
+     *
      * So manually fetch all the content from the database for this test.
      */
     public function testValidateSingle() {
         $importer = $this->container->get(PluginImporter::class);
         $xml = simplexml_load_string($this->xmlData());
-        $plugin = $importer->buildPlugin($xml);        
+        $plugin = $importer->buildPlugin($xml);
         $au = new Au();
         // should be $this->getReference('provider.1') but that fails.
         $au->setContentProvider($this->em->find(ContentProvider::class, 1));
         $au->setPln($this->em->find(Pln::class, 1));
         $au->setPlugin($plugin);
+        $au->setAuid('1b');
         $this->em->persist($au);
-        
+
         $content = new Content();
         $content->setDeposit($this->em->find(Deposit::class, 1));
         $content->setUrl("http://example.com/path/1");
@@ -78,7 +79,7 @@ class AuValidatorTest extends BaseTestCase {
         $content->setAu($au);
         $this->em->persist($content);
         $this->em->flush();
-        
+
         $this->assertEquals(0, $this->validator->validate($au));
     }
 
@@ -86,20 +87,21 @@ class AuValidatorTest extends BaseTestCase {
      * The references to fixtures in the test below keep getting lost, resulting
      * in strange error messages like
      * "Undefined index: 00000000763d670d000000016f52a1c9"
-     * 
+     *
      * So manually fetch all the content from the database for this test.
      */
     public function testValidate() {
         $importer = $this->container->get(PluginImporter::class);
         $xml = simplexml_load_string($this->xmlData());
-        $plugin = $importer->buildPlugin($xml);        
+        $plugin = $importer->buildPlugin($xml);
         $au = new Au();
         // should be $this->getReference('provider.1') but that fails.
         $au->setContentProvider($this->em->find(ContentProvider::class, 1));
+        $au->setAuid('1b');
         $au->setPln($this->em->find(Pln::class, 1));
         $au->setPlugin($plugin);
         $this->em->persist($au);
-        
+
         for($i = 0; $i < 10; $i++) {
             $content = new Content();
             $content->setDeposit($this->em->find(Deposit::class, 1));
@@ -113,21 +115,22 @@ class AuValidatorTest extends BaseTestCase {
             $this->em->persist($content);
         }
         $this->em->flush();
-        
+
         $this->assertEquals(0, $this->validator->validate($au));
     }
 
     public function testValidateFail() {
         $importer = $this->container->get(PluginImporter::class);
         $xml = simplexml_load_string($this->xmlData());
-        $plugin = $importer->buildPlugin($xml);        
+        $plugin = $importer->buildPlugin($xml);
         $au = new Au();
         // should be $this->getReference('provider.1') but that fails.
         $au->setContentProvider($this->em->find(ContentProvider::class, 1));
+        $au->setAuid('1b');
         $au->setPln($this->em->find(Pln::class, 1));
         $au->setPlugin($plugin);
         $this->em->persist($au);
-        
+
         for($i = 0; $i < 10; $i++) {
             $content = new Content();
             $content->setDeposit($this->em->find(Deposit::class, 1));
@@ -141,10 +144,10 @@ class AuValidatorTest extends BaseTestCase {
             $this->em->persist($content);
         }
         $this->em->flush();
-        
+
         $this->assertEquals(9, $this->validator->validate($au));
     }
-    
+
     public function xmlData() {
         return <<<'ENDXML'
 <map>

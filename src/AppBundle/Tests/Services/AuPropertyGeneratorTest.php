@@ -15,10 +15,16 @@ use AppBundle\Entity\AuProperty;
 use AppBundle\Entity\Content;
 use AppBundle\Entity\ContentOwner;
 use AppBundle\Entity\ContentProvider;
+use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Pln;
+use AppBundle\Entity\Plugin;
+use AppBundle\Entity\PluginProperty;
 use AppBundle\Services\AuPropertyGenerator;
+use AppBundle\Services\PluginImporter;
 use DateTime;
+use Exception;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use ReflectionProperty;
 
 /**
  * Description of AuPropertyGeneratorTest
@@ -47,233 +53,241 @@ class AuPropertyGeneratorTest extends BaseTestCase {
         $this->assertInstanceOf(AuPropertyGenerator::class, $this->generator);
     }
 
-//    public function testBuildProperty() {
-//        $au = new Au();
-//        $key = 'foobar';
-//        $value = 'some long complex value.';
-//        $property = $this->generator->buildProperty($au, $key, $value);
-//        $this->assertInstanceOf(AuProperty::class, $property);
-//        $this->assertEquals($key, $property->getPropertyKey());
-//        $this->assertEquals($value, $property->getPropertyValue());
-//        $this->assertEquals(1, $au->getAuProperties()->count());
-//    }
-//
-//    public function testBuildPropetyChild() {
-//        $au = new Au();
-//        $key = 'foobar';
-//        $value = 'some long complex value.';
-//        $parent = new AuProperty();
-//        $property = $this->generator->buildProperty($au, $key, $value, $parent);
-//        $this->assertTrue($parent->hasChildren());
-//        $this->assertEquals($parent, $property->getParent());
-//        $this->assertEquals(1, $au->getAuProperties()->count()); // didn't add parent to AU.
-//    }
-//
-//    /**
-//     * @dataProvider generateStringData
-//     */
-//    public function testGenerateString($expected, $value, $map) {
-//        $au = $this->createMock(Au::class);
-//        $au->method('getAuPropertyValue')->will($this->returnValueMap($map));
-//
-//        $this->assertEquals($expected, $this->generator->generateString($au, $value));
-//    }
-//
-//    public function generateStringData() {
-//        return [
-//            // [expected, value, map]
-//            ['', '""', []],
-//            ['Some testing.', '"Some testing."', []],
-//            ['Some testing.', '"Some %s.", foo', [
-//                    ['foo', 'testing']
-//                ]],
-//            ['Test number 1 etc.', '"Test number %d etc.", bling', [
-//                    ['bling', 1]
-//                ]],
-//            ['Test number 1 etc.', '"Test number %d etc.", bling', [
-//                    ['bling', 1],
-//                    ['murphy', 1],
-//                    ['wilson', 1],
-//                ]],
-//            ['Test jango is number 1.', '"Test %s is number %d.", bling, murphy', [
-//                    ['bling', 'jango'],
-//                    ['murphy', 1],
-//                ]],
-//        ];
-//    }
-//
-//    /**
-//     * @dataProvider generateStringBadData
-//     * @expectedException Exception
-//     */
-//    public function testGenerateBadString($expected, $value, $map) {
-//        $au = $this->createMock(Au::class);
-//        $au->method('getAuPropertyValue')->will($this->returnValueMap($map));
-//
-//        $this->assertEquals($expected, $this->generator->generateString($au, $value));
-//    }
-//
-//    public function generateStringBadData() {
-//        return [
-//            // [expected, value, map]
-//            ['', '', []],
-//            ['Some testing.', '"Some %s."', [
-//                    ['foo', 'testing']
-//                ]],
-//            ['Test number 1 etc.', '"Test number %d etc., bling', [
-//                    ['bling', 1]
-//                ]],
-//        ];
-//    }
-//
-//    /**
-//     * @dataProvider testGenerateSymbolData
-//     */
-//    public function testGenerateSymbolString(array $data) {
-//        $property = $this->createMock(PluginProperty::class);
-//        $property->method('isList')->will($this->returnValue($data['list']));
-//        $property->method('getPropertyValue')->will($this->returnValue($data['propValue']));
-//
-//        $plugin = $this->createMock(Plugin::class);
-//        $plugin->method('getProperty')->will($this->returnValue($property));
-//        $plugin->method('getName')->will($this->returnValue('dummy'));
-//
-//        $au = $this->createMock(Au::class);
-//        $au->method('getPlugin')->will($this->returnValue($plugin));
-//        $au->method('getAuPropertyValue')->will($this->returnValueMap($data['auValues']));
-//
-//        $str = $this->generator->generateSymbol($au, 'testable');
-//        $this->assertEquals($data['expected'], $str);
-//    }
-//
-//    public function testGenerateSymbolData() {
-//        return [
-//            [[
-//            'list' => false,
-//            'propValue' => '"item is a cheese"',
-//            'auValues' => [
-//                ['fromage', 'cheddar'],
-//            ],
-//            'expected' => 'item is a cheese',
-//                ]],
-//            [[
-//            'list' => false,
-//            'propValue' => '"item %s is a cheese", fromage',
-//            'auValues' => [
-//                ['fromage', 'cheddar'],
-//            ],
-//            'expected' => 'item cheddar is a cheese',
-//                ]],
-//            [[
-//            'list' => false,
-//            'propValue' => '"Sand is %s and %s", grit, color',
-//            'auValues' => [
-//                ['fromage', 'cheddar'],
-//                ['grit', 'coarse'],
-//                ['color', 'black']
-//            ],
-//            'expected' => 'Sand is coarse and black',
-//                ]],
-//            [[
-//            'list' => true,
-//            'propValue' => [
-//                '"item %s is a cheese", fromage',
-//                '"Sand is %s and %s", grit, color',
-//            ],
-//            'auValues' => [
-//                ['fromage', 'cheddar'],
-//                ['grit', 'coarse'],
-//                ['color', 'black']
-//            ],
-//            'expected' => [
-//                'item cheddar is a cheese',
-//                'Sand is coarse and black'
-//            ],
-//                ]],
-//            [[
-//            'list' => true,
-//            'propValue' => [
-//                '"item %s is a cheese", fromage',
-//                '"Sand is %s and %s", fromage, fromage',
-//            ],
-//            'auValues' => [
-//                ['fromage', 'cheddar'],
-//                ['grit', 'coarse'],
-//                ['color', 'black']
-//            ],
-//            'expected' => [
-//                'item cheddar is a cheese',
-//                'Sand is cheddar and cheddar'
-//            ],
-//                ]],
-//        ];
-//    }
-//
-//    public function buildContentItems(Au $au) {
-//        $deposit = $this->em->find(Deposit::class, 1);
-//        for ($i = 0; $i < 10; $i++) {
-//            $content = new Content();
-//            $content->setUrl("http://example.com/path/{$i}");
-//            $content->setTitle("Item {$i}");
-//            $content->setDateDeposited(new DateTime());
-//
-//            // definitional
-//            $content->setProperty('base_url', 'http://example.com/path');
-//            $content->setProperty('container_number', 1);
-//            $content->setProperty('permission_url', "http://example.com/permission/");
-//            $content->setProperty('manifest_url', "http://example.com/manifest/");
-//            //other properties.
-//            $content->setProperty('journalTitle', 'Journal Title');
-//            $content->setProperty('publisher', 'Journal Publisher');
-//
-//            // deposit
-//            $content->setDeposit($deposit);
-//            $deposit->addContent($content);
-//            $content->setAu($au);
-//            $au->addContent($content);
-//            $this->em->persist($content);
-//        }
-//    }
-//
-//    public function testBaseProperties() {
-//        $au = new Au();
-//        $root = new AuProperty();
-//        $content = new Content();
-//        $content->setTitle("Content");
-//        $content->setProperty('journalTitle', "Fooooo");
-//        $deposit = new Deposit();
-//        $deposit->setTitle("Deposit Title");
-//        $content->setDeposit($deposit);
-//        $plugin = new Plugin();
-//        $plugin->setIdentifier('com.example.plugin');
-//        $au->setPlugin($plugin);
-//        $content->setProperty('publisher', 'Publishing House');
-//
-//        $this->generator->baseProperties($au, $root, $content);
-//        $this->assertEquals(4, count($au->getAuProperties()));
-//        $this->assertEquals('Fooooo', $au->getSimpleAuProperty('journalTitle'));
-//        $this->assertEquals('LOCKSSOMatic AU Content Deposit Title', $au->getSimpleAuProperty('title'));
-//        $this->assertEquals('com.example.plugin', $au->getSimpleAuProperty('plugin'));
-//        $this->assertEquals('Publishing House', $au->getSimpleAuProperty('attributes.publisher'));
-//    }
+    public function testBuildProperty() {
+        $au = new Au();
+        $key = 'foobar';
+        $value = 'some long complex value.';
+        $property = $this->generator->buildProperty($au, $key, $value);
+        $this->assertInstanceOf(AuProperty::class, $property);
+        $this->assertEquals($key, $property->getPropertyKey());
+        $this->assertEquals($value, $property->getPropertyValue());
+        $this->assertEquals(1, $au->getAuProperties()->count());
+    }
 
-    public function testConfigProperties() {
+    public function testBuildPropetyChild() {
+        $au = new Au();
+        $key = 'foobar';
+        $value = 'some long complex value.';
+        $parent = new AuProperty();
+        $property = $this->generator->buildProperty($au, $key, $value, $parent);
+        $this->assertTrue($parent->hasChildren());
+        $this->assertEquals($parent, $property->getParent());
+        $this->assertEquals(1, $au->getAuProperties()->count()); // didn't add parent to AU.
+    }
 
-        $pln = $this->createMock(Pln::class);
-        $pln->method('getId')->willReturn(1);
+    /**
+     * @dataProvider generateStringData
+     */
+    public function testGenerateString($expected, $value, $map) {
+        $au = $this->createMock(Au::class);
+        $au->method('getAuPropertyValue')->will($this->returnValueMap($map));
 
-        $owner = $this->createMock(ContentOwner::class);
-        $owner->method('getId')->willReturn(3);
+        $this->assertEquals($expected, $this->generator->generateString($au, $value));
+    }
 
-        $provider = $this->createMock(ContentProvider::class);
-        $provider->method('getId')->willReturn(5);
-        $provider->method('getContentOwner')->willReturn($owner);
-        $provider->method('getPermissionUrl')->willReturn('http://example.com/permission');
+    public function generateStringData() {
+        return [
+            // [expected, value, map]
+            ['', '""', []],
+            ['Some testing.', '"Some testing."', []],
+            ['Some testing.', '"Some %s.", foo', [
+                    ['foo', 'testing']
+                ]],
+            ['Test number 1 etc.', '"Test number %d etc.", bling', [
+                    ['bling', 1]
+                ]],
+            ['Test number 1 etc.', '"Test number %d etc.", bling', [
+                    ['bling', 1],
+                    ['murphy', 1],
+                    ['wilson', 1],
+                ]],
+            ['Test jango is number 1.', '"Test %s is number %d.", bling, murphy', [
+                    ['bling', 'jango'],
+                    ['murphy', 1],
+                ]],
+        ];
+    }
+
+    /**
+     * @dataProvider generateStringBadData
+     * @expectedException Exception
+     */
+    public function testGenerateBadString($expected, $value, $map) {
+        $au = $this->createMock(Au::class);
+        $au->method('getAuPropertyValue')->will($this->returnValueMap($map));
+
+        $this->assertEquals($expected, $this->generator->generateString($au, $value));
+    }
+
+    public function generateStringBadData() {
+        return [
+            // [expected, value, map]
+            ['', '', []],
+            ['Some testing.', '"Some %s."', [
+                    ['foo', 'testing']
+                ]],
+            ['Test number 1 etc.', '"Test number %d etc., bling', [
+                    ['bling', 1]
+                ]],
+        ];
+    }
+
+    /**
+     * @dataProvider testGenerateSymbolData
+     */
+    public function testGenerateSymbolString(array $data) {
+        $property = $this->createMock(PluginProperty::class);
+        $property->method('isList')->will($this->returnValue($data['list']));
+        $property->method('getPropertyValue')->will($this->returnValue($data['propValue']));
+
+        $plugin = $this->createMock(Plugin::class);
+        $plugin->method('getProperty')->will($this->returnValue($property));
+        $plugin->method('getName')->will($this->returnValue('dummy'));
 
         $au = $this->createMock(Au::class);
-        $au->method('getId')->willReturn(7);
-        $au->method('getPln')->willReturn($pln);
-        $au->method('getContentProvider')->willReturn($provider);
+        $au->method('getPlugin')->will($this->returnValue($plugin));
+        $au->method('getAuPropertyValue')->will($this->returnValueMap($data['auValues']));
+
+        $str = $this->generator->generateSymbol($au, 'testable');
+        $this->assertEquals($data['expected'], $str);
+    }
+
+    public function testGenerateSymbolData() {
+        return [
+            [[
+            'list' => false,
+            'propValue' => '"item is a cheese"',
+            'auValues' => [
+                ['fromage', 'cheddar'],
+            ],
+            'expected' => 'item is a cheese',
+                ]],
+            [[
+            'list' => false,
+            'propValue' => '"item %s is a cheese", fromage',
+            'auValues' => [
+                ['fromage', 'cheddar'],
+            ],
+            'expected' => 'item cheddar is a cheese',
+                ]],
+            [[
+            'list' => false,
+            'propValue' => '"Sand is %s and %s", grit, color',
+            'auValues' => [
+                ['fromage', 'cheddar'],
+                ['grit', 'coarse'],
+                ['color', 'black']
+            ],
+            'expected' => 'Sand is coarse and black',
+                ]],
+            [[
+            'list' => true,
+            'propValue' => [
+                '"item %s is a cheese", fromage',
+                '"Sand is %s and %s", grit, color',
+            ],
+            'auValues' => [
+                ['fromage', 'cheddar'],
+                ['grit', 'coarse'],
+                ['color', 'black']
+            ],
+            'expected' => [
+                'item cheddar is a cheese',
+                'Sand is coarse and black'
+            ],
+                ]],
+            [[
+            'list' => true,
+            'propValue' => [
+                '"item %s is a cheese", fromage',
+                '"Sand is %s and %s", fromage, fromage',
+            ],
+            'auValues' => [
+                ['fromage', 'cheddar'],
+                ['grit', 'coarse'],
+                ['color', 'black']
+            ],
+            'expected' => [
+                'item cheddar is a cheese',
+                'Sand is cheddar and cheddar'
+            ],
+                ]],
+        ];
+    }
+
+    public function buildContentItems(Au $au) {
+        $deposit = $this->em->find(Deposit::class, 1);
+        for ($i = 0; $i < 10; $i++) {
+            $content = new Content();
+            $content->setUrl("http://example.com/path/{$i}");
+            $content->setTitle("Item {$i}");
+            $content->setDateDeposited(new DateTime());
+
+            // definitional
+            $content->setProperty('base_url', 'http://example.com/path');
+            $content->setProperty('container_number', 1);
+            $content->setProperty('permission_url', "http://example.com/permission/");
+            $content->setProperty('manifest_url', "http://example.com/manifest/");
+            //other properties.
+            $content->setProperty('journalTitle', 'Journal Title');
+            $content->setProperty('publisher', 'Journal Publisher');
+
+            // deposit
+            $content->setDeposit($deposit);
+            $deposit->addContent($content);
+            $content->setAu($au);
+            $au->addContent($content);
+            $this->em->persist($content);
+        }
+    }
+
+    public function testBaseProperties() {
+        $au = new Au();
+        $root = new AuProperty();
+        $content = new Content();
+        $content->setTitle("Content");
+        $content->setProperty('journalTitle', "Fooooo");
+        $deposit = new Deposit();
+        $deposit->setTitle("Deposit Title");
+        $content->setDeposit($deposit);
+        $plugin = new Plugin();
+        $plugin->setIdentifier('com.example.plugin');
+        $au->setPlugin($plugin);
+        $content->setProperty('publisher', 'Publishing House');
+
+        $this->generator->baseProperties($au, $root, $content);
+        $this->assertEquals(4, count($au->getAuProperties()));
+        $this->assertEquals('Fooooo', $au->getSimpleAuProperty('journalTitle'));
+        $this->assertEquals('LOCKSSOMatic AU Content Deposit Title', $au->getSimpleAuProperty('title'));
+        $this->assertEquals('com.example.plugin', $au->getSimpleAuProperty('plugin'));
+        $this->assertEquals('Publishing House', $au->getSimpleAuProperty('attributes.publisher'));
+    }
+
+    public function testConfigProperties() {
+        $pln = new Pln();
+        $plnRef = new ReflectionProperty(Pln::class, 'id');
+        $plnRef->setAccessible(true);
+        $plnRef->setValue($pln, 1);
+
+        $owner = new ContentOwner();
+        $ownerRef = new ReflectionProperty(ContentOwner::class, 'id');
+        $ownerRef->setAccessible(true);
+        $ownerRef->setValue($owner, 3);
+
+        $provider = new ContentProvider();
+        $providerRef = new ReflectionProperty(ContentProvider::class, 'id');
+        $providerRef->setAccessible(true);
+        $providerRef->setValue($provider, 5);
+        $provider->setContentOwner($owner);
+        $provider->setPln($pln);
+        $provider->setPermissionUrl('http://example.com/permission');
+
+        $au = new Au();
+        $auRef = new ReflectionProperty(Au::class, 'id');
+        $auRef->setAccessible(true);
+        $auRef->setValue($au, 7);
+        $au->setPln($pln);
+        $au->setContentProvider($provider);
 
         $content = new Content();
         $content->setUrl("http://example.com/path/item");
@@ -295,40 +309,65 @@ class AuPropertyGeneratorTest extends BaseTestCase {
         $this->generator->configProperties($propertyNames, $au, $root, $content);
         // 1 for root, 3 for each property (one to group, one key, one value)
         $this->assertEquals(13, count($au->getAuProperties()));
-        $this->assertEquals('http://example.com/path', $au->getAuPropertyValue('base_url'));
+        $this->assertEquals('http://example.com', $au->getAuPropertyValue('base_url'));
         $this->assertEquals(1, $au->getAuPropertyValue('container_number'));
-        $this->assertEquals('http://example.com/permission/', $au->getAuPropertyValue('permission_url'));
-        $this->assertEquals('http://example.com/manifest/', $au->getAuPropertyValue('manifest_url'));
+        $this->assertEquals('http://example.com/permission', $au->getAuPropertyValue('permission_url'));
+        $this->assertStringEndsWith('plnconfigs/1/manifests/3/5/manifest_7.html', $au->getAuPropertyValue('manifest_url'));
     }
 
-//    public function testContentProperties() {
-//        $au = new Au();
-//        $root = new AuProperty();
-//        $au->addAuProperty($root);
-//        $content = new Content();
-//        $content->setProperty("foo", "barr");
-//        $content->setProperty("spackle", "made from dust.");
-//        $this->generator->contentProperties($au, $root, $content);
-//        $this->assertEquals(3, count($au->getAuProperties()));
-//        $this->assertEquals('barr', $au->getSimpleAuProperty('attributes.pkppln.foo'));
-//        $this->assertEquals('made from dust.', $au->getSimpleAuProperty('attributes.pkppln.spackle'));
-//    }
-//
-//    public function testGenerateProperties() {
-//        $xml = simplexml_load_string($this->xmlData());
-//        $importer = $this->container->get(PluginImporter::class);
-//        $plugin = $importer->buildPlugin($xml);
-//        $au = new Au();
-//        $au->setPlugin($plugin);
-//        $this->buildContentItems($au);
-//
-//        $this->generator->generateProperties($au);
-//        $this->assertEquals(23, count($au->getAuProperties()));
-//        $this->assertEquals('http://example.com/path', $au->getAuPropertyValue('base_url'));
-//        $this->assertEquals(1, $au->getAuPropertyValue('container_number'));
-//        $this->assertEquals('http://example.com/permission/', $au->getAuPropertyValue('permission_url'));
-//        $this->assertEquals('http://example.com/manifest/', $au->getAuPropertyValue('manifest_url'));
-//    }
+    public function testContentProperties() {
+        $au = new Au();
+        $root = new AuProperty();
+        $au->addAuProperty($root);
+        $content = new Content();
+        $content->setProperty("foo", "barr");
+        $content->setProperty("spackle", "made from dust.");
+        $this->generator->contentProperties($au, $root, $content);
+        $this->assertEquals(3, count($au->getAuProperties()));
+        $this->assertEquals('barr', $au->getSimpleAuProperty('attributes.pkppln.foo'));
+        $this->assertEquals('made from dust.', $au->getSimpleAuProperty('attributes.pkppln.spackle'));
+    }
+
+    public function testGenerateProperties() {
+        $xml = simplexml_load_string($this->xmlData());
+        $importer = $this->container->get(PluginImporter::class);
+        $plugin = $importer->buildPlugin($xml);
+
+        $pln = new Pln();
+        $plnRef = new ReflectionProperty(Pln::class, 'id');
+        $plnRef->setAccessible(true);
+        $plnRef->setValue($pln, 1);
+
+        $owner = new ContentOwner();
+        $ownerRef = new ReflectionProperty(ContentOwner::class, 'id');
+        $ownerRef->setAccessible(true);
+        $ownerRef->setValue($owner, 3);
+
+        $provider = new ContentProvider();
+        $providerRef = new ReflectionProperty(ContentProvider::class, 'id');
+        $providerRef->setAccessible(true);
+        $providerRef->setValue($provider, 5);
+        $provider->setContentOwner($owner);
+        $provider->setPln($pln);
+        $provider->setPermissionUrl('http://example.com/permission');
+
+        $au = new Au();
+        $auRef = new ReflectionProperty(Au::class, 'id');
+        $auRef->setAccessible(true);
+        $auRef->setValue($au, 7);
+        $au->setPln($pln);
+        $au->setContentProvider($provider);
+
+        $au->setPlugin($plugin);
+        $this->buildContentItems($au);
+
+        $this->generator->generateProperties($au);
+        $this->assertEquals(23, count($au->getAuProperties()));
+        $this->assertEquals('http://example.com', $au->getAuPropertyValue('base_url'));
+        $this->assertEquals(1, $au->getAuPropertyValue('container_number'));
+        $this->assertEquals('http://example.com/permission', $au->getAuPropertyValue('permission_url'));
+        $this->assertStringEndsWith('plnconfigs/1/manifests/3/5/manifest_7.html', $au->getAuPropertyValue('manifest_url'));
+    }
 
     public function xmlData() {
         return <<<'ENDXML'
