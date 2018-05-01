@@ -23,15 +23,27 @@ use Symfony\Component\Console\Output\OutputInterface;
 class AuStatusCommand extends ContainerAwareCommand {
 
     /**
+     * Dependency injected entity manager.
+     *
      * @var EntityManagerInterface
      */
     private $em;
-    
+
     /**
+     * Dependency injected lockss client.
+     *
      * @var LockssClient
      */
     private $client;
 
+    /**
+     * Construct the command.
+     *
+     * @param EntityManagerInterface $em
+     *   Dependency injected entity manager.
+     * @param LockssClient $client
+     *   Dependency injected LOCKSS client.
+     */
     public function __construct(EntityManagerInterface $em, LockssClient $client) {
         parent::__construct();
         $this->client = $client;
@@ -47,13 +59,24 @@ class AuStatusCommand extends ContainerAwareCommand {
     }
 
     /**
+     * Get a list of AUs to check.
+     *
      * @return Au[]|Collection
+     *   All AUs.
      */
     protected function getAus() {
         $aus = $this->em->getRepository(Au::class)->findAll();
         return $aus;
     }
 
+    /**
+     * Execute the command.
+     *
+     * @param InputInterface $input
+     *   Input source.
+     * @param OutputInterface $output
+     *   Output destination.
+     */
     public function execute(InputInterface $input, OutputInterface $output) {
         $aus = $this->getAus();
         foreach($aus as $au) {
@@ -65,6 +88,6 @@ class AuStatusCommand extends ContainerAwareCommand {
                 }
             }
         }
-    }        
+    }
 
 }

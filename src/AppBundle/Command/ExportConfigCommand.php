@@ -18,20 +18,36 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ExportConfigCommand extends ContainerAwareCommand {
 
     /**
+     * Exporter service instance.
+     *
      * @var ConfigExporter
      */
     private $exporter;
 
     /**
+     * Configuration updater instance.
+     *
      * @var ConfigUpdater
      */
     private $updater;
 
     /**
+     * Doctrine entity manager instance.
+     *
      * @var EntityManagerInterface
      */
     private $em;
 
+    /**
+     * Construct the command.
+     *
+     * @param EntityManagerInterface $em
+     *   Dependency injected doctrine instance.
+     * @param ConfigExporter $exporter
+     *   Dependency injected configuration exporter service.
+     * @param ConfigUpdater $updater
+     *   Dependency injected configuration updater service.
+     */
     public function __construct(EntityManagerInterface $em, ConfigExporter $exporter, ConfigUpdater $updater) {
         $this->em = $em;
         $this->exporter = $exporter;
@@ -50,10 +66,14 @@ class ExportConfigCommand extends ContainerAwareCommand {
     }
 
     /**
+     * Get the PLNs for export.
+     *
      * @param array $plnIds
+     *   If this array is empty all PLNs are returned.
      * @return Pln[]
+     *   List of PLNs to update.
      */
-    private function getPlns($plnIds = null) {
+    private function getPlns(array $plnIds = null) {
         $repo = $this->em->getRepository(Pln::class);
         if ($plnIds === null || count($plnIds) === 0) {
             return $repo->findAll();

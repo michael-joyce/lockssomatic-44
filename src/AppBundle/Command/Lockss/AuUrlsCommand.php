@@ -18,7 +18,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Description of DaemonStatusCommand
+ * Query the URLs preserved in an AU.
  */
 class AuUrlsCommand extends ContainerAwareCommand {
 
@@ -26,7 +26,7 @@ class AuUrlsCommand extends ContainerAwareCommand {
      * @var EntityManagerInterface
      */
     private $em;
-    
+
     /**
      * @var LockssClient
      */
@@ -65,6 +65,6 @@ class AuUrlsCommand extends ContainerAwareCommand {
                 }
             }
         }
-    }        
+    }
 
 }
