@@ -27,17 +27,17 @@ class EncoderTest extends TestCase {
     public function testSanity() {
         $this->assertInstanceOf(Encoder::class, $this->encoder);
     }
-    
+
     /**
      * @dataProvider encodeData
-     * 
+     *
      * @param string $encoded
      * @param string $raw
      */
     public function testEncode($encoded, $raw) {
         $this->assertEquals($encoded, $this->encoder->encode($raw));
     }
-    
+
     public function encodeData() {
         return [
             ['abc123', 'abc123'],
@@ -45,7 +45,7 @@ class EncoderTest extends TestCase {
             ['abc_123', 'abc_123'],
             ['abc*123', 'abc*123'],
             ['abc+123', 'abc 123'],
-            
+
             ['abc%2E123', 'abc.123'],
             ['abc%2F123', 'abc/123'],
             ['abc%2B123', 'abc+123'],
@@ -54,17 +54,19 @@ class EncoderTest extends TestCase {
             ['abc%7E123', 'abc~123'],
             ['abc%26123', 'abc&123'],
             ['abc%7C123', 'abc|123'],
+            [null, null],
+            ['', '']
         ];
     }
 
     /**
      * @dataProvider encodeData
-     * 
+     *
      * @param string $encoded
      * @param string $raw
      */
     public function testDecode($encoded, $raw) {
         $this->assertEquals($raw, $this->encoder->decode($encoded));
     }
-    
+
 }

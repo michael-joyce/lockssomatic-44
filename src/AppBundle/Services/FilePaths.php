@@ -68,6 +68,10 @@ class FilePaths {
         $this->downloadDir = $downloadDir;
     }
 
+    public function setRoot($root) {
+        $this->root = $root;
+    }
+
     /**
      * Get the root file system path.
      *
@@ -75,7 +79,7 @@ class FilePaths {
      *   Path to the root.
      */
     public function getRootPath() {
-        return realpath($this->root);
+        return $this->root;
     }
 
     /**
@@ -147,10 +151,10 @@ class FilePaths {
 
     /**
      * Get a LOCKSS keystore directory.
-     * 
-     * This is where LOM stores the java keystores. They are served from a 
+     *
+     * This is where LOM stores the java keystores. They are served from a
      * different location.
-     * 
+     *
      * @param Pln $pln
      *   The Pln for the keystore.
      *

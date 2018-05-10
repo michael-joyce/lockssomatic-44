@@ -21,7 +21,7 @@ use Symfony\Component\Templating\EngineInterface;
 class ConfigExporter {
 
     private $ausPerTitleDb;
-    
+
     /**
      * @var EntityManagerInterface
      */
@@ -50,9 +50,13 @@ class ConfigExporter {
         $this->fs = new Filesystem();
     }
 
+    public function setFilePaths(FilePaths $fp) {
+        $this->fp = $fp;
+    }
+
     /**
      * Export the lockss.xml configuration file.
-     * 
+     *
      * @param Pln $pln
      */
     public function exportLockssXml(Pln $pln) {
@@ -65,7 +69,7 @@ class ConfigExporter {
 
     /**
      * Export a PLN's java keystore.
-     * 
+     *
      * @param Pln $pln
      */
     public function exportKeystore(Pln $pln) {
@@ -79,7 +83,7 @@ class ConfigExporter {
 
     /**
      * Export the java plugins.
-     * 
+     *
      * @param Pln $pln
      */
     public function exportPlugins(Pln $pln) {
@@ -99,7 +103,7 @@ class ConfigExporter {
 
     /**
      * Export the manifests for a PLN.
-     * 
+     *
      * @param Pln $pln
      */
     public function exportManifests(Pln $pln) {
@@ -117,13 +121,13 @@ class ConfigExporter {
 
     /**
      * Export the lOCKSS titledbs for a PLN.
-     * 
+     *
      * @param Pln $pln
      */
     public function exportTitleDbs(Pln $pln) {
         foreach ($pln->getContentProviders() as $provider) {
             $aus = $provider->getAus();
-            for ($i = 0; $i < ceil($aus->count() / $this->ausPerTitleDb); $i++) {                
+            for ($i = 0; $i < ceil($aus->count() / $this->ausPerTitleDb); $i++) {
                 $slice = $aus->slice($i * $this->ausPerTitleDb, $this->ausPerTitleDb);
                 $titleDbPath = $this->fp->getTitleDbPath($provider, $i+1);
                 $xml = $this->templating->render('AppBundle:lockss:titledb.xml.twig', array(

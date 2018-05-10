@@ -19,15 +19,15 @@ use Symfony\Component\Templating\EngineInterface;
  * Description of BoxNotifier
  */
 class BoxNotifier {
-    
+
     private $sender;
-    
+
     private $contact;
-    
+
     private $templating;
-    
+
     private $mailer;
-    
+
     public function __construct($sender, $contact, EngineInterface $templating, Swift_Mailer $mailer) {
         $this->sender = $sender;
         $this->contact = $contact;
@@ -55,7 +55,7 @@ class BoxNotifier {
         if( ! $box->getSendNotifications() || ! $box->getContactEmail()) {
             return;
         }
-        
+
         $message = new Swift_Message('LOCKSSOMatic Notification: Disk Space Warning', null, 'text/plain', '7bit');
         $message->setTo($box->getContactEmail());
         $message->setCc($this->contact);
@@ -64,8 +64,7 @@ class BoxNotifier {
             'box' => $box,
             'boxStatus' => $boxStatus,
             'contact' => $this->contact,
-        )));        
-        print $message;
+        )));
         $this->mailer->send($message);
     }
 
