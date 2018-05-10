@@ -9,6 +9,7 @@
 
 namespace AppBundle\Services;
 
+use Exception;
 use AppBundle\Entity\Content;
 use AppBundle\Entity\Pln;
 use Doctrine\ORM\EntityManagerInterface;
@@ -54,6 +55,10 @@ class ConfigExporter {
         $this->fp = $fp;
     }
 
+    public function setEntityManager(EntityManagerInterface $em) {
+        $this->em = $em;
+    }
+
     /**
      * Export the lockss.xml configuration file.
      *
@@ -89,8 +94,7 @@ class ConfigExporter {
     public function exportPlugins(Pln $pln) {
         foreach ($pln->getPlugins() as $plugin) {
             if (!file_exists($plugin->getPath())) {
-                print "Cannot find {$plugin->getPath()}\n";
-                continue;
+                throw new Exception("Cannot find {$plugin->getPath()} to export plugin.");
             }
             $path = $this->fp->getPluginsExportFile($pln, $plugin);
             $this->fs->copy($plugin->getPath(), $path);
@@ -110,7 +114,7 @@ class ConfigExporter {
         $repo = $this->em->getRepository(Content::class);
         foreach ($pln->getAus() as $au) {
             $manifestPath = $this->fp->getManifestPath($au);
-            $iterator = $repo->auQuery($au)->iterate();
+            $iterator = $repo->auQuery($au);
             $html = $this->templating->render('AppBundle:lockss:manifest.html.twig', array(
                 'pln' => $pln,
                 'content' => $iterator,

@@ -176,7 +176,7 @@ class ContentProvider extends AbstractEntity {
     public function getPermissionUrl() {
         return $this->permissionurl;
     }
-    
+
     /**
      *
      */
@@ -345,6 +345,10 @@ class ContentProvider extends AbstractEntity {
      */
     public function getAus() {
         return $this->aus;
+    }
+
+    public function setAus($aus) {
+        $this->aus = $aus;
     }
 
     /**

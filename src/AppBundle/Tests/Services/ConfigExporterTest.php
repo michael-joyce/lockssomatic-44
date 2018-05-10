@@ -13,8 +13,12 @@ use AppBundle\Entity\Au;
 use AppBundle\Entity\Content;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Plugin;
+use AppBundle\Repository\ContentRepository;
 use AppBundle\Services\ConfigExporter;
 use AppBundle\Services\FilePaths;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
@@ -88,7 +92,68 @@ class ConfigExporterTest extends BaseTestCase {
         $this->assertTrue(file_exists("vfs://confdir/data/plnconfigs/1/plugins/index.html"));
     }
 
+    /**
+     * @expectedException Exception
+     */
+    public function testExportMissingPlugins() {
+        $url = vfsStream::url('confdir/plugin.jar');
+
+        $plugin = new Plugin();
+        $plugin->setPath($url);
+
+        $provider = new ContentProvider();
+        $provider->setPlugin($plugin);
+
+        $pln = $this->getReference('pln.1');
+        $pln->addContentProvider($provider);
+
+        $this->exporter->exportPlugins($pln);
+    }
+
     public function testExportManifests() {
+        $content = new Content();
+        $content->setUrl('http://example.com/path/to/content');
+
+        $repo = $this->createMock(ContentRepository::class);
+        $repo->method('auQuery')->will($this->returnValue(array(
+            [$content],
+        )));
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->will($this->returnValue($repo));
+
+        $this->exporter->setEntityManager($em);
+
+        $fp = $this->createMock(FilePaths::class);
+        $fp->method('getManifestPath')->willReturn('vfs://confdir/manifest.html');
+        $this->exporter->setFilePaths($fp);
+
+        $pln = $this->getReference('pln.1');
+        $au = new Au();
+        $pln->addAu($au);
+        $au->setPln($pln);
+        $this->exporter->exportManifests($pln);
+
+        $this->assertTrue(file_exists("vfs://confdir/manifest.html"));
+    }
+
+    public function testExportTitleDbs() {
+        $fp = $this->createMock(FilePaths::class);
+        $fp->method('getTitleDbPath')->willReturn('vfs://confdir/titledb.xml');
+        $this->exporter->setFilePaths($fp);
+
+        $au = new Au();
+        $provider = new ContentProvider();
+        $aus = new ArrayCollection();
+        $aus[] = $au;
+        $provider->setAus($aus);
+        $au->setContentProvider($provider);
+
+        $pln = $this->getReference('pln.1');
+        $pln->addContentProvider($provider);
+
+        $this->exporter->exportTitleDbs($pln);
+        $this->assertTrue(file_exists("vfs://confdir/titledb.xml"));
     }
 
 }
