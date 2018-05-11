@@ -22,9 +22,9 @@ use Symfony\Bridge\Monolog\Logger;
  * @author Michael Joyce <ubermichael@gmail.com>
  */
 class AuValidator {
-    
+
     const BATCHSIZE = 100;
-    
+
     /**
      * Psr\Log compatible logger for the service.
      *
@@ -38,7 +38,7 @@ class AuValidator {
      * @var EntityManagerInterface
      */
     private $em;
-    
+
     /**
      * Construct the service.
      *
@@ -51,7 +51,7 @@ class AuValidator {
         $this->logger = $logger;
         $this->em = $em;
     }
-    
+
     /**
      * Validate the AU content.
      *
@@ -77,16 +77,16 @@ class AuValidator {
         if (!$definitional || count($definitional) === 0) {
             throw new Exception("Cannot validate AU for plugin without definitional properties.");
         }
-        
+
         $repo = $this->em->getRepository(Content::class);
-        $iterator = $repo->auQuery($au)->iterate();
-        
+        $iterator = $repo->auQuery($au);
+
         $first = $iterator->next()[0];
         $base = [];
         foreach ($definitional as $name) {
             $base[$name] = $first->getProperty($name);
         }
-        
+
         $i = 0;
         while (($row = $iterator->next()) !== false) {
             $content = $row[0];
@@ -103,5 +103,5 @@ class AuValidator {
         }
         return $errors;
     }
-    
+
 }
