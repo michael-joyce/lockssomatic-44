@@ -206,7 +206,7 @@ class SwordController extends Controller {
             $url = trim((string) $content);
             $host = parse_url($url, PHP_URL_HOST);
             if ($permissionHost !== $host) {
-                throw new BadRequestHttpException("Permission host does not match content host. Content host:{$host} Permission host: {$permissionHost}", null, Response::HTTP_BAD_REQUEST);
+                throw new BadRequestHttpException("Permission host for {$url} does not match content host. Content host:{$host} Permission host: {$permissionHost}", null, Response::HTTP_BAD_REQUEST);
             }
 
             if ($content->attributes()->size > $provider->getMaxFileSize()) {
