@@ -22,7 +22,7 @@
     "require": {
         "php": ">=5.5.9",
         "beberlei/DoctrineExtensions": "^1.0",
-        "besimple/soap-client": "^0.2.6",
+        "besimple/soap": "dev-um",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
         "egulias/email-validator": "^2.1",
@@ -53,6 +53,12 @@
         "squizlabs/php_codesniffer": "^2.9.1 <3.0",
         "symfony/phpunit-bridge": "^4.0"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ubermichael/BeSimpleSoap.git"
+        }
+    ],
     "scripts": {
         "symfony-scripts": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",

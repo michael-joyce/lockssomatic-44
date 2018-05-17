@@ -37,7 +37,7 @@ class LockssClient {
         'user_agent' => 'LOCKSSOMatic 1.0',
         'authentication' => SOAP_AUTHENTICATION_BASIC,
     );
-    
+
     const GUZZLE_OPTS = array(
         'allow_redirects' => true,
         'headers' => array(
@@ -45,7 +45,7 @@ class LockssClient {
         ),
         'decode_content' => false,
     );
-    
+
     // getAuStatus
     // isDaemonReady
     // queryRepositories
@@ -134,7 +134,7 @@ class LockssClient {
                     'auId' => $auid,
         ));
     }
-    
+
     public function getAuUrls(Box $box, Au $au) {
         if (!$this->isDaemonReady($box)) {
             return;
@@ -144,7 +144,7 @@ class LockssClient {
                     'auId' => $auid,
         ));
     }
-    
+
     public function queryRepositories(Box $box) {
         if (!$this->isDaemonReady($box)) {
             return;
@@ -164,11 +164,11 @@ class LockssClient {
     }
 
     /**
-     * Fetches the hash of a content URL from a box. 
-     * 
-     * May return null if the item hasn't been preserved or if the box isn't 
+     * Fetches the hash of a content URL from a box.
+     *
+     * May return null if the item hasn't been preserved or if the box isn't
      * responding.
-     * 
+     *
      * @param Box $box
      * @param Content $content
      * @return string|null
@@ -177,7 +177,7 @@ class LockssClient {
         if( ! $this->isUrlCached($box, $content)) {
             return;
         }
-        $auid = $this->auIdGenerator->fromAu($content->getAu());
+        $auid = $this->auIdGenerator->fromAu($content->getAu(), true);
         $response = $this->call($box, self::HASHER_SERVICE, 'hash', array(
                     'hasherParams' => array(
                         'recordFilterStream' => true,
@@ -187,7 +187,7 @@ class LockssClient {
                         'auId' => $auid,
                     ),
         ));
-        
+
         $block = $response->blockFileDataHandler;
         $lines = array_values(array_filter(explode("\n", $block), function($s){
             return strlen($s) > 0 && $s[0] !== '#';
@@ -196,7 +196,7 @@ class LockssClient {
             return null;
         }
         list($checksum, $url) = preg_split("/\s+/", $lines[0]);
-                
+
         return strtoupper($checksum);
     }
 
@@ -215,11 +215,11 @@ class LockssClient {
 
     /**
      * Download a content item from a lockss box.
-     * 
-     * This can't use the normal SOAP api because the SOAP libraries all 
-     * try to store the data in memory rather than streaming it to a temporary 
-     * file. 
-     * 
+     *
+     * This can't use the normal SOAP api because the SOAP libraries all
+     * try to store the data in memory rather than streaming it to a temporary
+     * file.
+     *
      * @param Box $box
      * @param Content $content
      * @return resource
@@ -237,7 +237,7 @@ class LockssClient {
                 'url' => $content->getUrl()
             ],
         ));
-        
+
         $response = $client->get($baseUrl, $options);
         $body = $response->getBody();
         while(($data = $body->read(64 * 1024))) {

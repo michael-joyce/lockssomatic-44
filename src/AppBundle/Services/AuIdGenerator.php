@@ -21,14 +21,14 @@ use Psr\Log\LoggerInterface;
  * @author Michael Joyce <ubermichael@gmail.com>
  */
 class AuIdGenerator {
-    
+
     /**
      * Logger for logging.
      *
      * @var LoggerInterface
      */
     private $logger;
-    
+
     /**
      * Build the service.
      *
@@ -38,7 +38,7 @@ class AuIdGenerator {
     public function __construct(LoggerInterface $logger) {
         $this->logger = $logger;
     }
-    
+
     public function fromContent(Content $content, $lockssAuid = true) {
         $encoder = new Encoder();
         $plugin = $content->getPlugin();
@@ -48,11 +48,15 @@ class AuIdGenerator {
         $propNames = $plugin->getDefinitionalPropertyNames();
         sort($propNames);
         foreach($propNames as $name) {
-            if( ! $lockssAuid 
-                    && in_array($name, $plugin->getGeneratedParams())) {
+            if( ! $lockssAuid && in_array($name, $plugin->getGeneratedParams())) {
                 continue;
             }
-            $value = $encoder->encode($content->getProperty($name));
+            $value = null;
+            if($lockssAuid) {
+                $value = $encoder->encode($content->getAu()->getAuPropertyValue($name));
+            } else {
+                $value = $encoder->encode($content->getProperty($name));
+            }
             if (!$value) {
                 throw new Exception("Cannot generate AUID without definitional property {$name}.");
             }
@@ -61,7 +65,7 @@ class AuIdGenerator {
         $id = $pluginKey . $auKey;
         return $id;
     }
-    
+
     /**
      * Sets the AU id based on the first content item in the AU and returns it.
      *
@@ -85,5 +89,5 @@ class AuIdGenerator {
         }
         return $this->fromContent($au->getContent()->first(), $lockssAuid);
     }
-    
+
 }
