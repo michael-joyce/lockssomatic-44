@@ -171,7 +171,7 @@ class AuPropertyGenerator {
      */
     public function baseProperties(Au $au, AuProperty $root, Content $content) {
         $this->buildProperty($au, 'journalTitle', $content->getProperty('journalTitle'), $root);
-        $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $content->getTitle() . ' ' . $content->getDeposit()->getTitle(), $root);
+        $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $au->getId() . ' ' . $content->getTitle() . ' ' . $content->getDeposit()->getTitle(), $root);
         $this->buildProperty($au, 'plugin', $au->getPlugin()->getIdentifier(), $root);
         $this->buildProperty($au, 'attributes.publisher', $content->getProperty('publisher'), $root);
     }
