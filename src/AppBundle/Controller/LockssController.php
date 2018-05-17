@@ -35,17 +35,17 @@ class LockssController extends Controller {
      * @var FilePaths
      */
     private $fp;
-    
+
     /**
      * @param FilePaths $fp
-     */    
+     */
     public function __construct(FilePaths $fp) {
         $this->fp = $fp;
     }
-    
+
     /**
      * Check that a request came from a good IP address.
-     * 
+     *
      * @param Request $request
      * @param Pln $pln
      */
@@ -80,7 +80,7 @@ class LockssController extends Controller {
 
         return new BinaryFileResponse($path, 200, array(
             'Content-Type' => 'text/xml',
-        ));        
+        ));
     }
 
     /**
@@ -110,7 +110,7 @@ class LockssController extends Controller {
 
         return new BinaryFileResponse($path, 200, array(
             'Content-Type' => 'text/xml',
-        ));        
+        ));
     }
 
     /**
@@ -141,7 +141,7 @@ class LockssController extends Controller {
         return new BinaryFileResponse($path, 200, array(
             'Content-Type' => 'text/html',
         ));
-        
+
     }
 
     /**
@@ -189,7 +189,7 @@ class LockssController extends Controller {
         }
         return new BinaryFileResponse($path, 200, array(
             'Content-Type' => 'text/html',
-        ));        
+        ));
     }
 
     /**
@@ -199,14 +199,14 @@ class LockssController extends Controller {
      *   Dependency injected http request.
      * @param Pln $pln
      *   PLN configured by the file.
-     * @param Plugin $plugin
-     *   The plugin to fetch.
+     * @param string $filename
+     *   Name of the file to fetch, from the URL.
      *
      * @Route("/plugins/{filename}", name="lockss_plugin")
      */
     public function pluginAction(Request $request, Pln $pln, $filename) {
         $this->checkIp($request, $pln);
-        
+
         $dir = $this->fp->getPluginsExportDir($pln);
         $path = $dir . '/' . $filename;
         if( ! $path) {
@@ -214,7 +214,7 @@ class LockssController extends Controller {
         }
         return new BinaryFileResponse($path, 200, array(
             'Content-Type' => 'application/java-archive',
-        ));        
+        ));
     }
 
 }

@@ -33,6 +33,8 @@ class PlnPropertyController extends Controller {
      *
      * @param Request $request
      *   The HTTP request instance.
+     * @param Pln $pln
+     *   The PLN to configure.
      *
      * @return array
      *   Array data for the template processor.
@@ -52,6 +54,8 @@ class PlnPropertyController extends Controller {
      *
      * @param Request $request
      *   The HTTP request instance.
+     * @param Pln $pln
+     *   The PLN to configure.
      *
      * @return array
      *   Array data for the template processor.
@@ -97,7 +101,7 @@ class PlnPropertyController extends Controller {
      *   Pln to show, as determined by the URL.
      * @param string $propertyKey
      *   Name of the property to edit.
-     * 
+     *
      * @return array
      *   Array data for the template processor.
      *

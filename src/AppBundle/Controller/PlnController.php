@@ -204,15 +204,21 @@ class PlnController extends Controller {
 
     /**
      * Exports and updates the PLN configuration.
-     * 
+     *
      * Updates all configuration for a PLN and exports it to disk for LOCKSS
-     * to access. Usually this should be done in a regularly scheduled cron 
+     * to access. Usually this should be done in a regularly scheduled cron
      * job.
      *
      * @param Request $request
      *   The HTTP request instance.
      * @param Pln $pln
      *   Pln to show, as determined by the URL.
+     * @param EntityManagerInterface $em
+     *   Doctrine entity manager to update the PLN config.
+     * @param ConfigExporter $exporter
+     *   Exporter service.
+     * @param ConfigUpdater $updater
+     *   Updater service.
      *
      * @return RedirectResponse
      *   Redirects to the show action with an appropriate message.
@@ -225,13 +231,13 @@ class PlnController extends Controller {
     public function exportAction(Request $request, Pln $pln, EntityManagerInterface $em, ConfigExporter $exporter, ConfigUpdater $updater) {
         $updater->update($pln);
         $em->flush();
-        $exporter->export($pln);        
+        $exporter->export($pln);
         $this->addFlash('success', 'The pln configuration has been updated and exported.');
         return $this->redirectToRoute('pln_show', array(
             'id' => $pln->getId(),
         ));
     }
-    
+
     /**
      * Deletes a Pln entity.
      *

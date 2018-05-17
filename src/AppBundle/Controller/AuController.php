@@ -36,6 +36,8 @@ class AuController extends Controller {
      *   The HTTP request instance.
      * @param Pln $pln
      *   The pln, determined from the URL.
+     * @param AuManager $manager
+     *   Dependency-injected AU manager service.
      *
      * @return array
      *   Array data for the template processor.
@@ -66,6 +68,8 @@ class AuController extends Controller {
      *   The AU to show.
      * @param Pln $pln
      *   The pln, determined from the URL.
+     * @param AuManager $manager
+     *   Dependency-injected AU manager service.
      *
      * @return array
      *   Array data for the template processor.
@@ -82,5 +86,5 @@ class AuController extends Controller {
             'manager' => $manager,
         );
     }
-    
+
 }

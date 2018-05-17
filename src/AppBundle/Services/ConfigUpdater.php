@@ -13,7 +13,7 @@ use AppBundle\Entity\Pln;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Update the configuration properties of a PLN. 
+ * Update the configuration properties of a PLN.
  */
 class ConfigUpdater {
 
@@ -26,17 +26,20 @@ class ConfigUpdater {
      * @var UrlGeneratorInterface
      */
     private $urlGenerator;
-    
+
     /**
      * @var PropertyGenerator
      */
     private $propertyGenerator;
 
     /**
-     * 
+     *
      * @param int $ausPerTitleDb
      *   Maximum number of AUs to include in a titledb.xml file.
      * @param UrlGeneratorInterface $urlGenerator
+     *   The Symfony URL generator.
+     * @param AuPropertyGenerator $propertyGenerator
+     *   The AU property generator service.
      */
     public function __construct($ausPerTitleDb, UrlGeneratorInterface $urlGenerator, AuPropertyGenerator $propertyGenerator) {
         $this->ausPerTitleDb = $ausPerTitleDb;
@@ -46,7 +49,7 @@ class ConfigUpdater {
 
     /**
      * Update the list of peers in the PLN configuration properties.
-     * 
+     *
      * @param Pln $pln
      */
     public function updatePeerList(Pln $pln) {
@@ -60,7 +63,7 @@ class ConfigUpdater {
 
     /**
      * Set the list of title db URLs in the PLN config properties.
-     * 
+     *
      * @param Pln $pln
      */
     public function updateTitleDbs(Pln $pln) {
@@ -80,7 +83,7 @@ class ConfigUpdater {
         }
         $pln->setProperty('org.lockss.titleDbs', $urls);
     }
-    
+
     public function updateAuConfigs(Pln $pln) {
         foreach($pln->getAus() as $au) {
             if($au->hasAuProperties()) {
@@ -92,7 +95,7 @@ class ConfigUpdater {
 
     /**
      * Set the location of the PLN keystore in the config properties.
-     * 
+     *
      * @param Pln $pln
      */
     public function updateKeystoreLocation(Pln $pln) {
@@ -109,7 +112,7 @@ class ConfigUpdater {
 
     /**
      * Update the PLN config properties to match the credentials stored in LOM.
-     * 
+     *
      * @param Pln $pln
      */
     public function updateAuthentication(Pln $pln) {
@@ -126,7 +129,7 @@ class ConfigUpdater {
 
     /**
      * Update the PLN config properties to match the content UI settings in LOM.
-     * 
+     *
      * @param Pln $pln
      */
     public function updateContentUi(Pln $pln) {
@@ -144,7 +147,7 @@ class ConfigUpdater {
 
     /**
      * Update all the PLN config properties.
-     * 
+     *
      * @param Pln $pln
      */
     public function update(Pln $pln) {
