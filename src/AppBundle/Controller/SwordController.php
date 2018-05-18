@@ -199,6 +199,9 @@ class SwordController extends Controller {
         if (count($atom->xpath('//lom:content')) === 0) {
             throw new BadRequestHttpException('Empty deposits are not allowed.', null, Response::HTTP_BAD_REQUEST);
         }
+        if(count($atom->xpath('//lom:content')) > 1) {
+            throw new BadRequestHttpException('Deposits with multiple content elements are not allowed.', null, Response::HTTP_BAD_REQUEST);
+        }
         $plugin = $provider->getPlugin();
 
         $permissionHost = $provider->getPermissionHost();
