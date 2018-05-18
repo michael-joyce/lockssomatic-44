@@ -85,7 +85,7 @@ class BoxController extends Controller {
             $em->persist($box);
             $em->flush();
 
-            $this->addFlash('success', 'The new box was created.');
+            $this->addFlash('success', 'The new box was created. You should check deposit status manually with --force once content is copied.');
             return $this->redirectToRoute('box_show', array('id' => $box->getId(), 'plnId' => $pln->getId()));
         }
 
