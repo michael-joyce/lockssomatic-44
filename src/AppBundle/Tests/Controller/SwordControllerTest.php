@@ -99,6 +99,19 @@ class SwordControllerTest extends BaseTestCase {
         $this->assertEquals($auCount+1, count($this->em->getRepository(Au::class)->findAll()));
     }
 
+    public function testCreateDepositMultiple() {
+        $auCount = count($this->em->getRepository(Au::class)->findAll());
+        $provider = $this->getReference('provider.1');
+        $client = static::createClient();
+        $data = $this->getData('Sword/depositMultiple.xml');
+        $crawler = $client->request(
+                'POST', '/api/sword/2.0/col-iri/' . $provider->getUuid(), array(), array(), array(), $data
+        );
+        $response = $client->getResponse();
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertContains('multiple content elements are not allowed.', $response->getContent());
+    }
+
     public function testCreateDeposits() {
         $auCount = count($this->em->getRepository(Au::class)->findAll());
         $provider = $this->getReference('provider.1');
@@ -143,7 +156,7 @@ class SwordControllerTest extends BaseTestCase {
         );
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertContains('Permission host does not match content host.', $response->getContent());
+        $this->assertContains('Permission host for http://otherdomain.com/3691/11186563486_8796f4f843_o_d.jpg does not match content host.', $response->getContent());
     }
 
     public function testCreateLargeDeposit() {
