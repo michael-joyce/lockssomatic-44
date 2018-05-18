@@ -31,6 +31,11 @@ Box
   preserved. The box will also communicate with LOCKSS to update its
   configuration.
 
+.. todo::
+
+    Document how to add a new box to the network, and how to force LOCKSSOMatic
+    to check the status of all deposits afterward. 
+
 Box Status
 
   Historical status checks on the box, checking on its connectivity.
@@ -85,7 +90,7 @@ Plugin
 Plugin Property
 
   Plugin properties are key-value properties, and may be
-  hierarchical. 
+  hierarchical.
 
 Services
 --------
