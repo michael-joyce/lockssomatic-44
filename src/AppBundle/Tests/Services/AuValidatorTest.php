@@ -12,7 +12,6 @@ namespace AppBundle\Tests\Services;
 use AppBundle\DataFixtures\ORM\LoadDeposit;
 use AppBundle\DataFixtures\ORM\LoadPln;
 use AppBundle\Entity\Au;
-use AppBundle\Entity\Content;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Pln;
@@ -68,16 +67,14 @@ class AuValidatorTest extends BaseTestCase {
         $au->setAuid('1b');
         $this->em->persist($au);
 
-        $content = new Content();
-        $content->setDeposit($this->em->find(Deposit::class, 1));
-        $content->setUrl("http://example.com/path/1");
-        $content->setTitle("Item 1");
-        $content->setDateDeposited(new DateTime());
-        $content->setProperty('base_url', 'http://example.com/path');
-        $content->setProperty('container_number', 1);
-        $content->setProperty('permission_url', "http://example.com/permission/1");
-        $content->setAu($au);
-        $this->em->persist($content);
+        $deposit = $this->em->find(Deposit::class, 1);
+        $deposit->setUrl("http://example.com/path/1");
+        $deposit->setTitle("Item 1");
+        $deposit->setProperty('base_url', 'http://example.com/path');
+        $deposit->setProperty('container_number', 1);
+        $deposit->setProperty('permission_url', "http://example.com/permission/1");
+        $deposit->setAu($au);
+        $this->em->persist($deposit);
         $this->em->flush();
 
         $this->assertEquals(0, $this->validator->validate($au));
@@ -103,16 +100,15 @@ class AuValidatorTest extends BaseTestCase {
         $this->em->persist($au);
 
         for($i = 0; $i < 10; $i++) {
-            $content = new Content();
-            $content->setDeposit($this->em->find(Deposit::class, 1));
-            $content->setUrl("http://example.com/path/{$i}");
-            $content->setTitle("Item {$i}");
-            $content->setDateDeposited(new DateTime());
-            $content->setProperty('base_url', 'http://example.com/path');
-            $content->setProperty('container_number', 1);
-            $content->setProperty('permission_url', "http://example.com/permission/{$i}");
-            $content->setAu($au);
-            $this->em->persist($content);
+            $deposit = new Deposit();
+            $deposit->setUrl("http://example.com/path/{$i}");
+            $deposit->setTitle("Item {$i}");
+            $deposit->setProperty('base_url', 'http://example.com/path');
+            $deposit->setProperty('container_number', 1);
+            $deposit->setProperty('permission_url', "http://example.com/permission/{$i}");
+            $deposit->setAu($au);
+            $deposit->setContentProvider($this->em->find(ContentProvider::class, 1));
+            $this->em->persist($deposit);
         }
         $this->em->flush();
 
@@ -132,16 +128,15 @@ class AuValidatorTest extends BaseTestCase {
         $this->em->persist($au);
 
         for($i = 0; $i < 10; $i++) {
-            $content = new Content();
-            $content->setDeposit($this->em->find(Deposit::class, 1));
-            $content->setUrl("http://example.com/path/{$i}");
-            $content->setTitle("Item {$i}");
-            $content->setDateDeposited(new DateTime());
-            $content->setProperty('base_url', "http://example.com/path/{$i}");
-            $content->setProperty('container_number', 1);
-            $content->setProperty('permission_url', "http://example.com/permission/{$i}");
-            $content->setAu($au);
-            $this->em->persist($content);
+            $deposit = new Deposit();
+            $deposit->setUrl("http://example.com/path/{$i}");
+            $deposit->setTitle("Item {$i}");
+            $deposit->setProperty('base_url', "http://example.com/path/{$i}");
+            $deposit->setProperty('container_number', 1);
+            $deposit->setProperty('permission_url', "http://example.com/permission/{$i}");
+            $deposit->setAu($au);
+            $deposit->setContentProvider($this->em->find(ContentProvider::class, 1));
+            $this->em->persist($deposit);
         }
         $this->em->flush();
 

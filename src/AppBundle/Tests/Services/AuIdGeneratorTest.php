@@ -10,7 +10,7 @@
 namespace AppBundle\Tests\Services;
 
 use AppBundle\Entity\Au;
-use AppBundle\Entity\Content;
+use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Plugin;
 use AppBundle\Services\AuIdGenerator;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
@@ -31,11 +31,11 @@ class AuIdGeneratorTest extends BaseTestCase {
         parent::setUp();
         $this->generator = $this->container->get(AuIdGenerator::class);
     }
-    
+
     public function testInstance() {
         $this->assertInstanceOf(AuIdGenerator::class, $this->generator);
     }
-    
+
     public function testFromContentLockss() {
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
@@ -45,14 +45,14 @@ class AuIdGeneratorTest extends BaseTestCase {
         $plugin->method('getGeneratedParams')->will($this->returnValue([
             'bar'
         ]));
-        $content = $this->createMock(Content::class);
-        $content->method('getPlugin')->will($this->returnValue($plugin));
-        $content->method('getProperty')->will($this->returnValueMap([
+        $deposit = $this->createMock(Deposit::class);
+        $deposit->method('getPlugin')->will($this->returnValue($plugin));
+        $deposit->method('getProperty')->will($this->returnValueMap([
             ['foo', 'Some complex title'],
             ['bar', 'other.property'],
             ['bax', 'property the third!'],
         ]));
-        $id = $this->generator->fromContent($content, true);
+        $id = $this->generator->fromDeposit($deposit, true);
         $this->assertEquals('ca|example|plugin&bar~other%2Eproperty&bax~property+the+third%21&foo~Some+complex+title', $id);
     }
 
@@ -65,14 +65,14 @@ class AuIdGeneratorTest extends BaseTestCase {
         $plugin->method('getGeneratedParams')->will($this->returnValue([
             'bar'
         ]));
-        $content = $this->createMock(Content::class);
-        $content->method('getPlugin')->will($this->returnValue($plugin));
-        $content->method('getProperty')->will($this->returnValueMap([
+        $deposit = $this->createMock(Deposit::class);
+        $deposit->method('getPlugin')->will($this->returnValue($plugin));
+        $deposit->method('getProperty')->will($this->returnValueMap([
             ['foo', 'Some complex title'],
             ['bar', 'other.property'],
             ['bax', 'property the third!'],
         ]));
-        $id = $this->generator->fromContent($content, false);
+        $id = $this->generator->fromDeposit($deposit, false);
         $this->assertEquals('ca|example|plugin&bax~property+the+third%21&foo~Some+complex+title', $id);
     }
 
@@ -82,20 +82,20 @@ class AuIdGeneratorTest extends BaseTestCase {
         $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
             'foo', 'bar', 'bax'
         ]));
-        $content = $this->createMock(Content::class);
-        $content->method('getPlugin')->will($this->returnValue($plugin));
-        $content->method('getProperty')->will($this->returnValueMap([
+        $deposit = $this->createMock(Deposit::class);
+        $deposit->method('getPlugin')->will($this->returnValue($plugin));
+        $deposit->method('getProperty')->will($this->returnValueMap([
             ['foo', 'Some complex title'],
             ['bar', 'other.property'],
             ['bax', 'property the third!'],
         ]));
         $au = new Au();
-        $au->addContent($content);
+        $au->addDeposit($deposit);
         $au->setPlugin($plugin);
         $id = $this->generator->fromAu($au);
         $this->assertEquals('ca|example|plugin&bar~other%2Eproperty&bax~property+the+third%21&foo~Some+complex+title', $id);
     }
-    
+
     public function testFromAuNonLockss() {
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
@@ -105,15 +105,15 @@ class AuIdGeneratorTest extends BaseTestCase {
         $plugin->method('getGeneratedParams')->will($this->returnValue([
             'bar'
         ]));
-        $content = $this->createMock(Content::class);
-        $content->method('getPlugin')->will($this->returnValue($plugin));
-        $content->method('getProperty')->will($this->returnValueMap([
+        $deposit = $this->createMock(Deposit::class);
+        $deposit->method('getPlugin')->will($this->returnValue($plugin));
+        $deposit->method('getProperty')->will($this->returnValueMap([
             ['foo', 'Some complex title'],
             ['bar', 'other.property'],
             ['bax', 'property the third!'],
         ]));
         $au = new Au();
-        $au->addContent($content);
+        $au->addDeposit($deposit);
         $au->setPlugin($plugin);
         $id = $this->generator->fromAu($au, false);
         $this->assertEquals('ca|example|plugin&bax~property+the+third%21&foo~Some+complex+title', $id);

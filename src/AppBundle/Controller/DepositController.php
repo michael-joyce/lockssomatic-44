@@ -150,7 +150,6 @@ class DepositController extends Controller {
      */
     public function newAction(Request $request, Pln $pln) {
         $deposit = new Deposit();
-        $deposit->setDateDeposited(new DateTime());
         $form = $this->createForm(DepositType::class, $deposit);
         $form->handleRequest($request);
 

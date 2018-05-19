@@ -2,12 +2,11 @@
 
 namespace AppBundle\Tests\Controller;
 
-use AppBundle\DataFixtures\ORM\LoadContent;
 use AppBundle\DataFixtures\ORM\LoadContentProvider;
 use AppBundle\DataFixtures\ORM\LoadDeposit;
 use AppBundle\DataFixtures\ORM\LoadPluginProperty;
 use AppBundle\Entity\Au;
-use AppBundle\Entity\Content;
+use AppBundle\Entity\Deposit;
 use AppBundle\Utilities\Namespaces;
 use Exception;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
@@ -20,7 +19,6 @@ class SwordControllerTest extends BaseTestCase {
             LoadContentProvider::class,
             LoadPluginProperty::class,
             LoadDeposit::class,
-            LoadContent::class,
         );
     }
 
@@ -186,10 +184,10 @@ class SwordControllerTest extends BaseTestCase {
         $this->assertStringEndsWith('/edit', $editResponse->headers->get('Location'));
 
         // check that the content checksum value changed.
-        $content = $this->em->getRepository(Content::class)->findOneBy(array(
+        $deposit = $this->em->getRepository(Deposit::class)->findOneBy(array(
             'url' => 'http://example.com/3691/11186563486_8796f4f843_o_d.jpg',
         ));
-        $this->assertEquals('D3B0738', $content->getChecksumValue());
+        $this->assertEquals('D3B0738', $deposit->getChecksumValue());
     }
 
     public function testViewDeposit() {

@@ -10,7 +10,7 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Au;
-use AppBundle\Entity\Content;
+use AppBundle\Entity\Deposit;
 use AppBundle\Repository\AuRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -76,8 +76,8 @@ class AuManager {
         return $this->auRepository->getAuSize($au);
     }
 
-    public function buildAu(Content $content, $auid) {
-        $provider = $content->getContentProvider();
+    public function buildAu(Deposit $deposit, $auid) {
+        $provider = $deposit->getContentProvider();
         $au = new Au();
         $au->setContentProvider($provider);
         $au->setPln($provider->getPln());
@@ -92,26 +92,26 @@ class AuManager {
      *
      * Persists the new AU, but does not flush it to the database.
      *
-     * @param Content $content
+     * @param Deposit $deposit
      *   Initial content for the AU.
      *
      * @return Au
      *   The new AU.
      */
-    public function findOpenAu(Content $content) {
-        $provider = $content->getContentProvider();
-        $auid = $this->idGenerator->fromContent($content, false);
+    public function findOpenAu(Deposit $deposit) {
+        $provider = $deposit->getContentProvider();
+        $auid = $this->idGenerator->fromDeposit($deposit, false);
         $au = $this->auRepository->findOpenAu($auid);
-        if ($au && $this->auSize($au) + $content->getSize() > $provider->getMaxAuSize()) {
+        if ($au && $this->auSize($au) + $deposit->getSize() > $provider->getMaxAuSize()) {
             $au->setOpen(false);
             $this->auRepository->flush($au);
             $au = null;
         }
         if (!$au) {
-            $au = $this->buildAu($content, $auid);
+            $au = $this->buildAu($deposit, $auid);
         }
-        $au->addContent($content);
-        $content->setAu($au);
+        $au->addDeposit($deposit);
+        $deposit->setAu($au);
         return $au;
     }
 

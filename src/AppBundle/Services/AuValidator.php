@@ -10,7 +10,7 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Au;
-use AppBundle\Entity\Content;
+use AppBundle\Entity\Deposit;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -78,7 +78,7 @@ class AuValidator {
             throw new Exception("Cannot validate AU for plugin without definitional properties.");
         }
 
-        $repo = $this->em->getRepository(Content::class);
+        $repo = $this->em->getRepository(Deposit::class);
         $iterator = $repo->auQuery($au);
 
         $first = $iterator->next()[0];

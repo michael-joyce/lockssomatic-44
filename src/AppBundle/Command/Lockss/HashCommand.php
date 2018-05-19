@@ -9,7 +9,7 @@
 
 namespace AppBundle\Command\Lockss;
 
-use AppBundle\Entity\Content;
+use AppBundle\Entity\Deposit;
 use AppBundle\Services\LockssClient;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,7 +26,7 @@ class HashCommand extends ContainerAwareCommand {
      * @var EntityManagerInterface
      */
     private $em;
-    
+
     /**
      * @var LockssClient
      */
@@ -49,18 +49,18 @@ class HashCommand extends ContainerAwareCommand {
     /**
      * @return Content[]|Collection
      */
-    protected function getContents() {
-        $contents = $this->em->getRepository(Content::class)->findAll();
+    protected function getDeposits() {
+        $contents = $this->em->getRepository(Deposit::class)->findAll();
         return $contents;
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
-        $contents = $this->getContents();
-        foreach($contents as $content) {
-            $output->writeln($content->getUrl());
-            foreach($content->getAu()->getPln()->getBoxes() as $box) {
+        $deposits = $this->getDeposits();
+        foreach($deposits as $deposit) {
+            $output->writeln($deposit->getUrl());
+            foreach($deposit->getAu()->getPln()->getBoxes() as $box) {
                 $output->writeln($box->getIpAddress());
-                dump($this->client->hash($box, $content));
+                dump($this->client->hash($box, $deposit));
                 if($this->client->hasErrors()) {
                     foreach($this->client->getErrors() as $error) {
                         $output->writeln($error);
@@ -70,6 +70,6 @@ class HashCommand extends ContainerAwareCommand {
                 }
             }
         }
-    }        
+    }
 
 }

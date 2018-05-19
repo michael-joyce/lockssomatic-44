@@ -11,7 +11,7 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\Au;
 use AppBundle\Entity\AuProperty;
-use AppBundle\Entity\Content;
+use AppBundle\Entity\Deposit;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -166,14 +166,14 @@ class AuPropertyGenerator {
      *   Archival unit to generate properties for.
      * @param AuProperty $root
      *   Root of the AU properties.
-     * @param Content $content
-     *   Content with the property values for the AU.
+     * @param Deposit $deposit
+     *   Deposit with the property values for the AU.
      */
-    public function baseProperties(Au $au, AuProperty $root, Content $content) {
-        $this->buildProperty($au, 'journalTitle', $content->getProperty('journalTitle'), $root);
-        $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $au->getId() . ' ' . $content->getTitle() . ' ' . $content->getDeposit()->getTitle(), $root);
+    public function baseProperties(Au $au, AuProperty $root, Deposit $deposit) {
+        $this->buildProperty($au, 'journalTitle', $deposit->getProperty('journalTitle'), $root);
+        $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $au->getId() . ' ' . $deposit->getTitle(), $root);
         $this->buildProperty($au, 'plugin', $au->getPlugin()->getIdentifier(), $root);
-        $this->buildProperty($au, 'attributes.publisher', $content->getProperty('publisher'), $root);
+        $this->buildProperty($au, 'attributes.publisher', $deposit->getProperty('publisher'), $root);
     }
 
     /**
@@ -185,10 +185,10 @@ class AuPropertyGenerator {
      *   Archival unit to generate properties for.
      * @param AuProperty $root
      *   Root of the AU properties.
-     * @param Content $content
-     *   Content with the property values for the AU.
+     * @param Deposit $deposit
+     *   Deposit with the property values for the AU.
      */
-    public function configProperties(array $propertyNames, Au $au, AuProperty $root, Content $content) {
+    public function configProperties(array $propertyNames, Au $au, AuProperty $root, Deposit $deposit) {
         $manifestUrl = $this->router->generate('lockss_manifest', array(
             'plnId' => $au->getPln()->getId(),
             'ownerId' => $au->getContentProvider()->getContentOwner()->getId(),
@@ -205,11 +205,11 @@ class AuPropertyGenerator {
                     $value = $au->getContentProvider()->getPermissionUrl();
                     break;
                 case 'base_url':
-                    $p = parse_url($content->getUrl());
+                    $p = parse_url($deposit->getUrl());
                     $value = "{$p['scheme']}://{$p['host']}" . (isset($p['port']) ? ":{$p['port']}" : '');
                     break;
                 default:
-                    $value = $content->getProperty($name);
+                    $value = $deposit->getProperty($name);
                     break;
             }
             $grouping = $this->buildProperty($au, "param.{$index}", null, $root);
@@ -225,12 +225,12 @@ class AuPropertyGenerator {
      *   Archival unit to generate properties for.
      * @param AuProperty $root
      *   Root of the AU properties.
-     * @param Content $content
-     *   Content with the property values for the AU.
+     * @param Deposit $deposit
+     *   Deposit with the property values for the AU.
      */
-    public function contentProperties(Au $au, AuProperty $root, Content $content) {
-        foreach ($content->getProperties() as $name) {
-            $value = $content->getProperty($name);
+    public function contentProperties(Au $au, AuProperty $root, Deposit $deposit) {
+        foreach ($deposit->getProperties() as $name) {
+            $value = $deposit->getProperty($name);
             if (is_array($value)) {
                 $this->logger->warning("AU {$au->getId()} has unsupported property value list {$name}");
                 continue;
@@ -261,7 +261,7 @@ class AuPropertyGenerator {
             }
         }
         $rootName = str_replace('.', '', uniqid('lockssomatic', true));
-        $content = $au->getContent()->first();
+        $deposit = $au->getDeposits()->first();
         $root = $this->buildProperty($au, $rootName);
 
         // Definitional properties must go first.
@@ -269,9 +269,9 @@ class AuPropertyGenerator {
             $au->getPlugin()->getDefinitionalPropertyNames(), $au->getPlugin()->getNonDefinitionalProperties()
         );
 
-        $this->baseProperties($au, $root, $content);
-        $this->configProperties($propertyNames, $au, $root, $content);
-        $this->contentProperties($au, $root, $content);
+        $this->baseProperties($au, $root, $deposit);
+        $this->configProperties($propertyNames, $au, $root, $deposit);
+        $this->contentProperties($au, $root, $deposit);
     }
 
 }

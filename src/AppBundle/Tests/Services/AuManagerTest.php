@@ -9,10 +9,10 @@
 
 namespace AppBundle\Tests\Services;
 
-use AppBundle\DataFixtures\ORM\LoadContent;
+use AppBundle\DataFixtures\ORM\LoadDeposit;
 use AppBundle\Entity\Au;
-use AppBundle\Entity\Content;
 use AppBundle\Entity\ContentProvider;
+use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Plugin;
 use AppBundle\Repository\AuRepository;
 use AppBundle\Services\AuManager;
@@ -35,7 +35,7 @@ class AuManagerTest extends BaseTestCase {
 
     protected function getFixtures() {
         return [
-            LoadContent::class
+            LoadDeposit::class
         ];
     }
 
@@ -51,7 +51,7 @@ class AuManagerTest extends BaseTestCase {
         $this->assertEquals(0, $this->manager->auSize($this->getReference('au.2')));
     }
 
-    public function testFromContent() {
+    public function testFromDeposit() {
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
         $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
@@ -62,16 +62,16 @@ class AuManagerTest extends BaseTestCase {
         ]));
         $provider = new ContentProvider();
         $provider->setPlugin($plugin);
-        $content = $this->createMock(Content::class);
-        $content->method('getContentProvider')->will($this->returnValue($provider));
-        $content->method('getPlugin')->will($this->returnValue($plugin));
-        $content->method('getProperty')->will($this->returnValueMap([
+        $deposit = $this->createMock(Deposit::class);
+        $deposit->method('getContentProvider')->will($this->returnValue($provider));
+        $deposit->method('getPlugin')->will($this->returnValue($plugin));
+        $deposit->method('getProperty')->will($this->returnValueMap([
             ['foo', 'Some complex title'],
             ['bar', 'other.property'],
             ['bax', 'property the third!'],
         ]));
 
-        $au = $this->manager->findOpenAu($content);
+        $au = $this->manager->findOpenAu($deposit);
         $this->assertInstanceOf(Au::class, $au);
         $this->assertEquals('ca|example|plugin&bax~property+the+third%21&foo~Some+complex+title', $au->getAuid());
     }
@@ -88,29 +88,29 @@ class AuManagerTest extends BaseTestCase {
         $provider = new ContentProvider();
         $provider->setPlugin($plugin);
 
-        $content1 = $this->createMock(Content::class);
-        $content1->method('getContentProvider')->will($this->returnValue($provider));
-        $content1->method('getPlugin')->will($this->returnValue($plugin));
-        $content1->method('getProperty')->will($this->returnValueMap([
+        $deposit1 = $this->createMock(Deposit::class);
+        $deposit1->method('getContentProvider')->will($this->returnValue($provider));
+        $deposit1->method('getPlugin')->will($this->returnValue($plugin));
+        $deposit1->method('getProperty')->will($this->returnValueMap([
             ['foo', 'Some complex title'],
             ['bar', 'different.property'],
             ['bax', 'property the third!'],
         ]));
 
-        $au1 = $this->manager->findOpenAu($content1);
+        $au1 = $this->manager->findOpenAu($deposit1);
         $this->assertInstanceOf(Au::class, $au1);
         $this->assertEquals('ca|example|plugin&bax~property+the+third%21&foo~Some+complex+title', $au1->getAuid());
 
-        $content2 = $this->createMock(Content::class);
-        $content2->method('getContentProvider')->will($this->returnValue($provider));
-        $content2->method('getPlugin')->will($this->returnValue($plugin));
-        $content2->method('getProperty')->will($this->returnValueMap([
+        $deposit2 = $this->createMock(Deposit::class);
+        $deposit2->method('getContentProvider')->will($this->returnValue($provider));
+        $deposit2->method('getPlugin')->will($this->returnValue($plugin));
+        $deposit2->method('getProperty')->will($this->returnValueMap([
             ['foo', 'Some complex title'],
             ['bar', 'other.property'],
             ['bax', 'property the third!'],
         ]));
 
-        $au2 = $this->manager->findOpenAu($content2);
+        $au2 = $this->manager->findOpenAu($deposit2);
         $this->assertInstanceOf(Au::class, $au1);
         $this->assertEquals('ca|example|plugin&bax~property+the+third%21&foo~Some+complex+title', $au2->getAuid());
 
@@ -129,29 +129,29 @@ class AuManagerTest extends BaseTestCase {
         $provider = new ContentProvider();
         $provider->setPlugin($plugin);
 
-        $content1 = $this->createMock(Content::class);
-        $content1->method('getContentProvider')->will($this->returnValue($provider));
-        $content1->method('getPlugin')->will($this->returnValue($plugin));
-        $content1->method('getProperty')->will($this->returnValueMap([
+        $deposit1 = $this->createMock(Deposit::class);
+        $deposit1->method('getContentProvider')->will($this->returnValue($provider));
+        $deposit1->method('getPlugin')->will($this->returnValue($plugin));
+        $deposit1->method('getProperty')->will($this->returnValueMap([
             ['foo', 'Some complex title'],
             ['bar', 'different.property'],
             ['bax', 'property the Billionth'],
         ]));
 
-        $au1 = $this->manager->findOpenAu($content1);
+        $au1 = $this->manager->findOpenAu($deposit1);
         $this->assertInstanceOf(Au::class, $au1);
         $this->assertEquals('ca|example|plugin&bax~property+the+Billionth&foo~Some+complex+title', $au1->getAuid());
 
-        $content2 = $this->createMock(Content::class);
-        $content2->method('getContentProvider')->will($this->returnValue($provider));
-        $content2->method('getPlugin')->will($this->returnValue($plugin));
-        $content2->method('getProperty')->will($this->returnValueMap([
+        $deposit2 = $this->createMock(Deposit::class);
+        $deposit2->method('getContentProvider')->will($this->returnValue($provider));
+        $deposit2->method('getPlugin')->will($this->returnValue($plugin));
+        $deposit2->method('getProperty')->will($this->returnValueMap([
             ['foo', 'Some complex title'],
             ['bar', 'other.property'],
             ['bax', 'property the third!'],
         ]));
 
-        $au2 = $this->manager->findOpenAu($content2);
+        $au2 = $this->manager->findOpenAu($deposit2);
         $this->assertInstanceOf(Au::class, $au1);
         $this->assertEquals('ca|example|plugin&bax~property+the+third%21&foo~Some+complex+title', $au2->getAuid());
 
@@ -175,15 +175,15 @@ class AuManagerTest extends BaseTestCase {
         $provider->setPlugin($plugin);
         $provider->setMaxAuSize(600);
 
-        $content = $this->createMock(Content::class);
-        $content->method('getSize')->willReturn(400);
-        $content->method('getContentProvider')->will($this->returnValue($provider));
-        $content->method('getPlugin')->will($this->returnValue($plugin));
-        $content->method('getProperty')->will($this->returnValueMap([
+        $deposit = $this->createMock(Deposit::class);
+        $deposit->method('getSize')->willReturn(400);
+        $deposit->method('getContentProvider')->will($this->returnValue($provider));
+        $deposit->method('getPlugin')->will($this->returnValue($plugin));
+        $deposit->method('getProperty')->will($this->returnValueMap([
             ['foo', 'bar'],
         ]));
 
-        $foundAu = $this->manager->findOpenAu($content);
+        $foundAu = $this->manager->findOpenAu($deposit);
         $this->assertFalse($au->isOpen());
         $this->assertNotEquals($au, $foundAu);
     }

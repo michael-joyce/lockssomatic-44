@@ -12,10 +12,9 @@ namespace AppBundle\Tests\Services;
 use AppBundle\DataFixtures\ORM\LoadDeposit;
 use AppBundle\Entity\Au;
 use AppBundle\Entity\AuProperty;
-use AppBundle\Entity\Content;
+use AppBundle\Entity\Deposit;
 use AppBundle\Entity\ContentOwner;
 use AppBundle\Entity\ContentProvider;
-use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Pln;
 use AppBundle\Entity\Plugin;
 use AppBundle\Entity\PluginProperty;
@@ -218,44 +217,39 @@ class AuPropertyGeneratorTest extends BaseTestCase {
     public function buildContentItems(Au $au) {
         $deposit = $this->em->find(Deposit::class, 1);
         for ($i = 0; $i < 10; $i++) {
-            $content = new Content();
-            $content->setUrl("http://example.com/path/{$i}");
-            $content->setTitle("Item {$i}");
-            $content->setDateDeposited(new DateTime());
+            $deposit = new Deposit();
+            $deposit->setUrl("http://example.com/path/{$i}");
+            $deposit->setTitle("Item {$i}");
 
             // definitional
-            $content->setProperty('base_url', 'http://example.com/path');
-            $content->setProperty('container_number', 1);
-            $content->setProperty('permission_url', "http://example.com/permission/");
-            $content->setProperty('manifest_url', "http://example.com/manifest/");
+            $deposit->setProperty('base_url', 'http://example.com/path');
+            $deposit->setProperty('container_number', 1);
+            $deposit->setProperty('permission_url', "http://example.com/permission/");
+            $deposit->setProperty('manifest_url', "http://example.com/manifest/");
             //other properties.
-            $content->setProperty('journalTitle', 'Journal Title');
-            $content->setProperty('publisher', 'Journal Publisher');
+            $deposit->setProperty('journalTitle', 'Journal Title');
+            $deposit->setProperty('publisher', 'Journal Publisher');
 
             // deposit
-            $content->setDeposit($deposit);
-            $deposit->addContent($content);
-            $content->setAu($au);
-            $au->addContent($content);
-            $this->em->persist($content);
+            $deposit->setAu($au);
+            $au->addDeposit($deposit);
+            $this->em->persist($deposit);
         }
     }
 
     public function testBaseProperties() {
         $au = new Au();
         $root = new AuProperty();
-        $content = new Content();
-        $content->setTitle("Content");
-        $content->setProperty('journalTitle', "Fooooo");
         $deposit = new Deposit();
+        $deposit->setTitle("Deposit");
+        $deposit->setProperty('journalTitle', "Fooooo");
         $deposit->setTitle("Deposit Title");
-        $content->setDeposit($deposit);
         $plugin = new Plugin();
         $plugin->setIdentifier('com.example.plugin');
         $au->setPlugin($plugin);
-        $content->setProperty('publisher', 'Publishing House');
+        $deposit->setProperty('publisher', 'Publishing House');
 
-        $this->generator->baseProperties($au, $root, $content);
+        $this->generator->baseProperties($au, $root, $deposit);
         $this->assertEquals(4, count($au->getAuProperties()));
         $this->assertEquals('Fooooo', $au->getSimpleAuProperty('journalTitle'));
         $this->assertEquals('LOCKSSOMatic AU Content Deposit Title', $au->getSimpleAuProperty('title'));
@@ -289,13 +283,12 @@ class AuPropertyGeneratorTest extends BaseTestCase {
         $au->setPln($pln);
         $au->setContentProvider($provider);
 
-        $content = new Content();
-        $content->setUrl("http://example.com/path/item");
-        $content->setTitle("Item");
-        $content->setDateDeposited(new DateTime());
+        $deposit = new Deposit();
+        $deposit->setUrl("http://example.com/path/item");
+        $deposit->setTitle("Item");
 
         // definitional
-        $content->setProperty('container_number', 1);
+        $deposit->setProperty('container_number', 1);
 
         $propertyNames = [
             'base_url', 'container_number',
@@ -306,7 +299,7 @@ class AuPropertyGeneratorTest extends BaseTestCase {
         $root->setAu($au);
         $au->addAuProperty($root);
 
-        $this->generator->configProperties($propertyNames, $au, $root, $content);
+        $this->generator->configProperties($propertyNames, $au, $root, $deposit);
         // 1 for root, 3 for each property (one to group, one key, one value)
         $this->assertEquals(13, count($au->getAuProperties()));
         $this->assertEquals('http://example.com', $au->getAuPropertyValue('base_url'));
@@ -319,10 +312,10 @@ class AuPropertyGeneratorTest extends BaseTestCase {
         $au = new Au();
         $root = new AuProperty();
         $au->addAuProperty($root);
-        $content = new Content();
-        $content->setProperty("foo", "barr");
-        $content->setProperty("spackle", "made from dust.");
-        $this->generator->contentProperties($au, $root, $content);
+        $deposit = new Deposit();
+        $deposit->setProperty("foo", "barr");
+        $deposit->setProperty("spackle", "made from dust.");
+        $this->generator->contentProperties($au, $root, $deposit);
         $this->assertEquals(3, count($au->getAuProperties()));
         $this->assertEquals('barr', $au->getSimpleAuProperty('attributes.pkppln.foo'));
         $this->assertEquals('made from dust.', $au->getSimpleAuProperty('attributes.pkppln.spackle'));

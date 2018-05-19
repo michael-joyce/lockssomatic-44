@@ -10,13 +10,11 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Content;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Plugin;
 use AppBundle\Services\AuIdGenerator;
 use AppBundle\Services\AuManager;
-use AppBundle\Services\ContentBuilder;
 use AppBundle\Services\DepositBuilder;
 use AppBundle\Utilities\Namespaces;
 use Doctrine\ORM\EntityManagerInterface;
@@ -114,24 +112,6 @@ class SwordController extends Controller {
             throw new NotFoundHttpException("Content provider not found.", null, Response::HTTP_NOT_FOUND);
         }
         return $provider;
-    }
-
-    /**
-     * Get a content item.
-     *
-     * @param Deposit $deposit
-     *   Deposit containing the content.
-     * @param string $url
-     *   URL identifying the content.
-     *
-     * @return Content|null
-     *   The content matching the deposit and URL.
-     */
-    private function getContent(Deposit $deposit, $url) {
-        return $this->getDoctrine()->getRepository(Content::class)->findOneBy(array(
-                    'deposit' => $deposit,
-                    'url' => trim($url),
-        ));
     }
 
     /**
@@ -276,8 +256,6 @@ class SwordController extends Controller {
      *   Entity manager for the database.
      * @param DepositBuilder $depositBuilder
      *   Dependency injected deposit builder.
-     * @param ContentBuilder $contentBuilder
-     *   Dependency injected content builder.
      * @param AuManager $auManager
      *   Dependency injected archival unit builder.
      * @param AuIdGenerator $idGenerator
@@ -296,15 +274,11 @@ class SwordController extends Controller {
      * @return Response
      *   The HTTP response containing a location header and the SWORD body.
      */
-    public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, ContentBuilder $contentBuilder, AuManager $auManager, AuIdGenerator $idGenerator) {
+    public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, AuManager $auManager, AuIdGenerator $idGenerator) {
         $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);
         $deposit = $depositBuilder->fromXml($atom, $provider);
-        foreach ($atom->xpath('lom:content') as $node) {
-            $content = $contentBuilder->fromXml($node);
-            $content->setDeposit($deposit);
-            $au = $auManager->findOpenAu($content);
-        }
+        $au = $auManager->findOpenAu($deposit);
         $em->flush();
         $response = $this->renderDepositReceipt($provider, $deposit);
         $response->headers->set('Location', $this->generateUrl('sword_reciept', array(
@@ -347,13 +321,8 @@ class SwordController extends Controller {
         $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);
         foreach ($atom->xpath('lom:content') as $node) {
-            $content = $this->getContent($deposit, (string) $node);
-            if (!$content) {
-                $this->logger->warning("Cannot edit content for deposit {$deposit->getId()} with URL " . $node);
-                continue;
-            }
-            $content->setChecksumType($node['checksumType']);
-            $content->setChecksumValue($node['checksumValue']);
+            $deposit->setChecksumType($node['checksumType']);
+            $deposit->setChecksumValue($node['checksumValue']);
         }
         $em->flush();
         $response = $this->renderDepositReceipt($provider, $deposit);

@@ -10,7 +10,7 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Au;
-use AppBundle\Entity\Content;
+use AppBundle\Entity\Deposit;
 use AppBundle\Utilities\Encoder;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -39,9 +39,9 @@ class AuIdGenerator {
         $this->logger = $logger;
     }
 
-    public function fromContent(Content $content, $lockssAuid = true) {
+    public function fromDeposit(Deposit $deposit, $lockssAuid = true) {
         $encoder = new Encoder();
-        $plugin = $content->getPlugin();
+        $plugin = $deposit->getPlugin();
         $pluginId = $plugin->getIdentifier();
         $pluginKey = str_replace('.', '|', $pluginId);
         $auKey = '';
@@ -53,9 +53,9 @@ class AuIdGenerator {
             }
             $value = null;
             if($lockssAuid) {
-                $value = $encoder->encode($content->getAu()->getAuPropertyValue($name));
+                $value = $encoder->encode($deposit->getAu()->getAuPropertyValue($name));
             } else {
-                $value = $encoder->encode($content->getProperty($name));
+                $value = $encoder->encode($deposit->getProperty($name));
             }
             if (!$value) {
                 throw new Exception("Cannot generate AUID without definitional property {$name}.");
@@ -80,14 +80,14 @@ class AuIdGenerator {
      *   The generated AUID.
      */
     public function fromAu(Au $au, $lockssAuid = true) {
-        if($au->getContent()->count() === 0) {
+        if($au->getDeposits()->count() === 0) {
             return;
         }
         $plugin = $au->getPlugin();
         if ($plugin === null) {
             return null;
         }
-        return $this->fromContent($au->getContent()->first(), $lockssAuid);
+        return $this->fromDeposit($au->getDeposit()->first(), $lockssAuid);
     }
 
 }

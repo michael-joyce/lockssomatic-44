@@ -9,10 +9,10 @@
 
 namespace AppBundle\Services;
 
-use Exception;
-use AppBundle\Entity\Content;
+use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Pln;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Templating\EngineInterface;
 
@@ -111,7 +111,7 @@ class ConfigExporter {
      * @param Pln $pln
      */
     public function exportManifests(Pln $pln) {
-        $repo = $this->em->getRepository(Content::class);
+        $repo = $this->em->getRepository(Deposit::class);
         foreach ($pln->getAus() as $au) {
             $manifestPath = $this->fp->getManifestPath($au);
             $iterator = $repo->auQuery($au);
