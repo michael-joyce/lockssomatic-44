@@ -39,6 +39,18 @@ class AuIdGenerator {
         $this->logger = $logger;
     }
 
+    /**
+     * Generate an AUID from a deposit.
+     *
+     * @param Deposit $deposit
+     *   Deposit for the AUID.
+     * @param bool $lockssAuid
+     *   If true, generate a LOCKSS AUID including the LOM-generated properties.
+     * @return string
+     *   The generated AUID.
+     * @throws Exception
+     *   If the deposit is missing a required property, an exception is thrown.
+     */
     public function fromDeposit(Deposit $deposit, $lockssAuid = true) {
         $encoder = new Encoder();
         $plugin = $deposit->getPlugin();
@@ -78,16 +90,19 @@ class AuIdGenerator {
      *
      * @return string|null
      *   The generated AUID.
+     *
+     * @throws Exception
+     *   If the AU is missing a required property.
      */
     public function fromAu(Au $au, $lockssAuid = true) {
         if($au->getDeposits()->count() === 0) {
-            return;
+            return null;
         }
         $plugin = $au->getPlugin();
         if ($plugin === null) {
             return null;
         }
-        return $this->fromDeposit($au->getDeposit()->first(), $lockssAuid);
+        return $this->fromDeposit($au->getDeposits()->first(), $lockssAuid);
     }
 
 }

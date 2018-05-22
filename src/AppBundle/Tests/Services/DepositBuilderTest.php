@@ -75,6 +75,11 @@ class DepositBuilderTest extends BaseTestCase {
     
     private function getArray() {
         return [
+            'size' => 300,
+            'type' => 'add',
+            'url' => 'http://example.com/path/to/deposit.zip',
+            'checksum type' => 'sha1',
+            'checksum value' => 'abc123',
             'uuid' => '771E96EC-5486-4E34-A1F6-AB113AFB642D',
             'title' => 'Deposit 1',
             'summary' => 'Judgement',

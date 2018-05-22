@@ -73,7 +73,6 @@ class DepositBuilder {
         $deposit->setUrl(trim((string) $content));
         $deposit->setProperty('journalTitle', (string) $content->attributes('pkp', true)->journalTitle);
         $deposit->setProperty('publisher', (string) $content->attributes('pkp', true)->publisher);
-        $deposit->setTitle((string) $content->attributes('pkp', true)->journalTitle);
 
         foreach ($content->xpath('lom:property') as $property) {
             $deposit->setProperty((string) $property->attributes()->name, (string) $property->attributes()->value);
@@ -100,7 +99,6 @@ class DepositBuilder {
         $deposit->setTitle($data['title']);
         $deposit->setSummary($data['summary']);
         $deposit->setContentProvider($provider);
-        $deposit->setDateDeposited();
 
         if (array_key_exists('uuid', $data) && $data['uuid'] !== null && $data['uuid'] !== '') {
             $deposit->setUuid($data['uuid']);
