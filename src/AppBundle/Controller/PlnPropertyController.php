@@ -11,11 +11,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Pln;
 use AppBundle\Form\PlnPropertyType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -72,12 +67,12 @@ class PlnPropertyController extends Controller {
             $data = $form->getData();
             $name = $data['name'];
             $values = $data['values'];
-            if(count($values) > 1) {
+            if (count($values) > 1) {
                 $pln->setProperty($name, $values);
-            } else if(count($values) === 1) {
+            } elseif (count($values) === 1) {
                 $pln->setProperty($name, $values[0]);
             } else {
-                // count(values) === 0
+                // count(values) === 0.
                 $pln->removeProperty($name);
             }
             $this->getDoctrine()->getManager()->flush();
@@ -120,12 +115,12 @@ class PlnPropertyController extends Controller {
             $data = $form->getData();
             $name = $data['name'];
             $values = $data['values'];
-            if(count($values) > 1) {
+            if (count($values) > 1) {
                 $pln->setProperty($name, $values);
-            } else if(count($values) === 1) {
+            } elseif (count($values) === 1) {
                 $pln->setProperty($name, $values[0]);
             } else {
-                // count(values) === 0
+                // count(values) === 0.
                 $pln->removeProperty($name);
             }
             $this->getDoctrine()->getManager()->flush();

@@ -12,13 +12,15 @@ namespace AppBundle\Command\Lockss;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Pln;
 use AppBundle\Services\LockssClient;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ *
+ */
 class DepositStatusCommand extends ContainerAwareCommand {
 
     /**
@@ -31,6 +33,9 @@ class DepositStatusCommand extends ContainerAwareCommand {
      */
     private $client;
 
+    /**
+     *
+     */
     public function __construct(EntityManagerInterface $em, LockssClient $client) {
         parent::__construct();
         $this->client = $client;
@@ -52,9 +57,10 @@ class DepositStatusCommand extends ContainerAwareCommand {
     /**
      * Get a list of deposits to check.
      *
-     * @param boolean $all
+     * @param bool $all
      * @param int $limit
      * @param int $plnId
+     *
      * @return Deposit[]|Collection
      */
     protected function getDeposits($all, $limit, $plnId) {
@@ -75,7 +81,9 @@ class DepositStatusCommand extends ContainerAwareCommand {
         return $qb->getQuery()->getResult();
     }
 
-
+    /**
+     *
+     */
     public function execute(InputInterface $input, OutputInterface $output) {
         $all = $input->getOption('all');
         $plnId = $input->getOption('pln');
@@ -83,9 +91,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
         $limit = $input->getOption('limit');
 
         $deposits = $this->getDeposits($all, $limit, $plnId);
-        $output->writeln('Checking deposit status for '.count($deposits).' deposits.');
-
-
+        $output->writeln('Checking deposit status for ' . count($deposits) . ' deposits.');
     }
 
 }

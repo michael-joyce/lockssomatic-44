@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  *  This file is licensed under the MIT License version 3 or
  *  later. See the LICENSE file for details.
@@ -20,10 +19,6 @@ use AppBundle\Utilities\Namespaces;
 use Doctrine\ORM\EntityManagerInterface;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -142,20 +137,23 @@ class SwordController extends Controller {
         );
     }
 
+    /**
+     *
+     */
     private function precheckContentProperties(SimpleXMLElement $content, Plugin $plugin) {
-        foreach($plugin->getDefinitionalPropertyNames() as $name) {
-            if(in_array($name, $plugin->getGeneratedParams())) {
+        foreach ($plugin->getDefinitionalPropertyNames() as $name) {
+            if (in_array($name, $plugin->getGeneratedParams())) {
                 continue;
             }
             $nodes = $content->xpath("lom:property[@name='{$name}']");
-            if(count($nodes) === 0) {
+            if (count($nodes) === 0) {
                 throw new BadRequestHttpException("{$name} is a required property.");
             }
-            if(count($nodes) > 1) {
+            if (count($nodes) > 1) {
                 throw new BadRequestHttpException("{$name} cannot be repeated.");
             }
-            $value = (string)($nodes[0]->attributes()->value);
-            if(  ! $value) {
+            $value = (string) ($nodes[0]->attributes()->value);
+            if (!$value) {
                 throw new BadRequestHttpException("{$name} must have a value.");
             }
         }
@@ -212,8 +210,8 @@ class SwordController extends Controller {
      */
     private function renderDepositReceipt(ContentProvider $provider, Deposit $deposit) {
         $response = $this->render('sword/receipt.xml.twig', array(
-            'provider' => $provider,
-            'deposit' => $deposit,
+        'provider' => $provider,
+        'deposit' => $deposit,
         ));
         $response->headers->set('Content-Type', 'text/xml');
 
@@ -282,8 +280,8 @@ class SwordController extends Controller {
         $em->flush();
         $response = $this->renderDepositReceipt($provider, $deposit);
         $response->headers->set('Location', $this->generateUrl('sword_reciept', array(
-                    'providerUuid' => $provider->getUuid(),
-                    'depositUuid' => $deposit->getUuid(),
+                'providerUuid' => $provider->getUuid(),
+                'depositUuid' => $deposit->getUuid(),
         ), UrlGeneratorInterface::ABSOLUTE_URL));
         $response->setStatusCode(Response::HTTP_CREATED);
         return $response;
@@ -327,8 +325,8 @@ class SwordController extends Controller {
         $em->flush();
         $response = $this->renderDepositReceipt($provider, $deposit);
         $response->headers->set('Location', $this->generateUrl('sword_reciept', array(
-                    'providerUuid' => $provider->getUuid(),
-                    'depositUuid' => $deposit->getUuid(),
+                'providerUuid' => $provider->getUuid(),
+                'depositUuid' => $deposit->getUuid(),
         ), UrlGeneratorInterface::ABSOLUTE_URL));
         $response->setStatusCode(Response::HTTP_OK);
         return $response;
@@ -365,8 +363,8 @@ class SwordController extends Controller {
      */
     public function viewDepositAction(Request $request, ContentProvider $provider, Deposit $deposit) {
         return array(
-            'provider' => $provider,
-            'deposit' => $deposit,
+        'provider' => $provider,
+        'deposit' => $deposit,
         );
     }
 
@@ -410,10 +408,10 @@ class SwordController extends Controller {
             $stateDescription = 'LOCKSS boxes have not completed harvesting the content.';
         }
         return array(
-            'state' => $state,
-            'stateDescription' => $stateDescription,
-            'provider' => $provider,
-            'deposit' => $deposit,
+        'state' => $state,
+        'stateDescription' => $stateDescription,
+        'provider' => $provider,
+        'deposit' => $deposit,
         );
     }
 
@@ -445,14 +443,23 @@ class SwordController extends Controller {
      */
     public function receiptAction(Request $request, ContentProvider $provider, Deposit $deposit) {
         return array(
-            'provider' => $provider,
-            'deposit' => $deposit,
+        'provider' => $provider,
+        'deposit' => $deposit,
         );
     }
 
     /**
-     * Attempt to fetch the original deposit from LOCKSS, store it to
-     * the file system in a temp file, and then serve it to the user agent.
+     * Attempt to fetch the original deposit from LOCKSS,.
+     *
+     * Stores it to the file system in a temp file, and then serve it to the
+     * user agent.
+     *
+     * @param ContentProvider $provider
+     *   Provider that made the deposit.
+     * @param Deposit $deposit
+     *   Deposit for the statement.
+     * @param string $filename
+     *   Original file name deposit.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/{filename}/original", name="original_deposit", requirements={
      *      "providerUuid": ".{36}",
@@ -464,6 +471,5 @@ class SwordController extends Controller {
      */
     public function originalDepositAction(ContentProvider $provider, Deposit $deposit, $filename) {
     }
-
 
 }
