@@ -46,6 +46,13 @@ class AuManager {
     private $auRepository;
 
     /**
+     * URL generator.
+     *
+     * @var RouterInterface
+     */
+    private $router;
+    
+    /**
      * Build the builder.
      *
      * @param EntityManagerInterface $em
