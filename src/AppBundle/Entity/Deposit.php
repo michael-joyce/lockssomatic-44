@@ -394,10 +394,7 @@ class Deposit extends AbstractEntity {
         if ($this->au && $this->au->getPlugin()) {
             return $this->au->getPlugin();
         }
-        if ($this->deposit && $this->deposit->getContentProvider() && $this->deposit->getContentProvider()->getPlugin()) {
-            return $this->deposit->getContentProvider()->getPlugin();
-        }
-        return null;
+        return $this->contentProvider->getPlugin();
     }
 
     /**

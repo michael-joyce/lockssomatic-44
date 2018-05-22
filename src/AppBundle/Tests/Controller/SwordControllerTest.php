@@ -141,7 +141,7 @@ class SwordControllerTest extends BaseTestCase {
         );
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertContains('Permission host does not match content host.', $response->getContent());
+        $this->assertContains('Permission host for', $response->getContent());
     }
 
     public function testCreateLargeDeposit() {
