@@ -487,7 +487,7 @@ class AuManager {
         if ($plugin === null) {
             return null;
         }
-        return $this->fromDeposit($au->getDeposits()->first(), $lockssAuid);
+        return $this->generateAuidFromDeposit($au->getDeposits()->first(), $lockssAuid);
     }
 
 
