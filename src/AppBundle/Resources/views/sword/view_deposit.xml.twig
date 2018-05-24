@@ -1,5 +1,5 @@
-<entry xmlns="http://www.w3.org/2005/Atom" 
-       xmlns:sword="http://purl.org/net/sword/" 
+<entry xmlns="http://www.w3.org/2005/Atom"
+       xmlns:sword="http://purl.org/net/sword/"
        xmlns:lom="http://lockssomatic.info/SWORD2">
     <sword:treatment>
         Content URLs deposited to {{ deposit.contentProvider.pln }}, collection {{ provider.name }}.
@@ -10,7 +10,5 @@
     <title>{{ deposit.title }}</title>
     <id>urn:uuid:{{ deposit.uuid }}</id>
     <updated>{{ deposit.dateDeposited|date('Y-m-d H:i:s') }}</updated>
-    {% for content in deposit.content %}
-        <lom:content size="{{ content.size }}" checksumType=" {{ content.checksumType }}" checksumValue="{{ content.checksumValue }}">{{ content.url }}</lom:content>
-    {% endfor %}
+    <lom:content size="{{ deposit.size }}" checksumType=" {{ deposit.checksumType }}" checksumValue="{{ deposit.checksumValue }}">{{ deposit.url }}</lom:content>
 </entry>

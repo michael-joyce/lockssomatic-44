@@ -17,9 +17,7 @@
         <sword:depositedOn>{{ deposit.dateDeposited|date }}</sword:depositedOn>
         <lom:agreement>{{ deposit.agreement }}</lom:agreement>
 
-        {% for content in deposit.content %}
-            <sword:originalDeposit href="{{ url('original_deposit', {'providerUuid': deposit.contentprovider.uuid, 'depositUuid': deposit.uuid, 'filename': content.filename}) }}" />
-        {% endfor %}
-        
+        <sword:originalDeposit href="{{ url('original_deposit', {'providerUuid': deposit.contentprovider.uuid, 'depositUuid': deposit.uuid, 'filename': deposit.filename}) }}" />
+
     </atom:entry>
 </atom:feed>

@@ -9,37 +9,37 @@
 
 namespace AppBundle\Command\Lockss;
 
-use AppBundle\Entity\Content;
-use AppBundle\Services\LockssClient;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Entity\Deposit;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Description of DaemonStatusCommand
+ * Fetch and print hashes from the network.
  */
 class HashCommand extends ContainerAwareCommand {
 
     /**
-     * @var EntityManagerInterface
+     * Doctrine instance.
+     *
+     * @var \Doctrine\ORM\EntityManagerInterface
      */
     private $em;
-    
+
     /**
-     * @var LockssClient
+     * LOCKSS client service.
+     *
+     * @var \AppBundle\Services\LockssClient
      */
     private $client;
 
-    public function __construct(EntityManagerInterface $em, LockssClient $client) {
-        parent::__construct();
-        $this->client = $client;
-        $this->em = $em;
-    }
-
     /**
-     * Configure the command.
+     * Build the command.
+     *
+     * @param EntityManagerInterface $em
+     *   Dependency injected doctrine instance.
+     * @param LockssClient $client
+     *   Dependency injected LOCKSS client.
      */
     protected function configure() {
         $this->setName('lockss:content:hash');
@@ -47,22 +47,27 @@ class HashCommand extends ContainerAwareCommand {
     }
 
     /**
+     * Determine which deposits to hash.
+     *
      * @return Content[]|Collection
      */
-    protected function getContents() {
-        $contents = $this->em->getRepository(Content::class)->findAll();
+    protected function getDeposits() {
+        $contents = $this->em->getRepository(Deposit::class)->findAll();
         return $contents;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function execute(InputInterface $input, OutputInterface $output) {
-        $contents = $this->getContents();
-        foreach($contents as $content) {
-            $output->writeln($content->getUrl());
-            foreach($content->getAu()->getPln()->getBoxes() as $box) {
+        $deposits = $this->getDeposits();
+        foreach ($deposits as $deposit) {
+            $output->writeln($deposit->getUrl());
+            foreach ($deposit->getAu()->getPln()->getBoxes() as $box) {
                 $output->writeln($box->getIpAddress());
-                dump($this->client->hash($box, $content));
-                if($this->client->hasErrors()) {
-                    foreach($this->client->getErrors() as $error) {
+                dump($this->client->hash($box, $deposit));
+                if ($this->client->hasErrors()) {
+                    foreach ($this->client->getErrors() as $error) {
                         $output->writeln($error);
                     }
                     $output->writeln('');
@@ -70,6 +75,6 @@ class HashCommand extends ContainerAwareCommand {
                 }
             }
         }
-    }        
+    }
 
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  *  This file is licensed under the MIT License version 3 or
  *  later. See the LICENSE file for details.
@@ -10,13 +9,10 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Content;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Plugin;
-use AppBundle\Services\AuIdGenerator;
 use AppBundle\Services\AuManager;
-use AppBundle\Services\ContentBuilder;
 use AppBundle\Services\DepositBuilder;
 use AppBundle\Utilities\Namespaces;
 use Doctrine\ORM\EntityManagerInterface;
@@ -117,24 +113,6 @@ class SwordController extends Controller {
     }
 
     /**
-     * Get a content item.
-     *
-     * @param Deposit $deposit
-     *   Deposit containing the content.
-     * @param string $url
-     *   URL identifying the content.
-     *
-     * @return Content|null
-     *   The content matching the deposit and URL.
-     */
-    private function getContent(Deposit $deposit, $url) {
-        return $this->getDoctrine()->getRepository(Content::class)->findOneBy(array(
-                    'deposit' => $deposit,
-                    'url' => trim($url),
-        ));
-    }
-
-    /**
      * SWORD service document.
      *
      * @param Request $request
@@ -162,20 +140,23 @@ class SwordController extends Controller {
         );
     }
 
+    /**
+     *
+     */
     private function precheckContentProperties(SimpleXMLElement $content, Plugin $plugin) {
-        foreach($plugin->getDefinitionalPropertyNames() as $name) {
-            if(in_array($name, $plugin->getGeneratedParams())) {
+        foreach ($plugin->getDefinitionalPropertyNames() as $name) {
+            if (in_array($name, $plugin->getGeneratedParams())) {
                 continue;
             }
             $nodes = $content->xpath("lom:property[@name='{$name}']");
-            if(count($nodes) === 0) {
+            if (count($nodes) === 0) {
                 throw new BadRequestHttpException("{$name} is a required property.");
             }
-            if(count($nodes) > 1) {
+            if (count($nodes) > 1) {
                 throw new BadRequestHttpException("{$name} cannot be repeated.");
             }
-            $value = (string)($nodes[0]->attributes()->value);
-            if(  ! $value) {
+            $value = (string) ($nodes[0]->attributes()->value);
+            if (!$value) {
                 throw new BadRequestHttpException("{$name} must have a value.");
             }
         }
@@ -235,8 +216,8 @@ class SwordController extends Controller {
      */
     private function renderDepositReceipt(ContentProvider $provider, Deposit $deposit) {
         $response = $this->render('sword/receipt.xml.twig', array(
-            'provider' => $provider,
-            'deposit' => $deposit,
+        'provider' => $provider,
+        'deposit' => $deposit,
         ));
         $response->headers->set('Content-Type', 'text/xml');
 
@@ -279,12 +260,8 @@ class SwordController extends Controller {
      *   Entity manager for the database.
      * @param DepositBuilder $depositBuilder
      *   Dependency injected deposit builder.
-     * @param ContentBuilder $contentBuilder
-     *   Dependency injected content builder.
      * @param AuManager $auManager
      *   Dependency injected archival unit builder.
-     * @param AuIdGenerator $idGenerator
-     *   Dependency injected AUID generator.
      *
      * @Route("/col-iri/{providerUuid}", name="sword_collection", requirements={
      *      "providerUuid": ".{36}"
@@ -299,20 +276,16 @@ class SwordController extends Controller {
      * @return Response
      *   The HTTP response containing a location header and the SWORD body.
      */
-    public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, ContentBuilder $contentBuilder, AuManager $auManager, AuIdGenerator $idGenerator) {
+    public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, AuManager $auManager) {
         $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);
         $deposit = $depositBuilder->fromXml($atom, $provider);
-        foreach ($atom->xpath('lom:content') as $node) {
-            $content = $contentBuilder->fromXml($node);
-            $content->setDeposit($deposit);
-            $au = $auManager->findOpenAu($content);
-        }
+        $au = $auManager->findOpenAu($deposit);
         $em->flush();
         $response = $this->renderDepositReceipt($provider, $deposit);
         $response->headers->set('Location', $this->generateUrl('sword_reciept', array(
-                    'providerUuid' => $provider->getUuid(),
-                    'depositUuid' => $deposit->getUuid(),
+                'providerUuid' => $provider->getUuid(),
+                'depositUuid' => $deposit->getUuid(),
         ), UrlGeneratorInterface::ABSOLUTE_URL));
         $response->setStatusCode(Response::HTTP_CREATED);
         return $response;
@@ -350,19 +323,14 @@ class SwordController extends Controller {
         $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);
         foreach ($atom->xpath('lom:content') as $node) {
-            $content = $this->getContent($deposit, (string) $node);
-            if (!$content) {
-                $this->logger->warning("Cannot edit content for deposit {$deposit->getId()} with URL " . $node);
-                continue;
-            }
-            $content->setChecksumType($node['checksumType']);
-            $content->setChecksumValue($node['checksumValue']);
+            $deposit->setChecksumType($node['checksumType']);
+            $deposit->setChecksumValue($node['checksumValue']);
         }
         $em->flush();
         $response = $this->renderDepositReceipt($provider, $deposit);
         $response->headers->set('Location', $this->generateUrl('sword_reciept', array(
-                    'providerUuid' => $provider->getUuid(),
-                    'depositUuid' => $deposit->getUuid(),
+                'providerUuid' => $provider->getUuid(),
+                'depositUuid' => $deposit->getUuid(),
         ), UrlGeneratorInterface::ABSOLUTE_URL));
         $response->setStatusCode(Response::HTTP_OK);
         return $response;
@@ -399,8 +367,8 @@ class SwordController extends Controller {
      */
     public function viewDepositAction(Request $request, ContentProvider $provider, Deposit $deposit) {
         return array(
-            'provider' => $provider,
-            'deposit' => $deposit,
+        'provider' => $provider,
+        'deposit' => $deposit,
         );
     }
 
@@ -444,10 +412,10 @@ class SwordController extends Controller {
             $stateDescription = 'LOCKSS boxes have not completed harvesting the content.';
         }
         return array(
-            'state' => $state,
-            'stateDescription' => $stateDescription,
-            'provider' => $provider,
-            'deposit' => $deposit,
+        'state' => $state,
+        'stateDescription' => $stateDescription,
+        'provider' => $provider,
+        'deposit' => $deposit,
         );
     }
 
@@ -479,14 +447,23 @@ class SwordController extends Controller {
      */
     public function receiptAction(Request $request, ContentProvider $provider, Deposit $deposit) {
         return array(
-            'provider' => $provider,
-            'deposit' => $deposit,
+        'provider' => $provider,
+        'deposit' => $deposit,
         );
     }
 
     /**
-     * Attempt to fetch the original deposit from LOCKSS, store it to
-     * the file system in a temp file, and then serve it to the user agent.
+     * Attempt to fetch the original deposit from LOCKSS,.
+     *
+     * Stores it to the file system in a temp file, and then serve it to the
+     * user agent.
+     *
+     * @param ContentProvider $provider
+     *   Provider that made the deposit.
+     * @param Deposit $deposit
+     *   Deposit for the statement.
+     * @param string $filename
+     *   Original file name deposit.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/{filename}/original", name="original_deposit", requirements={
      *      "providerUuid": ".{36}",
@@ -498,6 +475,5 @@ class SwordController extends Controller {
      */
     public function originalDepositAction(ContentProvider $provider, Deposit $deposit, $filename) {
     }
-
 
 }

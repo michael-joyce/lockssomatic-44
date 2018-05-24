@@ -29,11 +29,11 @@ class Au extends AbstractEntity {
      * @ORM\Column(name="open", type="boolean", nullable=false)
      */
     private $open;
-    
+
     /**
      * @ORM\Column(name="auid", type="string", length=512, nullable=false)
      *
-     * @var type 
+     * @var type
      */
     private $auid;
 
@@ -103,11 +103,11 @@ class Au extends AbstractEntity {
      *
      * This is a LOCKSSOMatic-specific field.
      *
-     * @var Content[]|Collection
+     * @var Deposits[]|Collection
      *
-     * @ORM\OneToMany(targetEntity="Content", mappedBy="au")
+     * @ORM\OneToMany(targetEntity="Deposit", mappedBy="au")
      */
-    private $content;
+    private $deposits;
 
     /**
      * Build the AU.
@@ -117,7 +117,7 @@ class Au extends AbstractEntity {
         $this->open = true;
         $this->auProperties = new ArrayCollection();
         $this->auStatus = new ArrayCollection();
-        $this->content = new ArrayCollection();
+        $this->deposits = new ArrayCollection();
     }
 
     /**
@@ -281,7 +281,7 @@ class Au extends AbstractEntity {
     public function getAuProperties() {
         return $this->auProperties;
     }
-    
+
     public function hasAuProperties() {
         return ! $this->auProperties->isEmpty();
     }
@@ -371,35 +371,35 @@ class Au extends AbstractEntity {
     }
 
     /**
-     * Add content.
+     * Add deposit.
      *
-     * @param Content $content
+     * @param Deposit $deposit
      *
      * @return Au
      *   Returns $this.
      */
-    public function addContent(Content $content) {
-        $this->content[] = $content;
+    public function addDeposit(Deposit $deposit) {
+        $this->deposits[] = $deposit;
 
         return $this;
     }
 
     /**
-     * Remove content.
+     * Remove deposit.
      *
-     * @param Content $content
+     * @param Deposit $deposit
      */
-    public function removeContent(Content $content) {
-        $this->content->removeElement($content);
+    public function removeDeposit(Deposit $deposit) {
+        $this->deposits->removeElement($deposit);
     }
 
     /**
-     * Get content.
+     * Get deposits.
      *
      * @return Collection
      */
-    public function getContent() {
-        return $this->content;
+    public function getDeposits() {
+        return $this->deposits;
     }
 
     /**

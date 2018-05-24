@@ -18,5 +18,5 @@ use Doctrine\ORM\EntityRepository;
  * repository methods below.
  */
 class DepositRepository extends EntityRepository {
-    
+
 }

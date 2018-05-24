@@ -46,6 +46,10 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
 
+    AppBundle\Services\AuManager:
+        calls:
+            - { method: setLogger, arguments: ['@logger'] }
+
     AppBundle\Services\ConfigExporter:
         arguments:
             $ausPerTitleDb: '%lom.aus_per_titledb%'

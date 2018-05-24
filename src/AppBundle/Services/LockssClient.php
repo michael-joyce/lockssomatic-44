@@ -11,7 +11,6 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\Au;
 use AppBundle\Entity\Box;
-use AppBundle\Entity\Content;
 use BeSimple\SoapClient\SoapClient;
 use BeSimple\SoapCommon\Cache;
 use BeSimple\SoapCommon\Helper;
@@ -60,11 +59,15 @@ class LockssClient {
     /**
      * @var AuIdGenerator
      */
-    private $auIdGenerator;
+    private $auManager;
+
+    /**
+     * @var array
+     */
     private $errors;
 
-    public function __construct(AuIdGenerator $auIdGenerator) {
-        $this->auIdGenerator = $auIdGenerator;
+    public function __construct(AuManager $auManager) {
+        $this->auManager = $auManager;
         $this->errors = array();
     }
 
@@ -129,7 +132,7 @@ class LockssClient {
         if (!$this->isDaemonReady($box)) {
             return;
         }
-        $auid = $this->auIdGenerator->fromAu($au);
+        $auid = $this->auManager->fromAu($au);
         return $this->call($box, self::STATUS_SERVICE, 'getAuStatus', array(
                     'auId' => $auid,
         ));
@@ -139,7 +142,7 @@ class LockssClient {
         if (!$this->isDaemonReady($box)) {
             return;
         }
-        $auid = $this->auIdGenerator->fromAu($au);
+        $auid = $this->auManager->fromAu($au);
         return $this->call($box, self::STATUS_SERVICE, 'getAuUrls', array(
                     'auId' => $auid,
         ));
@@ -170,20 +173,20 @@ class LockssClient {
      * responding.
      *
      * @param Box $box
-     * @param Content $content
+     * @param Deposit $deposit
      * @return string|null
      */
-    public function hash(Box $box, Content $content) {
-        if( ! $this->isUrlCached($box, $content)) {
+    public function hash(Box $box, Deposit $deposit) {
+        if( ! $this->isUrlCached($box, $deposit)) {
             return;
         }
-        $auid = $this->auIdGenerator->fromAu($content->getAu(), true);
+        $auid = $this->auManager->fromAu($deposit->getAu(), true);
         $response = $this->call($box, self::HASHER_SERVICE, 'hash', array(
                     'hasherParams' => array(
                         'recordFilterStream' => true,
                         'hashType' => 'V3File',
-                        'algorithm' => $content->getChecksumType(),
-                        'url' => $content->getUrl(),
+                        'algorithm' => $deposit->getChecksumType(),
+                        'url' => $deposit->getUrl(),
                         'auId' => $auid,
                     ),
         ));
@@ -200,13 +203,13 @@ class LockssClient {
         return strtoupper($checksum);
     }
 
-    public function isUrlCached(Box $box, Content $content) {
+    public function isUrlCached(Box $box, Deposit $deposit) {
         if (!$this->isDaemonReady($box)) {
             return;
         }
-        $auid = $this->auIdGenerator->fromAu($content->getAu());
+        $auid = $this->auManager->fromAu($deposit->getAu());
         return $this->call($box, self::CONTENT_SERVICE, 'isUrlCached', array(
-                    'url' => $content->getUrl(),
+                    'url' => $deposit->getUrl(),
                     'auId' => $auid,
                         ), array(
                     'attachment_type' => Helper::ATTACHMENTS_TYPE_MTOM,
@@ -221,10 +224,10 @@ class LockssClient {
      * file.
      *
      * @param Box $box
-     * @param Content $content
+     * @param Deposit $deposit
      * @return resource
      */
-    public function fetchFile(Box $box, Content $content) {
+    public function fetchFile(Box $box, Deposit $deposit) {
         if (!$this->isDaemonReady($box)) {
             return;
         }
@@ -234,7 +237,7 @@ class LockssClient {
         $fh = tmpfile();
         $options = array_merge(self::GUZZLE_OPTS, array(
             'query' => [
-                'url' => $content->getUrl()
+                'url' => $deposit->getUrl()
             ],
         ));
 

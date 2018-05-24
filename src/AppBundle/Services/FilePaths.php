@@ -10,11 +10,10 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Au;
-use AppBundle\Entity\Content;
 use AppBundle\Entity\ContentProvider;
+use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Pln;
 use AppBundle\Entity\Plugin;
-use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -102,18 +101,18 @@ class FilePaths {
      * LOCKSS boxes do not download content from LOM. This is for the staging
      * server to fetch content from the PLN.
      *
-     * @param Content $content
-     *   The content in question.
+     * @param Deposit $deposit
+     *   The deposit in question.
      *
      * @return string
      *   Path to the content in the file system.
      */
-    public function getDownloadContentPath(Content $content) {
+    public function getDownloadContentPath(Deposit $deposit) {
         $path = implode('/', array(
             $this->getCacheDownloadDir(),
-            $content->getDeposit()->getUuid(),
-            $content->getId(),
-            basename($content->getUrl()),
+            $deposit->getUuid(),
+            $deposit->getId(),
+            basename($deposit->getFilename()),
         ));
         return $path;
     }

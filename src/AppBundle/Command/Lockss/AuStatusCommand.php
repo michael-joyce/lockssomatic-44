@@ -11,14 +11,13 @@ namespace AppBundle\Command\Lockss;
 
 use AppBundle\Entity\Au;
 use AppBundle\Services\LockssClient;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Description of DaemonStatusCommand
+ * Description of DaemonStatusCommand.
  */
 class AuStatusCommand extends ContainerAwareCommand {
 
@@ -79,11 +78,11 @@ class AuStatusCommand extends ContainerAwareCommand {
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         $aus = $this->getAus();
-        foreach($aus as $au) {
+        foreach ($aus as $au) {
             $output->writeln($au->getId());
-            foreach($au->getPln()->getBoxes() as $box) {
+            foreach ($au->getPln()->getBoxes() as $box) {
                 dump($this->client->getAuStatus($box, $au));
-                foreach($this->client->getErrors() as $e) {
+                foreach ($this->client->getErrors() as $e) {
                     $output->writeln($e);
                 }
             }

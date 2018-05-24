@@ -213,8 +213,6 @@ class PlnController extends Controller {
      *   The HTTP request instance.
      * @param Pln $pln
      *   Pln to show, as determined by the URL.
-     * @param EntityManagerInterface $em
-     *   Doctrine entity manager to update the PLN config.
      * @param ConfigExporter $exporter
      *   Exporter service.
      * @param ConfigUpdater $updater
@@ -228,7 +226,8 @@ class PlnController extends Controller {
      * @Method({"GET"})
      * @Template()
      */
-    public function exportAction(Request $request, Pln $pln, EntityManagerInterface $em, ConfigExporter $exporter, ConfigUpdater $updater) {
+    public function exportAction(Request $request, Pln $pln, ConfigExporter $exporter, ConfigUpdater $updater) {
+        $em = $this->getDoctrine()->getManager();
         $updater->update($pln);
         $em->flush();
         $exporter->export($pln);

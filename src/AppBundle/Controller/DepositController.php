@@ -107,70 +107,6 @@ class DepositController extends Controller {
     }
 
     /**
-     * Full text search for Deposit entities.
-     *
-     * @Route("/fulltext", name="deposit_fulltext")
-     * @Method("GET")
-     * @Template()
-     */
-    public function fulltextAction(Request $request, Pln $pln) {
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('AppBundle:Deposit');
-        $q = $request->query->get('q');
-        if ($q) {
-            $query = $repo->fulltextQuery($q);
-            $paginator = $this->get('knp_paginator');
-            $deposits = $paginator->paginate($query, $request->query->getInt('page', 1), 25);
-        } else {
-            $deposits = array();
-        }
-
-        return array(
-            'deposits' => $deposits,
-            'q' => $q,
-            'pln' => $pln,
-        );
-    }
-
-    /**
-     * Creates a new Deposit entity.
-     *
-     * @param Request $request
-     *   The HTTP request instance.
-     * @param Pln $pln
-     *   The PLN, as determined by the URL.
-     *
-     * @return array
-     *   Array data for the template processor.
-     *
-     * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/new", name="deposit_new")
-     * @Method({"GET", "POST"})
-     * @Template()
-     */
-    public function newAction(Request $request, Pln $pln) {
-        $deposit = new Deposit();
-        $deposit->setDateDeposited(new DateTime());
-        $form = $this->createForm(DepositType::class, $deposit);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($deposit);
-            $em->flush();
-
-            $this->addFlash('success', 'The new deposit was created.');
-            return $this->redirectToRoute('deposit_show', array('plnId' => $pln->getId(), 'id' => $deposit->getId()));
-        }
-
-        return array(
-            'deposit' => $deposit,
-            'form' => $form->createView(),
-            'pln' => $pln,
-        );
-    }
-
-    /**
      * Finds and displays a Deposit entity.
      *
      * @param Deposit $deposit
@@ -191,68 +127,6 @@ class DepositController extends Controller {
             'deposit' => $deposit,
             'pln' => $pln,
         );
-    }
-
-    /**
-     * Displays a form to edit an existing Deposit entity.
-     *
-     * @param Request $request
-     *   The HTTP request instance.
-     * @param Deposit $deposit
-     *   The deposit, as determined by the URL.
-     * @param Pln $pln
-     *   The PLN, as determined by the URL.
-     *
-     * @return array
-     *   Array data for the template processor.
-     *
-     * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/{id}/edit", name="deposit_edit")
-     * @Method({"GET", "POST"})
-     * @Template()
-     */
-    public function editAction(Request $request, Deposit $deposit, Pln $pln) {
-        $editForm = $this->createForm(DepositType::class, $deposit);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->flush();
-            $this->addFlash('success', 'The deposit has been updated.');
-            return $this->redirectToRoute('deposit_show', array('plnId' => $pln->getId(), 'id' => $deposit->getId()));
-        }
-
-        return array(
-            'deposit' => $deposit,
-            'edit_form' => $editForm->createView(),
-            'pln' => $pln,
-        );
-    }
-
-    /**
-     * Deletes a Deposit entity.
-     *
-     * @param Request $request
-     *   The HTTP request instance.
-     * @param Deposit $deposit
-     *   The deposit, as determined by the URL.
-     * @param Pln $pln
-     *   The PLN, as determined by the URL.
-     *
-     * @return array
-     *   Array data for the template processor.
-     *
-     * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/{id}/delete", name="deposit_delete")
-     * @Method("GET")
-     */
-    public function deleteAction(Request $request, Deposit $deposit, Pln $pln) {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($deposit);
-        $em->flush();
-        $this->addFlash('success', 'The deposit was deleted.');
-
-        return $this->redirectToRoute('deposit_index', ['plnId' => $pln->getId()]);
     }
 
 }

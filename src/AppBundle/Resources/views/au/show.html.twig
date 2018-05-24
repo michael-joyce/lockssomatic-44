@@ -105,13 +105,13 @@
         </ul>
     {% endif %}
 
-    {% if au.content | length > 0 %}
-        <h2>Content</h2>
+    {% if au.deposits | length > 0 %}
+        <h2>Deposits</h2>
         <ul>
-            {% for content in au.content %}
+            {% for deposit in au.deposits %}
                 <li>
-                    <a href="{{ path("deposit_content_show", {"id":content.id, 'plnId': pln.id, 'depositId': content.deposit.id }) }}">
-                        {{ content }}
+                    <a href="{{ path("deposit_show", {"id":deposit.id, 'plnId': pln.id }) }}">
+                        {{ deposit }}
                     </a>
                 </li>
             {% endfor %}

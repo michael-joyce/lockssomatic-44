@@ -70,6 +70,7 @@ class ExportConfigCommand extends ContainerAwareCommand {
      *
      * @param array $plnIds
      *   If this array is empty all PLNs are returned.
+     *
      * @return Pln[]
      *   List of PLNs to update.
      */

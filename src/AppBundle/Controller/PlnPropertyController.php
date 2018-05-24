@@ -72,12 +72,12 @@ class PlnPropertyController extends Controller {
             $data = $form->getData();
             $name = $data['name'];
             $values = $data['values'];
-            if(count($values) > 1) {
+            if (count($values) > 1) {
                 $pln->setProperty($name, $values);
-            } else if(count($values) === 1) {
+            } elseif (count($values) === 1) {
                 $pln->setProperty($name, $values[0]);
             } else {
-                // count(values) === 0
+                // count(values) === 0.
                 $pln->removeProperty($name);
             }
             $this->getDoctrine()->getManager()->flush();
@@ -120,12 +120,12 @@ class PlnPropertyController extends Controller {
             $data = $form->getData();
             $name = $data['name'];
             $values = $data['values'];
-            if(count($values) > 1) {
+            if (count($values) > 1) {
                 $pln->setProperty($name, $values);
-            } else if(count($values) === 1) {
+            } elseif (count($values) === 1) {
                 $pln->setProperty($name, $values[0]);
             } else {
-                // count(values) === 0
+                // count(values) === 0.
                 $pln->removeProperty($name);
             }
             $this->getDoctrine()->getManager()->flush();

@@ -10,7 +10,7 @@ namespace AppBundle\Tests\Services;
 
 use AppBundle\DataFixtures\ORM\LoadPln;
 use AppBundle\Entity\Au;
-use AppBundle\Entity\Content;
+use AppBundle\Entity\Deposit;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Plugin;
 use AppBundle\Repository\ContentRepository;
@@ -111,12 +111,12 @@ class ConfigExporterTest extends BaseTestCase {
     }
 
     public function testExportManifests() {
-        $content = new Content();
-        $content->setUrl('http://example.com/path/to/content');
+        $deposit = new Deposit();
+        $deposit->setUrl('http://example.com/path/to/content');
 
         $repo = $this->createMock(ContentRepository::class);
         $repo->method('auQuery')->will($this->returnValue(array(
-            [$content],
+            [$deposit],
         )));
 
         $em = $this->createMock(EntityManagerInterface::class);

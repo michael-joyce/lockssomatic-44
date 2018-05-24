@@ -28,9 +28,9 @@ class ConfigUpdater {
     private $urlGenerator;
 
     /**
-     * @var PropertyGenerator
+     * @var AuManager
      */
-    private $propertyGenerator;
+    private $auManager;
 
     /**
      *
@@ -38,13 +38,13 @@ class ConfigUpdater {
      *   Maximum number of AUs to include in a titledb.xml file.
      * @param UrlGeneratorInterface $urlGenerator
      *   The Symfony URL generator.
-     * @param AuPropertyGenerator $propertyGenerator
+     * @param AuPropertyGenerator $auManager
      *   The AU property generator service.
      */
-    public function __construct($ausPerTitleDb, UrlGeneratorInterface $urlGenerator, AuPropertyGenerator $propertyGenerator) {
+    public function __construct($ausPerTitleDb, UrlGeneratorInterface $urlGenerator, AuManager $auManager) {
         $this->ausPerTitleDb = $ausPerTitleDb;
         $this->urlGenerator = $urlGenerator;
-        $this->propertyGenerator = $propertyGenerator;
+        $this->auManager = $auManager;
     }
 
     /**
@@ -89,7 +89,7 @@ class ConfigUpdater {
             if($au->hasAuProperties()) {
                 continue;
             }
-            $this->propertyGenerator->generateProperties($au);
+            $this->auManager->generateProperties($au);
         }
     }
 

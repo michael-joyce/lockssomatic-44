@@ -32,12 +32,17 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class LockssController extends Controller {
 
     /**
+     * File path service.
+     *
      * @var FilePaths
      */
     private $fp;
 
     /**
+     * Construct the controller.
+     *
      * @param FilePaths $fp
+     *   Dependency injected file path service.
      */
     public function __construct(FilePaths $fp) {
         $this->fp = $fp;
@@ -47,15 +52,21 @@ class LockssController extends Controller {
      * Check that a request came from a good IP address.
      *
      * @param Request $request
+     *   HTTP request to inspect.
      * @param Pln $pln
+     *   Pln the request is coming from.
+     *
+     * @return null
+     *
+     * @throws AccessDeniedHttpException if the IP address of the request isn't allowed.
      */
     private function checkIp(Request $request, Pln $pln) {
-        $boxIps = array_map(function(Box $box) {
+        $boxIps = array_map(function (Box $box) {
             return $box->getIpAddress();
         }, $pln->getBoxes()->toArray());
         $allowed = array_merge($boxIps, $this->getParameter('lom.allowed_ips'));
         $ip = $request->getClientIp();
-        if( ! IpUtils::checkIp($ip, $allowed)) {
+        if (!IpUtils::checkIp($ip, $allowed)) {
             throw new AccessDeniedHttpException("Client IP {$ip} is not authorized for this PLN.");
         }
     }
@@ -141,7 +152,6 @@ class LockssController extends Controller {
         return new BinaryFileResponse($path, 200, array(
             'Content-Type' => 'text/html',
         ));
-
     }
 
     /**
@@ -161,7 +171,7 @@ class LockssController extends Controller {
             throw new NotFoundHttpException('The requested keystore does not exist.');
         }
         $path = $this->fp->getPluginsExportDir($pln) . "/lockss.keystore";
-        if( ! file_exists($path)) {
+        if (!file_exists($path)) {
             throw new NotFoundHttpException('The requested keystore does not exist.');
         }
         return new BinaryFileResponse($path, 200, array(
@@ -184,7 +194,7 @@ class LockssController extends Controller {
     public function pluginListAction(Request $request, Pln $pln) {
         $this->checkIp($request, $pln);
         $path = $this->fp->getPluginsManifestFile($pln);
-        if( ! $path) {
+        if (!$path) {
             throw new NotFoundHttpException('The requested plugin manifest does not exist.');
         }
         return new BinaryFileResponse($path, 200, array(
@@ -209,7 +219,7 @@ class LockssController extends Controller {
 
         $dir = $this->fp->getPluginsExportDir($pln);
         $path = $dir . '/' . $filename;
-        if( ! $path) {
+        if (!$path) {
             throw new NotFoundHttpException('The requested plugin does not exist.');
         }
         return new BinaryFileResponse($path, 200, array(
