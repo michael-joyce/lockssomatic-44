@@ -73,15 +73,14 @@ class AuManagerTest extends BaseTestCase {
         $this->assertEquals('auid123', $au->getAuid());
     }
 
-
     public function testFindOpenAuEmpty() {
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
         $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
-            'foo', 'bar', 'bax'
+                    'foo', 'bar', 'bax'
         ]));
         $plugin->method('getGeneratedParams')->will($this->returnValue([
-            'bar'
+                    'bar'
         ]));
         $provider = new ContentProvider();
         $provider->setPlugin($plugin);
@@ -89,9 +88,9 @@ class AuManagerTest extends BaseTestCase {
         $deposit->method('getContentProvider')->will($this->returnValue($provider));
         $deposit->method('getPlugin')->will($this->returnValue($plugin));
         $deposit->method('getProperty')->will($this->returnValueMap([
-            ['foo', 'Some complex title'],
-            ['bar', 'other.property'],
-            ['bax', 'property the third!'],
+                    ['foo', 'Some complex title'],
+                    ['bar', 'other.property'],
+                    ['bax', 'property the third!'],
         ]));
 
         $au = $this->manager->findOpenAu($deposit);
@@ -103,10 +102,10 @@ class AuManagerTest extends BaseTestCase {
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
         $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
-            'foo', 'bar', 'bax'
+                    'foo', 'bar', 'bax'
         ]));
         $plugin->method('getGeneratedParams')->will($this->returnValue([
-            'bar'
+                    'bar'
         ]));
         $provider = new ContentProvider();
         $provider->setPlugin($plugin);
@@ -115,9 +114,9 @@ class AuManagerTest extends BaseTestCase {
         $deposit1->method('getContentProvider')->will($this->returnValue($provider));
         $deposit1->method('getPlugin')->will($this->returnValue($plugin));
         $deposit1->method('getProperty')->will($this->returnValueMap([
-            ['foo', 'Some complex title'],
-            ['bar', 'different.property'],
-            ['bax', 'property the third!'],
+                    ['foo', 'Some complex title'],
+                    ['bar', 'different.property'],
+                    ['bax', 'property the third!'],
         ]));
 
         $au1 = $this->manager->findOpenAu($deposit1);
@@ -128,9 +127,9 @@ class AuManagerTest extends BaseTestCase {
         $deposit2->method('getContentProvider')->will($this->returnValue($provider));
         $deposit2->method('getPlugin')->will($this->returnValue($plugin));
         $deposit2->method('getProperty')->will($this->returnValueMap([
-            ['foo', 'Some complex title'],
-            ['bar', 'other.property'],
-            ['bax', 'property the third!'],
+                    ['foo', 'Some complex title'],
+                    ['bar', 'other.property'],
+                    ['bax', 'property the third!'],
         ]));
 
         $au2 = $this->manager->findOpenAu($deposit2);
@@ -144,10 +143,10 @@ class AuManagerTest extends BaseTestCase {
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
         $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
-            'foo', 'bar', 'bax'
+                    'foo', 'bar', 'bax'
         ]));
         $plugin->method('getGeneratedParams')->will($this->returnValue([
-            'bar'
+                    'bar'
         ]));
         $provider = new ContentProvider();
         $provider->setPlugin($plugin);
@@ -156,9 +155,9 @@ class AuManagerTest extends BaseTestCase {
         $deposit1->method('getContentProvider')->will($this->returnValue($provider));
         $deposit1->method('getPlugin')->will($this->returnValue($plugin));
         $deposit1->method('getProperty')->will($this->returnValueMap([
-            ['foo', 'Some complex title'],
-            ['bar', 'different.property'],
-            ['bax', 'property the Billionth'],
+                    ['foo', 'Some complex title'],
+                    ['bar', 'different.property'],
+                    ['bax', 'property the Billionth'],
         ]));
 
         $au1 = $this->manager->findOpenAu($deposit1);
@@ -169,9 +168,9 @@ class AuManagerTest extends BaseTestCase {
         $deposit2->method('getContentProvider')->will($this->returnValue($provider));
         $deposit2->method('getPlugin')->will($this->returnValue($plugin));
         $deposit2->method('getProperty')->will($this->returnValueMap([
-            ['foo', 'Some complex title'],
-            ['bar', 'other.property'],
-            ['bax', 'property the third!'],
+                    ['foo', 'Some complex title'],
+                    ['bar', 'other.property'],
+                    ['bax', 'property the third!'],
         ]));
 
         $au2 = $this->manager->findOpenAu($deposit2);
@@ -191,7 +190,7 @@ class AuManagerTest extends BaseTestCase {
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
         $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
-            'foo'
+                    'foo'
         ]));
         $plugin->method('getGeneratedParams')->will($this->returnValue([]));
         $provider = new ContentProvider();
@@ -203,7 +202,7 @@ class AuManagerTest extends BaseTestCase {
         $deposit->method('getContentProvider')->will($this->returnValue($provider));
         $deposit->method('getPlugin')->will($this->returnValue($plugin));
         $deposit->method('getProperty')->will($this->returnValueMap([
-            ['foo', 'bar'],
+                    ['foo', 'bar'],
         ]));
 
         $foundAu = $this->manager->findOpenAu($deposit);
@@ -215,7 +214,7 @@ class AuManagerTest extends BaseTestCase {
         $au = new Au();
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
-            'foo'
+                    'foo'
         ]));
         $au->setPlugin($plugin);
 
@@ -229,7 +228,7 @@ class AuManagerTest extends BaseTestCase {
 
         $repo = $this->createMock(AuRepository::class);
         $repo->method('iterateDeposits')->will($this->returnValue(
-            $iterator
+                        $iterator
         ));
         $this->manager->setAuRepository($repo);
 
@@ -240,7 +239,7 @@ class AuManagerTest extends BaseTestCase {
         $au = new Au();
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
-            'foo'
+                    'foo'
         ]));
         $au->setPlugin($plugin);
 
@@ -255,7 +254,7 @@ class AuManagerTest extends BaseTestCase {
 
         $repo = $this->createMock(AuRepository::class);
         $repo->method('iterateDeposits')->will($this->returnValue(
-            $iterator
+                        $iterator
         ));
         $this->manager->setAuRepository($repo);
 
@@ -266,12 +265,12 @@ class AuManagerTest extends BaseTestCase {
         $au = new Au();
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
-            'foo'
+                    'foo'
         ]));
         $au->setPlugin($plugin);
 
         $data = new ArrayObject();
-        for($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $deposit = new Deposit();
             $deposit->setProperty('foo', 'chicanery_' . $i);
             $data[] = [$deposit, 0];
@@ -281,7 +280,7 @@ class AuManagerTest extends BaseTestCase {
 
         $repo = $this->createMock(AuRepository::class);
         $repo->method('iterateDeposits')->will($this->returnValue(
-            $iterator
+                        $iterator
         ));
         $this->manager->setAuRepository($repo);
 
@@ -450,7 +449,6 @@ class AuManagerTest extends BaseTestCase {
         ];
     }
 
-
     public function buildContentItems(Au $au) {
         $deposit = $this->em->find(Deposit::class, 1);
         for ($i = 0; $i < 10; $i++) {
@@ -557,6 +555,50 @@ class AuManagerTest extends BaseTestCase {
         $this->assertEquals(3, count($au->getAuProperties()));
         $this->assertEquals('barr', $au->getSimpleAuProperty('attributes.pkppln.foo'));
         $this->assertEquals('made from dust.', $au->getSimpleAuProperty('attributes.pkppln.spackle'));
+    }
+
+    public function testGenerateProperties() {
+        $plugin = $this->createMock(Plugin::class);
+        $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
+        $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
+                    'base_url', 'container_number', 'manifest_url', 'permission_url'
+        ]));
+        $plugin->method('getNonDefinitionalProperties')->will($this->returnValue([]));
+
+        $pln = new Pln();
+        $plnRef = new ReflectionProperty(Pln::class, 'id');
+        $plnRef->setAccessible(true);
+        $plnRef->setValue($pln, 1);
+
+        $owner = new ContentOwner();
+        $ownerRef = new ReflectionProperty(ContentOwner::class, 'id');
+        $ownerRef->setAccessible(true);
+        $ownerRef->setValue($owner, 3);
+
+        $provider = new ContentProvider();
+        $providerRef = new ReflectionProperty(ContentProvider::class, 'id');
+        $providerRef->setAccessible(true);
+        $providerRef->setValue($provider, 5);
+        $provider->setContentOwner($owner);
+        $provider->setPln($pln);
+        $provider->setPermissionUrl('http://example.com/permission');
+
+        $au = new Au();
+        $auRef = new ReflectionProperty(Au::class, 'id');
+        $auRef->setAccessible(true);
+        $auRef->setValue($au, 7);
+        $au->setPln($pln);
+        $au->setContentProvider($provider);
+
+        $au->setPlugin($plugin);
+        $this->buildContentItems($au);
+
+        $this->manager->generateProperties($au);
+        $this->assertEquals(23, count($au->getAuProperties()));
+        $this->assertEquals('http://example.com', $au->getAuPropertyValue('base_url'));
+        $this->assertEquals(1, $au->getAuPropertyValue('container_number'));
+        $this->assertEquals('http://example.com/permission', $au->getAuPropertyValue('permission_url'));
+        $this->assertStringEndsWith('plnconfigs/1/manifests/3/5/manifest_7.html', $au->getAuPropertyValue('manifest_url'));
     }
 
 }

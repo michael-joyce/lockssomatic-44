@@ -415,7 +415,8 @@ class AuManager {
 
         // Definitional properties must go first.
         $propertyNames = array_merge(
-            $au->getPlugin()->getDefinitionalPropertyNames(), $au->getPlugin()->getNonDefinitionalProperties()
+            $au->getPlugin()->getDefinitionalPropertyNames(),
+            $au->getPlugin()->getNonDefinitionalProperties()
         );
 
         $this->baseProperties($au, $root, $deposit);
