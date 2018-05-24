@@ -12,6 +12,7 @@ namespace AppBundle\Repository;
 use AppBundle\Entity\Au;
 use AppBundle\Entity\Deposit;
 use Doctrine\ORM\EntityRepository;
+use Iterator;
 
 /**
  * AuRepository.
@@ -44,5 +45,33 @@ class AuRepository extends EntityRepository {
         $qb->setParameter('au', $au);
         return $qb->getQuery()->getSingleScalarResult();
     }
+
+    public function countDeposits(Au $au) {
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('COUNT(d.id) as c');
+        $qb->from(Deposit::class, 'd');
+        $qb->where('d.au = :au');
+        $qb->setParameter('au', $au);
+        return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Get a query for the content items in an AU.
+     *
+     * @param Au $au
+     *
+     * @return Iterator|Deposit[]
+     */
+    public function iterateDeposits(Au $au) {
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('d');
+        $qb->from(Deposit::class, 'd');
+        $qb->andWhere("d.au = :au");
+        $qb->setParameter('au', $au);
+        $iterator = $qb->getQuery()->iterate();
+        $iterator->rewind();
+        return $iterator;
+    }
+
 
 }

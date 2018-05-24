@@ -25,9 +25,6 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
 
-    AppBundle\Services\AuValidator:
-        public: true
-
     AppBundle\Services\ConfigExporter:
         arguments:
             $ausPerTitleDb: '%lom.aus_per_titledb%'

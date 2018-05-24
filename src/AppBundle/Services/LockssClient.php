@@ -59,11 +59,15 @@ class LockssClient {
     /**
      * @var AuIdGenerator
      */
-    private $auIdGenerator;
+    private $auManager;
+
+    /**
+     * @var array
+     */
     private $errors;
 
-    public function __construct(AuIdGenerator $auIdGenerator) {
-        $this->auIdGenerator = $auIdGenerator;
+    public function __construct(AuManager $auManager) {
+        $this->auManager = $auManager;
         $this->errors = array();
     }
 
@@ -128,7 +132,7 @@ class LockssClient {
         if (!$this->isDaemonReady($box)) {
             return;
         }
-        $auid = $this->auIdGenerator->fromAu($au);
+        $auid = $this->auManager->fromAu($au);
         return $this->call($box, self::STATUS_SERVICE, 'getAuStatus', array(
                     'auId' => $auid,
         ));
@@ -138,7 +142,7 @@ class LockssClient {
         if (!$this->isDaemonReady($box)) {
             return;
         }
-        $auid = $this->auIdGenerator->fromAu($au);
+        $auid = $this->auManager->fromAu($au);
         return $this->call($box, self::STATUS_SERVICE, 'getAuUrls', array(
                     'auId' => $auid,
         ));
@@ -176,7 +180,7 @@ class LockssClient {
         if( ! $this->isUrlCached($box, $deposit)) {
             return;
         }
-        $auid = $this->auIdGenerator->fromAu($deposit->getAu(), true);
+        $auid = $this->auManager->fromAu($deposit->getAu(), true);
         $response = $this->call($box, self::HASHER_SERVICE, 'hash', array(
                     'hasherParams' => array(
                         'recordFilterStream' => true,
@@ -203,7 +207,7 @@ class LockssClient {
         if (!$this->isDaemonReady($box)) {
             return;
         }
-        $auid = $this->auIdGenerator->fromAu($deposit->getAu());
+        $auid = $this->auManager->fromAu($deposit->getAu());
         return $this->call($box, self::CONTENT_SERVICE, 'isUrlCached', array(
                     'url' => $deposit->getUrl(),
                     'auId' => $auid,

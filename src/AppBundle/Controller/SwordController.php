@@ -12,7 +12,6 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Plugin;
-use AppBundle\Services\AuIdGenerator;
 use AppBundle\Services\AuManager;
 use AppBundle\Services\DepositBuilder;
 use AppBundle\Utilities\Namespaces;
@@ -260,8 +259,6 @@ class SwordController extends Controller {
      *   Dependency injected deposit builder.
      * @param AuManager $auManager
      *   Dependency injected archival unit builder.
-     * @param AuIdGenerator $idGenerator
-     *   Dependency injected AUID generator.
      *
      * @Route("/col-iri/{providerUuid}", name="sword_collection", requirements={
      *      "providerUuid": ".{36}"
@@ -276,7 +273,7 @@ class SwordController extends Controller {
      * @return Response
      *   The HTTP response containing a location header and the SWORD body.
      */
-    public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, AuManager $auManager, AuIdGenerator $idGenerator) {
+    public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, AuManager $auManager) {
         $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);
         $deposit = $depositBuilder->fromXml($atom, $provider);

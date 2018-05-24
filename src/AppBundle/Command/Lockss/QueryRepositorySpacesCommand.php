@@ -50,6 +50,11 @@ class QueryRepositorySpacesCommand extends ContainerAwareCommand {
         $this->em = $em;
     }
 
+    protected function configure() {
+        $this->setName('lockss:au:space');
+    }
+
+
     /**
      * Get the boxes to check.
      *

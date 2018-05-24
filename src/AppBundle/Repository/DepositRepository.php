@@ -9,10 +9,7 @@
 
 namespace AppBundle\Repository;
 
-use AppBundle\Entity\Au;
-use AppBundle\Entity\Deposit;
 use Doctrine\ORM\EntityRepository;
-use Iterator;
 
 /**
  * DepositRepository.
@@ -21,20 +18,5 @@ use Iterator;
  * repository methods below.
  */
 class DepositRepository extends EntityRepository {
-
-    /**
-     * Get a query for the content items in an AU.
-     *
-     * @param Au $au
-     *
-     * @return Iterator|Deposit[]
-     */
-    public function auQuery(Au $au) {
-        $qb = $this->createQueryBuilder('d');
-        $qb->andWhere("d.au = :au");
-        $qb->setParameter('au', $au);
-        return $qb->getQuery()->iterate();
-    }
-
 
 }
