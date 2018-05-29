@@ -250,4 +250,16 @@ class ConfigUpdaterTest extends BaseTestCase {
         $this->assertEquals('8123', $pln->getProperty('org.lockss.contentui.port'));
     }
 
+    public function testUpdatePluginRegistries() {
+        $pln = new Pln();
+        $plnRef = new ReflectionProperty(Pln::class, 'id');
+        $plnRef->setAccessible(true);
+        $plnRef->setValue($pln, 1);
+        $this->updater->updatePluginRegistries($pln);
+        $this->assertEquals(
+            ['http://localhost/lom2/web/app_dev.php/plnconfigs/1/plugins/index.html'],
+            $pln->getProperty('org.lockss.plugin.registries')
+        );
+    }
+
 }
