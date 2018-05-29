@@ -17,7 +17,7 @@
           .fixable th {
             color:grey;
           }
-          
+
           .nowarnings .fixable {
             display: none;
           }
@@ -34,16 +34,16 @@
       <body class="nowarnings">
         <div class="container">
           <div class="row">
+            <div class="col-md-7">
+              <h3>Details</h3>
+              <a id="toggle">Toggle warnings</a>
+              <xsl:apply-templates mode="detail" />
+            </div>
             <div class="col-md-5">
               <h3>Overview</h3>
               <ul>
                 <xsl:apply-templates mode="summary" />
               </ul>
-            </div>
-            <div class="col-md-7">
-              <h3>Details</h3>
-              <a id="toggle">Toggle warnings</a>
-              <xsl:apply-templates mode="detail" />
             </div>
           </div>
         </div>
@@ -68,8 +68,8 @@
     </xsl:variable>
     <div class="{$class}">
       <p id="{generate-id(.)}"> <xsl:value-of select="@name" /><br />
-        Errors: <xsl:value-of select="$errors" /> | 
-        Warnings: <xsl:value-of select="$warnings" /> 
+        Errors: <xsl:value-of select="$errors" /> |
+        Warnings: <xsl:value-of select="$warnings" />
       </p>
       <table class="table table-stripped table-compressed">
         <thead>

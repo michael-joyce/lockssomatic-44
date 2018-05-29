@@ -75,6 +75,7 @@ class SwordController extends Controller {
      *   The value of the header or null if that's OK.
      *
      * @throws BadRequestException
+     *   If the header is required but cannot be found.
      */
     private function fetchHeader(Request $request, $key, $required = false) {
         if ($request->headers->has($key)) {
