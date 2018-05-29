@@ -157,7 +157,7 @@ class ConfigExporter {
     }
 
     /**
-     *
+     * @codeCoverageIgnore
      */
     public function export(Pln $pln) {
         $this->exportLockssXml($pln);

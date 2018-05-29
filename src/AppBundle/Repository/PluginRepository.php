@@ -12,8 +12,8 @@ namespace AppBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * PluginRepository.
+ * Doctrine stub.
  */
 class PluginRepository extends EntityRepository {
-    
+
 }

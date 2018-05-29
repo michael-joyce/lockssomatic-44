@@ -12,8 +12,8 @@ namespace AppBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * AU Property Repository for queries on the AUs.
+ * Doctrine stub.
  */
 class AuPropertyRepository extends EntityRepository {
-    
+
 }

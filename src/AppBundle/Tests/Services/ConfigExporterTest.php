@@ -74,6 +74,15 @@ class ConfigExporterTest extends BaseTestCase {
         $this->assertTrue(file_exists("vfs://confdir/data/plnconfigs/1/plugins/lockss.keystore"));
     }
 
+    public function testExportNullKeystore() {
+        $pln = $this->getReference('pln.1');
+        $pln->setKeystore(null);
+        $url = vfsStream::url('confdir/foo.keystore');
+        file_put_contents($url, "some keystore stuff.");
+        $this->exporter->exportKeystore($pln);
+        $this->assertFalse(file_exists("vfs://confdir/data/plnconfigs/1/plugins/lockss.keystore"));
+    }
+
     public function testExportPlugins() {
         $url = vfsStream::url('confdir/plugin.jar');
         file_put_contents($url, "jar data");

@@ -48,7 +48,7 @@ class BoxController extends Controller {
     public function indexAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Box::class);
-        $query = $repo->findBoxesQuery($pln);
+        $query = $repo->findBy(array('pln' => $pln), array('id' => 'ASC'));
         $paginator = $this->get('knp_paginator');
         $boxes = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 

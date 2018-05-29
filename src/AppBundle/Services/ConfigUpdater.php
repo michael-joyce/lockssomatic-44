@@ -166,6 +166,8 @@ class ConfigUpdater {
      * Update all the PLN config properties.
      *
      * @param Pln $pln
+     *
+     * @codeCoverageIgnore
      */
     public function update(Pln $pln) {
         $this->updatePeerList($pln);
