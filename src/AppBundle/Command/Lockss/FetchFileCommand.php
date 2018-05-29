@@ -61,6 +61,7 @@ class FetchFileCommand extends ContainerAwareCommand {
      * Determine which deposits to fetch.
      *
      * @return Deposit[]|Collection
+     *   List of deposits to fetch.
      */
     protected function getDeposits() {
         $contents = $this->em->getRepository(Deposit::class)->findAll();

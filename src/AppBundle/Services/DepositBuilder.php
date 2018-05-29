@@ -63,7 +63,7 @@ class DepositBuilder {
         $deposit->setTitle((string) $title);
         $deposit->setUuid($id);
         $elements = $xml->xpath('lom:content');
-        if(count($elements) > 1) {
+        if (count($elements) > 1) {
             throw new Exception("Multiple content elements not supported in deposit.");
         }
         $content = $elements[0];

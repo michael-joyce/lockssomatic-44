@@ -56,9 +56,8 @@ class LockssController extends Controller {
      * @param Pln $pln
      *   Pln the request is coming from.
      *
-     * @return null
-     *
-     * @throws AccessDeniedHttpException if the IP address of the request isn't allowed.
+     * @throws AccessDeniedHttpException
+     *  If the IP address of the request isn't allowed.
      */
     private function checkIp(Request $request, Pln $pln) {
         $boxIps = array_map(function (Box $box) {

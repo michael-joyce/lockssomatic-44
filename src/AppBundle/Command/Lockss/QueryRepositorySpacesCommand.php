@@ -11,6 +11,7 @@ namespace AppBundle\Command\Lockss;
 
 use AppBundle\Entity\Box;
 use AppBundle\Services\LockssClient;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -50,15 +51,18 @@ class QueryRepositorySpacesCommand extends ContainerAwareCommand {
         $this->em = $em;
     }
 
+    /**
+     * Configure the command.
+     */
     protected function configure() {
         $this->setName('lockss:au:space');
     }
 
-
     /**
      * Get the boxes to check.
      *
-     * @return \Doctrine\Common\Collections\Collection|Box[]
+     * @return Collection|Box[]
+     *   List of boxes to query.
      */
     protected function getBoxes() {
         $boxes = $this->em->getRepository(Box::class)->findAll();

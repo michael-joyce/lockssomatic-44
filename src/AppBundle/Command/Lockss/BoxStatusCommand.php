@@ -13,6 +13,7 @@ use AppBundle\Entity\Box;
 use AppBundle\Entity\BoxStatus;
 use AppBundle\Services\BoxNotifier;
 use AppBundle\Services\LockssClient;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -85,7 +86,8 @@ class BoxStatusCommand extends ContainerAwareCommand {
     /**
      * Fetch a list of boxes to check.
      *
-     * @return \Doctrine\Common\Collections\Collection|Box[]
+     * @return Collection|Box[]
+     *   List of boxes to query.
      */
     protected function getBoxes($boxIds = array()) {
         if ($boxIds && count($boxIds)) {

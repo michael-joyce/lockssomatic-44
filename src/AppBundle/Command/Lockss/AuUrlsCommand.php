@@ -61,6 +61,7 @@ class AuUrlsCommand extends ContainerAwareCommand {
      * Fetch a list of AUs to query from the database.
      *
      * @return Au[]|Collection
+     *   List of AUs to query.
      */
     protected function getAus() {
         $aus = $this->em->getRepository(Au::class)->findAll();

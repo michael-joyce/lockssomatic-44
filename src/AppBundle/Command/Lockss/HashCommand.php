@@ -10,6 +10,8 @@
 namespace AppBundle\Command\Lockss;
 
 use AppBundle\Entity\Deposit;
+use AppBundle\Services\LockssClient;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,14 +24,14 @@ class HashCommand extends ContainerAwareCommand {
     /**
      * Doctrine instance.
      *
-     * @var \Doctrine\ORM\EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
      * LOCKSS client service.
      *
-     * @var \AppBundle\Services\LockssClient
+     * @var LockssClient
      */
     private $client;
 
@@ -41,6 +43,15 @@ class HashCommand extends ContainerAwareCommand {
      * @param LockssClient $client
      *   Dependency injected LOCKSS client.
      */
+    public function __construct(EntityManagerInterface $em, LockssClient $client) {
+        parent::__construct();
+        $this->em = $em;
+        $this->client = $client;
+    }
+
+    /**
+     * Configure the command.
+     */
     protected function configure() {
         $this->setName('lockss:content:hash');
         $this->setDescription('Report the status of an AU.');
@@ -49,11 +60,12 @@ class HashCommand extends ContainerAwareCommand {
     /**
      * Determine which deposits to hash.
      *
-     * @return Content[]|Collection
+     * @return Deposit[]|Collection
+     *   List of deposits to fetch.
      */
     protected function getDeposits() {
-        $contents = $this->em->getRepository(Deposit::class)->findAll();
-        return $contents;
+        $deposits = $this->em->getRepository(Deposit::class)->findAll();
+        return $deposits;
     }
 
     /**

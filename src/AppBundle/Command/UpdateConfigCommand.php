@@ -61,7 +61,7 @@ class UpdateConfigCommand extends ContainerAwareCommand {
      * @return Pln[]
      *   PLNs to update.
      */
-    private function getPlns($plnIds = null) {
+    private function getPlns(array $plnIds = null) {
         $repo = $this->em->getRepository(Pln::class);
         if ($plnIds === null || count($plnIds) === 0) {
             return $repo->findAll();

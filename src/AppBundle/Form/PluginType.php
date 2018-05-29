@@ -15,13 +15,17 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- *
+ * Data entry form for LOCKSS plugins.
  */
 class PluginType extends AbstractType {
 
     /**
+     * Build the form by adding types to $builder.
+     *
      * @param FormBuilderInterface $builder
+     *   Form builder.
      * @param array $options
+     *   Unused form options.
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('generateManifests', ChoiceType::class, array(
@@ -57,7 +61,10 @@ class PluginType extends AbstractType {
     }
 
     /**
+     * Configure default options.
+     *
      * @param OptionsResolver $resolver
+     *   Options resolver to pass options back to configure the form.
      */
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(

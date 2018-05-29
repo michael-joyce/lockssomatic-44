@@ -16,13 +16,17 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- *
+ * Data entry form for java keystore files.
  */
 class KeystoreType extends AbstractType {
 
     /**
+     * Build the form by adding types to $builder.
+     *
      * @param FormBuilderInterface $builder
+     *   Form builder.
      * @param array $options
+     *   Unused form options.
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('path', null, array(
@@ -43,7 +47,10 @@ class KeystoreType extends AbstractType {
     }
 
     /**
+     * Configure default options.
+     *
      * @param OptionsResolver $resolver
+     *   Options resolver to pass options back to configure the form.
      */
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(

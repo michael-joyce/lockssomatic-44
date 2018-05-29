@@ -84,9 +84,12 @@ class ConfigUpdater {
         $pln->setProperty('org.lockss.titleDbs', $urls);
     }
 
+    /**
+     *
+     */
     public function updateAuConfigs(Pln $pln) {
-        foreach($pln->getAus() as $au) {
-            if($au->hasAuProperties()) {
+        foreach ($pln->getAus() as $au) {
+            if ($au->hasAuProperties()) {
                 continue;
             }
             $this->auManager->generateProperties($au);
@@ -105,8 +108,8 @@ class ConfigUpdater {
             return;
         }
         $url = $this->urlGenerator->generate('lockss_keystore', array(
-            'plnId' => $pln->getId(),
-                ), UrlGeneratorInterface::ABSOLUTE_URL);
+        'plnId' => $pln->getId(),
+        ), UrlGeneratorInterface::ABSOLUTE_URL);
         $pln->setProperty('org.lockss.plugin.keystore.location', $url);
     }
 
@@ -138,10 +141,13 @@ class ConfigUpdater {
         $pln->setProperty("{$prefix}.port", $pln->getContentPort());
     }
 
+    /**
+     *
+     */
     public function updatePluginRegistries(Pln $pln) {
         $url = $this->urlGenerator->generate('lockss_plugin_list', array(
             'plnId' => $pln->getId(),
-                ), UrlGeneratorInterface::ABSOLUTE_URL);
+        ), UrlGeneratorInterface::ABSOLUTE_URL);
         $pln->setProperty('org.lockss.plugin.registries', $url);
     }
 

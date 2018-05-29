@@ -16,13 +16,17 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- *
+ * Data entry form for individual pln properties.
  */
 class PlnPropertyType extends AbstractType {
 
     /**
+     * Build the form by adding types to $builder.
+     *
      * @param FormBuilderInterface $builder
+     *   Form builder.
      * @param array $options
+     *   Unused form options.
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('name', TextType::class, array(
@@ -44,12 +48,15 @@ class PlnPropertyType extends AbstractType {
             'by_reference' => false,
             'attr' => array(
                 'class' => 'collection collection-simple',
-            )
+            ),
         ));
     }
 
     /**
+     * Configure default options.
+     *
      * @param OptionsResolver $resolver
+     *   Options resolver to pass options back to configure the form.
      */
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(

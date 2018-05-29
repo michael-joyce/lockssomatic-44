@@ -1,11 +1,20 @@
 /**
  * @file
+ * Some useful javascripty UI stuff.
  */
 
 (function ($, window) {
 
+    /**
+     * Domain name (without the www. at the beginning) of the current page.
+     *
+     * @type string
+     */
     var hostname = window.location.hostname.replace('www.', '');
-
+    
+    /**
+     * Add a confirm handler to any link with a data-confirm attribute.
+     */
     function confirm() {
         var $this = $(this);
         $this.click(function () {
@@ -13,6 +22,13 @@
         });
     }
     
+    /**
+     * Before leaving the page, check that all forms have been saved.
+     *
+     * @param event e
+     *
+     * @returns {String}
+     */
     function windowBeforeUnload(e) {
         var clean = true;
         $('form').each(function () {
@@ -28,6 +44,13 @@
         }
     }
 
+    /**
+     * Called when a form element changes to mark the form dirty.
+     *
+     * Javascript will prompt the user to save before leaving the page.
+     *
+     * @returns null
+     */
     function formDirty() {
         var $form = $(this);
         $form.data('dirty', false);
@@ -39,12 +62,22 @@
         });
     }
 
+    /**
+     * Open a link in a popup.
+     *
+     * @param {event} e
+     *
+     * @returns {null}
+     */
     function formPopup(e) {
         e.preventDefault();
         var url = $(this).prop('href');
         window.open(url, "_blank", "toolbar=no,scrollbars=yes,resizable=yes,top=60,left=60,width=500,height=600");
     }
 
+    /**
+     * Configure a simple, one-input, symfony collection.
+     */
     function simpleCollection() {
         $('.collection-simple').collection({
             init_with_n_elements: 1,
@@ -61,6 +94,9 @@
         });
     }
 
+    /**
+     * Configure a complex, multi-input, symfony collection.
+     */
     function complexCollection() {
         $('.collection-complex').collection({
             allow_up: false,
@@ -76,6 +112,11 @@
         });
     }
 
+    /**
+     * Style links that go off site a bit differently and open them in a new window.
+     *
+     * @returns {undefined}
+     */
     function link() {
         if (this.hostname.replace('www.', '') === hostname) {
             return;
@@ -83,6 +124,11 @@
         $(this).attr('target', '_blank');
     }
 
+    /**
+     * Do some things to make file uploads a bit less terrible.
+     *
+     * @returns void
+     */
     function uploadControls() {
         var $input = $(this);
         $input.change(function () {
@@ -93,6 +139,9 @@
         });
     }
 
+    /*
+     * Set up the stuff.
+     */
     $(document).ready(function () {
         $(window).bind('beforeunload', windowBeforeUnload);
         $('form').each(formDirty);
@@ -104,14 +153,6 @@
             simpleCollection();
             complexCollection();
         }
-//        $("input").each(function () {
-//            var $this = $(this);
-//            if ($this.attr('type') == 'radio' || $this.attr('type') == 'checkbox') {
-//                $(this).after('<span class="widgetname">' + $(this).attr('name') + '=' + $this.attr('value') + '</span>');
-//            } else {
-//                $(this).after('<span class="widgetname">' + $(this).attr('name') + '</span>');
-//            }
-//        });
     });
 
 })(jQuery, window);

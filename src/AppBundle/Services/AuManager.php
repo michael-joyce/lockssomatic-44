@@ -22,12 +22,15 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Description of AuManager.
+ * Manage all AUs and queries on them.
  */
 class AuManager {
 
     use LoggerAwareTrait;
 
+    /**
+     * Batch size for iterating deposits in AUs.
+     */
     const BATCHSIZE = 25;
 
     /**
@@ -38,6 +41,8 @@ class AuManager {
     private $em;
 
     /**
+     * AU repository for database queries.
+     *
      * @var AuRepository
      */
     private $auRepository;
@@ -50,14 +55,12 @@ class AuManager {
     private $router;
 
     /**
-     * Build the builder.
+     * Build the manager.
      *
      * @param EntityManagerInterface $em
      *   Dependency injected entity manager.
-     * @param AuPropertyGenerator $propertyGenerator
-     *   Dependency injected property generator.
-     * @param AuIdGenerator $idGenerator
-     *   Dependency injected ID generator.
+     * @param RouterInterface $router
+     *   Dependency injected URL generator.
      */
     public function __construct(EntityManagerInterface $em, RouterInterface $router) {
         $this->em = $em;
@@ -65,6 +68,12 @@ class AuManager {
         $this->auRepository = $em->getRepository(Au::class);
     }
 
+    /**
+     * Set or override the AU repository.
+     *
+     * @param AuRepository $repo
+     *   Repository to query.
+     */
     public function setAuRepository(AuRepository $repo) {
         $this->auRepository = $repo;
     }
@@ -73,20 +82,36 @@ class AuManager {
      * Calculate the size of an AU.
      *
      * @param Au $au
+     *   AU to query.
+     *
      * @return int
+     *   Size in 1000-byte kb.
      */
     public function auSize(Au $au) {
         return $this->auRepository->getAuSize($au);
     }
 
+    /**
+     * Count the deposits in an AU.
+     *
+     * @param Au $au
+     *   The AU to count.
+     *
+     * @return int
+     *   The number of deposits in the AU.
+     */
     public function countDeposits(Au $au) {
         return $this->auRepository->countDeposits($au);
     }
 
     /**
+     * Get an iterator over the deposits in the AU.
      *
      * @param Au $au
+     *   The AU to query.
+     *
      * @return Iterator|Deposit[]
+     *   The resulting iterator.
      */
     public function auDeposits(Au $au) {
         return $this->auRepository->iterateDeposits($au);
@@ -98,8 +123,12 @@ class AuManager {
      * Does not trigger a database flush.
      *
      * @param Deposit $deposit
+     *   Base the AU on this deposit, which is added to the AU.
      * @param string $auid
+     *   Precomputed AUID.
+     *
      * @return Au
+     *   The generated AU.
      */
     public function buildAu(Deposit $deposit, $auid) {
         $provider = $deposit->getContentProvider();
@@ -155,6 +184,7 @@ class AuManager {
      *   The number of errors found.
      *
      * @throws Exception
+     *   If the AU is empty or is missing a plugin.
      */
     public function validate(Au $au) {
         $errors = 0;
@@ -167,9 +197,9 @@ class AuManager {
             throw new Exception("Cannot validate AU for plugin without definitional properties.");
         }
 
-        if($this->countDeposits($au) === 0) {
+        if ($this->countDeposits($au) === 0) {
             $this->logger->warning("AU {$au->getId()} has no deposits and cannot be validated.");
-            return;
+            return 0;
         }
 
         $iterator = $this->auDeposits($au);
@@ -343,20 +373,23 @@ class AuManager {
             'ownerId' => $au->getContentProvider()->getContentOwner()->getId(),
             'providerId' => $au->getContentProvider()->getId(),
             'auId' => $au->getId(),
-            ), UrlGeneratorInterface::ABSOLUTE_URL);
+        ), UrlGeneratorInterface::ABSOLUTE_URL);
 
         foreach ($propertyNames as $index => $name) {
             switch ($name) {
                 case 'manifest_url':
                     $value = $manifestUrl;
                     break;
+
                 case 'permission_url':
                     $value = $au->getContentProvider()->getPermissionUrl();
                     break;
+
                 case 'base_url':
                     $p = parse_url($deposit->getUrl());
                     $value = "{$p['scheme']}://{$p['host']}" . (isset($p['port']) ? ":{$p['port']}" : '');
                     break;
+
                 default:
                     $value = $deposit->getProperty($name);
                     break;
@@ -431,8 +464,10 @@ class AuManager {
      *   Deposit for the AUID.
      * @param bool $lockssAuid
      *   If true, generate a LOCKSS AUID including the LOM-generated properties.
+     *
      * @return string
      *   The generated AUID.
+     *
      * @throws Exception
      *   If the deposit is missing a required property, an exception is thrown.
      */
@@ -444,12 +479,12 @@ class AuManager {
         $auKey = '';
         $propNames = $plugin->getDefinitionalPropertyNames();
         sort($propNames);
-        foreach($propNames as $name) {
-            if( ! $lockssAuid && in_array($name, $plugin->getGeneratedParams())) {
+        foreach ($propNames as $name) {
+            if (!$lockssAuid && in_array($name, $plugin->getGeneratedParams())) {
                 continue;
             }
             $value = null;
-            if($lockssAuid) {
+            if ($lockssAuid) {
                 $value = $encoder->encode($deposit->getAu()->getAuPropertyValue($name));
             } else {
                 $value = $encoder->encode($deposit->getProperty($name));
@@ -480,7 +515,7 @@ class AuManager {
      *   If the AU is missing a required property.
      */
     public function generateAuidFromAu(Au $au, $lockssAuid = true) {
-        if($au->getDeposits()->count() === 0) {
+        if ($au->getDeposits()->count() === 0) {
             return null;
         }
         $plugin = $au->getPlugin();
@@ -489,6 +524,5 @@ class AuManager {
         }
         return $this->generateAuidFromDeposit($au->getDeposits()->first(), $lockssAuid);
     }
-
 
 }

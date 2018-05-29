@@ -11,40 +11,32 @@ namespace AppBundle\EventListener;
 
 use AppBundle\Entity\Box;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareTrait;
 
 /**
- * Description of BoxListener.
- *
- * @author Michael Joyce <ubermichael@gmail.com>
+ * Automatically update box IP addresses when they are changed.
  */
 class BoxListener {
     
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    use LoggerAwareTrait;
     
     /**
-     *
-     */
-    public function __construct(LoggerInterface $logger) {
-        $this->logger = $logger;
-    }
-    
-    /**
-     *
+     * Look up an IP address for a hostname.
+     * 
+     * @return string|null
+     *   IP address as a string or null if it cannot be resolved.
      */
     private function lookup($hostname) {
         $ip = gethostbyname($hostname);
         if ($ip === $hostname) {
             $this->logger->warning("Cannot find IP for {$hostname}.");
+            return null;
         }
         return $ip;
     }
     
     /**
-     *
+     * Automatically called before persisting a box.
      */
     public function prePersist(LifecycleEventArgs $args) {
         $entity = $args->getEntity();
@@ -58,7 +50,7 @@ class BoxListener {
     }
     
     /**
-     *
+     * Automatically called before updating boxes.
      */
     public function preUpdate(LifecycleEventArgs $args) {
         $entity = $args->getEntity();
@@ -69,7 +61,6 @@ class BoxListener {
         if ($ip === $entity->getIpAddress()) {
             return;
         }
-        $this->logger->warning("Updating IP address for box {$entity->getHostname()} to {$ip}.");
         $entity->setIpAddress($ip);
     }
     

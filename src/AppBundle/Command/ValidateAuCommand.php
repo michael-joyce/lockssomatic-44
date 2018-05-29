@@ -17,6 +17,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ValidateAuCommand extends ContainerAwareCommand {
 
     /**
+     * AU Manager.
+     *
      * @var AuManager
      */
     private $manager;
@@ -28,6 +30,14 @@ class ValidateAuCommand extends ContainerAwareCommand {
      */
     private $em;
 
+    /**
+     * Construct the command.
+     *
+     * @param EntityManagerInterface $em
+     *   Dependency-injected doctrine instance.
+     * @param AuManager $manager
+     *   Dependency-injected au manager service.
+     */
     public function __construct(EntityManagerInterface $em, AuManager $manager) {
         parent::__construct(null);
         $this->manager = $manager;
@@ -50,15 +60,15 @@ class ValidateAuCommand extends ContainerAwareCommand {
      *   List of AU database IDs to check.
      *
      * @return Au[]|Collection
+     *   List of AUs to query.
      */
     protected function getAus(array $ids) {
-        if(count($ids) === 0) {
+        if (count($ids) === 0) {
             return $this->em->getRepository(Au::class)->findAll();
         }
         return $this->em->getRepository(Au::class)->findBy(array(
-            'id' => $ids
+            'id' => $ids,
         ));
-
     }
 
     /**

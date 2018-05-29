@@ -67,6 +67,9 @@ class FilePaths {
         $this->downloadDir = $downloadDir;
     }
 
+    /**
+     *
+     */
     public function setRoot($root) {
         $this->root = $root;
     }
@@ -89,8 +92,8 @@ class FilePaths {
      */
     public function getCacheDownloadDir() {
         $path = implode('/', array(
-            $this->getRootPath(),
-            $this->downloadDir,
+        $this->getRootPath(),
+        $this->downloadDir,
         ));
         return $path;
     }
@@ -109,10 +112,10 @@ class FilePaths {
      */
     public function getDownloadContentPath(Deposit $deposit) {
         $path = implode('/', array(
-            $this->getCacheDownloadDir(),
-            $deposit->getUuid(),
-            $deposit->getId(),
-            basename($deposit->getFilename()),
+        $this->getCacheDownloadDir(),
+        $deposit->getUuid(),
+        $deposit->getId(),
+        basename($deposit->getFilename()),
         ));
         return $path;
     }
@@ -125,9 +128,9 @@ class FilePaths {
      */
     public function getLockssDir() {
         $path = implode('/', array(
-            $this->getRootPath(),
-            'data',
-            'lockss',
+        $this->getRootPath(),
+        'data',
+        'lockss',
         ));
 
         return $path;
@@ -141,8 +144,8 @@ class FilePaths {
      */
     public function getPluginsDir() {
         $path = implode('/', array(
-            $this->getLockssDir(),
-            'plugins',
+        $this->getLockssDir(),
+        'plugins',
         ));
 
         return $path;
@@ -162,9 +165,9 @@ class FilePaths {
      */
     public function getLockssKeystoreDir(Pln $pln) {
         $path = implode('/', array(
-            $this->getLockssDir(),
-            'keystores',
-            $pln->getId(),
+        $this->getLockssDir(),
+        'keystores',
+        $pln->getId(),
         ));
 
         return $path;
@@ -181,10 +184,10 @@ class FilePaths {
      */
     public function getConfigsDir(Pln $pln) {
         $path = implode('/', array(
-            $this->getRootPath(),
-            'data',
-            'plnconfigs',
-            $pln->getId(),
+        $this->getRootPath(),
+        'data',
+        'plnconfigs',
+        $pln->getId(),
         ));
 
         return $path;
@@ -201,9 +204,9 @@ class FilePaths {
      */
     public function getLockssXmlFile(Pln $pln) {
         $path = implode('/', array(
-            $this->getConfigsDir($pln),
-            'properties',
-            'lockss.xml',
+        $this->getConfigsDir($pln),
+        'properties',
+        'lockss.xml',
         ));
 
         return $path;
@@ -220,8 +223,8 @@ class FilePaths {
      */
     public function getPluginsExportDir(Pln $pln) {
         $path = implode('/', array(
-            $this->getConfigsDir($pln),
-            'plugins',
+        $this->getConfigsDir($pln),
+        'plugins',
         ));
 
         return $path;
@@ -240,8 +243,8 @@ class FilePaths {
      */
     public function getPluginsExportFile(Pln $pln, Plugin $plugin) {
         $path = implode('/', array(
-            $this->getPluginsExportDir($pln),
-            $plugin->getOriginalFilename(),
+        $this->getPluginsExportDir($pln),
+        $plugin->getOriginalFilename(),
         ));
 
         return $path;
@@ -258,8 +261,8 @@ class FilePaths {
      */
     public function getPluginsManifestFile(Pln $pln) {
         $path = implode('/', array(
-            $this->getPluginsExportDir($pln),
-            'index.html',
+        $this->getPluginsExportDir($pln),
+        'index.html',
         ));
 
         return $path;
@@ -278,10 +281,10 @@ class FilePaths {
      */
     public function getManifestDir(Pln $pln, ContentProvider $provider) {
         $path = implode('/', array(
-            $this->getConfigsDir($pln),
-            'manifests',
-            $provider->getContentOwner()->getId(),
-            $provider->getId(),
+        $this->getConfigsDir($pln),
+        'manifests',
+        $provider->getContentOwner()->getId(),
+        $provider->getId(),
         ));
 
         return $path;
@@ -298,8 +301,8 @@ class FilePaths {
      */
     public function getManifestPath(Au $au) {
         $path = implode('/', array(
-            $this->getManifestDir($au->getPln(), $au->getContentprovider()),
-            'manifest_' . $au->getId() . '.html',
+        $this->getManifestDir($au->getPln(), $au->getContentprovider()),
+        'manifest_' . $au->getId() . '.html',
         ));
 
         return $path;
@@ -318,19 +321,22 @@ class FilePaths {
      */
     public function getTitleDbDir(Pln $pln, ContentProvider $provider) {
         $path = implode('/', array(
-            $this->getConfigsDir($pln),
-            'titledbs',
-            $provider->getContentOwner()->getId(),
-            $provider->getId(),
+        $this->getConfigsDir($pln),
+        'titledbs',
+        $provider->getContentOwner()->getId(),
+        $provider->getId(),
         ));
 
         return $path;
     }
 
+    /**
+     *
+     */
     public function getTitleDbPath(ContentProvider $provider, $id) {
         $path = implode('/', array(
-            $this->getTitleDbDir($provider->getPln(), $provider),
-            'titledb_' . $id . '.xml'
+        $this->getTitleDbDir($provider->getPln(), $provider),
+        'titledb_' . $id . '.xml',
         ));
         return $path;
     }

@@ -19,22 +19,31 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- *
+ * Check the status of deposits in LOCKSS.
  */
 class DepositStatusCommand extends ContainerAwareCommand {
 
     /**
+     * Dependency injected doctrine instance.
+     *
      * @var EntityManagerInterface
      */
     private $em;
 
     /**
+     * LOCKSS client for SOAP interactions.
+     *
      * @var LockssClient
      */
     private $client;
 
     /**
+     * Build the command.
      *
+     * @param EntityManagerInterface $em
+     *   Dependency injected doctrine instance.
+     * @param LockssClient $client
+     *   Dependency injected LOCKSS client.
      */
     public function __construct(EntityManagerInterface $em, LockssClient $client) {
         parent::__construct();
@@ -57,11 +66,17 @@ class DepositStatusCommand extends ContainerAwareCommand {
     /**
      * Get a list of deposits to check.
      *
+     * By default, only deposits that have not reached agreement are queried.
+     *
      * @param bool $all
+     *   If true, all deposits will be returned.
      * @param int $limit
+     *   Limit the number of deposits returned.
      * @param int $plnId
+     *   Filter the deposits to the this PLN ID.
      *
      * @return Deposit[]|Collection
+     *   List of deposits to to query.
      */
     protected function getDeposits($all, $limit, $plnId) {
         $repo = $this->em->getRepository(Deposit::class);
@@ -82,7 +97,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
     }
 
     /**
-     *
+     * @inheritdoc
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         $all = $input->getOption('all');

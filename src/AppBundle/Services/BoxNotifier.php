@@ -16,7 +16,7 @@ use Swift_Message;
 use Symfony\Component\Templating\EngineInterface;
 
 /**
- * Description of BoxNotifier
+ * Description of BoxNotifier.
  */
 class BoxNotifier {
 
@@ -28,6 +28,9 @@ class BoxNotifier {
 
     private $mailer;
 
+    /**
+     *
+     */
     public function __construct($sender, $contact, EngineInterface $templating, Swift_Mailer $mailer) {
         $this->sender = $sender;
         $this->contact = $contact;
@@ -35,8 +38,11 @@ class BoxNotifier {
         $this->mailer = $mailer;
     }
 
+    /**
+     *
+     */
     public function unreachable(Box $box, BoxStatus $boxStatus) {
-        if( ! $box->getSendNotifications() || ! $box->getContactEmail()) {
+        if (!$box->getSendNotifications() || !$box->getContactEmail()) {
             return;
         }
         $message = new Swift_Message('LOCKSSOMatic Notification: Box Unreachable', null, 'text/plain', '7bit');
@@ -51,8 +57,11 @@ class BoxNotifier {
         $this->mailer->send($message);
     }
 
+    /**
+     *
+     */
     public function freeSpaceWarning(Box $box, BoxStatus $boxStatus) {
-        if( ! $box->getSendNotifications() || ! $box->getContactEmail()) {
+        if (!$box->getSendNotifications() || !$box->getContactEmail()) {
             return;
         }
 

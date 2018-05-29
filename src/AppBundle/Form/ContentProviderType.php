@@ -16,13 +16,17 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- *
+ * Data entry form for content providers.
  */
 class ContentProviderType extends AbstractType {
 
     /**
+     * Build the form by adding types to $builder.
+     *
      * @param FormBuilderInterface $builder
+     *   Form builder.
      * @param array $options
+     *   Unused form options.
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('uuid', null, array(
@@ -68,14 +72,17 @@ class ContentProviderType extends AbstractType {
         ));
         $builder->add('plugin', null, array(
             'required' => true,
-            'choice_label' => function(Plugin $plugin) {
-                return $plugin->getName() . ' version ' . $plugin->getVersion(); 
+            'choice_label' => function (Plugin $plugin) {
+                return $plugin->getName() . ' version ' . $plugin->getVersion();
             },
         ));
     }
 
     /**
+     * Configure default options.
+     *
      * @param OptionsResolver $resolver
+     *   Options resolver to pass options back to configure the form.
      */
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
