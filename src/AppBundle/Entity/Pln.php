@@ -26,7 +26,7 @@ class Pln extends AbstractEntity {
     const KEYSTORE_MIMETYPES = array(
         'application/x-java-keystore',
     );
-    
+
     /**
      * LOCKSS will only recognize these properties in an XML file if they
      * are lists.
@@ -132,7 +132,7 @@ class Pln extends AbstractEntity {
      * @var Pln[]|Collection
      */
     private $contentProviders;
-    
+
     /**
      *
      */
@@ -284,7 +284,7 @@ class Pln extends AbstractEntity {
     public function getContentPort() {
         return $this->contentPort;
     }
-    
+
     public function clearProperties() {
         $this->properties = [];
         return $this;
@@ -298,13 +298,13 @@ class Pln extends AbstractEntity {
     public function getProperties() {
         return $this->properties;
     }
-    
+
     /**
      * @param string $key
      * @param string|array $value
      * @return Pln
      */
-    public function setProperty($key, $value) {        
+    public function setProperty($key, $value) {
         if(in_array($key, self::LIST_REQUIRED)) {
             if(is_array($value)) {
                 $this->properties[$key] = $value;
@@ -320,14 +320,14 @@ class Pln extends AbstractEntity {
         }
         return $this;
     }
-    
+
     public function getProperty($key) {
         if( !array_key_exists($key, $this->properties)) {
             return null;
         }
         return $this->properties[$key];
     }
-    
+
     public function removeProperty($key) {
         unset($this->properties[$key]);
     }
@@ -399,7 +399,8 @@ class Pln extends AbstractEntity {
     /**
      * Set keystore.
      *
-     * @param Keystore $keystore
+     * @param string $keystore
+     *   Path to the keystore file.
      *
      * @return Pln
      */
@@ -417,7 +418,7 @@ class Pln extends AbstractEntity {
     public function getKeystorePath() {
         return $this->keystore;
     }
-    
+
     /**
      *
      */
@@ -456,7 +457,7 @@ class Pln extends AbstractEntity {
     public function getContentProviders() {
         return $this->contentProviders;
     }
-    
+
     /**
      * @return Plugin[]
      */

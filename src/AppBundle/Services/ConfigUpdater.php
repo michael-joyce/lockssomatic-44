@@ -51,6 +51,7 @@ class ConfigUpdater {
      * Update the list of peers in the PLN configuration properties.
      *
      * @param Pln $pln
+     *   The pln to update.
      */
     public function updatePeerList(Pln $pln) {
         $boxes = $pln->getBoxes();
@@ -65,6 +66,7 @@ class ConfigUpdater {
      * Set the list of title db URLs in the PLN config properties.
      *
      * @param Pln $pln
+     *   The pln to update.
      */
     public function updateTitleDbs(Pln $pln) {
         $urls = [];
@@ -85,7 +87,10 @@ class ConfigUpdater {
     }
 
     /**
+     * Update the AU configurations by generating the properties for them.
      *
+     * @param Pln $pln
+     *   The pln to update.
      */
     public function updateAuConfigs(Pln $pln) {
         foreach ($pln->getAus() as $au) {

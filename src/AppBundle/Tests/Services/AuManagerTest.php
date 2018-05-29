@@ -20,6 +20,7 @@ use AppBundle\Entity\PluginProperty;
 use AppBundle\Repository\AuRepository;
 use AppBundle\Services\AuManager;
 use ArrayObject;
+use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 use ReflectionProperty;
@@ -285,6 +286,37 @@ class AuManagerTest extends BaseTestCase {
         $this->manager->setAuRepository($repo);
 
         $this->assertEquals(9, $this->manager->validate($au));
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testValidateNoPlugin() {
+        $au = new Au();
+        $this->manager->validate($au);
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testValidateNoDefinitionalProps() {
+        $au = new Au();
+        $plugin = $this->createMock(Plugin::class);
+        $au->setPlugin($plugin);
+        $this->manager->validate($au);
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testValidateNoDeposits() {
+        $au = new Au();
+        $plugin = $this->createMock(Plugin::class);
+        $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
+            'foo'
+        ]));
+        $au->setPlugin($plugin);
+        $this->manager->validate($au);
     }
 
     public function testBuildProperty() {
@@ -601,6 +633,57 @@ class AuManagerTest extends BaseTestCase {
         $this->assertStringEndsWith('plnconfigs/1/manifests/3/5/manifest_7.html', $au->getAuPropertyValue('manifest_url'));
     }
 
+    public function testGeneratePropertiesClear() {
+        $plugin = $this->createMock(Plugin::class);
+        $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
+        $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
+            'base_url', 'container_number', 'manifest_url', 'permission_url'
+        ]));
+        $plugin->method('getNonDefinitionalProperties')->will($this->returnValue([]));
+
+        $pln = new Pln();
+        $plnRef = new ReflectionProperty(Pln::class, 'id');
+        $plnRef->setAccessible(true);
+        $plnRef->setValue($pln, 1);
+
+        $owner = new ContentOwner();
+        $ownerRef = new ReflectionProperty(ContentOwner::class, 'id');
+        $ownerRef->setAccessible(true);
+        $ownerRef->setValue($owner, 3);
+
+        $provider = new ContentProvider();
+        $providerRef = new ReflectionProperty(ContentProvider::class, 'id');
+        $providerRef->setAccessible(true);
+        $providerRef->setValue($provider, 5);
+        $provider->setContentOwner($owner);
+        $provider->setPln($pln);
+        $provider->setPermissionUrl('http://example.com/permission');
+
+        $au = new Au();
+        $dummy = new AuProperty();
+        $dummy->setAu($au);
+        $dummy->setPropertyKey("dummy");
+        $dummy->setPropertyValue("also dummy.");
+        $au->addAuProperty($dummy);
+
+        $auRef = new ReflectionProperty(Au::class, 'id');
+        $auRef->setAccessible(true);
+        $auRef->setValue($au, 7);
+        $au->setPln($pln);
+        $au->setContentProvider($provider);
+
+        $au->setPlugin($plugin);
+        $this->buildContentItems($au);
+
+        $this->manager->generateProperties($au, true);
+        $this->assertEquals('', $au->getAuPropertyValue("dummy"));
+        $this->assertEquals(23, count($au->getAuProperties()));
+        $this->assertEquals('http://example.com', $au->getAuPropertyValue('base_url'));
+        $this->assertEquals(1, $au->getAuPropertyValue('container_number'));
+        $this->assertEquals('http://example.com/permission', $au->getAuPropertyValue('permission_url'));
+        $this->assertStringEndsWith('plnconfigs/1/manifests/3/5/manifest_7.html', $au->getAuPropertyValue('manifest_url'));
+    }
+
     public function testGenerateAuidFromDeposit() {
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
@@ -615,6 +698,35 @@ class AuManagerTest extends BaseTestCase {
             ['foo', 'Some complex title'],
             ['bar', 'other.property'],
             ['bax', 'property the third!'],
+        ]));
+        $deposit = $this->createMock(Deposit::class);
+        $deposit->method('getPlugin')->will($this->returnValue($plugin));
+        $deposit->method('getProperty')->will($this->returnValueMap([
+            ['foo', 'Some complex title'],
+            ['bar', 'other.property'],
+            ['bax', 'property the third!'],
+        ]));
+        $deposit->method('getAu')->willReturn($au);
+
+        $id = $this->manager->generateAuidFromDeposit($deposit, true);
+        $this->assertEquals('ca|example|plugin&bar~other%2Eproperty&bax~property+the+third%21&foo~Some+complex+title', $id);
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testGenerateAuidFromDepositMissingProperty() {
+        $plugin = $this->createMock(Plugin::class);
+        $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
+        $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
+            'foo', 'bar', 'bax'
+        ]));
+        $plugin->method('getGeneratedParams')->will($this->returnValue([
+            'bar'
+        ]));
+        $au = $this->createMock(Au::class);
+        $au->method('getAuPropertyValue')->will($this->returnValueMap([
+            ['foo', 'Some complex title'],
         ]));
         $deposit = $this->createMock(Deposit::class);
         $deposit->method('getPlugin')->will($this->returnValue($plugin));
@@ -668,11 +780,48 @@ class AuManagerTest extends BaseTestCase {
             ['bar', 'other.property'],
             ['bax', 'property the third!'],
         ]));
-        $au->method('getDeposits')->willReturn(new \Doctrine\Common\Collections\ArrayCollection([$deposit]));
+        $au->method('getDeposits')->willReturn(new ArrayCollection([$deposit]));
         $au->method('getPlugin')->willReturn($plugin);
         $deposit->method('getAu')->willReturn($au);
         $id = $this->manager->generateAuidFromAu($au);
         $this->assertEquals('ca|example|plugin&bar~other%2Eproperty&bax~property+the+third%21&foo~Some+complex+title', $id);
+    }
+
+    public function testGenerateAuidFromAuNoDeposits() {
+        $plugin = $this->createMock(Plugin::class);
+        $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
+        $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
+            'foo', 'bar', 'bax'
+        ]));
+        $au = $this->createMock(Au::class);
+        $au->method('getAuPropertyValue')->will($this->returnValueMap([
+            ['foo', 'Some complex title'],
+            ['bar', 'other.property'],
+            ['bax', 'property the third!'],
+        ]));
+        $au->method('getDeposits')->willReturn(new ArrayCollection([]));
+        $au->method('getPlugin')->willReturn($plugin);
+        $id = $this->manager->generateAuidFromAu($au);
+        $this->assertNull($id);
+    }
+
+    public function testGenerateAuidFromAuNoPlugin() {
+        $au = $this->createMock(Au::class);
+        $au->method('getAuPropertyValue')->will($this->returnValueMap([
+            ['foo', 'Some complex title'],
+            ['bar', 'other.property'],
+            ['bax', 'property the third!'],
+        ]));
+        $deposit = $this->createMock(Deposit::class);
+        $deposit->method('getPlugin')->will($this->returnValue(null));
+        $deposit->method('getProperty')->will($this->returnValueMap([
+            ['foo', 'Some complex title'],
+            ['bar', 'other.property'],
+            ['bax', 'property the third!'],
+        ]));
+        $au->method('getDeposits')->willReturn(new ArrayCollection([$deposit]));
+        $id = $this->manager->generateAuidFromAu($au);
+        $this->assertNull($id);
     }
 
     public function testGenerateAuidFromAuNonLockss() {
@@ -699,7 +848,7 @@ class AuManagerTest extends BaseTestCase {
         ]));
         $au->method('getPlugin')->willReturn($plugin);
         $deposit->method('getAu')->willReturn($au);
-        $au->method('getDeposits')->willReturn(new \Doctrine\Common\Collections\ArrayCollection([$deposit]));
+        $au->method('getDeposits')->willReturn(new ArrayCollection([$deposit]));
         $id = $this->manager->generateAuidFromAu($au, false);
         $this->assertEquals('ca|example|plugin&bax~property+the+third%21&foo~Some+complex+title', $id);
     }
