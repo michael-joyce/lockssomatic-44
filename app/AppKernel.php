@@ -21,6 +21,7 @@ class AppKernel extends Kernel {
             new FOS\UserBundle\FOSUserBundle(),
             new Nines\UserBundle\NinesUserBundle(),
             new Nines\UtilBundle\NinesUtilBundle(),
+            new Tetranz\Select2EntityBundle\TetranzSelect2EntityBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

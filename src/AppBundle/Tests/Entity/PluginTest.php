@@ -31,11 +31,12 @@ class PluginTest extends BaseTestCase {
     public function testGetRootPluginProperties() {
         $plugin = $this->getReference('plugin.1');
         $properties = $plugin->getRootPluginProperties();
-        $this->assertCount(4, $properties);
-        $this->assertEquals('test_1', $properties[0]->getPropertyKey());
-        $this->assertEquals('test_property', $properties[1]->getPropertyKey());
-        $this->assertEquals('test_list', $properties[2]->getPropertyKey());
-        $this->assertEquals('test_parent', $properties[3]->getPropertyKey());
+        $this->assertCount(5, $properties);
+        $this->assertEquals('plugin_identifier', $properties[0]->getPropertyKey());
+        $this->assertEquals('au_name', $properties[1]->getPropertyKey());
+        $this->assertEquals('plugin_version', $properties[2]->getPropertyKey());
+        $this->assertEquals('au_permission_url', $properties[3]->getPropertyKey());
+        $this->assertEquals('plugin_config_props', $properties[4]->getPropertyKey());
     }
     
     /**
@@ -49,12 +50,13 @@ class PluginTest extends BaseTestCase {
     
     public function getPropertyData() {
         return [
-            ['test_1', 'Test Property'],
-            ['test_property', 'Test Property Again!?'],
-            ['test_list', ['list a', 'list b']],
-            ['test_parent', null],
-            ['test_child_1', 'Bobby Tables'],
-            ['test_child_2', ['Mary', 'Jane']],
+            ['plugin_identifier', 'ca.example.lockss.plugin'],
+            ['au_name', '"Dummy AU %d", container_number'],
+            ['plugin_version', 301],
+            ['au_permission_url', [
+                '"%s", manifest_url',
+                '"%s", permission_url'
+            ]],
         ];
     }
     
@@ -81,7 +83,7 @@ class PluginTest extends BaseTestCase {
         $importer = $this->container->get(PluginImporter::class);
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
-        $definitionals = $plugin->getDefinitionalProperties();
+        $definitionals = $plugin->getDefinitionalPropertyNames();
         $this->assertEquals(2, count($definitionals));
         $this->assertEquals('base_url', $definitionals[0]);        
         $this->assertEquals('container_number', $definitionals[1]);

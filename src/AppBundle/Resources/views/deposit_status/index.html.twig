@@ -26,7 +26,7 @@
                             {{ depositStatus.agreement }}
                         </a>
                     </td>
-                    <td>{% if depositStatus.queryDate %}{{ depositStatus.queryDate|date('Y-m-d H:i:s') }}{% endif %}</td>
+                    <td>{{ depositStatus.created|date }}</td>
                 </tr>
             {% endfor %}
         </tbody>

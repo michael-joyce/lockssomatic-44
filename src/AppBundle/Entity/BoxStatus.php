@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
- * BoxStatus
+ * BoxStatus.
  *
  * @ORM\Table(name="box_status")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\BoxStatusRepository")
@@ -26,15 +26,9 @@ class BoxStatus extends AbstractEntity {
      * @var Box
      *
      * @ORM\ManyToOne(targetEntity="Box", inversedBy="status")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $box;
-
-    /**
-     * @var DateTime
-     *
-     * @ORM\Column(name="query_date", type="datetime", nullable=false)
-     */
-    private $queryDate;
 
     /**
      * @var bool
@@ -51,42 +45,29 @@ class BoxStatus extends AbstractEntity {
     private $errors;
 
     /**
-     * @var Collection|CacheStatus
-     *
-     * @ORM\OneToMany(targetEntity="CacheStatus", mappedBy="boxStatus", orphanRemoval=true)
+     * @var array
+     * 
+     * @ORM\Column(name="data", type="array", nullable=false)
      */
-    private $caches;
+    private $data;
 
+    public function __construct() {
+        parent::__construct();
+        $this->success = false;
+        $this->data = array();
+    }
+
+    /**
+     * Generate a string representation of the status.
+     */
     public function __toString() {
-        return $this->box . " " . $this->queryDate->format('c');
+        return $this->box . " " . $this->created->format('c');
     }
 
     /**
-     * Set queryDate
+     * Set success.
      *
-     * @param DateTime $queryDate
-     *
-     * @return BoxStatus
-     */
-    public function setQueryDate($queryDate) {
-        $this->queryDate = $queryDate;
-
-        return $this;
-    }
-
-    /**
-     * Get queryDate
-     *
-     * @return DateTime
-     */
-    public function getQueryDate() {
-        return $this->queryDate;
-    }
-
-    /**
-     * Set success
-     *
-     * @param boolean $success
+     * @param bool $success
      *
      * @return BoxStatus
      */
@@ -97,29 +78,33 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Get success
+     * Get success.
      *
-     * @return boolean
+     * @return bool
      */
     public function getSuccess() {
         return $this->success;
     }
 
     /**
-     * Set errors
+     * Set errors.
      *
-     * @param string $errors
+     * @param string|array $errors
      *
      * @return BoxStatus
      */
     public function setErrors($errors) {
-        $this->errors = $errors;
+        if(is_array($errors)) {
+            $this->errors = implode("\n", $errors);
+        } else {
+            $this->errors = $errors;
+        }
 
         return $this;
     }
 
     /**
-     * Get errors
+     * Get errors.
      *
      * @return string
      */
@@ -128,7 +113,7 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Set box
+     * Set box.
      *
      * @param Box $box
      *
@@ -141,7 +126,7 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Get box
+     * Get box.
      *
      * @return Box
      */
@@ -150,34 +135,25 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Add cach
+     * Set data
      *
-     * @param CacheStatus $cach
+     * @param array $data
      *
      * @return BoxStatus
      */
-    public function addCach(CacheStatus $cach) {
-        $this->caches[] = $cach;
+    public function setData($data) {
+        $this->data = $data;
 
         return $this;
     }
 
     /**
-     * Remove cach
+     * Get data
      *
-     * @param CacheStatus $cach
+     * @return array
      */
-    public function removeCach(CacheStatus $cach) {
-        $this->caches->removeElement($cach);
-    }
-
-    /**
-     * Get caches
-     *
-     * @return Collection
-     */
-    public function getCaches() {
-        return $this->caches;
+    public function getData() {
+        return $this->data;
     }
 
 }

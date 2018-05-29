@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
- * DepositStatus
+ * DepositStatus.
  *
  * @ORM\Table(name="deposit_status")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\DepositStatusRepository")
@@ -25,6 +25,7 @@ class DepositStatus extends AbstractEntity {
      * @var Deposit
      *
      * @ORM\ManyToOne(targetEntity="Deposit", inversedBy="status")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $deposit;
 
@@ -35,13 +36,6 @@ class DepositStatus extends AbstractEntity {
     private $agreement;
 
     /**
-     * @var DateTime
-     *
-     * @ORM\Column(name="query_date", type="datetime", nullable=false)
-     */
-    private $queryDate;
-
-    /**
      * A deposit status is a big array.
      *
      * @var array
@@ -50,12 +44,15 @@ class DepositStatus extends AbstractEntity {
      */
     private $status;
 
+    /**
+     *
+     */
     public function __toString() {
-        return $this->deposit . ' ' . $this->queryDate->format('c');
+        return $this->deposit . ' ' . $this->created->format('c');
     }
 
     /**
-     * Set agreement
+     * Set agreement.
      *
      * @param float $agreement
      *
@@ -68,7 +65,7 @@ class DepositStatus extends AbstractEntity {
     }
 
     /**
-     * Get agreement
+     * Get agreement.
      *
      * @return float
      */
@@ -77,29 +74,7 @@ class DepositStatus extends AbstractEntity {
     }
 
     /**
-     * Set queryDate
-     *
-     * @param DateTime $queryDate
-     *
-     * @return DepositStatus
-     */
-    public function setQueryDate($queryDate) {
-        $this->queryDate = $queryDate;
-
-        return $this;
-    }
-
-    /**
-     * Get queryDate
-     *
-     * @return DateTime
-     */
-    public function getQueryDate() {
-        return $this->queryDate;
-    }
-
-    /**
-     * Set status
+     * Set status.
      *
      * @param array $status
      *
@@ -112,7 +87,7 @@ class DepositStatus extends AbstractEntity {
     }
 
     /**
-     * Get status
+     * Get status.
      *
      * @return array
      */
@@ -121,7 +96,7 @@ class DepositStatus extends AbstractEntity {
     }
 
     /**
-     * Set deposit
+     * Set deposit.
      *
      * @param Deposit $deposit
      *
@@ -134,7 +109,7 @@ class DepositStatus extends AbstractEntity {
     }
 
     /**
-     * Get deposit
+     * Get deposit.
      *
      * @return Deposit
      */

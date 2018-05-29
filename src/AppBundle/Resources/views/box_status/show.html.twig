@@ -18,7 +18,7 @@
         <tbody>
             <tr>
                 <th>Query Date</th>
-                <td>{% if boxStatus.queryDate %}{{ boxStatus.queryDate|date }}{% endif %}</td>
+                <td>{{ boxStatus.created|date }}</td>
             </tr>
             <tr>
                 <th>Success</th>
@@ -47,14 +47,23 @@
         </tbody>
     </table>
                     
-    {% if boxStatus.caches | length > 0 %}    
+    {% if boxStatus.data | length > 0 %}    
         <h2>Cache Status</h2>
-            {% for cache in boxStatus.caches %}
+            {% for data in boxStatus.data %}
+                <p>Cache: {{ data.repositorySpaceId }}</p>
                 <dl class="dl-horizontal">
-                    {% for key,value in cache.response %}
-                        <dt>{{ key }}</dt>
-                        <dd>{{ value }}</dd>                        
-                    {% endfor %}
+                    <dt>Active AUs</dt>
+                    <dd>{{ data.activeCount }}</dd>
+                    <dt>Deleted AUs</dt>
+                    <dd>{{ data.deletedCount }}</dd>
+                    <dt>Percentage Full</dt>
+                    <dd>{{ data.percentageFull * 100 }}%</dd>
+                    <dt>Disk Size</dt>
+                    <dd>{{ include('AppBundle:util:size.html.twig', {'bytes': data.size}) }}</dd>
+                    <dt>Free Space</dt>
+                    <dd>{{ include('AppBundle:util:size.html.twig', {'bytes': data.free}) }}</dd>
+                    <dt>Used Space</dt>
+                    <dd>{{ include('AppBundle:util:size.html.twig', {'bytes': data.used}) }}</dd>
                 </dl>
             {% endfor %} 
     {% endif %}

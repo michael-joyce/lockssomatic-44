@@ -13,24 +13,33 @@ services:
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
-        
+
     AppBundle\EventListener\SwordExceptionListener:
+        arguments:
+            $env: "%kernel.environment%"
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
-            - {name: kernel.event_listener, event: kernel.controller }
-            
+            - { name: kernel.event_listener, event: kernel.controller }
+
     AppBundle\Menu\Builder:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
-            
-    Nines\UserBundle\Menu\Builder:
-        tags:
-            - { name: knp_menu.menu_builder, method: userNavMenu, alias: user}
-            
-    AppBundle\Services\:
-        resource: '../../src/AppBundle/Services'
-        public: true
-            
+
+    AppBundle\Services\ConfigExporter:
+        arguments:
+            $ausPerTitleDb: '%lom.aus_per_titledb%'
+
+    AppBundle\Services\ConfigUpdater:
+        arguments:
+            $ausPerTitleDb: '%lom.aus_per_titledb%'
+
     AppBundle\Services\FilePaths:
-        arguments: ['@logger', '%kernel.project_dir%', '%lom.download_dir%']
-        
+        arguments:
+            $root: '%kernel.project_dir%'
+            $downloadDir: '%lom.download_dir%'
+
+    AppBundle\Services\BoxNotifier:
+        arguments:
+            $sender: '%lom.boxstatus.sender%'
+            $contact: '%lom.boxstatus.contact%'
+

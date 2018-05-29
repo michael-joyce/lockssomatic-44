@@ -25,6 +25,10 @@
     <table class="table table-bordered table-condensed table-hover table-striped">
         <tbody>
             <tr>
+                <th>UI</th>
+                <td><a href="{{ box.getUrl() }}">{{ box.getUrl() }}</a></td>
+            </tr>                    
+            <tr>
                 <th>Hostname</th>
                 <td>{{ box.hostname }}</td>
             </tr>
@@ -39,6 +43,10 @@
             <tr>
                 <th>Ws Port</th>
                 <td>{{ box.webServicePort }}</td>
+            </tr>
+            <tr>
+                <th>Ws Protocol</th>
+                <td>{{ box.webServiceProtocol }}</td>
             </tr>
             <tr>
                 <th>Ip Address</th>
@@ -79,15 +87,9 @@
         </tbody>
     </table>
     {% if box.status | length > 0 %}    
-        <h2>Status</h2>
-        <ul>
-            {% for status in box.status %}
-                <li>
-                    <a href="{{ path("box_status_show", {'boxId': box.id, 'plnId': pln.id, "id":status.id}) }}">
-                        {{ status }}
-                    </a>
-                </li>
-            {% endfor %} 
-        </ul>
+        <h2>Recent Status</h2>
+        <a href="{{ path('box_status_index', {'plnId': box.pln.id, 'boxId': box.id}) }}">
+            {{ box.status.last() }}
+        </a>
     {% endif %}
 {% endblock %}

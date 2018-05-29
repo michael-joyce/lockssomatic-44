@@ -15,6 +15,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ *
+ */
 class BoxType extends AbstractType {
 
     /**
@@ -49,6 +52,19 @@ class BoxType extends AbstractType {
             'attr' => array(
                 'help_block' => '',
             ),
+        ));
+        $builder->add('webServiceProtocol', ChoiceType::class, array(
+            'label' => 'Web Service Protocol',
+            'required' => true,
+            'attr' => array(
+                'help_block' => '',
+            ),
+            'choices' => array(
+                'http' => 'http',
+                'https' => 'https',
+            ),
+            'expanded' => true,
+            'multiple' => false,
         ));
         $builder->add('ipAddress', null, array(
             'label' => 'Ip Address',
@@ -109,7 +125,7 @@ class BoxType extends AbstractType {
      */
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Box'
+            'data_class' => 'AppBundle\Entity\Box',
         ));
     }
 

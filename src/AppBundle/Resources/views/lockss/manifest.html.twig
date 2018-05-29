@@ -1,0 +1,15 @@
+<html>
+    <title>{{ pln.name }} Manifest</title>
+    <body>
+        <h1>{{ pln.name }} Manifest</h1>
+        <ul>
+            {% for row in content -%}
+                {% set item = row[0] -%}
+                <li><a href="{{ item.url }}">{{ item.url }}</a></li>
+            {% endfor -%}
+        </ul>
+        <p>
+            LOCKSS system has permission to collect, preserve, and serve this Archival Unit
+        </p>
+    </body>
+</html>

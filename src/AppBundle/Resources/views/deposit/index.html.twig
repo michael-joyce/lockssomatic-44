@@ -7,17 +7,12 @@
     <p class="count">
         Displaying {{ deposits|length }} deposits of {{ deposits.getTotalItemCount }} total.
     </p>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
-            {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('deposit_new', { 'plnId': pln.id }) }}" class="btn btn-default">
-                    <span class="glyphicon glyphicon-plus"></span> New
-                </a>
-            {% endif %}
             <a href="{{ path('deposit_search', { 'plnId': pln.id }) }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-search"></span> Search
             </a>
@@ -30,7 +25,6 @@
                 <th>Uuid</th>
                 <th>Title</th>
                 <th>Agreement</th>
-                <th>Summary</th>
                 <th>Date Deposited</th>
             </tr>
         </thead>
@@ -40,12 +34,12 @@
                     <td>
                         <a href="{{ path('deposit_show', { 'id': deposit.id, 'plnId': pln.id }) }}">
                             {{ deposit.uuid }}
-                        </a>
+                        </a><br/>
+                        {{ deposit.url }}
                     </td>
                     <td>{{ deposit.title }}</td>
                     <td>{{ deposit.agreement }}</td>
-                    <td>{{ deposit.summary }}</td>
-                    <td>{% if deposit.dateDeposited %}{{ deposit.dateDeposited|date('Y-m-d H:i:s') }}{% endif %}</td>
+                    <td>{{ deposit.dateDeposited|date }}</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -14,19 +14,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
- * AuStatus
+ * AuStatus.
  *
  * @ORM\Table(name="au_status")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AuStatusRepository")
  */
 class AuStatus extends AbstractEntity {
-
-    /**
-     * @var DateTime
-     *
-     * @ORM\Column(name="query_date", type="datetime", nullable=false)
-     */
-    private $queryDate;
 
     /**
      * @var string
@@ -46,37 +39,19 @@ class AuStatus extends AbstractEntity {
      * @var Au
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="auStatus")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $au;
 
+    /**
+     *
+     */
     public function __toString() {
-        return $this->queryDate->format('c') . ' - Errors: ' . count($this->errors);
+        return $this->created->format('c') . ' - Errors: ' . count($this->errors);
     }
 
     /**
-     * Set queryDate
-     *
-     * @param \DateTime $queryDate
-     *
-     * @return AuStatus
-     */
-    public function setQueryDate($queryDate) {
-        $this->queryDate = $queryDate;
-
-        return $this;
-    }
-
-    /**
-     * Get queryDate
-     *
-     * @return \DateTime
-     */
-    public function getQueryDate() {
-        return $this->queryDate;
-    }
-
-    /**
-     * Set status
+     * Set status.
      *
      * @param array $status
      *
@@ -89,7 +64,7 @@ class AuStatus extends AbstractEntity {
     }
 
     /**
-     * Get status
+     * Get status.
      *
      * @return array
      */
@@ -98,7 +73,7 @@ class AuStatus extends AbstractEntity {
     }
 
     /**
-     * Set errors
+     * Set errors.
      *
      * @param array $errors
      *
@@ -111,7 +86,7 @@ class AuStatus extends AbstractEntity {
     }
 
     /**
-     * Get errors
+     * Get errors.
      *
      * @return array
      */
@@ -120,7 +95,7 @@ class AuStatus extends AbstractEntity {
     }
 
     /**
-     * Set au
+     * Set au.
      *
      * @param Au $au
      *
@@ -133,7 +108,7 @@ class AuStatus extends AbstractEntity {
     }
 
     /**
-     * Get au
+     * Get au.
      *
      * @return Au
      */

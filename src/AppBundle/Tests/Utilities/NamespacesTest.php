@@ -34,7 +34,7 @@ class NamespacesTest extends TestCase {
             ['app', 'http://www.w3.org/2007/app'],
         ];
     }
-    
+
     public function testRegisterNamespaces() {
         $xml = simplexml_load_string($this->getXml());
         Namespaces::registerNamespaces($xml);
@@ -45,7 +45,11 @@ class NamespacesTest extends TestCase {
         $this->assertEquals(5, (string)$xml->xpath('//rdf:e[1]/text()')[0]);
         $this->assertEquals(6, (string)$xml->xpath('//app:f[1]/text()')[0]);
     }
-    
+
+    public function testGetNullNamespace() {
+        $this->assertNull(Namespaces::getNamespace("foo"));
+    }
+
     public function getXml() {
         return <<<"ENDXML"
         <root>

@@ -11,6 +11,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Au;
 use AppBundle\Entity\Pln;
+use AppBundle\Services\AuManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -35,6 +36,8 @@ class AuController extends Controller {
      *   The HTTP request instance.
      * @param Pln $pln
      *   The pln, determined from the URL.
+     * @param AuManager $manager
+     *   Dependency-injected AU manager service.
      *
      * @return array
      *   Array data for the template processor.
@@ -43,7 +46,7 @@ class AuController extends Controller {
      * @Method("GET")
      * @Template()
      */
-    public function indexAction(Request $request, Pln $pln) {
+    public function indexAction(Request $request, Pln $pln, AuManager $manager) {
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
         $qb->select('e')->from(Au::class, 'e')->orderBy('e.id', 'ASC');
@@ -54,6 +57,7 @@ class AuController extends Controller {
         return array(
             'aus' => $aus,
             'pln' => $pln,
+            'manager' => $manager,
         );
     }
 
@@ -64,6 +68,8 @@ class AuController extends Controller {
      *   The AU to show.
      * @param Pln $pln
      *   The pln, determined from the URL.
+     * @param AuManager $manager
+     *   Dependency-injected AU manager service.
      *
      * @return array
      *   Array data for the template processor.
@@ -72,12 +78,13 @@ class AuController extends Controller {
      * @Method("GET")
      * @Template()
      */
-    public function showAction(Au $au, Pln $pln) {
+    public function showAction(Au $au, Pln $pln, AuManager $manager) {
 
         return array(
             'au' => $au,
             'pln' => $pln,
+            'manager' => $manager,
         );
     }
-    
+
 }

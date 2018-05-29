@@ -18,7 +18,7 @@ use Doctrine\Common\Persistence\ObjectManager;
  * Load some archival units.
  */
 class LoadAu extends Fixture implements DependentFixtureInterface {
-    
+
     /**
      * Load the objects.
      *
@@ -27,21 +27,21 @@ class LoadAu extends Fixture implements DependentFixtureInterface {
      */
     public function load(ObjectManager $em) {
         $au1 = new Au();
-        $au1->setAuid("phone-au-id-1");
+        $au1->setAuid('p~a');
         $au1->setContentProvider($this->getReference('provider.1'));
         $au1->setPln($this->getReference('pln.1'));
         $au1->setPlugin($this->getReference('plugin.1'));
         $em->persist($au1);
         $this->setReference('au.1', $au1);
-        
+
         $au2 = new Au();
-        $au2->setAuid("phone-au-id-27b/4");
+        $au2->setAuid('p~b');
         $au2->setContentProvider($this->getReference('provider.1'));
         $au2->setPln($this->getReference('pln.1'));
         $au2->setPlugin($this->getReference('plugin.1'));
         $em->persist($au2);
         $this->setReference('au.2', $au2);
-        
+
         $em->flush();
     }
 

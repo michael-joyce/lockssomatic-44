@@ -11,6 +11,9 @@ namespace AppBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * Default application bundle definition.
+ */
 class AppBundle extends Bundle {
-    
+
 }

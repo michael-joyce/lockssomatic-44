@@ -9,6 +9,7 @@
 
 namespace AppBundle\Entity;
 
+use Nines\UtilBundle\Entity\AbstractEntity;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,12 +17,12 @@ use Nines\UserBundle\Entity\User;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Deposit
+ * Deposit.
  *
  * @ORM\Table(name="deposit")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\DepositRepository")
  */
-class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
+class Deposit extends AbstractEntity {
 
     /**
      * The UUID for the deposit. Should be UPPERCASE.
@@ -34,6 +35,18 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     private $uuid;
 
     /**
+     * The URL for the content.
+     *
+     * @todo is 255 long enough?
+     *
+     * @var string
+     *
+     * @Assert\Url()
+     * @ORM\Column(name="url", type="string", length=255, nullable=false)
+     */
+    private $url;
+
+    /**
      * The title of the deposit.
      *
      * @var string
@@ -41,6 +54,15 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
      */
     private $title;
+
+    /**
+     * The size of the content in 1000-byte units.
+     *
+     * @var int
+     *
+     * @ORM\Column(name="size", type="integer", nullable=true)
+     */
+    private $size;
 
     /**
      * The amount of agreement for the deposit's content URLs in the lockss boxes.
@@ -61,13 +83,30 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     private $summary;
 
     /**
-     * The date LOCKSSOMatic recieved the deposit.
+     * The checksum type for verifying the deposit. One of SHA1 or MD5.
      *
-     * @var DateTime
+     * @var string
      *
-     * @ORM\Column(name="date_deposited", type="datetime", nullable=false)
+     * @ORM\Column(name="checksum_type", type="string", length=24, nullable=true)
      */
-    private $dateDeposited;
+    private $checksumType;
+
+    /**
+     * The value of the checksum.
+     *
+     * @var string
+     *
+     * @ORM\Column(name="checksum_value", type="string", length=255, nullable=true)
+     */
+    private $checksumValue;
+
+    /**
+     * Key/value array of content properties.
+     *
+     * @var array
+     * @ORM\Column(name="properties", type="array", nullable=false)
+     */
+    private $properties;
 
     /**
      * The content provider that created the deposit.s.
@@ -75,6 +114,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
      * @var ContentProvider
      *
      * @ORM\ManyToOne(targetEntity="ContentProvider", inversedBy="deposits")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $contentProvider;
 
@@ -88,15 +128,6 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     private $user;
 
     /**
-     * The content for the deposit.
-     *
-     * @ORM\OneToMany(targetEntity="Content", mappedBy="deposit")
-     * 
-     * @var Content[]|Collection
-     */
-    private $content;
-
-    /**
      * The statuses from LOCKSS for the deposit.
      *
      * @var DepositStatus
@@ -105,12 +136,25 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
      */
     private $status;
 
+    /**
+     * The AU this content is a part of.
+     *
+     * @var Au
+     *
+     * @ORM\ManyToOne(targetEntity="Au", inversedBy="deposits")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $au;
+
+    /**
+     * Get the deposit title.
+     */
     public function __toString() {
         return $this->title;
     }
 
     /**
-     * Set uuid
+     * Set uuid.
      *
      * @param string $uuid
      *
@@ -123,7 +167,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get uuid
+     * Get uuid.
      *
      * @return string
      */
@@ -132,7 +176,33 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Set title
+     * Set url.
+     *
+     * @param string $url
+     *
+     * @return Deposit
+     */
+    public function setUrl($url) {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    /**
+     * Get url.
+     *
+     * @return string
+     */
+    public function getUrl() {
+        return $this->url;
+    }
+
+    public function getFilename() {
+        return basename($this->url);
+    }
+
+    /**
+     * Set title.
      *
      * @param string $title
      *
@@ -145,7 +215,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get title
+     * Get title.
      *
      * @return string
      */
@@ -154,7 +224,29 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Set agreement
+     * Set size.
+     *
+     * @param int $size
+     *
+     * @return Deposit
+     */
+    public function setSize($size) {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    /**
+     * Get size.
+     *
+     * @return int
+     */
+    public function getSize() {
+        return $this->size;
+    }
+
+    /**
+     * Set agreement.
      *
      * @param float $agreement
      *
@@ -167,7 +259,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get agreement
+     * Get agreement.
      *
      * @return float
      */
@@ -176,7 +268,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Set summary
+     * Set summary.
      *
      * @param string $summary
      *
@@ -189,7 +281,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get summary
+     * Get summary.
      *
      * @return string
      */
@@ -197,34 +289,62 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
         return $this->summary;
     }
 
+
     /**
-     * Set dateDeposited
+     * Set checksumType.
      *
-     * @param DateTime $dateDeposited
+     * @param string $checksumType
      *
      * @return Deposit
      */
-    public function setDateDeposited(DateTime $dateDeposited = null) {
-        if($dateDeposited) {
-            $this->dateDeposited = $dateDeposited;
-        } else {
-            $this->dateDeposited = new DateTime();
-        }
+    public function setChecksumType($checksumType) {
+        $this->checksumType = $checksumType;
 
         return $this;
     }
 
     /**
-     * Get dateDeposited
+     * Get checksumType.
+     *
+     * @return string
+     */
+    public function getChecksumType() {
+        return $this->checksumType;
+    }
+
+    /**
+     * Set checksumValue.
+     *
+     * @param string $checksumValue
+     *
+     * @return Deposit
+     */
+    public function setChecksumValue($checksumValue) {
+        $this->checksumValue = strtoupper($checksumValue);
+
+        return $this;
+    }
+
+    /**
+     * Get checksumValue.
+     *
+     * @return string
+     */
+    public function getChecksumValue() {
+        return $this->checksumValue;
+    }
+
+    /**
+     * Get dateDeposited.
      *
      * @return DateTime
      */
     public function getDateDeposited() {
-        return $this->dateDeposited;
+        return $this->created;
     }
 
     /**
-     * Set contentProvider
+     * Set contentProvider.
      *
      * @param ContentProvider $contentProvider
      *
@@ -237,16 +357,48 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get contentProvider
+     * Get contentProvider.
      *
-     * @return ContentProvider
+     * @return DepositProvider
      */
     public function getContentProvider() {
         return $this->contentProvider;
     }
 
     /**
-     * Set user
+     * Set au.
+     *
+     * @param Au $au
+     *
+     * @return Deposit
+     */
+    public function setAu(Au $au = null) {
+        $this->au = $au;
+
+        return $this;
+    }
+
+    /**
+     * Get au.
+     *
+     * @return Au
+     */
+    public function getAu() {
+        return $this->au;
+    }
+
+    /**
+     *
+     */
+    public function getPlugin() {
+        if ($this->au && $this->au->getPlugin()) {
+            return $this->au->getPlugin();
+        }
+        return $this->contentProvider->getPlugin();
+    }
+
+    /**
+     * Set user.
      *
      * @param User $user
      *
@@ -259,7 +411,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get user
+     * Get user.
      *
      * @return User
      */
@@ -268,38 +420,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Add content
-     *
-     * @param Content $content
-     *
-     * @return Deposit
-     */
-    public function addContent(Content $content) {
-        $this->content[] = $content;
-
-        return $this;
-    }
-
-    /**
-     * Remove content
-     *
-     * @param Content $content
-     */
-    public function removeContent(Content $content) {
-        $this->content->removeElement($content);
-    }
-
-    /**
-     * Get content
-     *
-     * @return Collection
-     */
-    public function getContent() {
-        return $this->content;
-    }
-
-    /**
-     * Add status
+     * Add status.
      *
      * @param DepositStatus $status
      *
@@ -312,7 +433,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Remove status
+     * Remove status.
      *
      * @param DepositStatus $status
      */
@@ -321,7 +442,7 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
     }
 
     /**
-     * Get status
+     * Get status.
      *
      * @return Collection
      */
@@ -329,4 +450,46 @@ class Deposit extends \Nines\UtilBundle\Entity\AbstractEntity {
         return $this->status;
     }
 
+    /**
+     * Add contentProperty.
+     *
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return Deposit
+     */
+    public function setProperty($key, $value) {
+        $this->properties[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     *
+     */
+    public function getProperties() {
+        return array_keys($this->properties);
+    }
+
+    /**
+     * Get the value of a content property, optionally encoded to
+     * LOCKSS standards.
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    public function getProperty($key) {
+        if ($this->hasProperty($key)) {
+            return $this->properties[$key];
+        }
+        return null;
+    }
+
+    /**
+     *
+     */
+    public function hasProperty($key) {
+        return isset($this->properties[$key]);
+    }
 }

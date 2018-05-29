@@ -28,7 +28,6 @@ class LoadBoxStatus extends Fixture implements DependentFixtureInterface {
      */
     public function load(ObjectManager $em) {
         $status1 = new BoxStatus();
-        $status1->setQueryDate(new DateTime('2017-01-01'));
         $status1->setSuccess(false);
         $status1->setErrors('Cannot connect to host.');
         $status1->setBox($this->getReference('box.1'));
@@ -36,7 +35,6 @@ class LoadBoxStatus extends Fixture implements DependentFixtureInterface {
         $this->setReference('box.status.1', $status1);
         
         $status2 = new BoxStatus();
-        $status2->setQueryDate(new DateTime('2017-01-01'));
         $status2->setSuccess(true);
         $status2->setBox($this->getReference('box.1'));
         $em->persist($status2);

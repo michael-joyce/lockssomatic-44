@@ -23,7 +23,7 @@
                 <tr>
                     <td>
                         <a href="{{ path('box_status_show', { 'id': boxStatus.id, 'plnId': pln.id, 'boxId': box.id }) }}">
-                            {{ boxStatus.queryDate|date }}
+                            {{ boxStatus.created|date }}
                         </a>
                     </td>
                     <td>{% if boxStatus.success %}Yes{% else %}No{% endif %}</td>

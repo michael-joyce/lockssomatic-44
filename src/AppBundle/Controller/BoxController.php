@@ -85,7 +85,7 @@ class BoxController extends Controller {
             $em->persist($box);
             $em->flush();
 
-            $this->addFlash('success', 'The new box was created.');
+            $this->addFlash('success', 'The new box was created. You should check deposit status manually with --force once content is copied.');
             return $this->redirectToRoute('box_show', array('id' => $box->getId(), 'plnId' => $pln->getId()));
         }
 
@@ -112,7 +112,7 @@ class BoxController extends Controller {
      * @Template()
      */
     public function showAction(Pln $pln, Box $box) {
-        if ($pln->getId() !== $box->getId()) {
+        if ($pln->getId() !== $box->getPln()->getId()) {
             throw new NotFoundHttpException("No such box.");
         }
         return array(
@@ -150,7 +150,7 @@ class BoxController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The box has been updated.');
-            return $this->redirectToRoute('box_show', array('id' => $box->getId()));
+            return $this->redirectToRoute('box_show', array('id' => $box->getId(), 'plnId' => $pln->getId()));
         }
 
         return array(

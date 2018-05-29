@@ -30,7 +30,11 @@
             </tr>
             <tr>
                 <th>Permission Url</th>
-                <td>{{ contentProvider.permissionurl }}</td>
+                <td>
+                    <a href="{{ contentProvider.permissionUrl }}">
+                        {{ contentProvider.permissionUrl }}
+                    </a>
+                </td>
             </tr>
             <tr>
                 <th>Name</th>
@@ -79,12 +83,12 @@
         </tbody>
     </table>
     {% if contentProvider.aus | length > 0 %}    
-        <h2>Aus</h2>
+        <h2>AUs</h2>
         <ul>
-            {% for aus in contentProvider.aus %}
+            {% for au in contentProvider.aus %}
                 <li>
-                    <a href="{{ path("aus_show", {"id":aus.id}) }}">
-                        {{ aus }}
+                    <a href="{{ path("au_show", {"id":au.id, 'plnId': contentProvider.pln.id}) }}">
+                        {{ au }}
                     </a>
                 </li>
             {% endfor %} 
@@ -93,10 +97,10 @@
     {% if contentProvider.deposits | length > 0 %}    
         <h2>Deposits</h2>
         <ul>
-            {% for deposits in contentProvider.deposits %}
+            {% for deposit in contentProvider.deposits %}
                 <li>
-                    <a href="{{ path("deposits_show", {"id":deposits.id}) }}">
-                        {{ deposits }}
+                    <a href="{{ path("deposit_show", {"id":deposit.id, 'plnId': contentProvider.pln.id}) }}">
+                        {{ deposit }}
                     </a>
                 </li>
             {% endfor %} 

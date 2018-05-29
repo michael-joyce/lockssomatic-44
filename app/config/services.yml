@@ -4,56 +4,67 @@ parameters:
     container.autowiring.strict_mode: true
 
 services:
-    # default configuration for services in *this* file
     _defaults:
-        # automatically injects dependencies in your services
         autowire: true
-        # automatically registers your services as commands, event subscribers, etc.
         autoconfigure: true
-        # this means you cannot fetch services directly from the container via $container->get()
-        # if you need to do this, you can override this setting on individual services
         public: false
-
-    # makes classes in src/AppBundle available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
-    AppBundle\:
-        resource: '../../src/AppBundle/*'
-        # you can exclude directories or files
-        # but if a service is unused, it's removed anyway
-        exclude: '../../src/AppBundle/{Entity,Repository,Resources,Tests}'
 
     Nines\UserBundle\:
         resource: '../../src/Nines/UserBundle/*'
-        # you can exclude directories or files
-        # but if a service is unused, it's removed anyway
         exclude: '../../src/Nines/UserBundle/{Entity,Repository,Resources,Tests}'
-        
-    # controllers are imported separately to make sure they're public
-    # and have a tag that allows actions to type-hint services
+
+    Nines\UserBundle\Menu\Builder:
+        tags:
+            - { name: knp_menu.menu_builder, method: userNavMenu, alias: user}
+
+    AppBundle\:
+        resource: '../../src/AppBundle/*'
+        exclude: '../../src/AppBundle/{Entity,Repository,Resources,Tests}'
+
+    AppBundle\Command\Lockss\BoxStatusCommand:
+        arguments:
+            $sizeWarning: '%lom.boxstatus.sizewarning%'
+
     AppBundle\Controller\:
         resource: '../../src/AppBundle/Controller'
         public: true
         tags: ['controller.service_arguments']
 
-            
     AppBundle\EventListener\BoxListener:
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
 
     AppBundle\EventListener\SwordExceptionListener:
+        arguments:
+            $env: "%kernel.environment%"
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
-            - {name: kernel.event_listener, event: kernel.controller }
-            
+            - { name: kernel.event_listener, event: kernel.controller }
+
     AppBundle\Menu\Builder:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
-            
-    Nines\UserBundle\Menu\Builder:
-        tags:
-            - { name: knp_menu.menu_builder, method: userNavMenu, alias: user}
-            
+
+    AppBundle\Services\AuManager:
+        calls:
+            - { method: setLogger, arguments: ['@logger'] }
+
+    AppBundle\Services\ConfigExporter:
+        arguments:
+            $ausPerTitleDb: '%lom.aus_per_titledb%'
+
+    AppBundle\Services\ConfigUpdater:
+        arguments:
+            $ausPerTitleDb: '%lom.aus_per_titledb%'
+
     AppBundle\Services\FilePaths:
-        arguments: ['@logger', '%kernel.project_dir%', '%lom.download_dir%']
+        arguments:
+            $root: '%kernel.project_dir%'
+            $downloadDir: '%lom.download_dir%'
+
+    AppBundle\Services\BoxNotifier:
+        arguments:
+            $sender: '%lom.boxstatus.sender%'
+            $contact: '%lom.boxstatus.contact%'
 

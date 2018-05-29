@@ -27,7 +27,7 @@ framework:
     default_locale: '%locale%'
     trusted_hosts: ~
     session:
-        # https://symfony.com/doc/current/reference/configuration/framework.html#handler-id
+        # http://symfony.com/doc/3.4/reference/configuration/framework.html#handler-id
         handler_id: session.handler.native_file
         save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
         name: PHP_SESSION_LOM
@@ -45,6 +45,7 @@ twig:
     form_themes:      
         - 'bootstrap_3_horizontal_layout.html.twig'
         - '@NinesUtilBundle/Form/fields.html.twig'
+        - '::jquery.collection.html.twig'
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     paths:
@@ -68,6 +69,8 @@ doctrine:
         default_table_options:
             charset: utf8mb4
             collate: utf8mb4_unicode_ci
+#        logging: false
+#        profiling: false
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
         naming_strategy: doctrine.orm.naming_strategy.underscore

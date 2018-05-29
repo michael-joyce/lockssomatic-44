@@ -10,11 +10,10 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Au;
-use AppBundle\Entity\Content;
 use AppBundle\Entity\ContentProvider;
+use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Pln;
 use AppBundle\Entity\Plugin;
-use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -54,7 +53,7 @@ class FilePaths {
     /**
      * Build the service.
      *
-     * @param Logger $logger
+     * @param LoggerInterface $logger
      *   Logger for warnings.
      * @param string $root
      *   Path to the application root.
@@ -68,6 +67,10 @@ class FilePaths {
         $this->downloadDir = $downloadDir;
     }
 
+    public function setRoot($root) {
+        $this->root = $root;
+    }
+
     /**
      * Get the root file system path.
      *
@@ -75,7 +78,7 @@ class FilePaths {
      *   Path to the root.
      */
     public function getRootPath() {
-        return realpath($this->root);
+        return $this->root;
     }
 
     /**
@@ -98,18 +101,18 @@ class FilePaths {
      * LOCKSS boxes do not download content from LOM. This is for the staging
      * server to fetch content from the PLN.
      *
-     * @param Content $content
-     *   The content in question.
+     * @param Deposit $deposit
+     *   The deposit in question.
      *
      * @return string
      *   Path to the content in the file system.
      */
-    public function getDownloadContentPath(Content $content) {
+    public function getDownloadContentPath(Deposit $deposit) {
         $path = implode('/', array(
             $this->getCacheDownloadDir(),
-            $content->getDeposit()->getUuid(),
-            $content->getId(),
-            basename($content->getUrl()),
+            $deposit->getUuid(),
+            $deposit->getId(),
+            basename($deposit->getFilename()),
         ));
         return $path;
     }
@@ -147,6 +150,9 @@ class FilePaths {
 
     /**
      * Get a LOCKSS keystore directory.
+     *
+     * This is where LOM stores the java keystores. They are served from a
+     * different location.
      *
      * @param Pln $pln
      *   The Pln for the keystore.
@@ -235,7 +241,7 @@ class FilePaths {
     public function getPluginsExportFile(Pln $pln, Plugin $plugin) {
         $path = implode('/', array(
             $this->getPluginsExportDir($pln),
-            $plugin->getFilename(),
+            $plugin->getOriginalFilename(),
         ));
 
         return $path;
@@ -318,6 +324,14 @@ class FilePaths {
             $provider->getId(),
         ));
 
+        return $path;
+    }
+
+    public function getTitleDbPath(ContentProvider $provider, $id) {
+        $path = implode('/', array(
+            $this->getTitleDbDir($provider->getPln(), $provider),
+            'titledb_' . $id . '.xml'
+        ));
         return $path;
     }
 

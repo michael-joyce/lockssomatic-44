@@ -6,7 +6,6 @@
 
     var hostname = window.location.hostname.replace('www.', '');
 
-
     function confirm() {
         var $this = $(this);
         $this.click(function () {
@@ -105,6 +104,14 @@
             simpleCollection();
             complexCollection();
         }
+//        $("input").each(function () {
+//            var $this = $(this);
+//            if ($this.attr('type') == 'radio' || $this.attr('type') == 'checkbox') {
+//                $(this).after('<span class="widgetname">' + $(this).attr('name') + '=' + $this.attr('value') + '</span>');
+//            } else {
+//                $(this).after('<span class="widgetname">' + $(this).attr('name') + '</span>');
+//            }
+//        });
     });
 
 })(jQuery, window);

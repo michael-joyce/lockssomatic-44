@@ -18,7 +18,7 @@
         <tbody>
             <tr>
                 <th>Query Date</th>
-                <td>{% if auStatus.queryDate %}{{ auStatus.queryDate|date }}{% endif %}</td>
+                <td>{{ auStatus.created|date }}</td>
             </tr>
             <tr>
                 <th>Errors</th>

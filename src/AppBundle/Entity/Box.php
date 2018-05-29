@@ -15,7 +15,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Box
+ * Box.
  *
  * @ORM\Table(name="box")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\BoxRepository")
@@ -48,13 +48,24 @@ class Box extends AbstractEntity {
     private $port;
 
     /**
-     * The port to use for webservice requests - usually :80, but may be
-     * different for testing.
+     * The port to use for webservice requests.
+     * 
+     * Usually 8080, but may be different for testing.
      *
      * @var int
      * @ORM\Column(name="ws_port", type="integer", nullable=false)
      */
     private $webServicePort;
+    
+    /**
+     * Protocol for the LOCKSS-UI and webservices.
+     * 
+     * Usually http but may be https.
+     * 
+     * @var type 
+     * @ORM\Column(name="ws_protocol", type="string", length=8, nullable=false)
+     */
+    private $webServiceProtocol;
 
     /**
      * The box's IP address. The class will resolve it automatically from the
@@ -66,15 +77,6 @@ class Box extends AbstractEntity {
      * @Assert\Ip(version="4")
      */
     private $ipAddress;
-
-    /**
-     * The PLN this box is a part of.
-     *
-     * @var Pln
-     *
-     * @ORM\ManyToOne(targetEntity="Pln", inversedBy="boxes")
-     */
-    private $pln;
 
     /**
      * Name of the box admin.
@@ -98,11 +100,11 @@ class Box extends AbstractEntity {
     private $contactEmail;
 
     /**
-     * If true, send the contact email a notification if the box is down or 
+     * If true, send the contact email a notification if the box is down or
      * otherwise unreachable.
      *
-     * @var boolean
-     * @ORM\Column(name="send_notifications", type="boolean", nullable=false, options={"default": false}) 
+     * @var bool
+     * @ORM\Column(name="send_notifications", type="boolean", nullable=false, options={"default": false})
      */
     private $sendNotifications;
 
@@ -119,20 +121,44 @@ class Box extends AbstractEntity {
      * True if the box is active. If the box is inactive, LOCKSSOMatic will
      * not attempt to interact with it. Defaults to true.
      *
-     * @var boolean
-     * @ORM\Column(name="active", type="boolean", nullable=false, options={"default": true}) 
+     * @var bool
+     * @ORM\Column(name="active", type="boolean", nullable=false, options={"default": true})
      */
     private $active;
 
+    /**
+     * The PLN this box is a part of.
+     *
+     * @var Pln
+     *
+     * @ORM\ManyToOne(targetEntity="Pln", inversedBy="boxes")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $pln;
+    
+    public function __construct() {
+        parent::__construct();
+        $this->status = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->webServicePort = 8080;
+        $this->webServiceProtocol = 'http';
+    }
+    
+    /**
+     * Return the hostname or IP address.
+     */
     public function __toString() {
         if ($this->hostname) {
             return $this->hostname;
         }
         return $this->ipAddress;
     }
+    
+    public function getUrl() {
+        return "{$this->webServiceProtocol}://{$this}:{$this->webServicePort}";
+    }
 
     /**
-     * Set hostname
+     * Set hostname.
      *
      * @param string $hostname
      *
@@ -145,7 +171,7 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Get hostname
+     * Get hostname.
      *
      * @return string
      */
@@ -154,7 +180,7 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Set protocol
+     * Set protocol.
      *
      * @param string $protocol
      *
@@ -167,7 +193,7 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Get protocol
+     * Get protocol.
      *
      * @return string
      */
@@ -176,9 +202,9 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Set port
+     * Set port.
      *
-     * @param integer $port
+     * @param int $port
      *
      * @return Box
      */
@@ -189,18 +215,18 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Get port
+     * Get port.
      *
-     * @return integer
+     * @return int
      */
     public function getPort() {
         return $this->port;
     }
 
     /**
-     * Set webServicePort
+     * Set webServicePort.
      *
-     * @param integer $webServicePort
+     * @param int $webServicePort
      *
      * @return Box
      */
@@ -211,16 +237,16 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Get webServicePort
+     * Get webServicePort.
      *
-     * @return integer
+     * @return int
      */
     public function getWebServicePort() {
         return $this->webServicePort;
     }
 
     /**
-     * Set ipAddress
+     * Set ipAddress.
      *
      * @param string $ipAddress
      *
@@ -233,7 +259,7 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Get ipAddress
+     * Get ipAddress.
      *
      * @return string
      */
@@ -242,7 +268,7 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Set contactName
+     * Set contactName.
      *
      * @param string $contactName
      *
@@ -255,7 +281,7 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Get contactName
+     * Get contactName.
      *
      * @return string
      */
@@ -264,7 +290,7 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Set contactEmail
+     * Set contactEmail.
      *
      * @param string $contactEmail
      *
@@ -277,7 +303,7 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Get contactEmail
+     * Get contactEmail.
      *
      * @return string
      */
@@ -286,9 +312,9 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Set sendNotifications
+     * Set sendNotifications.
      *
-     * @param boolean $sendNotifications
+     * @param bool $sendNotifications
      *
      * @return Box
      */
@@ -299,18 +325,18 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Get sendNotifications
+     * Get sendNotifications.
      *
-     * @return boolean
+     * @return bool
      */
     public function getSendNotifications() {
         return $this->sendNotifications;
     }
 
     /**
-     * Set active
+     * Set active.
      *
-     * @param boolean $active
+     * @param bool $active
      *
      * @return Box
      */
@@ -321,16 +347,16 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Get active
+     * Get active.
      *
-     * @return boolean
+     * @return bool
      */
     public function getActive() {
         return $this->active;
     }
 
     /**
-     * Set pln
+     * Set pln.
      *
      * @param Pln $pln
      *
@@ -343,7 +369,7 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Get pln
+     * Get pln.
      *
      * @return Pln
      */
@@ -352,7 +378,7 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Add status
+     * Add status.
      *
      * @param BoxStatus $status
      *
@@ -365,7 +391,7 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Remove status
+     * Remove status.
      *
      * @param BoxStatus $status
      */
@@ -374,7 +400,7 @@ class Box extends AbstractEntity {
     }
 
     /**
-     * Get status
+     * Get status.
      *
      * @return Collection
      */
@@ -382,4 +408,28 @@ class Box extends AbstractEntity {
         return $this->status;
     }
 
+
+    /**
+     * Set webServiceProtocol
+     *
+     * @param string $webServiceProtocol
+     *
+     * @return Box
+     */
+    public function setWebServiceProtocol($webServiceProtocol)
+    {
+        $this->webServiceProtocol = $webServiceProtocol;
+
+        return $this;
+    }
+
+    /**
+     * Get webServiceProtocol
+     *
+     * @return string
+     */
+    public function getWebServiceProtocol()
+    {
+        return $this->webServiceProtocol;
+    }
 }

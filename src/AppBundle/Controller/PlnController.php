@@ -12,7 +12,10 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Pln;
 use AppBundle\Form\FileUploadType;
 use AppBundle\Form\PlnType;
+use AppBundle\Services\ConfigExporter;
+use AppBundle\Services\ConfigUpdater;
 use AppBundle\Services\FilePaths;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -197,6 +200,41 @@ class PlnController extends Controller {
             'pln' => $pln,
             'edit_form' => $editForm->createView(),
         );
+    }
+
+    /**
+     * Exports and updates the PLN configuration.
+     *
+     * Updates all configuration for a PLN and exports it to disk for LOCKSS
+     * to access. Usually this should be done in a regularly scheduled cron
+     * job.
+     *
+     * @param Request $request
+     *   The HTTP request instance.
+     * @param Pln $pln
+     *   Pln to show, as determined by the URL.
+     * @param ConfigExporter $exporter
+     *   Exporter service.
+     * @param ConfigUpdater $updater
+     *   Updater service.
+     *
+     * @return RedirectResponse
+     *   Redirects to the show action with an appropriate message.
+     *
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("/{id}/export", name="pln_export")
+     * @Method({"GET"})
+     * @Template()
+     */
+    public function exportAction(Request $request, Pln $pln, ConfigExporter $exporter, ConfigUpdater $updater) {
+        $em = $this->getDoctrine()->getManager();
+        $updater->update($pln);
+        $em->flush();
+        $exporter->export($pln);
+        $this->addFlash('success', 'The pln configuration has been updated and exported.');
+        return $this->redirectToRoute('pln_show', array(
+            'id' => $pln->getId(),
+        ));
     }
 
     /**

@@ -26,16 +26,14 @@ class Au extends AbstractEntity {
      * True if this AU is managed by LOCKSSOMatic. Defaults to false.
      *
      * @var bool
-     * @ORM\Column(name="managed", type="boolean", nullable=false)
+     * @ORM\Column(name="open", type="boolean", nullable=false)
      */
-    private $managed;
+    private $open;
 
     /**
-     * The AU ID, as constructed by LOCKSS strange rules.
+     * @ORM\Column(name="auid", type="string", length=512, nullable=false)
      *
-     * @var string
-     *
-     * @ORM\Column(name="auid", type="string", length=512, nullable=true)
+     * @var type
      */
     private $auid;
 
@@ -54,6 +52,7 @@ class Au extends AbstractEntity {
      * @var Pln
      *
      * @ORM\ManyToOne(targetEntity="Pln", inversedBy="aus")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $pln;
 
@@ -65,6 +64,7 @@ class Au extends AbstractEntity {
      * @var ContentProvider
      *
      * @ORM\ManyToOne(targetEntity="ContentProvider", inversedBy="aus")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $contentProvider;
 
@@ -76,6 +76,7 @@ class Au extends AbstractEntity {
      * @var Plugin
      *
      * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="aus")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $plugin;
 
@@ -102,21 +103,21 @@ class Au extends AbstractEntity {
      *
      * This is a LOCKSSOMatic-specific field.
      *
-     * @var Content[]|Collection
+     * @var Deposits[]|Collection
      *
-     * @ORM\OneToMany(targetEntity="Content", mappedBy="au")
+     * @ORM\OneToMany(targetEntity="Deposit", mappedBy="au")
      */
-    private $content;
+    private $deposits;
 
     /**
      * Build the AU.
      */
     public function __construct() {
         parent::__construct();
-        $this->managed = false;
+        $this->open = true;
         $this->auProperties = new ArrayCollection();
         $this->auStatus = new ArrayCollection();
-        $this->content = new ArrayCollection();
+        $this->deposits = new ArrayCollection();
     }
 
     /**
@@ -134,49 +135,27 @@ class Au extends AbstractEntity {
     }
 
     /**
-     * Set managed.
+     * Set open.
      *
-     * @param bool $managed
+     * @param bool $open
      *
      * @return Au
      *   Returns $this.
      */
-    public function setManaged($managed) {
-        $this->managed = $managed;
-
+    public function setOpen($open) {
+        if($this->open) {
+            $this->open = $open;
+        }
         return $this;
     }
 
     /**
-     * Get managed.
+     * Get open.
      *
      * @return bool
      */
-    public function getManaged() {
-        return $this->managed;
-    }
-
-    /**
-     * Set auid.
-     *
-     * @param string $auid
-     *
-     * @return Au
-     *   Returns $this.
-     */
-    public function setAuid($auid) {
-        $this->auid = $auid;
-
-        return $this;
-    }
-
-    /**
-     * Get auid.
-     *
-     * @return string
-     */
-    public function getAuid() {
-        return $this->auid;
+    public function isOpen() {
+        return $this->open;
     }
 
     /**
@@ -303,6 +282,10 @@ class Au extends AbstractEntity {
         return $this->auProperties;
     }
 
+    public function hasAuProperties() {
+        return ! $this->auProperties->isEmpty();
+    }
+
     /**
      * @return Collection|AuProperty[]
      */
@@ -388,35 +371,58 @@ class Au extends AbstractEntity {
     }
 
     /**
-     * Add content.
+     * Add deposit.
      *
-     * @param Content $content
+     * @param Deposit $deposit
      *
      * @return Au
      *   Returns $this.
      */
-    public function addContent(Content $content) {
-        $this->content[] = $content;
+    public function addDeposit(Deposit $deposit) {
+        $this->deposits[] = $deposit;
 
         return $this;
     }
 
     /**
-     * Remove content.
+     * Remove deposit.
      *
-     * @param Content $content
+     * @param Deposit $deposit
      */
-    public function removeContent(Content $content) {
-        $this->content->removeElement($content);
+    public function removeDeposit(Deposit $deposit) {
+        $this->deposits->removeElement($deposit);
     }
 
     /**
-     * Get content.
+     * Get deposits.
      *
      * @return Collection
      */
-    public function getContent() {
-        return $this->content;
+    public function getDeposits() {
+        return $this->deposits;
     }
 
+    /**
+     * Set auid
+     *
+     * @param string $auid
+     *
+     * @return Au
+     */
+    public function setAuid($auid)
+    {
+        $this->auid = $auid;
+
+        return $this;
+    }
+
+    /**
+     * Get auid
+     *
+     * @return string
+     */
+    public function getAuid()
+    {
+        return $this->auid;
+    }
 }

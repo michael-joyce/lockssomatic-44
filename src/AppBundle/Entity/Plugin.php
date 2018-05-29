@@ -9,12 +9,14 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
+use SplFileInfo;
 
 /**
- * Plugin
+ * Plugin.
  *
  * @ORM\Table(name="plugin")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PluginRepository")
@@ -22,9 +24,9 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 class Plugin extends AbstractEntity {
 
     const CONFIG_PROPS = 'plugin_config_props';
-    
+
     const DESCR_NAME = 'org.lockss.daemon.ConfigParamDescr';
-    
+
     /**
      * Name of the plugin.
      *
@@ -59,6 +61,20 @@ class Plugin extends AbstractEntity {
     private $identifier;
 
     /**
+     * If true, LOCKSSOMatic will generate manifest files for this plugin's AUs.
+     *
+     * @var bool
+     * @ORM\Column(name="generate_manifests", type="boolean", nullable=false)
+     */
+    private $generateManifests;
+
+    /**
+     * @var array
+     * @ORM\Column(name="generated_params", type="array", nullable=false)
+     */
+    private $generatedParams;
+
+    /**
      * AUs created for this plugin.
      *
      * @ORM\OneToMany(targetEntity="Au", mappedBy="plugin")
@@ -85,15 +101,30 @@ class Plugin extends AbstractEntity {
      */
     private $pluginProperties;
 
+    /**
+     *
+     */
+    public function __construct() {
+        parent::__construct();
+        $this->generatedParams = array();
+        $this->generateManifests = false;
+        $this->aus = new ArrayCollection();
+        $this->contentProviders = new ArrayCollection();
+        $this->pluginProperties = new ArrayCollection();
+    }
+
+    /**
+     *
+     */
     public function __toString() {
-        if($this->name) {
+        if ($this->name) {
             return $this->name;
         }
         return "";
     }
-    
+
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
@@ -106,7 +137,7 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -115,7 +146,7 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Set path
+     * Set path.
      *
      * @param string $path
      *
@@ -128,7 +159,7 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Get path
+     * Get path.
      *
      * @return string
      */
@@ -137,19 +168,24 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Get filename
+     * Get filename.
      *
      * @return string
      */
     public function getFilename() {
-        $fileinfo = new \SplFileInfo($this->path);
+        $fileinfo = new SplFileInfo($this->path);
         return $fileinfo->getBasename();
     }
 
+    public function getOriginalFilename() {
+        $filename = preg_replace('/-v[0-9]+\.jar$/', '.jar', $this->getFilename());
+        return $filename;
+    }
+
     /**
-     * Set version
+     * Set version.
      *
-     * @param integer $version
+     * @param int $version
      *
      * @return Plugin
      */
@@ -160,16 +196,16 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Get version
+     * Get version.
      *
-     * @return integer
+     * @return int
      */
     public function getVersion() {
         return $this->version;
     }
 
     /**
-     * Set identifier
+     * Set identifier.
      *
      * @param string $identifier
      *
@@ -182,7 +218,7 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Get identifier
+     * Get identifier.
      *
      * @return string
      */
@@ -191,7 +227,7 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Add aus
+     * Add aus.
      *
      * @param Au $aus
      *
@@ -204,7 +240,7 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Remove aus
+     * Remove aus.
      *
      * @param Au $aus
      */
@@ -213,7 +249,7 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Get aus
+     * Get aus.
      *
      * @return Collection
      */
@@ -222,7 +258,7 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Add contentProvider
+     * Add contentProvider.
      *
      * @param ContentProvider $contentProvider
      *
@@ -235,7 +271,7 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Remove contentProvider
+     * Remove contentProvider.
      *
      * @param ContentProvider $contentProvider
      */
@@ -244,7 +280,7 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Get contentProviders
+     * Get contentProviders.
      *
      * @return Collection
      */
@@ -253,7 +289,7 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Add pluginProperty
+     * Add pluginProperty.
      *
      * @param PluginProperty $pluginProperty
      *
@@ -266,7 +302,7 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Remove pluginProperty
+     * Remove pluginProperty.
      *
      * @param PluginProperty $pluginProperty
      */
@@ -275,24 +311,27 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Get pluginProperties
+     * Get pluginProperties.
      *
      * @return Collection
      */
     public function getPluginProperties() {
         return $this->pluginProperties;
     }
-    
+
+    /**
+     *
+     */
     public function getRootPluginProperties() {
-        return $this->pluginProperties->filter(function(PluginProperty $p){
+        return $this->pluginProperties->filter(function (PluginProperty $p) {
             return $p->getParent() === null;
         });
     }
-    
+
     /**
      * Get a Property object.
      *
-     * @param type $propertyKey
+     * @param mixed $propertyKey
      *
      * @return PluginProperty|null
      */
@@ -305,7 +344,7 @@ class Plugin extends AbstractEntity {
 
         return null;
     }
-    
+
     /**
      * Get a list of the configparamdescr plugin properties.
      *
@@ -313,7 +352,7 @@ class Plugin extends AbstractEntity {
      */
     public function getPluginConfigParams() {
         $properties = array();
-        foreach ($this->getPluginProperties() as $prop) {
+        foreach ($this->getPluginProperties()->toArray() as $prop) {
             /** @var PluginProperties $prop */
             if ($prop->getPropertyKey() !== self::CONFIG_PROPS) {
                 continue;
@@ -325,16 +364,38 @@ class Plugin extends AbstractEntity {
                 $properties[] = $child;
             }
         }
-
         return $properties;
     }
-    
+
     /**
      * Get the definitional plugin parameter names.
      *
      * @return ArrayCollection|PluginProperty[]
      */
-    public function getDefinitionalProperties() {
+    public function getConfigPropertyNames() {
+        $properties = array();
+
+        foreach ($this->getPluginConfigParams() as $prop) {
+            $key = '';
+            foreach ($prop->getChildren() as $child) {
+                if ($child->getPropertyKey() === 'key') {
+                    $key = $child->getPropertyValue();
+                }
+            }
+            if ($key !== '') {
+                $properties[] = $key;
+            }
+        }
+
+        return $properties;
+    }
+
+    /**
+     * Get the definitional plugin parameter names.
+     *
+     * @return ArrayCollection|PluginProperty[]
+     */
+    public function getDefinitionalPropertyNames() {
         $properties = array();
 
         foreach ($this->getPluginConfigParams() as $prop) {
@@ -389,6 +450,49 @@ class Plugin extends AbstractEntity {
 
         return $properties;
     }
-    
-    
+
+    /**
+     * Set generateManifests.
+     *
+     * @param bool $generateManifests
+     *
+     * @return Plugin
+     */
+    public function setGenerateManifests($generateManifests) {
+        $this->generateManifests = $generateManifests;
+
+        return $this;
+    }
+
+    /**
+     * Get generateManifests.
+     *
+     * @return bool
+     */
+    public function getGenerateManifests() {
+        return $this->generateManifests;
+    }
+
+    /**
+     * Set generatedParams.
+     *
+     * @param array $generatedParams
+     *
+     * @return Plugin
+     */
+    public function setGeneratedParams($generatedParams) {
+        $this->generatedParams = $generatedParams;
+
+        return $this;
+    }
+
+    /**
+     * Get generatedParams.
+     *
+     * @return array
+     */
+    public function getGeneratedParams() {
+        return $this->generatedParams;
+    }
+
 }

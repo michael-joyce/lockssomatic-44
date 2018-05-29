@@ -1,7 +1,7 @@
 {
     "name": "michael/lom2",
-    "license": "proprietary",
-    "type": "MIT",
+    "license": "MIT",
+    "type": "project",
     "autoload": {
         "psr-4": {
             "": "src/"
@@ -22,9 +22,12 @@
     "require": {
         "php": ">=5.5.9",
         "beberlei/DoctrineExtensions": "^1.0",
+        "besimple/soap": "dev-um",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
+        "egulias/email-validator": "^2.1",
         "friendsofsymfony/user-bundle": "^2.0",
+        "guzzlehttp/guzzle": "^6.3",
         "incenteev/composer-parameter-handler": "^2.0",
         "knplabs/knp-menu-bundle": "^2.2",
         "knplabs/knp-paginator-bundle": "^2.7",
@@ -33,9 +36,10 @@
         "sensio/framework-extra-bundle": "^5.0.0",
         "symfony/monolog-bundle": "^3.1.0",
         "symfony/polyfill-apcu": "^1.0",
-        "symfony/swiftmailer-bundle": "^2.6.4",
+        "symfony/swiftmailer-bundle": "^2.6.4 <3.0",
         "symfony/symfony": "3.4.*",
         "symfony/templating": "^3.4",
+        "tetranz/select2entity-bundle": "^2.9",
         "twig/extensions": "^1.5",
         "twig/twig": "^1.0||^2.0"
     },
@@ -43,11 +47,18 @@
         "doctrine/doctrine-fixtures-bundle": "^3.0",
         "drupal/coder": "^8.2",
         "liip/functional-test-bundle": "^1.8",
+        "mikey179/vfsStream": "^1.6",
         "phpunit/phpunit": "^5.7",
         "sensio/generator-bundle": "^3.0",
-        "squizlabs/php_codesniffer": "^2.9",
+        "squizlabs/php_codesniffer": "^2.9.1 <3.0",
         "symfony/phpunit-bridge": "^4.0"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ubermichael/BeSimpleSoap.git"
+        }
+    ],
     "scripts": {
         "symfony-scripts": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",

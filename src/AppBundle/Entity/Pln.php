@@ -9,12 +9,14 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
+use SplFileInfo;
 
 /**
- * Pln
+ * Pln.
  *
  * @ORM\Table(name="pln")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PlnRepository")
@@ -73,8 +75,8 @@ class Pln extends AbstractEntity {
 
     /**
      * If true, the lockss ContentUI subsystem will be enabled.
-     * 
-     * @var boolean
+     *
+     * @var bool
      * @ORM\Column(name="enable_content_ui", type="boolean", nullable=false)
      */
     private $enableContentUi;
@@ -82,10 +84,26 @@ class Pln extends AbstractEntity {
     /**
      * Unix port for the the content server to listen on, if enabled.
      *
-     * @var integer
+     * @var int
      * @ORM\Column(name="content_port", type="integer", nullable=false);
      */
     private $contentPort;
+
+    /**
+     * Java Keystore file.
+     *
+     * @ORM\Column(name="keystore_path", type="string", length=255, nullable=true)
+     */
+    private $keystore;
+
+    /**
+     * PLN Properties, as defined by the lockss.xml file and LOCKSSOMatic.
+     *
+     * @ORM\Column(name="property", type="array", nullable=false);
+     *
+     * @var array
+     */
+    private $properties;
 
     /**
      * A list of all AUs in the PLN. Probably very large.
@@ -106,22 +124,6 @@ class Pln extends AbstractEntity {
     private $boxes;
 
     /**
-     * Java Keystore file.
-     * 
-     * @ORM\Column(name="keystore_path", type="string", length=255, nullable=true)
-     */
-    private $keystore;
-
-    /**
-     * PLN Properties, as defined by the lockss.xml file and LOCKSSOMatic.
-     *
-     * @ORM\Column(name="property", type="array", nullable=true);
-     *
-     * @var array
-     */
-    private $properties;
-
-    /**
      * List of content providers for this PLN. Each provider is associated with
      * exactly one PLN.
      *
@@ -131,18 +133,28 @@ class Pln extends AbstractEntity {
      */
     private $contentProviders;
     
+    /**
+     *
+     */
     public function __construct() {
         parent::__construct();
         $this->enableContentUi = false;
         $this->contentPort = '8080';
+        $this->properties = array();
+        $this->contentProviders = new ArrayCollection();
+        $this->boxes = new ArrayCollection();
+        $this->aus = new ArrayCollection();
     }
 
+    /**
+     *
+     */
     public function __toString() {
         return $this->name;
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
@@ -155,16 +167,16 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
     public function getName() {
-        return $this->name;        
+        return $this->name;
     }
 
     /**
-     * Set description
+     * Set description.
      *
      * @param string $description
      *
@@ -177,7 +189,7 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Get description
+     * Get description.
      *
      * @return string
      */
@@ -186,7 +198,7 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Set username
+     * Set username.
      *
      * @param string $username
      *
@@ -199,7 +211,7 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Get username
+     * Get username.
      *
      * @return string
      */
@@ -208,7 +220,7 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Set password
+     * Set password.
      *
      * @param string $password
      *
@@ -221,7 +233,7 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Get password
+     * Get password.
      *
      * @return string
      */
@@ -230,9 +242,9 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Set enableContentUi
+     * Set enableContentUi.
      *
-     * @param boolean $enableContentUi
+     * @param bool $enableContentUi
      *
      * @return Pln
      */
@@ -243,18 +255,18 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Get enableContentUi
+     * Get enableContentUi.
      *
-     * @return boolean
+     * @return bool
      */
     public function getEnableContentUi() {
         return $this->enableContentUi;
     }
 
     /**
-     * Set contentPort
+     * Set contentPort.
      *
-     * @param integer $contentPort
+     * @param int $contentPort
      *
      * @return Pln
      */
@@ -265,60 +277,87 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Get contentPort
+     * Get contentPort.
      *
-     * @return integer
+     * @return int
      */
     public function getContentPort() {
         return $this->contentPort;
     }
-
-    /**
-     * Set properties
-     *
-     * @param array $properties
-     *
-     * @return Pln
-     */
-    public function setProperties($properties) {
-        $this->properties = $properties;
-
+    
+    public function clearProperties() {
+        $this->properties = [];
         return $this;
     }
 
     /**
-     * Get properties
+     * Get properties.
      *
      * @return array
      */
     public function getProperties() {
         return $this->properties;
     }
+    
+    /**
+     * @param string $key
+     * @param string|array $value
+     * @return Pln
+     */
+    public function setProperty($key, $value) {        
+        if(in_array($key, self::LIST_REQUIRED)) {
+            if(is_array($value)) {
+                $this->properties[$key] = $value;
+            } else {
+                $this->properties[$key] = [$value];
+            }
+        } else {
+            if(is_array($value) && count($value) === 1) {
+                $this->properties[$key] = $value[0];
+            } else {
+                $this->properties[$key] = $value;
+            }
+        }
+        return $this;
+    }
+    
+    public function getProperty($key) {
+        if( !array_key_exists($key, $this->properties)) {
+            return null;
+        }
+        return $this->properties[$key];
+    }
+    
+    public function removeProperty($key) {
+        unset($this->properties[$key]);
+    }
 
     /**
-     * Add aus
+     * Add aus.
      *
-     * @param Au $aus
+     * @param Au $au
      *
      * @return Pln
      */
-    public function addAus(Au $aus) {
-        $this->aus[] = $aus;
+    public function addAu(Au $au) {
+        if (!$this->aus->contains($au)) {
+            $this->aus->add($au);
+        }
 
         return $this;
     }
 
     /**
-     * Remove aus
+     * Remove aus.
      *
-     * @param Au $aus
+     * @param Au $au
      */
-    public function removeAus(Au $aus) {
-        $this->aus->removeElement($aus);
+    public function removeAu(Au $au) {
+        $this->aus->removeElement($au);
     }
 
     /**
-     * Get aus
+     * Get aus.
      *
      * @return Collection
      */
@@ -327,7 +366,7 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Add box
+     * Add box.
      *
      * @param Box $box
      *
@@ -340,7 +379,7 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Remove box
+     * Remove box.
      *
      * @param Box $box
      */
@@ -349,7 +388,7 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Get boxes
+     * Get boxes.
      *
      * @return Collection
      */
@@ -358,7 +397,7 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Set keystore
+     * Set keystore.
      *
      * @param Keystore $keystore
      *
@@ -371,21 +410,24 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Get keystore
+     * Get keystore.
      *
      * @return Keystore
      */
-    public function getKeystore() {
+    public function getKeystorePath() {
         return $this->keystore;
     }
     
+    /**
+     *
+     */
     public function getKeystoreFilename() {
-        $fileinfo = new \SplFileInfo($this->keystore);
+        $fileinfo = new SplFileInfo($this->keystore);
         return $fileinfo->getBasename();
     }
 
     /**
-     * Add contentProvider
+     * Add contentProvider.
      *
      * @param ContentProvider $contentProvider
      *
@@ -398,7 +440,7 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Remove contentProvider
+     * Remove contentProvider.
      *
      * @param ContentProvider $contentProvider
      */
@@ -407,12 +449,25 @@ class Pln extends AbstractEntity {
     }
 
     /**
-     * Get contentProviders
+     * Get contentProviders.
      *
-     * @return Collection
+     * @return Collection|ContentProvider[]
      */
     public function getContentProviders() {
         return $this->contentProviders;
+    }
+    
+    /**
+     * @return Plugin[]
+     */
+    public function getPlugins() {
+        $plugins = [];
+        foreach($this->contentProviders as $provider) {
+            if( ! in_array($provider->getPlugin(), $plugins)) {
+                $plugins[] = $provider->getPlugin();
+            }
+        }
+        return $plugins;
     }
 
 }
