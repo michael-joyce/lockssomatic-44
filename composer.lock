@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "content-hash": "5e19e059a91758012eba7b3268537b23",
@@ -68,16 +68,16 @@
         },
         {
             "name": "beberlei/DoctrineExtensions",
-            "version": "v1.0.21",
+            "version": "v1.0.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/beberlei/DoctrineExtensions.git",
-                "reference": "b4dc688b5f7f9645920f4c81703e83a45cab09c2"
+                "reference": "dacd609f1fefb0e59054f2d09be594dfed9a46a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/beberlei/DoctrineExtensions/zipball/b4dc688b5f7f9645920f4c81703e83a45cab09c2",
-                "reference": "b4dc688b5f7f9645920f4c81703e83a45cab09c2",
+                "url": "https://api.github.com/repos/beberlei/DoctrineExtensions/zipball/dacd609f1fefb0e59054f2d09be594dfed9a46a6",
+                "reference": "dacd609f1fefb0e59054f2d09be594dfed9a46a6",
                 "shasum": ""
             },
             "require": {
@@ -126,7 +126,7 @@
                 "doctrine",
                 "orm"
             ],
-            "time": "2018-01-27T07:05:10+00:00"
+            "time": "2018-05-28T08:54:30+00:00"
         },
         {
             "name": "besimple/soap",
@@ -2582,6 +2582,61 @@
             "time": "2018-04-26T10:06:28+00:00"
         },
         {
+            "name": "symfony/polyfill-ctype",
+            "version": "v1.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-ctype.git",
+                "reference": "7cc359f1b7b80fc25ed7796be7d96adc9b354bae"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/7cc359f1b7b80fc25ed7796be7d96adc9b354bae",
+                "reference": "7cc359f1b7b80fc25ed7796be7d96adc9b354bae",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.8-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Ctype\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                },
+                {
+                    "name": "Gert de Pagter",
+                    "email": "BackEndTea@gmail.com"
+                }
+            ],
+            "description": "Symfony polyfill for ctype functions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "ctype",
+                "polyfill",
+                "portable"
+            ],
+            "time": "2018-04-30T19:57:29+00:00"
+        },
+        {
             "name": "symfony/polyfill-intl-icu",
             "version": "v1.8.0",
             "source": {
@@ -2926,16 +2981,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v3.4.9",
+            "version": "v3.4.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "4babd75194d45f7a4412560038924f3008c67ef2"
+                "reference": "8eb567d8398ce31a402ea8db3e6b5b1faf121cbc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/4babd75194d45f7a4412560038924f3008c67ef2",
-                "reference": "4babd75194d45f7a4412560038924f3008c67ef2",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/8eb567d8398ce31a402ea8db3e6b5b1faf121cbc",
+                "reference": "8eb567d8398ce31a402ea8db3e6b5b1faf121cbc",
                 "shasum": ""
             },
             "require": {
@@ -2949,6 +3004,7 @@
                 "psr/log": "~1.0",
                 "psr/simple-cache": "^1.0",
                 "symfony/polyfill-apcu": "~1.1",
+                "symfony/polyfill-ctype": "~1.8",
                 "symfony/polyfill-intl-icu": "~1.0",
                 "symfony/polyfill-mbstring": "~1.0",
                 "symfony/polyfill-php56": "~1.0",
@@ -3076,7 +3132,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2018-04-30T19:27:18+00:00"
+            "time": "2018-05-25T13:16:49+00:00"
         },
         {
             "name": "tetranz/select2entity-bundle",
@@ -3345,131 +3401,6 @@
         }
     ],
     "packages-dev": [
-        {
-            "name": "besimple/soap-client",
-            "version": "v0.2.6",
-            "target-dir": "BeSimple/SoapClient",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/BeSimple/BeSimpleSoapClient.git",
-                "reference": "50f186fd3e9fafc4ce2d194d5d18e3987d5fbf41"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/BeSimple/BeSimpleSoapClient/zipball/50f186fd3e9fafc4ce2d194d5d18e3987d5fbf41",
-                "reference": "50f186fd3e9fafc4ce2d194d5d18e3987d5fbf41",
-                "shasum": ""
-            },
-            "require": {
-                "ass/xmlsecurity": "~1.0",
-                "besimple/soap-common": "0.2.*",
-                "ext-curl": "*",
-                "ext-soap": "*",
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "mikey179/vfsstream": "~1.0",
-                "symfony/filesystem": "~2.0",
-                "symfony/process": "~2.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.2-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "BeSimple\\SoapClient": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andreas Schamberger",
-                    "email": "mail@andreass.net"
-                },
-                {
-                    "name": "Christian Kerl",
-                    "email": "christian-kerl@web.de"
-                },
-                {
-                    "name": "Francis Besset",
-                    "email": "francis.besset@gmail.com"
-                }
-            ],
-            "description": "Build and consume SOAP Client based web services",
-            "homepage": "https://github.com/BeSimple/BeSimpleSoapClient",
-            "keywords": [
-                "soap",
-                "soap-client"
-            ],
-            "time": "2014-08-18T09:45:53+00:00"
-        },
-        {
-            "name": "besimple/soap-common",
-            "version": "v0.2.6",
-            "target-dir": "BeSimple/SoapCommon",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/BeSimple/BeSimpleSoapCommon.git",
-                "reference": "08aa78c7f1cae4b23cce5e8928dca7243ca4e4fa"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/BeSimple/BeSimpleSoapCommon/zipball/08aa78c7f1cae4b23cce5e8928dca7243ca4e4fa",
-                "reference": "08aa78c7f1cae4b23cce5e8928dca7243ca4e4fa",
-                "shasum": ""
-            },
-            "require": {
-                "ass/xmlsecurity": "~1.0",
-                "ext-soap": "*",
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "ext-mcrypt": "*",
-                "mikey179/vfsstream": "~1.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.2-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "BeSimple\\SoapCommon": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andreas Schamberger",
-                    "email": "mail@andreass.net"
-                },
-                {
-                    "name": "Christian Kerl",
-                    "email": "christian-kerl@web.de"
-                },
-                {
-                    "name": "Francis Besset",
-                    "email": "francis.besset@gmail.com"
-                }
-            ],
-            "description": "Build and consume SOAP Common based web services",
-            "homepage": "https://github.com/BeSimple/BeSimpleSoapCommon",
-            "keywords": [
-                "soap",
-                "soap-common"
-            ],
-            "time": "2014-08-14T19:40:13+00:00"
-        },
         {
             "name": "doctrine/data-fixtures",
             "version": "v1.2.2",
@@ -5038,16 +4969,16 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v4.0.9",
+            "version": "v4.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
-                "reference": "03971d50f60e019d1640e137633bc596db2573f4"
+                "reference": "30d8eed8b7b3b94ee1a8b4cd2d0aa1f4ed6950e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/03971d50f60e019d1640e137633bc596db2573f4",
-                "reference": "03971d50f60e019d1640e137633bc596db2573f4",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/30d8eed8b7b3b94ee1a8b4cd2d0aa1f4ed6950e5",
+                "reference": "30d8eed8b7b3b94ee1a8b4cd2d0aa1f4ed6950e5",
                 "shasum": ""
             },
             "require": {
@@ -5100,7 +5031,7 @@
             ],
             "description": "Symfony PHPUnit Bridge",
             "homepage": "https://symfony.com",
-            "time": "2018-04-30T15:37:01+00:00"
+            "time": "2018-05-11T15:58:37+00:00"
         },
         {
             "name": "webmozart/assert",
