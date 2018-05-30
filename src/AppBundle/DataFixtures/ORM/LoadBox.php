@@ -20,7 +20,7 @@ use Doctrine\Common\Persistence\ObjectManager;
  * @author Michael Joyce <ubermichael@gmail.com>
  */
 class LoadBox extends Fixture implements DependentFixtureInterface {
-    
+
     /**
      * Load the objects.
      *
@@ -30,6 +30,7 @@ class LoadBox extends Fixture implements DependentFixtureInterface {
     public function load(ObjectManager $em) {
         $box1 = new Box();
         $box1->setHostname('localhost');
+        $box1->setIpAddress('127.0.0.1');
         $box1->setProtocol('TCP');
         $box1->setPort('1234');
         $box1->setWebServicePort('11234');
@@ -38,9 +39,10 @@ class LoadBox extends Fixture implements DependentFixtureInterface {
         $box1->setPln($this->getReference('pln.1'));
         $em->persist($box1);
         $this->setReference('box.1', $box1);
-        
+
         $box2 = new Box();
         $box2->setHostname('localhost');
+        $box2->setIpAddress('127.0.0.1');
         $box2->setProtocol('TCP');
         $box2->setPort('2234');
         $box2->setWebServicePort('22234');

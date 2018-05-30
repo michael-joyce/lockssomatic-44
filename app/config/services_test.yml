@@ -13,6 +13,8 @@ services:
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
+        calls:
+            - { method: setLogger, arguments: ['@logger'] }
 
     AppBundle\EventListener\SwordExceptionListener:
         arguments:
