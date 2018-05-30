@@ -70,6 +70,8 @@ class AuRepositoryTest extends BaseTestCase {
         $this->assertTrue($iterator->valid());
         $this->assertTrue(is_array($iterator->current()));
         $this->assertInstanceOf(Deposit::class, $iterator->current()[0]);
+        $this->em->flush();
+        $this->em->clear();
     }
 
     public function testIterateDepositsEmpty() {
@@ -78,5 +80,7 @@ class AuRepositoryTest extends BaseTestCase {
         $this->assertInstanceOf(Iterator::class, $iterator);
         $this->assertFalse($iterator->valid());
         $this->assertFalse($iterator->current());
+        $this->em->flush();
+        $this->em->clear();
     }
 }
