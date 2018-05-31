@@ -71,7 +71,7 @@ class BoxListenerTest extends BaseTestCase {
     public function preUpdateData() {
         return [
             ['frobinicate.com', null, '1.2.3.4'],
-            ['frobinicate.com', '10.0.0.12', '1.2.3.4'],
+            ['frobinicate.com', '10.0.0.12', '10.0.0.12'],
             ['notarealdomainname', null, null],
         ];
     }
