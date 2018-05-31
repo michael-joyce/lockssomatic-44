@@ -36,7 +36,7 @@ class BoxControllerTest extends BaseTestCase {
         $crawler = $client->request('GET', '/pln/33/box/');
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
-    
+
     public function testUserIndex() {
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/pln/1/box/');
@@ -79,7 +79,7 @@ class BoxControllerTest extends BaseTestCase {
         $crawler = $client->request('GET', '/pln/1/box/2');
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
     }
-    
+
     public function testUserShow() {
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/pln/1/box/1');
@@ -109,7 +109,7 @@ class BoxControllerTest extends BaseTestCase {
         $crawler = $client->request('GET', '/pln/1/box/2');
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
-    
+
     public function testAnonEdit() {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/pln/1/box/1/edit');
@@ -127,19 +127,20 @@ class BoxControllerTest extends BaseTestCase {
         $formCrawler = $client->request('GET', '/pln/1/box/1/edit');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
         $form = $formCrawler->selectButton('Update')->form([
-                // DO STUFF HERE.
-                // 'pln/1/boxs[FIELDNAME]' => 'FIELDVALUE',
+            'box[hostname]' => 'example.com',
+            'box[protocol]' => 'TCP',
+            'box[port]' => 8081,
+            'box[webServiceProtocol]' => 'http',
+            'box[sendNotifications]' => 0,
+            'box[active]' => 1,
         ]);
 
         $client->submit($form);
         $this->assertTrue($client->getResponse()->isRedirect('/pln/1/box/1'));
         $responseCrawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
+        $this->assertEquals(2, $responseCrawler->filter('td:contains("example.com")')->count());
     }
 
     public function testAnonNew() {
@@ -159,19 +160,20 @@ class BoxControllerTest extends BaseTestCase {
         $formCrawler = $client->request('GET', '/pln/1/box/new');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
         $form = $formCrawler->selectButton('Create')->form([
-                // DO STUFF HERE.
-                // 'pln/1/boxs[FIELDNAME]' => 'FIELDVALUE',
+            'box[hostname]' => 'example.com',
+            'box[protocol]' => 'TCP',
+            'box[port]' => 8081,
+            'box[webServiceProtocol]' => 'http',
+            'box[sendNotifications]' => 0,
+            'box[active]' => 1,
         ]);
 
         $client->submit($form);
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
+        $this->assertEquals(2, $responseCrawler->filter('td:contains("example.com")')->count());
     }
 
     public function testAnonDelete() {
