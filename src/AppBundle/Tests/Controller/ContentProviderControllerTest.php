@@ -85,19 +85,22 @@ class ContentProviderControllerTest extends BaseTestCase {
         $formCrawler = $client->request('GET', '/content_provider/1/edit');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
         $form = $formCrawler->selectButton('Update')->form([
-                // DO STUFF HERE.
-                // 'content_providers[FIELDNAME]' => 'FIELDVALUE',
+            'content_provider[uuid]' => '510ADC60-70FD-481B-B65E-1C7CFBC7AFB9',
+            'content_provider[permissionurl]' => 'http://example.com/gliberty/permission',
+            'content_provider[name]' => 'Gwendola',
+            'content_provider[maxFileSize]' => '100',
+            'content_provider[maxAuSize]' => '1000',
+            'content_provider[contentOwner]' => 2,
+            'content_provider[pln]' => 2,
+            'content_provider[plugin]' => 1,
         ]);
 
         $client->submit($form);
         $this->assertTrue($client->getResponse()->isRedirect('/content_provider/1'));
         $responseCrawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
+        $this->assertEquals(1, $responseCrawler->filter('td:contains("gliberty")')->count());
     }
 
     public function testAnonNew() {
@@ -117,19 +120,22 @@ class ContentProviderControllerTest extends BaseTestCase {
         $formCrawler = $client->request('GET', '/content_provider/new');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
         $form = $formCrawler->selectButton('Create')->form([
-                // DO STUFF HERE.
-                // 'content_providers[FIELDNAME]' => 'FIELDVALUE',
+            'content_provider[uuid]' => '510ADC60-70FD-481B-B65E-1C7CFBC7AFB9',
+            'content_provider[permissionurl]' => 'http://example.com/gliberty/permission',
+            'content_provider[name]' => 'Gwendola',
+            'content_provider[maxFileSize]' => '100',
+            'content_provider[maxAuSize]' => '1000',
+            'content_provider[contentOwner]' => 2,
+            'content_provider[pln]' => 2,
+            'content_provider[plugin]' => 1,
         ]);
 
         $client->submit($form);
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
+        $this->assertEquals(1, $responseCrawler->filter('td:contains("gliberty")')->count());
     }
 
     public function testAnonDelete() {

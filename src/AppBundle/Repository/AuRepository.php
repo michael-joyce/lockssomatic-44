@@ -12,7 +12,7 @@ namespace AppBundle\Repository;
 use AppBundle\Entity\Au;
 use AppBundle\Entity\Deposit;
 use Doctrine\ORM\EntityRepository;
-use Iterator;
+use Generator;
 
 /**
  * AU queries in Doctrine.
@@ -80,7 +80,7 @@ class AuRepository extends EntityRepository {
      * @param Au $au
      *   The AU to query.
      *
-     * @return Iterator|Deposit[]
+     * @return Generator|Deposit[]
      *   The iterator for the deposits.
      */
     public function iterateDeposits(Au $au) {
@@ -90,8 +90,10 @@ class AuRepository extends EntityRepository {
         $qb->andWhere("d.au = :au");
         $qb->setParameter('au', $au);
         $iterator = $qb->getQuery()->iterate();
-        $iterator->rewind();
-        return $iterator;
+
+        foreach($iterator as $row) {
+            yield $row[0];
+        }
     }
 
 }

@@ -85,19 +85,17 @@ class PlnControllerTest extends BaseTestCase {
         $formCrawler = $client->request('GET', '/pln/1/edit');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
         $form = $formCrawler->selectButton('Update')->form([
-                // DO STUFF HERE.
-                // 'plns[FIELDNAME]' => 'FIELDVALUE',
+            'pln[name]' => 'fireball',
+            'pln[enableContentUi]' => 0,
+            'pln[contentPort]' => 8123,
         ]);
 
         $client->submit($form);
         $this->assertTrue($client->getResponse()->isRedirect('/pln/1'));
         $responseCrawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
+        $this->assertEquals(1, $responseCrawler->filter('td:contains("8123")')->count());
     }
 
     public function testAnonNew() {
@@ -117,19 +115,17 @@ class PlnControllerTest extends BaseTestCase {
         $formCrawler = $client->request('GET', '/pln/new');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
         $form = $formCrawler->selectButton('Create')->form([
-                // DO STUFF HERE.
-                // 'plns[FIELDNAME]' => 'FIELDVALUE',
+            'pln[name]' => 'fireball',
+            'pln[enableContentUi]' => 0,
+            'pln[contentPort]' => 8123,
         ]);
 
         $client->submit($form);
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
+        $this->assertEquals(1, $responseCrawler->filter('td:contains("8123")')->count());
     }
 
     public function testAnonKeystore() {
@@ -151,7 +147,7 @@ class PlnControllerTest extends BaseTestCase {
 
         $form = $formCrawler->selectButton('Create')->form();
         $form['file_upload[file]']->upload('src/AppBundle/Tests/Data/dummy.keystore');
-        
+
         $client->submit($form);
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();

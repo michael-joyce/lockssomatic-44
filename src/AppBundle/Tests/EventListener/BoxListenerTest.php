@@ -9,7 +9,7 @@
 
 namespace AppBundle\EventListener;
 
-// Mock the gethostbyname function in the AppBundle\EventListener namespace to 
+// Mock the gethostbyname function in the AppBundle\EventListener namespace to
 // prevent actual DNS lookups and return known data for nonsense names.
 function gethostbyname($hostname) {
     switch ($hostname) {
@@ -52,6 +52,7 @@ class BoxListenerTest extends BaseTestCase {
         return [
             ['frobinicate.com', null, '1.2.3.4'],
             ['frobinicate.com', '10.0.0.12', '10.0.0.12'],
+            ['notarealdomainname', null, null],
         ];
     }
 
@@ -71,6 +72,7 @@ class BoxListenerTest extends BaseTestCase {
         return [
             ['frobinicate.com', null, '1.2.3.4'],
             ['frobinicate.com', '10.0.0.12', '1.2.3.4'],
+            ['notarealdomainname', null, null],
         ];
     }
 
