@@ -11,7 +11,7 @@
      * @type string
      */
     var hostname = window.location.hostname.replace('www.', '');
-    
+
     /**
      * Add a confirm handler to any link with a data-confirm attribute.
      */
@@ -21,7 +21,7 @@
             return window.confirm($this.data('confirm'));
         });
     }
-    
+
     /**
      * Before leaving the page, check that all forms have been saved.
      *
@@ -139,6 +139,27 @@
         });
     }
 
+    function nameInputs() {
+        $("input").each(function () {
+            var $this = $(this);
+            if ($this.attr('type') === 'radio' || $this.attr('type') === 'checkbox') {
+                $this.after('<span class="widgetname">' + $(this).attr('name') + '=' + $this.attr('value') + '</span>');
+            }
+            else {
+                $this.after('<span class="widgetname">' + $(this).attr('name') + '</span>');
+            }
+        });
+        $("select").each(function(){
+            var $this = $(this);
+            var opts = '<br/>';
+            $this.find('option').each(function(){
+                opts += ' * ' + $(this).text() + ' => ' + $(this).attr('value') + "<br/>";
+            });
+            $this.after('<span class="widgetname">' + $(this).attr('name') + opts + '</span>');
+
+        });
+    }
+
     /*
      * Set up the stuff.
      */
@@ -153,6 +174,7 @@
             simpleCollection();
             complexCollection();
         }
+        // nameInputs()
     });
 
 })(jQuery, window);

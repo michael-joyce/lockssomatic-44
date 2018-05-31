@@ -57,12 +57,10 @@ class BoxListener {
         if (!$entity instanceof Box) {
             return;
         }
-        $ip = $this->lookup($entity->getHostname());
-        if ($ip === $entity->getIpAddress()) {
-            return;
+        if (!$entity->getIpAddress()) {
+            $ip = $this->lookup($entity->getHostname());
+            $entity->setIpAddress($ip);
         }
-        $this->logger->warning("Updating IP address for box {$entity->getHostname()} to {$ip}.");
-        $entity->setIpAddress($ip);
     }
 
 }

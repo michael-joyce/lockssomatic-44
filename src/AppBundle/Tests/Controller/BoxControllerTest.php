@@ -128,7 +128,8 @@ class BoxControllerTest extends BaseTestCase {
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Update')->form([
-            'box[hostname]' => 'example.com',
+            'box[hostname]' => 'examplary.com',
+            'box[ipAddress]' => '10.0.0.0',
             'box[protocol]' => 'TCP',
             'box[port]' => 8081,
             'box[webServiceProtocol]' => 'http',
@@ -140,7 +141,7 @@ class BoxControllerTest extends BaseTestCase {
         $this->assertTrue($client->getResponse()->isRedirect('/pln/1/box/1'));
         $responseCrawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(2, $responseCrawler->filter('td:contains("example.com")')->count());
+        $this->assertEquals(2, $responseCrawler->filter('td:contains("examplary.com")')->count());
     }
 
     public function testAnonNew() {
@@ -161,7 +162,8 @@ class BoxControllerTest extends BaseTestCase {
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Create')->form([
-            'box[hostname]' => 'example.com',
+            'box[hostname]' => 'examplary.com',
+            'box[ipAddress]' => '10.0.0.0',
             'box[protocol]' => 'TCP',
             'box[port]' => 8081,
             'box[webServiceProtocol]' => 'http',
@@ -173,7 +175,7 @@ class BoxControllerTest extends BaseTestCase {
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(2, $responseCrawler->filter('td:contains("example.com")')->count());
+        $this->assertEquals(2, $responseCrawler->filter('td:contains("examplary.com")')->count());
     }
 
     public function testAnonDelete() {
