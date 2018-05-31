@@ -16,7 +16,7 @@ use AppBundle\Repository\AuRepository;
 use AppBundle\Utilities\Encoder;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Iterator;
+use Generator;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -425,7 +425,7 @@ class AuManager {
      * Generate and return all the properties for an AU.
      *
      * Persists, but does not flush, properties to the database. You should
-     * use the AuValidator to check that the content makes sense before
+     * use validate the AU to check that the content makes sense before
      * generating all properties.
      *
      * @param Au $au
@@ -433,7 +433,7 @@ class AuManager {
      * @param mixed $clear
      *   If true, remove any properties the AU already has.
      *
-     * @see AuValidator::validate
+     * @see validate
      */
     public function generateProperties(Au $au, $clear = false) {
         if ($clear) {

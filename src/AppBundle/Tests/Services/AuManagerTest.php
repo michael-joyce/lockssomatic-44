@@ -236,6 +236,29 @@ class AuManagerTest extends BaseTestCase {
         $this->assertEquals(0, $this->manager->validate($au));
     }
 
+    public function testValidateEmpty() {
+        $au = new Au();
+        $plugin = $this->createMock(Plugin::class);
+        $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
+                    'foo'
+        ]));
+        $au->setPlugin($plugin);
+
+        $deposit = new Deposit();
+        $deposit->setProperty('foo', 'chicanery');
+
+        $data = new ArrayObject();
+        $iterator = $data->getIterator();
+        $iterator->rewind();
+
+        $repo = $this->createMock(AuRepository::class);
+        $repo->method('iterateDeposits')->willReturn($iterator);
+        $repo->method('countDeposits')->willReturn(0);
+        $this->manager->setAuRepository($repo);
+
+        $this->assertEquals(0, $this->manager->validate($au));
+    }
+
     public function testValidate() {
         $au = new Au();
         $plugin = $this->createMock(Plugin::class);
@@ -418,6 +441,48 @@ class AuManagerTest extends BaseTestCase {
         $this->assertEquals($data['expected'], $str);
     }
 
+    /**
+     * @dataProvider testGenerateSymbolData
+     * @expectedException \Exception
+     */
+    public function testGenerateSymbolMissingPlugin(array $data) {
+        $property = $this->createMock(PluginProperty::class);
+        $property->method('isList')->will($this->returnValue($data['list']));
+        $property->method('getPropertyValue')->will($this->returnValue($data['propValue']));
+
+        $plugin = $this->createMock(Plugin::class);
+        $plugin->method('getProperty')->will($this->returnValue($property));
+        $plugin->method('getName')->will($this->returnValue('dummy'));
+
+        $au = $this->createMock(Au::class);
+        $au->method('getPlugin')->willReturn(null);
+        $au->method('getAuPropertyValue')->will($this->returnValueMap($data['auValues']));
+
+        $str = $this->manager->generateSymbol($au, 'testable');
+        $this->assertEquals($data['expected'], $str);
+    }
+
+    /**
+     * @dataProvider testGenerateSymbolData
+     * @expectedException \Exception
+     */
+    public function testGenerateSymbolMissingParameter(array $data) {
+        $property = $this->createMock(PluginProperty::class);
+        $property->method('isList')->will($this->returnValue($data['list']));
+        $property->method('getPropertyValue')->will($this->returnValue($data['propValue']));
+
+        $plugin = $this->createMock(Plugin::class);
+        $plugin->method('getProperty')->will($this->returnValue(null));
+        $plugin->method('getName')->will($this->returnValue('dummy'));
+
+        $au = $this->createMock(Au::class);
+        $au->method('getPlugin')->willReturn(null);
+        $au->method('getAuPropertyValue')->will($this->returnValueMap($data['auValues']));
+
+        $str = $this->manager->generateSymbol($au, 'testable');
+        $this->assertEquals($data['expected'], $str);
+    }
+
     public function testGenerateSymbolData() {
         return [
             [[
@@ -586,6 +651,19 @@ class AuManagerTest extends BaseTestCase {
         $this->manager->contentProperties($au, $root, $deposit);
         $this->assertEquals(3, count($au->getAuProperties()));
         $this->assertEquals('barr', $au->getSimpleAuProperty('attributes.pkppln.foo'));
+        $this->assertEquals('made from dust.', $au->getSimpleAuProperty('attributes.pkppln.spackle'));
+    }
+
+    public function testContentPropertiesList() {
+        $au = new Au();
+        $root = new AuProperty();
+        $au->addAuProperty($root);
+        $deposit = new Deposit();
+        $deposit->setProperty("foo", ["barr"]);
+        $deposit->setProperty("spackle", "made from dust.");
+        $this->manager->contentProperties($au, $root, $deposit);
+        $this->assertEquals(2, count($au->getAuProperties())); // property foois skipped.
+        $this->assertEquals(null, $au->getSimpleAuProperty('attributes.pkppln.foo'));
         $this->assertEquals('made from dust.', $au->getSimpleAuProperty('attributes.pkppln.spackle'));
     }
 
