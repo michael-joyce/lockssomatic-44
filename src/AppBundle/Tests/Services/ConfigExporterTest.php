@@ -13,7 +13,7 @@ use AppBundle\Entity\Au;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Plugin;
-use AppBundle\Repository\ContentRepository;
+use AppBundle\Repository\AuRepository;
 use AppBundle\Services\ConfigExporter;
 use AppBundle\Services\FilePaths;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -123,8 +123,8 @@ class ConfigExporterTest extends BaseTestCase {
         $deposit = new Deposit();
         $deposit->setUrl('http://example.com/path/to/content');
 
-        $repo = $this->createMock(ContentRepository::class);
-        $repo->method('auQuery')->will($this->returnValue(array(
+        $repo = $this->createMock(AuRepository::class);
+        $repo->method('iterateDeposits')->will($this->returnValue(array(
             [$deposit],
         )));
 

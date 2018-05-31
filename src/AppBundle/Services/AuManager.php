@@ -110,8 +110,8 @@ class AuManager {
      * @param Au $au
      *   The AU to query.
      *
-     * @return Iterator|Deposit[]
-     *   The resulting iterator.
+     * @return Generator|Deposit[]
+     *   The resulting generator.
      */
     public function auDeposits(Au $au) {
         return $this->auRepository->iterateDeposits($au);

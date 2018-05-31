@@ -68,10 +68,10 @@ class AuRepositoryTest extends BaseTestCase {
         $iterator = $this->repo->iterateDeposits($au);
         $this->assertInstanceOf(Iterator::class, $iterator);
         $this->assertTrue($iterator->valid());
-        $this->assertTrue(is_array($iterator->current()));
-        $this->assertInstanceOf(Deposit::class, $iterator->current()[0]);
-        $this->em->flush();
-        $this->em->clear();
+        $this->assertInstanceOf(Deposit::class, $iterator->current());
+        while($iterator->current()){
+            $iterator->next();
+        } // clean out the iterator or the db gets locked.
     }
 
     public function testIterateDepositsEmpty() {
@@ -79,8 +79,6 @@ class AuRepositoryTest extends BaseTestCase {
         $iterator = $this->repo->iterateDeposits($au);
         $this->assertInstanceOf(Iterator::class, $iterator);
         $this->assertFalse($iterator->valid());
-        $this->assertFalse($iterator->current());
-        $this->em->flush();
-        $this->em->clear();
+        $this->assertNull($iterator->current());
     }
 }
