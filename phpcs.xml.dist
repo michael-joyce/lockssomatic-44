@@ -15,12 +15,12 @@
 
     <config name="installed_paths" value="vendor/drupal/coder/coder_sniffer"/>
     
-    <!--    
+    <!-- 
     <config name="php_path" value="/usr/local/bin/php"/>
     <config name="csslint_path" value="/usr/local/bin/csslint"/>
     <config name="jslint_path" value="/usr/local/bin/jslint"/>
-    -->
-  
+  	-->
+  	
     <autoload>vendor/autoload.php</autoload>
 
     <rule ref="PSR2">
@@ -35,7 +35,7 @@
             <property name="indent" value="4" />
         </properties>
     </rule>
-
+    
     <rule ref="vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml">
         <exclude name="Drupal.Array.Array.ArrayIndentation"/>
         <exclude name="Drupal.WhiteSpace.ScopeClosingBrace.BreakIndent"/>
@@ -43,7 +43,9 @@
         <exclude name="Drupal.ControlStructures.ControlSignature.NewlineAfterCloseBrace"/>
         <exclude name="Drupal.Commenting.DataTypeNamespace.DataTypeNamespace"/>
         <exclude name="Drupal.Commenting.FileComment.NamespaceNoFileDoc"/>
-        <exclude name="Generic.PHP.UpperCaseConstant.Found"/>
+        <exclude name="Drupal.Commenting.FunctionComment.MissingParamComment" />
+        <exclude name="Drupal.Commenting.FunctionComment.MissingReturnComment" />
+        <exclude name="Generic.PHP.UpperCaseConstant.Found"/>        
     </rule>
   
     <rule ref="Drupal.WhiteSpace.ScopeIndent">
@@ -73,5 +75,5 @@
             <property name="indent" value="4"/>
         </properties>
     </rule>
-  
+    
 </ruleset>

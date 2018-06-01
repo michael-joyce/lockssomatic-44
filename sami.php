@@ -13,7 +13,7 @@ $iterator = Finder::create()
           ->name('*.php')
           ->exclude('Resources')
           ->exclude('Tests')
-          ->in($dir . '/src');
+          ->in($dir . '/src/AppBundle');
 
 $options = array(
     // 'theme' => 'symfony',
