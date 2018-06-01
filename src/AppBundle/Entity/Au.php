@@ -33,7 +33,7 @@ class Au extends AbstractEntity {
     /**
      * @ORM\Column(name="auid", type="string", length=512, nullable=false)
      *
-     * @var type
+     * @var mixed
      */
     private $auid;
 
@@ -143,7 +143,7 @@ class Au extends AbstractEntity {
      *   Returns $this.
      */
     public function setOpen($open) {
-        if($this->open) {
+        if ($this->open) {
             $this->open = $open;
         }
         return $this;
@@ -282,8 +282,11 @@ class Au extends AbstractEntity {
         return $this->auProperties;
     }
 
+    /**
+     *
+     */
     public function hasAuProperties() {
-        return ! $this->auProperties->isEmpty();
+        return !$this->auProperties->isEmpty();
     }
 
     /**
@@ -291,7 +294,7 @@ class Au extends AbstractEntity {
      */
     public function getRootAuProperties() {
         return $this->auProperties->filter(function (AuProperty $p) {
-                    return $p->getParent() === null;
+                return $p->getParent() === null;
         });
     }
 
@@ -403,26 +406,25 @@ class Au extends AbstractEntity {
     }
 
     /**
-     * Set auid
+     * Set auid.
      *
      * @param string $auid
      *
      * @return Au
      */
-    public function setAuid($auid)
-    {
+    public function setAuid($auid) {
         $this->auid = $auid;
 
         return $this;
     }
 
     /**
-     * Get auid
+     * Get auid.
      *
      * @return string
      */
-    public function getAuid()
-    {
+    public function getAuid() {
         return $this->auid;
     }
+
 }

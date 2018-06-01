@@ -347,6 +347,9 @@ class ContentProvider extends AbstractEntity {
         return $this->aus;
     }
 
+    /**
+     *
+     */
     public function setAus($aus) {
         $this->aus = $aus;
     }

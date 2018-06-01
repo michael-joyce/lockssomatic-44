@@ -53,7 +53,7 @@ class AuRepository extends EntityRepository {
         $qb->from(Deposit::class, 'd');
         $qb->where('d.au = :au');
         $qb->setParameter('au', $au);
-        return (int)$qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -71,7 +71,7 @@ class AuRepository extends EntityRepository {
         $qb->from(Deposit::class, 'd');
         $qb->where('d.au = :au');
         $qb->setParameter('au', $au);
-        return (int)$qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -91,7 +91,7 @@ class AuRepository extends EntityRepository {
         $qb->setParameter('au', $au);
         $iterator = $qb->getQuery()->iterate();
 
-        foreach($iterator as $row) {
+        foreach ($iterator as $row) {
             yield $row[0];
         }
     }

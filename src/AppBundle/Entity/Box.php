@@ -9,6 +9,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
@@ -49,7 +50,7 @@ class Box extends AbstractEntity {
 
     /**
      * The port to use for webservice requests.
-     * 
+     *
      * Usually 8080, but may be different for testing.
      *
      * @var int
@@ -59,10 +60,10 @@ class Box extends AbstractEntity {
     
     /**
      * Protocol for the LOCKSS-UI and webservices.
-     * 
+     *
      * Usually http but may be https.
-     * 
-     * @var type 
+     *
+     * @var mixed
      * @ORM\Column(name="ws_protocol", type="string", length=8, nullable=false)
      */
     private $webServiceProtocol;
@@ -136,9 +137,12 @@ class Box extends AbstractEntity {
      */
     private $pln;
     
+    /**
+     *
+     */
     public function __construct() {
         parent::__construct();
-        $this->status = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->status = new ArrayCollection();
         $this->webServicePort = 8080;
         $this->webServiceProtocol = 'http';
     }
@@ -153,6 +157,9 @@ class Box extends AbstractEntity {
         return $this->ipAddress;
     }
     
+    /**
+     *
+     */
     public function getUrl() {
         return "{$this->webServiceProtocol}://{$this}:{$this->webServicePort}";
     }
@@ -408,28 +415,26 @@ class Box extends AbstractEntity {
         return $this->status;
     }
 
-
     /**
-     * Set webServiceProtocol
+     * Set webServiceProtocol.
      *
      * @param string $webServiceProtocol
      *
      * @return Box
      */
-    public function setWebServiceProtocol($webServiceProtocol)
-    {
+    public function setWebServiceProtocol($webServiceProtocol) {
         $this->webServiceProtocol = $webServiceProtocol;
 
         return $this;
     }
 
     /**
-     * Get webServiceProtocol
+     * Get webServiceProtocol.
      *
      * @return string
      */
-    public function getWebServiceProtocol()
-    {
+    public function getWebServiceProtocol() {
         return $this->webServiceProtocol;
     }
+
 }

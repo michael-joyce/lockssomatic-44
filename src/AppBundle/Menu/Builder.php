@@ -30,35 +30,35 @@ class Builder implements ContainerAwareInterface {
     
     /**
      * Menu item factory.
-     * 
+     *
      * @var FactoryInterface
      */
     private $factory;
 
     /**
      * Authorization checker for roles.
-     * 
+     *
      * @var AuthorizationCheckerInterface
      */
     private $authChecker;
 
     /**
      * User login token storage service.
-     * 
+     *
      * @var TokenStorageInterface
      */
     private $tokenStorage;
     
     /**
      * Doctrine instance.
-     * 
+     *
      * @var EntityManagerInterface
      */
     private $em;
 
     /**
      * Construct the menu builder.
-     * 
+     *
      * @param FactoryInterface $factory
      *   Dependency-injected menu item factory.
      * @param AuthorizationCheckerInterface $authChecker
@@ -77,7 +77,7 @@ class Builder implements ContainerAwareInterface {
 
     /**
      * Check if the current user has $role.
-     * 
+     *
      * @param string $role
      *   The role to check.
      */
@@ -90,7 +90,7 @@ class Builder implements ContainerAwareInterface {
 
     /**
      * Build the main menu.
-     * 
+     *
      * @param array $options
      *   Unused options array.
      */

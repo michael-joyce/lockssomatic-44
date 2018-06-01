@@ -177,6 +177,9 @@ class Plugin extends AbstractEntity {
         return $fileinfo->getBasename();
     }
 
+    /**
+     *
+     */
     public function getOriginalFilename() {
         $filename = preg_replace('/-v[0-9]+\.jar$/', '.jar', $this->getFilename());
         return $filename;

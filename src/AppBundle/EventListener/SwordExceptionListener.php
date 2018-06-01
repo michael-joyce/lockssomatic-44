@@ -33,7 +33,7 @@ class SwordExceptionListener {
      * Templating engine to generate the error message.
      *
      * @var EngineInterface
-     */    
+     */
     private $templating;
 
     /**
@@ -45,7 +45,7 @@ class SwordExceptionListener {
     
     /**
      * Build the service.
-     * 
+     *
      * @param string $env
      *   Name of the environment.
      * @param EngineInterface $templating
@@ -58,7 +58,7 @@ class SwordExceptionListener {
     
     /**
      * Fired when a kernel event occurs.
-     * 
+     *
      * Once the controller has been initialized, this event is fired. Grab
      * a reference to the active controller.
      *
@@ -71,9 +71,9 @@ class SwordExceptionListener {
     
     /**
      * Fired on an exception in the SWORD controller.
-     * 
+     *
      * Sets the response inside the $event parameter.
-     * 
+     *
      * @param GetResponseForExceptionEvent $event
      *   Event that caused the exception.
      */

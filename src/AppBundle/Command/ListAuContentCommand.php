@@ -82,7 +82,7 @@ class ListAuContentCommand extends ContainerAwareCommand {
     protected function execute(InputInterface $input, OutputInterface $output) {
         foreach ($this->getAus($input->getArgument('ids')) as $au) {
             $iterator = $this->em->getRepository(Au::class)->iterateDeposits($au);
-            while(($deposit = $iterator->current())) {
+            while (($deposit = $iterator->current())) {
                 $output->writeln($deposit->getUrl());
                 $iterator->next();
             }

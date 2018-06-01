@@ -28,7 +28,7 @@ class Encoder {
      *   The result of the encoding. Returns null if $string is null.
      */
     public function encode($string) {
-        if($string === null) {
+        if ($string === null) {
             return null;
         }
         $callback = function ($matches) {

@@ -46,11 +46,14 @@ class BoxStatus extends AbstractEntity {
 
     /**
      * @var array
-     * 
+     *
      * @ORM\Column(name="data", type="array", nullable=false)
      */
     private $data;
 
+    /**
+     *
+     */
     public function __construct() {
         parent::__construct();
         $this->success = false;
@@ -94,7 +97,7 @@ class BoxStatus extends AbstractEntity {
      * @return BoxStatus
      */
     public function setErrors($errors) {
-        if(is_array($errors)) {
+        if (is_array($errors)) {
             $this->errors = implode("\n", $errors);
         } else {
             $this->errors = $errors;
@@ -135,7 +138,7 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Set data
+     * Set data.
      *
      * @param array $data
      *
@@ -148,7 +151,7 @@ class BoxStatus extends AbstractEntity {
     }
 
     /**
-     * Get data
+     * Get data.
      *
      * @return array
      */

@@ -197,6 +197,9 @@ class Deposit extends AbstractEntity {
         return $this->url;
     }
 
+    /**
+     *
+     */
     public function getFilename() {
         return basename($this->url);
     }
@@ -288,7 +291,6 @@ class Deposit extends AbstractEntity {
     public function getSummary() {
         return $this->summary;
     }
-
 
     /**
      * Set checksumType.
@@ -492,4 +494,5 @@ class Deposit extends AbstractEntity {
     public function hasProperty($key) {
         return isset($this->properties[$key]);
     }
+
 }

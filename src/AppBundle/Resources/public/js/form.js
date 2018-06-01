@@ -149,10 +149,10 @@
                 $this.after('<span class="widgetname">' + $(this).attr('name') + '</span>');
             }
         });
-        $("select").each(function(){
+        $("select").each(function () {
             var $this = $(this);
             var opts = '<br/>';
-            $this.find('option').each(function(){
+            $this.find('option').each(function () {
                 opts += ' * ' + $(this).text() + ' => ' + $(this).attr('value') + "<br/>";
             });
             $this.after('<span class="widgetname">' + $(this).attr('name') + opts + '</span>');

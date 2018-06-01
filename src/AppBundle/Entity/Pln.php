@@ -285,6 +285,9 @@ class Pln extends AbstractEntity {
         return $this->contentPort;
     }
 
+    /**
+     *
+     */
     public function clearProperties() {
         $this->properties = [];
         return $this;
@@ -305,14 +308,14 @@ class Pln extends AbstractEntity {
      * @return Pln
      */
     public function setProperty($key, $value) {
-        if(in_array($key, self::LIST_REQUIRED)) {
-            if(is_array($value)) {
+        if (in_array($key, self::LIST_REQUIRED)) {
+            if (is_array($value)) {
                 $this->properties[$key] = $value;
             } else {
                 $this->properties[$key] = [$value];
             }
         } else {
-            if(is_array($value) && count($value) === 1) {
+            if (is_array($value) && count($value) === 1) {
                 $this->properties[$key] = $value[0];
             } else {
                 $this->properties[$key] = $value;
@@ -321,13 +324,19 @@ class Pln extends AbstractEntity {
         return $this;
     }
 
+    /**
+     *
+     */
     public function getProperty($key) {
-        if( !array_key_exists($key, $this->properties)) {
+        if (!array_key_exists($key, $this->properties)) {
             return null;
         }
         return $this->properties[$key];
     }
 
+    /**
+     *
+     */
     public function removeProperty($key) {
         unset($this->properties[$key]);
     }
@@ -463,8 +472,8 @@ class Pln extends AbstractEntity {
      */
     public function getPlugins() {
         $plugins = [];
-        foreach($this->contentProviders as $provider) {
-            if( ! in_array($provider->getPlugin(), $plugins)) {
+        foreach ($this->contentProviders as $provider) {
+            if (!in_array($provider->getPlugin(), $plugins)) {
                 $plugins[] = $provider->getPlugin();
             }
         }
