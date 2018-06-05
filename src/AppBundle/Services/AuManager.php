@@ -159,8 +159,6 @@ class AuManager {
         $au = $this->auRepository->findOpenAu($auid);
         if ($au && $this->auSize($au) + $deposit->getSize() > $provider->getMaxAuSize()) {
             $au->setOpen(false);
-            $this->auRepository->flush($au);
-            $au = null;
         }
         if (!$au) {
             $au = $this->buildAu($deposit, $auid);

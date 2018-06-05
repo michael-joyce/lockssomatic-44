@@ -3,8 +3,7 @@
     <body>
         <h1>{{ pln.name }} Manifest</h1>
         <ul>
-            {% for row in content -%}
-                {% set item = row[0] -%}
+            {% for item in content -%}
                 <li><a href="{{ item.url }}">{{ item.url }}</a></li>
             {% endfor -%}
         </ul>

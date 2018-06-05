@@ -49,14 +49,20 @@ class ConfigExporter {
     private $fs;
 
     /**
+     * @var AuManager
+     */
+    private $manager;
+
+    /**
      *
      */
-    public function __construct($ausPerTitleDb, EntityManagerInterface $em, EngineInterface $templating, FilePaths $fp) {
+    public function __construct($ausPerTitleDb, EntityManagerInterface $em, EngineInterface $templating, FilePaths $fp, AuManager $manager) {
         $this->ausPerTitleDb = $ausPerTitleDb;
         $this->em = $em;
         $this->templating = $templating;
         $this->fp = $fp;
         $this->fs = new Filesystem();
+        $this->manager = $manager;
     }
 
     /**
@@ -128,10 +134,10 @@ class ConfigExporter {
         $repo = $this->em->getRepository(Deposit::class);
         foreach ($pln->getAus() as $au) {
             $manifestPath = $this->fp->getManifestPath($au);
-            $iterator = $repo->auQuery($au);
+            $iterator = $this->manager->auDeposits($au);
             $html = $this->templating->render('AppBundle:lockss:manifest.html.twig', array(
-            'pln' => $pln,
-            'content' => $iterator,
+                'pln' => $pln,
+                'content' => $iterator,
             ));
             $this->fs->dumpFile($manifestPath, $html);
         }
