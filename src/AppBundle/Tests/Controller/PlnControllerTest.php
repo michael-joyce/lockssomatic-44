@@ -119,6 +119,7 @@ class PlnControllerTest extends BaseTestCase {
             'pln[name]' => 'fireball',
             'pln[enableContentUi]' => 0,
             'pln[contentPort]' => 8123,
+            'pln[email]' => 'other@example.com',
         ]);
 
         $client->submit($form);

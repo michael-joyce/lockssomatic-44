@@ -35,11 +35,6 @@ class ConfigUpdaterTest extends BaseTestCase {
      */
     private $updater;
 
-    /**
-     * @var vfsStreamDirectory
-     */
-    private $root;
-
     protected function setUp() {
         parent::setUp();
         $this->updater = $this->container->get(ConfigUpdater::class);
@@ -236,18 +231,22 @@ class ConfigUpdaterTest extends BaseTestCase {
 
     public function testUpdateContentUiDisabled() {
         $pln = new Pln();
+        $pln->setEmail('pln@example.com');
         $pln->setEnableContentUi(false);
         $this->updater->updateContentUi($pln);
         $this->assertEquals('false', $pln->getProperty('org.lockss.contentui.start'));
+        $this->assertEquals('pln@example.com', $pln->getProperty('org.lockss.ui.contactEmail'));
     }
 
     public function testUpdateContentUiEnabled() {
         $pln = new Pln();
+        $pln->setEmail('pln@example.com');
         $pln->setEnableContentUi(true);
         $pln->setContentPort('8123');
         $this->updater->updateContentUi($pln);
         $this->assertEquals('true', $pln->getProperty('org.lockss.contentui.start'));
         $this->assertEquals('8123', $pln->getProperty('org.lockss.contentui.port'));
+        $this->assertEquals('pln@example.com', $pln->getProperty('org.lockss.ui.contactEmail'));
     }
 
     public function testUpdatePluginRegistries() {

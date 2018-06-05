@@ -147,6 +147,7 @@ class ConfigUpdater {
         $prefix = 'org.lockss.contentui';
         $pln->setProperty("{$prefix}.start", $pln->getEnableContentUi() ? "true" : "false");
         $pln->setProperty("{$prefix}.port", $pln->getContentPort());
+        $pln->setProperty("org.lockss.ui.contactEmail", $pln->getEmail());
     }
 
     /**

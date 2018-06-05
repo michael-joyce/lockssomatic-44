@@ -5,20 +5,21 @@
 {% block pageheader %}
     <h1>{{ pln.name }} Property List</h1>
     <p>
-        The properties listed below are managed by LOCKSSOMatic. Any changes to them will be lost when the 
+        The properties listed below are managed by LOCKSSOMatic. Any changes to them will be lost when the
         configuration files are written.
     </p>
     <ul>
         <li>org.lockss.id.initialV3PeerList</li>
         <li>org.lockss.titleDbs</li>
+        <li>org.lockss.ui.contactEmail</li>
         <li>org.lockss.plugin.registries</li>
         <li>org.lockss.plugin.keystore.location</li>
         <li>org.lockss.ui.users.lockssuser</li>
         <li>org.lockss.contentui.start</li>
         <li>org.lockss.contentui.port</li>
     </ul>
-    <p>Any of the 
-        <a href="http://www.lockss.org/lockssdoc/gamma/daemon/paramdoc.html">LOCKSS 
+    <p>Any of the
+        <a href="http://www.lockss.org/lockssdoc/gamma/daemon/paramdoc.html">LOCKSS
             Configuration Parameters</a> are allowed.
     </p>
 {% endblock %}

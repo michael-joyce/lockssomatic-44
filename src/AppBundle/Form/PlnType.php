@@ -57,6 +57,13 @@ class PlnType extends AbstractType {
                 'help_block' => 'Password that LOCKSSOMatic should use to communicate with the boxes.',
             ),
         ));
+        $builder->add('email', null, array(
+            'label' => 'Email',
+            'required' => true,
+            'attr' => array(
+                'help_block' => 'Network email address to display in the LOCKSS UI.'
+            ),
+        ));
         $builder->add('enableContentUi', ChoiceType::class, array(
             'label' => 'Enable Content Ui',
             'expanded' => true,

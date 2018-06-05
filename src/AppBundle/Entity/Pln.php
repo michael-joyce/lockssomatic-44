@@ -74,6 +74,12 @@ class Pln extends AbstractEntity {
     private $password;
 
     /**
+     * @var string
+     * @ORM\Column(name="email", type="string", length=64, nullable=false)
+     */
+    private $email;
+
+    /**
      * If true, the lockss ContentUI subsystem will be enabled.
      *
      * @var bool
@@ -480,4 +486,76 @@ class Pln extends AbstractEntity {
         return $plugins;
     }
 
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     *
+     * @return Pln
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Get keystore
+     *
+     * @return string
+     */
+    public function getKeystore()
+    {
+        return $this->keystore;
+    }
+
+    /**
+     * Set properties
+     *
+     * @param array $properties
+     *
+     * @return Pln
+     */
+    public function setProperties($properties)
+    {
+        $this->properties = $properties;
+
+        return $this;
+    }
+
+    /**
+     * Add aus
+     *
+     * @param \AppBundle\Entity\Au $aus
+     *
+     * @return Pln
+     */
+    public function addAus(\AppBundle\Entity\Au $aus)
+    {
+        $this->aus[] = $aus;
+
+        return $this;
+    }
+
+    /**
+     * Remove aus
+     *
+     * @param \AppBundle\Entity\Au $aus
+     */
+    public function removeAus(\AppBundle\Entity\Au $aus)
+    {
+        $this->aus->removeElement($aus);
+    }
 }
