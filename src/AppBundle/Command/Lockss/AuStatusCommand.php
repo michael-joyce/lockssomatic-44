@@ -10,10 +10,14 @@
 namespace AppBundle\Command\Lockss;
 
 use AppBundle\Entity\Au;
+use AppBundle\Entity\AuStatus;
+use AppBundle\Entity\Pln;
 use AppBundle\Services\LockssClient;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -54,18 +58,53 @@ class AuStatusCommand extends ContainerAwareCommand {
      */
     protected function configure() {
         $this->setName('lockss:au:status');
+        $this->addOption('pln', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Optional list of PLNs to check.');
+        $this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
         $this->setDescription('Report the status of an AU.');
     }
 
     /**
-     * Get a list of AUs to check.
+     * Get a list of PLNs to query.
      *
-     * @return Au[]|Collection
-     *   All AUs.
+     * @param array $plnIds
+     *
+     * @return Collection|Pln[]
      */
-    protected function getAus() {
-        $aus = $this->em->getRepository(Au::class)->findAll();
-        return $aus;
+    protected function getPlns(array $plnIds) {
+        $repo = $this->em->getRepository(Pln::class);
+        if (count($plnIds) > 0) {
+            return $repo->findBy(array('id' => $plnIds));
+        }
+        return $repo->findAll();
+    }
+
+    protected function queryAu(Au $au, $boxes) {
+        $status = [];
+        $errors = [];
+        foreach ($boxes as $box) {
+            $status[$box . ':' . $box->getWebServicePort()] = get_object_vars($this->client->getAuStatus($box, $au));
+            if($this->client->hasErrors()) {
+                $errors = array_merge($errors, $this->client->getErrors());
+                $this->client->clearErrors();
+            }
+        }
+        $auStatus = new AuStatus();
+        $auStatus->setAu($au);
+        $auStatus->setStatus($status);
+        $auStatus->setErrors($errors);
+        $this->em->persist($auStatus);
+        return $auStatus;
+    }
+
+    protected function queryPln(Pln $pln, $dryRun) {
+        $boxes = $pln->getBoxes();
+
+        foreach ($pln->getAus() as $au) {
+            $this->queryAu($au, $boxes);
+            if (!$dryRun) {
+                $this->em->flush();
+            }
+        }
     }
 
     /**
@@ -77,15 +116,12 @@ class AuStatusCommand extends ContainerAwareCommand {
      *   Output destination.
      */
     public function execute(InputInterface $input, OutputInterface $output) {
-        $aus = $this->getAus();
-        foreach ($aus as $au) {
-            $output->writeln($au->getId());
-            foreach ($au->getPln()->getBoxes() as $box) {
-                dump($this->client->getAuStatus($box, $au));
-                foreach ($this->client->getErrors() as $e) {
-                    $output->writeln($e);
-                }
-            }
+        $plnIds = $input->getOption('pln');
+        $dryRun = $input->getOption('dry-run');
+
+        $plns = $this->getPlns($plnIds);
+        foreach ($plns as $pln) {
+            $this->queryPln($pln, $dryRun);
         }
     }
 

@@ -2,9 +2,9 @@
 
 {% block title %}AuStatus{% endblock %}
 
-{% block pageheader %} 
+{% block pageheader %}
     <h1>AuStatus</h1>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
     <div class="btn-toolbar">
@@ -29,6 +29,8 @@
                                 <li>{{ error }}</li>
                                 {% endfor %}
                         </ul>
+                    {% else %}
+                        None
                     {% endif %}
                 </td>
             </tr>
@@ -39,7 +41,7 @@
             <tr>
                 <th>Updated</th>
                 <td>{% if auStatus.updated %}{{ auStatus.updated|date }}{% endif %}</td>
-            </tr>        
+            </tr>
             <tr>
                 <th>Au</th>
                 <td>
@@ -47,22 +49,19 @@
                         {{ auStatus.au }}
                     </a>
                 </td>
-            </tr>        
+            </tr>
         </tbody>
     </table>
 
     <h2>Details</h2>
-    <ul>
-        {% for host, details in auStatus.status %}
-            <li><strong>{{ host }}</strong>
-                <dl class="dl-horizontal">
-                    {% for key,value in details %}
-                        <dt>{{ key }}</dt>
-                        <dd>{{ value }}</dd>
-                    {% endfor %}
-                </dl>
-            </li>
-        {% endfor %}
-    </ul>
+    {% for host, details in auStatus.status %}
+        <h3>{{ host }}</h3>
+        <dl class="dl-horizontal">
+            {% for key,value in details %}
+                <dt>{{ key }}</dt>
+                <dd>{{ value }}</dd>
+            {% endfor %}
+        </dl>
+    {% endfor %}
 
 {% endblock %}

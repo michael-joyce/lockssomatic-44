@@ -7,7 +7,7 @@
     <p class="count">
         Displaying {{ depositStatuses|length }} depositStatuses of {{ depositStatuses.getTotalItemCount }} total.
     </p>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
 
@@ -23,7 +23,7 @@
                 <tr>
                     <td>
                         <a href="{{ path('deposit_status_show', { 'id': depositStatus.id, 'depositId': deposit.id, 'plnId': pln.id }) }}">
-                            {{ depositStatus.agreement }}
+                            {{ depositStatus.agreement * 100 }}%
                         </a>
                     </td>
                     <td>{{ depositStatus.created|date }}</td>

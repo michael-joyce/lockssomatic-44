@@ -7,7 +7,7 @@
     <p class="count">
         Displaying {{ auStatuses|length }} auStatuses of {{ auStatuses.getTotalItemCount }} total.
     </p>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
 
@@ -16,6 +16,7 @@
             <tr>
                 <th>Query Date</th>
                 <th>Status</th>
+                <th>Errors</th>
             </tr>
         </thead>
         <tbody>
@@ -28,6 +29,9 @@
                     </td>
                     <td>
                         {{ auStatus.status|keys|length }} hosts reported.
+                    </td>
+                    <td>
+                        {{ auStatus.errors|length }}
                     </td>
                 </tr>
             {% endfor %}

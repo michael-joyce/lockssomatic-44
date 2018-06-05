@@ -2,9 +2,9 @@
 
 {% block title %}DepositStatus{% endblock %}
 
-{% block pageheader %} 
+{% block pageheader %}
     <h1>DepositStatus</h1>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
     <div class="btn-toolbar">
@@ -18,7 +18,9 @@
         <tbody>
             <tr>
                 <th>Agreement</th>
-                <td>{{ depositStatus.agreement }}</td>
+                <td>
+                    {{ depositStatus.agreement * 100 }}%
+                </td>
             </tr>
             <tr>
                 <th>Query Date</th>
@@ -27,7 +29,7 @@
             <tr>
                 <th>Updated</th>
                 <td>{% if depositStatus.updated %}{{ depositStatus.updated|date }}{% endif %}</td>
-            </tr>        
+            </tr>
             <tr>
                 <th>Deposit</th>
                 <td>
@@ -35,16 +37,18 @@
                         {{ depositStatus.deposit }}
                     </a>
                 </td>
-            </tr>        
+            </tr>
         </tbody>
     </table>
 
     <h2>Details</h2>
     <dl class="dl-horizontal">
-    {% for hostname, agreement in depositStatus.status %}
-        <dt>{{ hostname }}</dt>
-        <dd>{{ agreement }}</dd>        
-    {% endfor %}
+        <dt>Expected</dt>
+        <dd>{{ depositStatus.deposit.checksumValue }}</dd>
+        {% for hostname, agreement in depositStatus.status %}
+            <dt>{{ hostname }}</dt>
+            <dd>{{ agreement }}</dd>
+        {% endfor %}
     </dl>
 
 {% endblock %}

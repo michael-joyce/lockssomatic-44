@@ -88,8 +88,11 @@ class LockssClient {
      */
     public function exceptionHandler(Exception $e) {
         $reflection = new ReflectionClass($e);
-        $this->errors[] = implode(':', [$reflection->getShortName(), $e->getCode(),
-            $e->getMessage()]);
+        $this->errors[] = implode(':', [
+            $reflection->getShortName(),
+            $e->getCode(),
+            $e->getMessage()
+        ]);
     }
 
     /**

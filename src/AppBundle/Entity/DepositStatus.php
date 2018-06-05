@@ -45,6 +45,20 @@ class DepositStatus extends AbstractEntity {
     private $status;
 
     /**
+     * List of errors during status check.
+     *
+     * @var type
+     *
+     * @ORM\Column(name="errors", type="array", nullable=true)
+     */
+    private $errors;
+
+    public function __construct() {
+        parent::__construct();
+        $this->errors = array();
+    }
+
+    /**
      *
      */
     public function __toString() {
@@ -117,4 +131,28 @@ class DepositStatus extends AbstractEntity {
         return $this->deposit;
     }
 
+
+    /**
+     * Set errors
+     *
+     * @param array $errors
+     *
+     * @return DepositStatus
+     */
+    public function setErrors($errors)
+    {
+        $this->errors = $errors;
+
+        return $this;
+    }
+
+    /**
+     * Get errors
+     *
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
 }

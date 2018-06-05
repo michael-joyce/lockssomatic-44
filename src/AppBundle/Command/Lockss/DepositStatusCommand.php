@@ -9,11 +9,16 @@
 
 namespace AppBundle\Command\Lockss;
 
+use AppBundle\Entity\Au;
+use AppBundle\Entity\Box;
 use AppBundle\Entity\Deposit;
+use AppBundle\Entity\DepositStatus;
 use AppBundle\Entity\Pln;
 use AppBundle\Services\AuManager;
 use AppBundle\Services\LockssClient;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Generator;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -65,41 +70,98 @@ class DepositStatusCommand extends ContainerAwareCommand {
         $this->setName('lockss:deposit:status');
         $this->setDescription('Check the status of a deposit.');
         $this->addOption('all', '-a', InputOption::VALUE_NONE, 'Process all deposits.');
-        $this->addOption('pln', null, InputOption::VALUE_REQUIRED, 'Optional list of PLNs to check.');
-        $this->addOption('limit', '-l', InputOption::VALUE_REQUIRED, 'Limit the number of deposits checked.');
+        $this->addOption('pln', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Optional list of PLNs to check.');
         $this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
+    }
+
+    /**
+     * Get a list of PLNs to query.
+     *
+     * @param array $plnIds
+     *
+     * @return Collection|Pln[]
+     */
+    protected function getPlns(array $plnIds) {
+        $repo = $this->em->getRepository(Pln::class);
+        if (count($plnIds) > 0) {
+            return $repo->findBy(array('id' => $plnIds));
+        }
+        return $repo->findAll();
     }
 
     /**
      * Get a list of deposits to check.
      *
-     * By default, only deposits that have not reached agreement are queried.
-     *
-     * @param bool $all
-     *   If true, all deposits will be returned.
-     * @param int $plnId
-     *   Filter the deposits to the this PLN ID.
+     * @param Au $au
+     * @param boolean $all
+     *  If true, all deposits in the AU will be returned.
      *
      * @return Generator|Deposit[]
-     *   The iterator for the deposits.
      */
-    protected function getDeposits($all, $limit, $plnId) {
+    protected function getDeposits(Au $au, $all) {
         $repo = $this->em->getRepository(Deposit::class);
         $qb = $repo->createQueryBuilder('d');
+        $qb->andWhere('d.au = :au');
+        $qb->setParameter('au', $au);
         if (!$all) {
-            $qb->where('d.agreement <> 1');
-            $qb->orWhere('d.agreement is null');
+            $qb->andWhere('(d.agreement is null OR d.agreement <> 1)');
         }
-        if ($plnId !== null) {
-            $plns = $this->em->getRepository(Pln::class)->findOneBy(array('id' => $plnId));
-            $qb->innerJoin('d.contentProvider', 'p', 'WITH', 'p.pln = :pln');
-            $qb->setParameter('pln', $plns);
-        }
-        $qb->orderBy('d.id', 'DESC');
-        $qb->setMaxResults($limit);
         $iterator = $qb->getQuery()->iterate();
-        foreach($iterator as $row) {
+        foreach ($iterator as $row) {
             yield $row[0];
+        }
+    }
+
+    /**
+     * Query one deposit across all the boxes in the deposit's network.
+     *
+     * @param Deposit $deposit
+     * @param Collection|Box[] $boxes
+     *
+     * @return DepositStatus
+     */
+    protected function queryDeposit(Deposit $deposit, $boxes) {
+        $boxCount = count($boxes);
+        $agree = 0;
+        $status = [];
+        $errors = [];
+
+        foreach ($boxes as $box) {
+            if (!$box->getActive()) {
+                continue;
+            }
+            $checksum = $this->client->hash($box, $deposit);
+            if($this->client->hasErrors()) {
+                $errors = array_merge($errors, $this->client->getErrors());
+                $this->client->clearErrors();
+            }
+            $status[$box . ':' . $box->getWebServicePort()] = $checksum;
+            if ($checksum === $deposit->getChecksumValue()) {
+                $agree++;
+            }
+        }
+        $depositStatus = new DepositStatus();
+        $depositStatus->setDeposit($deposit);
+        $depositStatus->setAgreement($agree / $boxCount);
+        $depositStatus->setStatus($status);
+        $depositStatus->setErrors($errors);
+        $deposit->setAgreement($agree / $boxCount);
+        $this->em->persist($depositStatus);
+        return $depositStatus;
+    }
+
+    protected function queryPln(Pln $pln, $all, $dryRun) {
+        $boxes = $pln->getBoxes();
+
+        foreach ($pln->getAus() as $au) {
+            $deposits = $this->getDeposits($au, $all);
+            foreach ($deposits as $deposit) {
+                $this->queryDeposit($deposit, $boxes);
+                if( ! $dryRun) {
+                    $this->em->flush();
+                }
+                //$this->em->detach($deposit);
+            }
         }
     }
 
@@ -108,35 +170,12 @@ class DepositStatusCommand extends ContainerAwareCommand {
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         $all = $input->getOption('all');
-        $plnId = $input->getOption('pln');
+        $plnIds = $input->getOption('pln');
         $dryRun = $input->getOption('dry-run');
-        $limit = $input->getOption('limit');
 
-        $deposits = $this->getDeposits($all, $limit, $plnId);
-        foreach($deposits as $deposit) {
-            $output->writeln($deposit->getUuid());
-            $boxes = $deposit->getAu()->getPln()->getBoxes();
-            $count = 0;
-            foreach ($boxes as $box) {
-                $output->writeln($box->getIpAddress());
-                $hash = $this->client->hash($box, $deposit);
-                if($hash === $deposit->getChecksumValue()) {
-                    $count++;
-                }
-                if ($this->client->hasErrors()) {
-                    foreach ($this->client->getErrors() as $error) {
-                        $output->writeln($error);
-                    }
-                    $output->writeln('');
-                    $this->client->clearErrors();
-                }
-            }
-            $deposit->setAgreement($count / count($boxes));
-
-            if($dryRun) {
-                continue;
-            }
-            $this->em->flush();
+        $plns = $this->getPlns($plnIds);
+        foreach ($plns as $pln) {
+            $this->queryPln($pln, $all, $dryRun);
         }
     }
 
