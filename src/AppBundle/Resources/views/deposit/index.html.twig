@@ -38,7 +38,7 @@
                         {{ deposit.url }}
                     </td>
                     <td>{{ deposit.title }}</td>
-                    <td>{{ deposit.agreement }}</td>
+                    <td>{{ deposit.agreement * 100 }}%</td>
                     <td>{{ deposit.dateDeposited|date }}</td>
                 </tr>
             {% endfor %}

@@ -11,12 +11,12 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\Au;
 use AppBundle\Entity\Box;
+use AppBundle\Entity\Deposit;
 use BeSimple\SoapClient\SoapClient;
 use BeSimple\SoapCommon\Cache;
 use BeSimple\SoapCommon\Helper;
 use Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use ReflectionClass;
 
 /**
@@ -50,8 +50,10 @@ class LockssClient {
     // queryRepositories
     // queryRepositorySpaces.
     const STATUS_SERVICE = 'ws/DaemonStatusService?wsdl';
+
     // Hash.
     const HASHER_SERVICE = 'ws/HasherService?wsdl';
+
     // isUrlCached
     // fetchFile.
     const CONTENT_SERVICE = 'ws/ContentService?wsdl';
@@ -86,7 +88,8 @@ class LockssClient {
      */
     public function exceptionHandler(Exception $e) {
         $reflection = new ReflectionClass($e);
-        $this->errors[] = implode(':', [$reflection->getShortName(), $e->getCode(), $e->getMessage()]);
+        $this->errors[] = implode(':', [$reflection->getShortName(), $e->getCode(),
+            $e->getMessage()]);
     }
 
     /**
@@ -159,9 +162,9 @@ class LockssClient {
         if (!$this->isDaemonReady($box)) {
             return;
         }
-        $auid = $this->auManager->fromAu($au);
+        $auid = $this->auManager->generateAuidFromAu($au);
         return $this->call($box, self::STATUS_SERVICE, 'getAuStatus', array(
-                    'auId' => $auid,
+                'auId' => $auid,
         ));
     }
 
@@ -172,9 +175,9 @@ class LockssClient {
         if (!$this->isDaemonReady($box)) {
             return;
         }
-        $auid = $this->auManager->fromAu($au);
+        $auid = $this->auManager->generateAuidFromAu($au);
         return $this->call($box, self::STATUS_SERVICE, 'getAuUrls', array(
-                    'auId' => $auid,
+                'auId' => $auid,
         ));
     }
 
@@ -186,7 +189,7 @@ class LockssClient {
             return;
         }
         return $this->call($box, self::STATUS_SERVICE, 'queryRepositories', array(
-                    'repositoryQuery' => 'SELECT *',
+                'repositoryQuery' => 'SELECT *',
         ));
     }
 
@@ -198,7 +201,7 @@ class LockssClient {
             return;
         }
         return $this->call($box, self::STATUS_SERVICE, 'queryRepositorySpaces', array(
-                    'repositorySpaceQuery' => 'SELECT *',
+                'repositorySpaceQuery' => 'SELECT *',
         ));
     }
 
@@ -217,21 +220,21 @@ class LockssClient {
         if (!$this->isUrlCached($box, $deposit)) {
             return;
         }
-        $auid = $this->auManager->fromAu($deposit->getAu(), true);
+        $auid = $this->auManager->generateAuidFromAu($deposit->getAu(), true);
         $response = $this->call($box, self::HASHER_SERVICE, 'hash', array(
-                'hasherParams' => array(
-                    'recordFilterStream' => true,
-                    'hashType' => 'V3File',
-                    'algorithm' => $deposit->getChecksumType(),
-                    'url' => $deposit->getUrl(),
-                    'auId' => $auid,
-                ),
+            'hasherParams' => array(
+                'recordFilterStream' => true,
+                'hashType' => 'V3File',
+                'algorithm' => $deposit->getChecksumType(),
+                'url' => $deposit->getUrl(),
+                'auId' => $auid,
+            ),
         ));
 
         $block = $response->blockFileDataHandler;
         $lines = array_values(array_filter(explode("\n", $block), function ($s) {
-            return strlen($s) > 0 && $s[0] !== '#';
-        }));
+                return strlen($s) > 0 && $s[0] !== '#';
+            }));
         if (count($lines) !== 1) {
             return null;
         }
@@ -247,11 +250,11 @@ class LockssClient {
         if (!$this->isDaemonReady($box)) {
             return;
         }
-        $auid = $this->auManager->fromAu($deposit->getAu());
+        $auid = $this->auManager->generateAuidFromAu($deposit->getAu());
         return $this->call($box, self::CONTENT_SERVICE, 'isUrlCached', array(
                 'url' => $deposit->getUrl(),
                 'auId' => $auid,
-        ), array(
+                ), array(
                 'attachment_type' => Helper::ATTACHMENTS_TYPE_MTOM,
         ));
     }
@@ -277,9 +280,9 @@ class LockssClient {
         $baseUrl = "http://{$box->getHostname()}:{$box->getPln()->getContentPort()}/ServeContent";
         $fh = tmpfile();
         $options = array_merge(self::GUZZLE_OPTS, array(
-        'query' => [
-        'url' => $deposit->getUrl(),
-        ],
+            'query' => [
+                'url' => $deposit->getUrl(),
+            ],
         ));
 
         $response = $client->get($baseUrl, $options);

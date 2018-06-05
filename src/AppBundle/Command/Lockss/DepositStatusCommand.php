@@ -11,6 +11,7 @@ namespace AppBundle\Command\Lockss;
 
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Pln;
+use AppBundle\Services\AuManager;
 use AppBundle\Services\LockssClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -38,6 +39,11 @@ class DepositStatusCommand extends ContainerAwareCommand {
     private $client;
 
     /**
+     * @var AuManager
+     */
+    private $manager;
+
+    /**
      * Build the command.
      *
      * @param EntityManagerInterface $em
@@ -45,10 +51,11 @@ class DepositStatusCommand extends ContainerAwareCommand {
      * @param LockssClient $client
      *   Dependency injected LOCKSS client.
      */
-    public function __construct(EntityManagerInterface $em, LockssClient $client) {
+    public function __construct(EntityManagerInterface $em, LockssClient $client, AuManager $manager) {
         parent::__construct();
         $this->client = $client;
         $this->em = $em;
+        $this->manager = $manager;
     }
 
     /**
@@ -70,13 +77,11 @@ class DepositStatusCommand extends ContainerAwareCommand {
      *
      * @param bool $all
      *   If true, all deposits will be returned.
-     * @param int $limit
-     *   Limit the number of deposits returned.
      * @param int $plnId
      *   Filter the deposits to the this PLN ID.
      *
-     * @return Deposit[]|Collection
-     *   List of deposits to to query.
+     * @return Generator|Deposit[]
+     *   The iterator for the deposits.
      */
     protected function getDeposits($all, $limit, $plnId) {
         $repo = $this->em->getRepository(Deposit::class);
@@ -92,8 +97,10 @@ class DepositStatusCommand extends ContainerAwareCommand {
         }
         $qb->orderBy('d.id', 'DESC');
         $qb->setMaxResults($limit);
-
-        return $qb->getQuery()->getResult();
+        $iterator = $qb->getQuery()->iterate();
+        foreach($iterator as $row) {
+            yield $row[0];
+        }
     }
 
     /**
@@ -106,7 +113,31 @@ class DepositStatusCommand extends ContainerAwareCommand {
         $limit = $input->getOption('limit');
 
         $deposits = $this->getDeposits($all, $limit, $plnId);
-        $output->writeln('Checking deposit status for ' . count($deposits) . ' deposits.');
+        foreach($deposits as $deposit) {
+            $output->writeln($deposit->getUuid());
+            $boxes = $deposit->getAu()->getPln()->getBoxes();
+            $count = 0;
+            foreach ($boxes as $box) {
+                $output->writeln($box->getIpAddress());
+                $hash = $this->client->hash($box, $deposit);
+                if($hash === $deposit->getChecksumValue()) {
+                    $count++;
+                }
+                if ($this->client->hasErrors()) {
+                    foreach ($this->client->getErrors() as $error) {
+                        $output->writeln($error);
+                    }
+                    $output->writeln('');
+                    $this->client->clearErrors();
+                }
+            }
+            $deposit->setAgreement($count / count($boxes));
+
+            if($dryRun) {
+                continue;
+            }
+            $this->em->flush();
+        }
     }
 
 }
