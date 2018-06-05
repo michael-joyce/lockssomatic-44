@@ -405,9 +405,16 @@ class Pln extends AbstractEntity {
     /**
      * Get boxes.
      *
-     * @return Collection
+     * If $shuffle is true, the boxes will be returned in a random order.
+     *
+     * @return Collection|Box[]
      */
-    public function getBoxes() {
+    public function getBoxes($shuffle = false) {
+        if($shuffle) {
+            $array = $this->boxes->toArray();
+            shuffle($array);
+            return new ArrayCollection($array);
+        }
         return $this->boxes;
     }
 
