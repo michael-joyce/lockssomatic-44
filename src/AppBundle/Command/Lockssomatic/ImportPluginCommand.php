@@ -7,7 +7,7 @@
  *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
  */
 
-namespace AppBundle\Command;
+namespace AppBundle\Command\Lockssomatic;
 
 use AppBundle\Services\FilePaths;
 use AppBundle\Services\PluginImporter;

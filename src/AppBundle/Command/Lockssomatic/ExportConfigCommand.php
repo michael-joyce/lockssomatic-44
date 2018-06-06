@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Command;
+namespace AppBundle\Command\Lockssomatic;
 
 use AppBundle\Entity\Pln;
 use AppBundle\Services\ConfigExporter;

@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Command;
+namespace AppBundle\Command\Lockssomatic;
 
 use AppBundle\Entity\Au;
 use AppBundle\Services\AuManager;
