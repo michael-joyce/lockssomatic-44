@@ -13,11 +13,10 @@ use AppBundle\Entity\Au;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Plugin;
-use AppBundle\Repository\AuRepository;
+use AppBundle\Services\AuManager;
 use AppBundle\Services\ConfigExporter;
 use AppBundle\Services\FilePaths;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 use org\bovigo\vfs\vfsStream;
@@ -123,15 +122,9 @@ class ConfigExporterTest extends BaseTestCase {
         $deposit = new Deposit();
         $deposit->setUrl('http://example.com/path/to/content');
 
-        $repo = $this->createMock(AuRepository::class);
-        $repo->method('iterateDeposits')->will($this->returnValue(array(
-            [$deposit],
-        )));
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->method('getRepository')->will($this->returnValue($repo));
-
-        $this->exporter->setEntityManager($em);
+        $manager = $this->createMock(AuManager::class);
+        $manager->method('auDeposits')->willReturn([$deposit]);
+        $this->exporter->setAuManager($manager);
 
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getManifestPath')->willReturn('vfs://confdir/manifest.html');

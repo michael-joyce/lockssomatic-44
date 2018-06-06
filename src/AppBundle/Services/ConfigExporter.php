@@ -79,6 +79,10 @@ class ConfigExporter {
         $this->em = $em;
     }
 
+    public function setAuManager(AuManager $manager) {
+        $this->manager = $manager;
+    }
+
     /**
      * Export the lockss.xml configuration file.
      *
@@ -131,7 +135,6 @@ class ConfigExporter {
      * @param Pln $pln
      */
     public function exportManifests(Pln $pln) {
-        $repo = $this->em->getRepository(Deposit::class);
         foreach ($pln->getAus() as $au) {
             $manifestPath = $this->fp->getManifestPath($au);
             $iterator = $this->manager->auDeposits($au);
