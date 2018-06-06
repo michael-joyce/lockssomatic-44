@@ -55,6 +55,8 @@ class DepositStatusCommand extends ContainerAwareCommand {
      *   Dependency injected doctrine instance.
      * @param LockssClient $client
      *   Dependency injected LOCKSS client.
+     * @param AuManager $manager
+     *   Dependency injected archival unit manager.
      */
     public function __construct(EntityManagerInterface $em, LockssClient $client, AuManager $manager) {
         parent::__construct();

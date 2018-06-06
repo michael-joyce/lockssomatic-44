@@ -57,6 +57,8 @@ class FetchFileCommand extends ContainerAwareCommand {
      *   Dependency injected doctrine instance.
      * @param LockssClient $client
      *   Dependency injected LOCKSS client.
+     * @param FilePaths $filePaths
+     *   Dependency injected file path construction service.
      */
     public function __construct(EntityManagerInterface $em, LockssClient $client, FilePaths $filePaths) {
         parent::__construct();
