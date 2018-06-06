@@ -47,9 +47,7 @@ class SwordExceptionListener {
      * Build the service.
      *
      * @param string $env
-     *   Name of the environment.
      * @param EngineInterface $templating
-     *   Templating engine to generate XML errors.
      */
     public function __construct($env, EngineInterface $templating) {
         $this->templating = $templating;
@@ -63,7 +61,6 @@ class SwordExceptionListener {
      * a reference to the active controller.
      *
      * @param FilterControllerEvent $event
-     *   The event causing the call.
      */
     public function onKernelController(FilterControllerEvent $event) {
         $this->controller = $event->getController();
@@ -75,7 +72,6 @@ class SwordExceptionListener {
      * Sets the response inside the $event parameter.
      *
      * @param GetResponseForExceptionEvent $event
-     *   Event that caused the exception.
      */
     public function onKernelException(GetResponseForExceptionEvent $event) {
         if (!$this->controller[0] instanceof SwordController) {

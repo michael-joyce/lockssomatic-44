@@ -34,12 +34,9 @@ class DepositController extends Controller {
      * Lists all Deposit entities.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   The PLN, determined from the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/", name="deposit_index")
      * @Method("GET")
@@ -76,12 +73,9 @@ class DepositController extends Controller {
      * </pre></code>
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   The PLN, determined from the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/search", name="deposit_search")
      * @Method("GET")
@@ -110,12 +104,9 @@ class DepositController extends Controller {
      * Finds and displays a Deposit entity.
      *
      * @param Deposit $deposit
-     *   The deposit, as determined by the URL.
      * @param Pln $pln
-     *   The PLN, as determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/{id}", name="deposit_show")
      * @Method("GET")

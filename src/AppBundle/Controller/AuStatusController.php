@@ -34,14 +34,10 @@ class AuStatusController extends Controller {
      * Lists all AuStatus entities.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   The PLN, determined by the URL.
      * @param Au $au
-     *   The AU, determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/", name="au_status_index")
      * @Method("GET")
@@ -66,14 +62,10 @@ class AuStatusController extends Controller {
      * Finds and displays a AuStatus entity.
      *
      * @param AuStatus $auStatus
-     *   The Au Status to show.
      * @param Pln $pln
-     *   The PLN, determined by the URL.
      * @param Au $au
-     *   The AU, determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/{id}", name="au_status_show")
      * @Method("GET")

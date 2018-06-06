@@ -35,11 +35,8 @@ class ConfigUpdater {
     /**
      *
      * @param int $ausPerTitleDb
-     *   Maximum number of AUs to include in a titledb.xml file.
      * @param UrlGeneratorInterface $urlGenerator
-     *   The Symfony URL generator.
      * @param AuPropertyGenerator $auManager
-     *   The AU property generator service.
      */
     public function __construct($ausPerTitleDb, UrlGeneratorInterface $urlGenerator, AuManager $auManager) {
         $this->ausPerTitleDb = $ausPerTitleDb;
@@ -51,7 +48,6 @@ class ConfigUpdater {
      * Update the list of peers in the PLN configuration properties.
      *
      * @param Pln $pln
-     *   The pln to update.
      */
     public function updatePeerList(Pln $pln) {
         $boxes = $pln->getBoxes();
@@ -66,7 +62,6 @@ class ConfigUpdater {
      * Set the list of title db URLs in the PLN config properties.
      *
      * @param Pln $pln
-     *   The pln to update.
      */
     public function updateTitleDbs(Pln $pln) {
         $urls = [];
@@ -90,7 +85,6 @@ class ConfigUpdater {
      * Update the AU configurations by generating the properties for them.
      *
      * @param Pln $pln
-     *   The pln to update.
      */
     public function updateAuConfigs(Pln $pln) {
         foreach ($pln->getAus() as $au) {
@@ -105,7 +99,6 @@ class ConfigUpdater {
      * Set the location of the PLN keystore in the config properties.
      *
      * @param Pln $pln
-     *   The pln to update.
      */
     public function updateKeystoreLocation(Pln $pln) {
         $filename = $pln->getKeystoreFilename();
@@ -123,7 +116,6 @@ class ConfigUpdater {
      * Update the PLN config properties to match the credentials stored in LOM.
      *
      * @param Pln $pln
-     *   The pln to update.
      */
     public function updateAuthentication(Pln $pln) {
         $username = $pln->getUsername();
@@ -141,7 +133,6 @@ class ConfigUpdater {
      * Update the PLN config properties to match the content UI settings in LOM.
      *
      * @param Pln $pln
-     *   The pln to update.
      */
     public function updateContentUi(Pln $pln) {
         $prefix = 'org.lockss.contentui';
@@ -154,7 +145,6 @@ class ConfigUpdater {
      * Update the plugin registries for a PLN.
      *
      * @param Pln $pln
-     *   The pln to update.
      */
     public function updatePluginRegistries(Pln $pln) {
         $url = $this->urlGenerator->generate('lockss_plugin_list', array(

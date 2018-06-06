@@ -35,7 +35,6 @@ class DepositBuilder {
      * Construct the builder.
      *
      * @param EntityManagerInterface $em
-     *   Dependency injected entity manager.
      */
     public function __construct(EntityManagerInterface $em) {
         $this->em = $em;
@@ -47,12 +46,9 @@ class DepositBuilder {
      * The deposit isn't flushed to the database.
      *
      * @param SimpleXMLElement $xml
-     *   Parsed xml data containing the deposit.
      * @param ContentProvider $provider
-     *   Content provider for the deposit.
      *
      * @return Deposit
-     *   The constructed deposit.
      */
     public function fromXml(SimpleXMLElement $xml, ContentProvider $provider) {
         $deposit = new Deposit();
@@ -87,12 +83,9 @@ class DepositBuilder {
      * Build a deposit from array data.
      *
      * @param array $data
-     *   Data to use to build the deposit.
      * @param ContentProvider $provider
-     *   Content provider for the deposit.
      *
      * @return Deposit
-     *   The constructed deposit.
      */
     public function fromArray(array $data, ContentProvider $provider) {
         $deposit = new Deposit();

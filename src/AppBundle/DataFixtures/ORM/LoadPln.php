@@ -22,7 +22,6 @@ class LoadPln extends Fixture {
      * Load the objects.
      *
      * @param ObjectManager $em
-     *   Doctrine object manager.
      */
     public function load(ObjectManager $em) {
         $pln1 = new Pln();

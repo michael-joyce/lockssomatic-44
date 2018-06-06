@@ -34,14 +34,10 @@ class BoxStatusController extends Controller {
      * Lists all BoxStatus entities.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   The pln, determined from the URL.
      * @param Box $box
-     *   The box, determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/", name="box_status_index")
      * @Method("GET")
@@ -67,14 +63,10 @@ class BoxStatusController extends Controller {
      * Finds and displays a BoxStatus entity.
      *
      * @param BoxStatus $boxStatus
-     *   The box status to show.
      * @param Pln $pln
-     *   The pln, determined from the URL.
      * @param Box $box
-     *   The box, determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/{id}", name="box_status_show")
      * @Method("GET")

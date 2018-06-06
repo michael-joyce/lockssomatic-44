@@ -33,14 +33,10 @@ class AuController extends Controller {
      * Lists all Au entities.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   The pln, determined from the URL.
      * @param AuManager $manager
-     *   Dependency-injected AU manager service.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/", name="au_index")
      * @Method("GET")
@@ -65,14 +61,10 @@ class AuController extends Controller {
      * Finds and displays a Au entity.
      *
      * @param Au $au
-     *   The AU to show.
      * @param Pln $pln
-     *   The pln, determined from the URL.
      * @param AuManager $manager
-     *   Dependency-injected AU manager service.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/{id}", name="au_show")
      * @Method("GET")

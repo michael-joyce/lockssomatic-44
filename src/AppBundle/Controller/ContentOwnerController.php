@@ -30,10 +30,8 @@ class ContentOwnerController extends Controller {
      * Lists all ContentOwner entities.
      *
      * @param Request $request
-     *   The HTTP request instance.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/", name="content_owner_index")
      * @Method("GET")
@@ -56,10 +54,8 @@ class ContentOwnerController extends Controller {
      * Creates a new ContentOwner entity.
      *
      * @param Request $request
-     *   The HTTP request instance.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="content_owner_new")
@@ -90,10 +86,8 @@ class ContentOwnerController extends Controller {
      * Finds and displays a ContentOwner entity.
      *
      * @param ContentOwner $contentOwner
-     *   Content owner to show, determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/{id}", name="content_owner_show")
      * @Method("GET")
@@ -110,12 +104,9 @@ class ContentOwnerController extends Controller {
      * Displays a form to edit an existing ContentOwner entity.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param ContentOwner $contentOwner
-     *   Content owner to show, determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="content_owner_edit")
@@ -143,12 +134,9 @@ class ContentOwnerController extends Controller {
      * Deletes a ContentOwner entity.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param ContentOwner $contentOwner
-     *   Content owner to show, determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="content_owner_delete")

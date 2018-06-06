@@ -42,11 +42,8 @@ class ExportConfigCommand extends ContainerAwareCommand {
      * Construct the command.
      *
      * @param EntityManagerInterface $em
-     *   Dependency injected doctrine instance.
      * @param ConfigExporter $exporter
-     *   Dependency injected configuration exporter service.
      * @param ConfigUpdater $updater
-     *   Dependency injected configuration updater service.
      */
     public function __construct(EntityManagerInterface $em, ConfigExporter $exporter, ConfigUpdater $updater) {
         $this->em = $em;
@@ -69,10 +66,8 @@ class ExportConfigCommand extends ContainerAwareCommand {
      * Get the PLNs for export.
      *
      * @param array $plnIds
-     *   If this array is empty all PLNs are returned.
      *
      * @return Pln[]
-     *   List of PLNs to update.
      */
     private function getPlns(array $plnIds = null) {
         $repo = $this->em->getRepository(Pln::class);
@@ -86,9 +81,7 @@ class ExportConfigCommand extends ContainerAwareCommand {
      * Execute the command.
      *
      * @param InputInterface $input
-     *   Command input, as defined in the configure() method.
      * @param OutputInterface $output
-     *   Output destination.
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
         $plnIds = $input->getArgument('pln');

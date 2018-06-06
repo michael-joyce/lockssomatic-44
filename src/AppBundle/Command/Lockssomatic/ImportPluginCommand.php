@@ -49,11 +49,8 @@ class ImportPluginCommand extends ContainerAwareCommand {
      * Build the import plugin command.
      *
      * @param EntityManagerInterface $em
-     *   Dependency injected doctrine.
      * @param PluginImporter $importer
-     *   Dependency injected plugin importer service.
      * @param FilePaths $filePaths
-     *   Dependency injected file path service.
      */
     public function __construct(EntityManagerInterface $em, PluginImporter $importer, FilePaths $filePaths) {
         $this->em = $em;

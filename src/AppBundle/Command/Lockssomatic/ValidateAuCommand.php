@@ -34,9 +34,7 @@ class ValidateAuCommand extends ContainerAwareCommand {
      * Construct the command.
      *
      * @param EntityManagerInterface $em
-     *   Dependency-injected doctrine instance.
      * @param AuManager $manager
-     *   Dependency-injected au manager service.
      */
     public function __construct(EntityManagerInterface $em, AuManager $manager) {
         parent::__construct(null);
@@ -57,10 +55,8 @@ class ValidateAuCommand extends ContainerAwareCommand {
      * Fetch a list of AUs to query from the database.
      *
      * @param array $ids
-     *   List of AU database IDs to check.
      *
      * @return Au[]|Collection
-     *   List of AUs to query.
      */
     protected function getAus(array $ids) {
         if (count($ids) === 0) {
@@ -75,9 +71,7 @@ class ValidateAuCommand extends ContainerAwareCommand {
      * Execute the command.
      *
      * @param InputInterface $input
-     *   Command input, as defined in the configure() method.
      * @param OutputInterface $output
-     *   Output destination.
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
         foreach ($this->getAus($input->getArgument('ids')) as $au) {

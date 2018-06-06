@@ -34,14 +34,10 @@ class DepositStatusController extends Controller {
      * Lists all DepositStatus entities.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   The pln, determined from the URL.
      * @param Deposit $deposit
-     *   The deposit, determined from the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/", name="deposit_status_index")
      * @Method("GET")
@@ -66,14 +62,10 @@ class DepositStatusController extends Controller {
      * Finds and displays a DepositStatus entity.
      *
      * @param DepositStatus $depositStatus
-     *   The deposit status, determined from the URL.
      * @param Pln $pln
-     *   The pln, determined from the URL.
      * @param Deposit $deposit
-     *   The deposit, determined from the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/{id}", name="deposit_status_show")
      * @Method("GET")

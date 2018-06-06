@@ -22,10 +22,8 @@ class Encoder {
      * Encode a string.
      *
      * @param string $string
-     *   The string to be encoded.
      *
      * @return string
-     *   The result of the encoding. Returns null if $string is null.
      */
     public function encode($string) {
         if ($string === null) {
@@ -44,10 +42,8 @@ class Encoder {
      * Decode a string.
      *
      * @param string $string
-     *   The string to decode.
      *
      * @return string
-     *   The result of decoding.
      */
     public function decode($string) {
         $decoded = str_replace('+', ' ', $string);

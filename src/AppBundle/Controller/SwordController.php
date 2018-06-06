@@ -48,7 +48,6 @@ class SwordController extends Controller {
      * Build the controller.
      *
      * @param LoggerInterface $logger
-     *   Dependency injected logger.
      */
     public function __construct(LoggerInterface $logger) {
         $this->logger = $logger;
@@ -65,11 +64,8 @@ class SwordController extends Controller {
      * will be thrown.
      *
      * @param Request $request
-     *   Request which should contain the header.
      * @param string $key
-     *   Name of the header.
      * @param string $required
-     *   If true, an exception will be thrown if the header is missing.
      *
      * @return string|null
      *   The value of the header or null if that's OK.
@@ -94,10 +90,8 @@ class SwordController extends Controller {
      * Get a content provider from it's UUID.
      *
      * @param string $uuid
-     *   The UUID of the content provider.
      *
      * @return ContentProvider
-     *   The content provider.
      *
      * @throws NotFoundHttpException
      *    Throws if the provider is missing.
@@ -117,10 +111,8 @@ class SwordController extends Controller {
      * SWORD service document.
      *
      * @param Request $request
-     *   Dependency injected request.
      *
      * @return array
-     *   The array is passed to the template handler.
      *
      * @Route("/sd-iri",
      *  name="sword_service_document",
@@ -172,9 +164,7 @@ class SwordController extends Controller {
      * Also makes sure the properties all make some sense.
      *
      * @param SimpleXMLElement $atom
-     *   The deposit data.
      * @param ContentProvider $provider
-     *   The provider making the deposit.
      *
      * @throws BadRequestException
      * @throws HostMismatchException
@@ -211,12 +201,9 @@ class SwordController extends Controller {
      * Given a deposit and content provider, render a deposit reciept.
      *
      * @param ContentProvider $provider
-     *   The provider making the deposit.
      * @param Deposit $deposit
-     *   The deposit jsut received.
      *
      * @return Response
-     *   Containing the XML.
      */
     private function renderDepositReceipt(ContentProvider $provider, Deposit $deposit) {
         $response = $this->render('sword/receipt.xml.twig', array(
@@ -232,10 +219,8 @@ class SwordController extends Controller {
      * Get the XML from an HTTP request.
      *
      * @param Request $request
-     *   Depedency injected http request.
      *
      * @return SimpleXMLElement
-     *   Parsed XML.
      *
      * @throws BadRequestHttpException
      */
@@ -257,15 +242,10 @@ class SwordController extends Controller {
      * Create a deposit by posting XML to this URL, aka col-iri.
      *
      * @param Request $request
-     *   Dependency injected http request.
      * @param ContentProvider $provider
-     *   Content provider making the request, determined from the URL.
      * @param EntityManagerInterface $em
-     *   Entity manager for the database.
      * @param DepositBuilder $depositBuilder
-     *   Dependency injected deposit builder.
      * @param AuManager $auManager
-     *   Dependency injected archival unit builder.
      *
      * @Route("/col-iri/{providerUuid}", name="sword_collection", requirements={
      *      "providerUuid": ".{36}"
@@ -278,7 +258,6 @@ class SwordController extends Controller {
      * @throws MaxUploadSizeExceededException
      *
      * @return Response
-     *   The HTTP response containing a location header and the SWORD body.
      */
     public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, AuManager $auManager) {
         $atom = $this->getXml($request);
@@ -302,13 +281,9 @@ class SwordController extends Controller {
      * edit-iri) but requires an HTTP PUT.
      *
      * @param Request $request
-     *   Dependency injected http request.
      * @param ContentProvider $provider
-     *   Content provider making the request, determined from the URL.
      * @param Deposit $deposit
-     *   Deposit being edited.
      * @param EntityManagerInterface $em
-     *   Database entity manager.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_edit", requirements={
      *      "providerUuid": ".{36}",
@@ -321,7 +296,6 @@ class SwordController extends Controller {
      * @todo what does the recrawl attribute do?
      *
      * @return Response
-     *   The sword HTTP response with a success message.
      */
     public function editDepositAction(Request $request, ContentProvider $provider, Deposit $deposit, EntityManagerInterface $em) {
         $atom = $this->getXml($request);
@@ -344,14 +318,10 @@ class SwordController extends Controller {
      * Fetch a representation of the deposit from this URL, aka cont-iri.
      *
      * @param Request $request
-     *   Dependency injected http request.
      * @param ContentProvider $provider
-     *   Content provider that originally made the deposit.
      * @param Deposit $deposit
-     *   Deposit being edited.
      *
      * @return array
-     *   The templating engine will process the returned data.
      *
      * @todo needs testing.
      *
@@ -384,14 +354,10 @@ class SwordController extends Controller {
      * each content item in the deposit.
      *
      * @param Request $request
-     *   Dependency injected http request.
      * @param ContentProvider $provider
-     *   Provider that made the deposit.
      * @param Deposit $deposit
-     *   Deposit for the statement.
      *
      * @return Response
-     *   SWORD API resonse with a success message.
      *
      * @todo finish this action.
      *
@@ -427,14 +393,10 @@ class SwordController extends Controller {
      * Get a deposit receipt from this URL, also known as the edit-iri.
      *
      * @param Request $request
-     *   Dependency injected http request.
      * @param ContentProvider $provider
-     *   Provider that made the deposit.
      * @param Deposit $deposit
-     *   Deposit for the statement.
      *
      * @return Response
-     *   The SWORD response with the deposit reciept in the body.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_reciept",
      *  defaults={"_format": "xml"},
@@ -463,11 +425,8 @@ class SwordController extends Controller {
      * user agent.
      *
      * @param ContentProvider $provider
-     *   Provider that made the deposit.
      * @param Deposit $deposit
-     *   Deposit for the statement.
      * @param string $filename
-     *   Original file name deposit.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/{filename}/original", name="original_deposit", requirements={
      *      "providerUuid": ".{36}",

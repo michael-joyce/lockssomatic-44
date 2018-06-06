@@ -29,10 +29,8 @@ class Namespaces {
      * Get the FQDN for the prefix, in a case-insensitive fashion.
      *
      * @param string $prefix
-     *   The usual namespace prefix to dereference.
      *
      * @return string
-     *   The URI or null.
      */
     public static function getNamespace($prefix) {
         if (array_key_exists($prefix, self::NS)) {
@@ -45,7 +43,6 @@ class Namespaces {
      * Register all the known namespaces in a SimpleXMLElement.
      *
      * @param SimpleXMLElement $xml
-     *   The document for which namespaces should be registered.
      */
     public static function registerNamespaces(SimpleXMLElement $xml) {
         foreach (array_keys(self::NS) as $key) {

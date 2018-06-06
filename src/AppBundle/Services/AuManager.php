@@ -58,9 +58,7 @@ class AuManager {
      * Build the manager.
      *
      * @param EntityManagerInterface $em
-     *   Dependency injected entity manager.
      * @param RouterInterface $router
-     *   Dependency injected URL generator.
      */
     public function __construct(EntityManagerInterface $em, RouterInterface $router) {
         $this->em = $em;
@@ -72,7 +70,6 @@ class AuManager {
      * Set or override the AU repository.
      *
      * @param AuRepository $repo
-     *   Repository to query.
      */
     public function setAuRepository(AuRepository $repo) {
         $this->auRepository = $repo;
@@ -82,10 +79,8 @@ class AuManager {
      * Calculate the size of an AU.
      *
      * @param Au $au
-     *   AU to query.
      *
      * @return int
-     *   Size in 1000-byte kb.
      */
     public function auSize(Au $au) {
         return $this->auRepository->getAuSize($au);
@@ -95,10 +90,8 @@ class AuManager {
      * Count the deposits in an AU.
      *
      * @param Au $au
-     *   The AU to count.
      *
      * @return int
-     *   The number of deposits in the AU.
      */
     public function countDeposits(Au $au) {
         return $this->auRepository->countDeposits($au);
@@ -108,7 +101,6 @@ class AuManager {
      * Get an iterator over the deposits in the AU.
      *
      * @param Au $au
-     *   The AU to query.
      *
      * @return Generator|Deposit[]
      *   The resulting generator.
@@ -123,12 +115,9 @@ class AuManager {
      * Does not trigger a database flush.
      *
      * @param Deposit $deposit
-     *   Base the AU on this deposit, which is added to the AU.
      * @param string $auid
-     *   Precomputed AUID.
      *
      * @return Au
-     *   The generated AU.
      */
     public function buildAu(Deposit $deposit, $auid) {
         $provider = $deposit->getContentProvider();
@@ -148,10 +137,8 @@ class AuManager {
      * but does not flush it to the database. May close an existing AU.
      *
      * @param Deposit $deposit
-     *   Initial content for the AU.
      *
      * @return Au
-     *   The new AU.
      */
     public function findOpenAu(Deposit $deposit) {
         $provider = $deposit->getContentProvider();
@@ -177,10 +164,8 @@ class AuManager {
      * number of errors.
      *
      * @param Au $au
-     *   The AU to check.
      *
      * @return int
-     *   The number of errors found.
      *
      * @throws Exception
      *   If the AU is empty or is missing a plugin.
@@ -233,16 +218,11 @@ class AuManager {
      * The property is persisted, but not flushed, to the database.
      *
      * @param Au $au
-     *   AU for which the property will be built.
      * @param string $key
-     *   Name of the property.
      * @param string $value
-     *   Value of the property.
      * @param AuProperty $parent
-     *   Parent of the property.
      *
      * @return AuProperty
-     *   The constructed property.
      */
     public function buildProperty(Au $au, $key, $value = null, AuProperty $parent = null) {
         $property = new AuProperty();
@@ -271,12 +251,9 @@ class AuManager {
      * is the single entry container_number, which is a property of the AU.
      *
      * @param Au $au
-     *   Au to generate the string for.
      * @param string $value
-     *   Format string.
      *
      * @return string
-     *   Generated string.
      *
      * @throws Exception
      */
@@ -308,9 +285,7 @@ class AuManager {
      * LOCKSS plugin configuration symbols can be strings or lists. Ugh.
      *
      * @param Au $au
-     *   Au for the symbol getting generated.
      * @param string $name
-     *   Name of the symbol.
      *
      * @return string|array
      *   The symbol as a string or a list of strings.
@@ -341,11 +316,8 @@ class AuManager {
      * Generate the base properties, required for any AU.
      *
      * @param Au $au
-     *   Archival unit to generate properties for.
      * @param AuProperty $root
-     *   Root of the AU properties.
      * @param Deposit $deposit
-     *   Deposit with the property values for the AU.
      */
     public function baseProperties(Au $au, AuProperty $root, Deposit $deposit) {
         $this->buildProperty($au, 'journalTitle', $deposit->getProperty('journalTitle'), $root);
@@ -358,13 +330,9 @@ class AuManager {
      * Generate the configuration parameters for an AU.
      *
      * @param array $propertyNames
-     *   List of property names to generate.
      * @param Au $au
-     *   Archival unit to generate properties for.
      * @param AuProperty $root
-     *   Root of the AU properties.
      * @param Deposit $deposit
-     *   Deposit with the property values for the AU.
      */
     public function configProperties(array $propertyNames, Au $au, AuProperty $root, Deposit $deposit) {
         $manifestUrl = $this->router->generate('lockss_manifest', array(
@@ -403,11 +371,8 @@ class AuManager {
      * Generate the content properties for the AU.
      *
      * @param Au $au
-     *   Archival unit to generate properties for.
      * @param AuProperty $root
-     *   Root of the AU properties.
      * @param Deposit $deposit
-     *   Deposit with the property values for the AU.
      */
     public function contentProperties(Au $au, AuProperty $root, Deposit $deposit) {
         foreach ($deposit->getProperties() as $name) {
@@ -428,9 +393,7 @@ class AuManager {
      * generating all properties.
      *
      * @param Au $au
-     *   Generate properties for this AU.
      * @param mixed $clear
-     *   If true, remove any properties the AU already has.
      *
      * @see validate
      */
@@ -460,12 +423,9 @@ class AuManager {
      * Generate an AUID from a deposit.
      *
      * @param Deposit $deposit
-     *   Deposit for the AUID.
      * @param bool $lockssAuid
-     *   If true, generate a LOCKSS AUID including the LOM-generated properties.
      *
      * @return string
-     *   The generated AUID.
      *
      * @throws Exception
      *   If the deposit is missing a required property, an exception is thrown.
@@ -503,9 +463,7 @@ class AuManager {
      * Assumes that the AU properties are already generated.
      *
      * @param Au $au
-     *   Archival unit for generating the AUID.
      * @param bool $lockssAuid
-     *   If true, then all CPDs will be included.
      *
      * @return string|null
      *   The generated AUID.

@@ -57,13 +57,9 @@ class BoxStatusCommand extends ContainerAwareCommand {
      * Build the command.
      *
      * @param float $sizeWarning
-     *   Disk usage percentage to trigger a warning email.
      * @param EntityManagerInterface $em
-     *   Dependency injected doctrine instance.
      * @param LockssClient $client
-     *   Dependency injected LOCKSS client.
      * @param BoxNotifier $notifier
-     *   Dependency injected box notifier service.
      */
     public function __construct($sizeWarning, EntityManagerInterface $em, LockssClient $client, BoxNotifier $notifier) {
         parent::__construct();
@@ -87,7 +83,6 @@ class BoxStatusCommand extends ContainerAwareCommand {
      * Fetch a list of boxes to check.
      *
      * @return Collection|Box[]
-     *   List of boxes to query.
      */
     protected function getBoxes($boxIds = array()) {
         if ($boxIds && count($boxIds)) {
@@ -102,10 +97,8 @@ class BoxStatusCommand extends ContainerAwareCommand {
      * Get a box status frmo the LOCKSS client.
      *
      * @param Box $box
-     *   Box to query.
      *
      * @return BoxStatus
-     *   Status info.
      */
     public function getBoxStatus(Box $box) {
         $status = new BoxStatus();

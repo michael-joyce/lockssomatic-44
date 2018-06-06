@@ -32,9 +32,7 @@ class UpdateConfigCommand extends ContainerAwareCommand {
      * Build the updater command.
      *
      * @param EntityManagerInterface $em
-     *   Dependency injected doctrine instance.
      * @param ConfigUpdater $updater
-     *   Dependency injected configuration updater service.
      */
     public function __construct(EntityManagerInterface $em, ConfigUpdater $updater) {
         $this->em = $em;
@@ -56,10 +54,8 @@ class UpdateConfigCommand extends ContainerAwareCommand {
      * Determine which PLNs should be updated.
      *
      * @param array $plnIds
-     *   List of PLN database IDs.
      *
      * @return Pln[]
-     *   PLNs to update.
      */
     private function getPlns(array $plnIds = null) {
         $repo = $this->em->getRepository(Pln::class);
@@ -73,9 +69,7 @@ class UpdateConfigCommand extends ContainerAwareCommand {
      * Execute the command.
      *
      * @param InputInterface $input
-     *   Command input, as defined in the configure() method.
      * @param OutputInterface $output
-     *   Output destination.
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
         $ids = $input->getArgument('pln');

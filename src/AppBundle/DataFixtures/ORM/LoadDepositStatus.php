@@ -25,7 +25,6 @@ class LoadDepositStatus extends Fixture implements DependentFixtureInterface {
      * Load the objects.
      *
      * @param ObjectManager $em
-     *   Doctrine object manager.
      */
     public function load(ObjectManager $em) {
         $status1 = new DepositStatus();

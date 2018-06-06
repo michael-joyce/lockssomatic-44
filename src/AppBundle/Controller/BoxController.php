@@ -34,12 +34,9 @@ class BoxController extends Controller {
      * Lists all Box entities.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   The pln, determined from the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/", name="box_index")
      * @Method("GET")
@@ -62,12 +59,9 @@ class BoxController extends Controller {
      * Creates a new Box entity.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   The pln, determined from the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="box_new")
@@ -100,12 +94,9 @@ class BoxController extends Controller {
      * Finds and displays a Box entity.
      *
      * @param Pln $pln
-     *   The pln, determined from the URL.
      * @param Box $box
-     *   The box to show, determined from the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/{id}", name="box_show")
      * @Method("GET")
@@ -125,14 +116,10 @@ class BoxController extends Controller {
      * Displays a form to edit an existing Box entity.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   The pln, determined from the URL.
      * @param Box $box
-     *   The box to show, determined from the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="box_edit")
@@ -164,14 +151,10 @@ class BoxController extends Controller {
      * Deletes a Box entity.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   The pln, determined from the URL.
      * @param Box $box
-     *   The box to show, determined from the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="box_delete")

@@ -52,11 +52,8 @@ class DepositStatusCommand extends ContainerAwareCommand {
      * Build the command.
      *
      * @param EntityManagerInterface $em
-     *   Dependency injected doctrine instance.
      * @param LockssClient $client
-     *   Dependency injected LOCKSS client.
      * @param AuManager $manager
-     *   Dependency injected archival unit manager.
      */
     public function __construct(EntityManagerInterface $em, LockssClient $client, AuManager $manager) {
         parent::__construct();
@@ -96,7 +93,6 @@ class DepositStatusCommand extends ContainerAwareCommand {
      *
      * @param Au $au
      * @param boolean $all
-     *  If true, all deposits in the AU will be returned.
      *
      * @return Generator|Deposit[]
      */

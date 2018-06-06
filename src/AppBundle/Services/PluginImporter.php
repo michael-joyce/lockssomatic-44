@@ -81,7 +81,6 @@ class PluginImporter {
      * Set up the service.
      *
      * @param EntityManagerInterface $em
-     *   Doctrine manager instance.
      */
     public function __construct(EntityManagerInterface $em) {
         $this->em = $em;
@@ -91,10 +90,8 @@ class PluginImporter {
      * Get the manifest data from the archive.
      *
      * @param ZipArchive $zipArchive
-     *   Archive with the data.
      *
      * @return array
-     *   Manifest data, each stanza as an array.
      */
     public function getManifest(ZipArchive $zipArchive) {
         $raw = $zipArchive->getFromName(self::MANIFEST);
@@ -108,10 +105,8 @@ class PluginImporter {
      * Fidn the plugin XML file entries in a manifest.
      *
      * @param array $manifest
-     *   Array of manifest stanzas.
      *
      * @return array
-     *   List of plugin XML files.
      */
     public function findPluginEntries(array $manifest) {
         $entries = [];
@@ -128,12 +123,9 @@ class PluginImporter {
      * Get the plugin XML from the archive at the $entry path.
      *
      * @param ZipArchive $zipArchive
-     *   Archive containing the XML.
      * @param string $entry
-     *   Location of the XML.
      *
      * @return SimpleXMLElement
-     *   Constructed XML object
      *
      * @throws Exception
      */
@@ -150,10 +142,8 @@ class PluginImporter {
      * Parse a manifest string.
      *
      * @param string $raw
-     *   Raw manifest data.
      *
      * @return array
-     *   Parsed manifest data.
      */
     public function parseManifest($raw) {
         $manifest = preg_replace('/\r\n/', "\n", $raw);
@@ -185,9 +175,7 @@ class PluginImporter {
      * Find a property string in a LOCKSS plugin.xml file.
      *
      * @param SimpleXMLElement $xml
-     *   XML object containing the data.
      * @param string $propName
-     *   Property to find.
      *
      * @return string|null
      *   The data found.
@@ -209,9 +197,7 @@ class PluginImporter {
      * Find a list element in a LOCKSS plugin.xml file.
      *
      * @param SimpleXMLElement $xml
-     *   The XML object containing the data.
      * @param string $propName
-     *   Name of the property to extract.
      *
      * @return SimpleXMLElement|null
      *   Extracted XML data.
@@ -233,12 +219,9 @@ class PluginImporter {
      * Import data from $value as children of $property.
      *
      * @param PluginProperty $property
-     *   Parent property.
      * @param SimpleXMLElement $value
-     *   XML value to import.
      *
      * @return PluginProperty
-     *   The constructed and persisted property.
      */
     public function importChildren(PluginProperty $property, SimpleXMLElement $value) {
         $childProperty = new PluginProperty();
@@ -269,14 +252,10 @@ class PluginImporter {
      * properties of $plugin.
      *
      * @param Plugin $plugin
-     *   Plugin for which the configuration data is being imported.
      * @param string $name
-     *   Name of the property to import.
      * @param SimpleXMLElement $value
-     *   Data to import.
      *
      * @return PluginProperty
-     *   Constructed property, assigned to $plugin.
      */
     public function newPluginConfig(Plugin $plugin, $name, SimpleXMLElement $value) {
         $property = new PluginProperty();
@@ -294,14 +273,11 @@ class PluginImporter {
      * Generate and persist a new plugin property object.
      *
      * @param Plugin $plugin
-     *   Plugin for the new property.
      * @param string $name
-     *   Name of the new property.
      * @param SimpleXMLElement|string $value
      *   Data to add to the property.
      *
      * @return PluginProperty
-     *   Constructed property.
      *
      * @throws Exception
      */
@@ -345,9 +321,7 @@ class PluginImporter {
      * titledb import command.
      *
      * @param Plugin $plugin
-     *   Plugin for the properties to import to.
      * @param SimpleXMLElement $xml
-     *   Data to import.
      */
     public function addProperties(Plugin $plugin, SimpleXMLElement $xml) {
         foreach (self::PROP_STRINGS as $propName) {
@@ -370,10 +344,8 @@ class PluginImporter {
      * Build a plugin entity from the XML data and return it.
      *
      * @param SimpleXMLElement $xml
-     *   Data to use to construct the plugin.
      *
      * @return Plugin
-     *   The constructed, persisted plugin.
      *
      * @throws Exception
      */
@@ -404,12 +376,9 @@ class PluginImporter {
      * Import the plugin data from a zip archive.
      *
      * @param ZipArchive $zip
-     *   Archive to import.
      * @param bool $flush
-     *   If true, flush the plugin to the database.
      *
      * @return Plugin
-     *   The constructed and populated plugin.
      *
      * @throws Exception
      */

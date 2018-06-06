@@ -30,10 +30,8 @@ class ContentProviderController extends Controller {
      * Lists all ContentProvider entities.
      *
      * @param Request $request
-     *   The HTTP request instance.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/", name="content_provider_index")
      * @Method("GET")
@@ -56,10 +54,8 @@ class ContentProviderController extends Controller {
      * Creates a new ContentProvider entity.
      *
      * @param Request $request
-     *   The HTTP request instance.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="content_provider_new")
@@ -90,10 +86,8 @@ class ContentProviderController extends Controller {
      * Finds and displays a ContentProvider entity.
      *
      * @param ContentProvider $contentProvider
-     *   Content provider to show, determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/{id}", name="content_provider_show")
      * @Method("GET")
@@ -110,12 +104,9 @@ class ContentProviderController extends Controller {
      * Displays a form to edit an existing ContentProvider entity.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param ContentProvider $contentProvider
-     *   Content provider to show, determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="content_provider_edit")
@@ -143,12 +134,9 @@ class ContentProviderController extends Controller {
      * Deletes a ContentProvider entity.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param ContentProvider $contentProvider
-     *   Content provider to show, determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="content_provider_delete")

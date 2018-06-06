@@ -26,10 +26,8 @@ class DefaultController extends Controller {
      * LOCKSSOMatic home page.
      *
      * @param Request $request
-     *   The HTTP Request.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/", name="homepage")
      * @Template()

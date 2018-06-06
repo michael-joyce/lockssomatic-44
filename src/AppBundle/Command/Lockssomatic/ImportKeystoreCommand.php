@@ -40,9 +40,7 @@ class ImportKeystoreCommand extends ContainerAwareCommand {
      * Build the import keystore command.
      *
      * @param EntityManagerInterface $em
-     *   Dependency injected doctrine instance.
      * @param FilePaths $filePaths
-     *   Dependency injected file path service.
      */
     public function __construct(EntityManagerInterface $em, FilePaths $filePaths) {
         $this->em = $em;

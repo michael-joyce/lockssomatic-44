@@ -23,7 +23,6 @@ class AuRepository extends EntityRepository {
      * Find an open AU and return it.
      *
      * @param string $auid
-     *   The LOCKSSOMatic AUID to search for.
      *
      * @return Au|null
      *   The open AU or null if one cannot be found.
@@ -42,10 +41,8 @@ class AuRepository extends EntityRepository {
      * Calculate the size of an AU.
      *
      * @param Au $au
-     *   The AU to work on.
      *
      * @return int
-     *   The AU size in 1000-byte kb.
      */
     public function getAuSize(Au $au) {
         $qb = $this->_em->createQueryBuilder();
@@ -60,10 +57,8 @@ class AuRepository extends EntityRepository {
      * Count the deposits in an AU.
      *
      * @param Au $au
-     *   The AU to work on.
      *
      * @return int
-     *   The AU size.
      */
     public function countDeposits(Au $au) {
         $qb = $this->_em->createQueryBuilder();
@@ -78,7 +73,6 @@ class AuRepository extends EntityRepository {
      * Get a query for the content items in an AU.
      *
      * @param Au $au
-     *   The AU to query.
      *
      * @return Generator|Deposit[]
      *   The iterator for the deposits.

@@ -36,10 +36,8 @@ class PlnController extends Controller {
      * Lists all Pln entities.
      *
      * @param Request $request
-     *   The HTTP request instance.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/", name="pln_index")
      * @Method("GET")
@@ -62,10 +60,8 @@ class PlnController extends Controller {
      * Creates a new Pln entity.
      *
      * @param Request $request
-     *   The HTTP request instance.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="pln_new")
@@ -98,14 +94,10 @@ class PlnController extends Controller {
      * Upload and add/replace the java keystore file for the Pln's plugins.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   The pln, determined from the URL.
      * @param FilePaths $filePaths
-     *   Dependency injected file path service.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/keystore", name="pln_keystore")
@@ -151,10 +143,8 @@ class PlnController extends Controller {
      * Finds and displays a Pln entity.
      *
      * @param Pln $pln
-     *   Pln to show, as determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/{id}", name="pln_show")
      * @Method("GET")
@@ -171,12 +161,9 @@ class PlnController extends Controller {
      * Displays a form to edit an existing Pln entity.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   Pln to show, as determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="pln_edit")
@@ -210,16 +197,11 @@ class PlnController extends Controller {
      * job.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   Pln to show, as determined by the URL.
      * @param ConfigExporter $exporter
-     *   Exporter service.
      * @param ConfigUpdater $updater
-     *   Updater service.
      *
      * @return RedirectResponse
-     *   Redirects to the show action with an appropriate message.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/export", name="pln_export")
@@ -241,12 +223,9 @@ class PlnController extends Controller {
      * Deletes a Pln entity.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   Pln to delete, as determined by the URL.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="pln_delete")

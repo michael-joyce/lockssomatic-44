@@ -43,9 +43,7 @@ class AuStatusCommand extends ContainerAwareCommand {
      * Construct the command.
      *
      * @param EntityManagerInterface $em
-     *   Dependency injected entity manager.
      * @param LockssClient $client
-     *   Dependency injected LOCKSS client.
      */
     public function __construct(EntityManagerInterface $em, LockssClient $client) {
         parent::__construct();
@@ -111,9 +109,7 @@ class AuStatusCommand extends ContainerAwareCommand {
      * Execute the command.
      *
      * @param InputInterface $input
-     *   Input source.
      * @param OutputInterface $output
-     *   Output destination.
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         $plnIds = $input->getOption('pln');

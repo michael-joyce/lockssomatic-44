@@ -39,9 +39,7 @@ class AuUrlsCommand extends ContainerAwareCommand {
      * Build the command.
      *
      * @param EntityManagerInterface $em
-     *   Dependency injected doctrine instance.
      * @param LockssClient $client
-     *   Dependency injected LOCKSS client.
      */
     public function __construct(EntityManagerInterface $em, LockssClient $client) {
         parent::__construct();

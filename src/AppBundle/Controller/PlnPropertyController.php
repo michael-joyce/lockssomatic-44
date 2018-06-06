@@ -32,12 +32,9 @@ class PlnPropertyController extends Controller {
      * Lists all PLN properties.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   The PLN to configure.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Route("/", name="pln_property_index")
      * @Method("GET")
@@ -53,12 +50,9 @@ class PlnPropertyController extends Controller {
      * Creates a new Pln property.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   The PLN to configure.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/new", name="pln_property_new")
@@ -96,14 +90,10 @@ class PlnPropertyController extends Controller {
      * Displays a form to edit an existing Pln property.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   Pln to show, as determined by the URL.
      * @param string $propertyKey
-     *   Name of the property to edit.
      *
      * @return array
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{propertyKey}/edit", name="pln_property_edit")
@@ -144,14 +134,10 @@ class PlnPropertyController extends Controller {
      * Deletes a Pln property.
      *
      * @param Request $request
-     *   The HTTP request instance.
      * @param Pln $pln
-     *   Pln to delete, as determined by the URL.
      * @param string $propertyKey
-     *   Name of the property to delete.
      *
      * @return RedirectResponse
-     *   Array data for the template processor.
      *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{propertyKey}/delete", name="pln_property_delete")

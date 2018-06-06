@@ -422,7 +422,6 @@ class Pln extends AbstractEntity {
      * Set keystore.
      *
      * @param string $keystore
-     *   Path to the keystore file.
      *
      * @return Pln
      */

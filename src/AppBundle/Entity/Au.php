@@ -124,7 +124,6 @@ class Au extends AbstractEntity {
      * Build a string representation of the AU.
      *
      * @return string
-     *   String description of the AU.
      */
     public function __toString() {
         if ($this->id) {
@@ -140,7 +139,6 @@ class Au extends AbstractEntity {
      * @param bool $open
      *
      * @return Au
-     *   Returns $this.
      */
     public function setOpen($open) {
         if ($this->open) {
@@ -164,7 +162,6 @@ class Au extends AbstractEntity {
      * @param string $comment
      *
      * @return Au
-     *   Returns $this.
      */
     public function setComment($comment) {
         $this->comment = $comment;
@@ -187,7 +184,6 @@ class Au extends AbstractEntity {
      * @param Pln $pln
      *
      * @return Au
-     *   Returns $this.
      */
     public function setPln(Pln $pln = null) {
         $this->pln = $pln;
@@ -210,7 +206,6 @@ class Au extends AbstractEntity {
      * @param ContentProvider $contentProvider
      *
      * @return Au
-     *   Returns $this.
      */
     public function setContentProvider(ContentProvider $contentProvider = null) {
         $this->contentProvider = $contentProvider;
@@ -233,7 +228,6 @@ class Au extends AbstractEntity {
      * @param Plugin $plugin
      *
      * @return Au
-     *   Returns $this.
      */
     public function setPlugin(Plugin $plugin = null) {
         $this->plugin = $plugin;
@@ -256,7 +250,6 @@ class Au extends AbstractEntity {
      * @param AuProperty $auProperty
      *
      * @return Au
-     *   Returns $this.
      */
     public function addAuProperty(AuProperty $auProperty) {
         $this->auProperties[] = $auProperty;
@@ -347,7 +340,6 @@ class Au extends AbstractEntity {
      * @param AuStatus $auStatus
      *
      * @return Au
-     *   Returns $this.
      */
     public function addAuStatus(AuStatus $auStatus) {
         $this->auStatus[] = $auStatus;
@@ -379,7 +371,6 @@ class Au extends AbstractEntity {
      * @param Deposit $deposit
      *
      * @return Au
-     *   Returns $this.
      */
     public function addDeposit(Deposit $deposit) {
         $this->deposits[] = $deposit;

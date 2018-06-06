@@ -42,7 +42,6 @@ class LockssController extends Controller {
      * Construct the controller.
      *
      * @param FilePaths $fp
-     *   Dependency injected file path service.
      */
     public function __construct(FilePaths $fp) {
         $this->fp = $fp;
@@ -52,9 +51,7 @@ class LockssController extends Controller {
      * Check that a request came from a good IP address.
      *
      * @param Request $request
-     *   HTTP request to inspect.
      * @param Pln $pln
-     *   Pln the request is coming from.
      *
      * @throws AccessDeniedHttpException
      *  If the IP address of the request isn't allowed.
@@ -74,9 +71,7 @@ class LockssController extends Controller {
      * Get a LOCKSS configuration xml file.
      *
      * @param Request $request
-     *   Dependency injected http request.
      * @param Pln $pln
-     *   PLN configured by the file.
      *
      * @Route("/properties/lockss.xml", name="lockss_config")
      * @Method("GET")
@@ -97,15 +92,10 @@ class LockssController extends Controller {
      * Fetch one title db file.
      *
      * @param Request $request
-     *   Dependency injected http request.
      * @param Pln $pln
-     *   PLN configured by the file.
      * @param ContentOwner $owner
-     *   Content ownter for the title db.
      * @param ContentProvider $provider
-     *   Content provider for the title db.
      * @param string $id
-     *   Name of the title db file.
      *
      * @Route("/titledbs/{ownerId}/{providerId}/titledb_{id}.xml", name="lockss_titledb")
      * @ParamConverter("owner", options={"id"="ownerId"})
@@ -127,15 +117,10 @@ class LockssController extends Controller {
      * Fetch the manifest file for one AU.
      *
      * @param Request $request
-     *   Dependency injected http request.
      * @param Pln $pln
-     *   PLN configured by the file.
      * @param ContentOwner $owner
-     *   Content ownter for the title db.
      * @param ContentProvider $provider
-     *   Content provider for the title db.
      * @param Au $au
-     *   The AU containing the content.
      *
      * @Route("/manifests/{ownerId}/{providerId}/manifest_{auId}.html", name="lockss_manifest")
      * @ParamConverter("owner", options={"id"="ownerId"})
@@ -157,9 +142,7 @@ class LockssController extends Controller {
      * Get the java keystore file for the LOCKSS plugins.
      *
      * @param Request $request
-     *   Dependency injected http request.
      * @param Pln $pln
-     *   PLN configured by the file.
      *
      * @Route("/plugins/lockssomatic.keystore", name="lockss_keystore")
      */
@@ -182,9 +165,7 @@ class LockssController extends Controller {
      * Get the plugin manifest.
      *
      * @param Request $request
-     *   Dependency injected http request.
      * @param Pln $pln
-     *   PLN configured by the file.
      *
      * @Route("/plugins/index.html", name="lockss_plugin_list")
      * @Route("/plugins/")
@@ -205,11 +186,8 @@ class LockssController extends Controller {
      * Get one plugin.
      *
      * @param Request $request
-     *   Dependency injected http request.
      * @param Pln $pln
-     *   PLN configured by the file.
      * @param string $filename
-     *   Name of the file to fetch, from the URL.
      *
      * @Route("/plugins/{filename}", name="lockss_plugin")
      */
