@@ -207,8 +207,8 @@ class SwordController extends Controller {
      */
     private function renderDepositReceipt(ContentProvider $provider, Deposit $deposit) {
         $response = $this->render('sword/receipt.xml.twig', array(
-        'provider' => $provider,
-        'deposit' => $deposit,
+            'provider' => $provider,
+            'deposit' => $deposit,
         ));
         $response->headers->set('Content-Type', 'text/xml');
 
@@ -269,7 +269,7 @@ class SwordController extends Controller {
         $response->headers->set('Location', $this->generateUrl('sword_reciept', array(
                 'providerUuid' => $provider->getUuid(),
                 'depositUuid' => $deposit->getUuid(),
-        ), UrlGeneratorInterface::ABSOLUTE_URL));
+                ), UrlGeneratorInterface::ABSOLUTE_URL));
         $response->setStatusCode(Response::HTTP_CREATED);
         return $response;
     }
@@ -309,7 +309,7 @@ class SwordController extends Controller {
         $response->headers->set('Location', $this->generateUrl('sword_reciept', array(
                 'providerUuid' => $provider->getUuid(),
                 'depositUuid' => $deposit->getUuid(),
-        ), UrlGeneratorInterface::ABSOLUTE_URL));
+                ), UrlGeneratorInterface::ABSOLUTE_URL));
         $response->setStatusCode(Response::HTTP_OK);
         return $response;
     }
@@ -341,8 +341,8 @@ class SwordController extends Controller {
      */
     public function viewDepositAction(Request $request, ContentProvider $provider, Deposit $deposit) {
         return array(
-        'provider' => $provider,
-        'deposit' => $deposit,
+            'provider' => $provider,
+            'deposit' => $deposit,
         );
     }
 
@@ -382,10 +382,10 @@ class SwordController extends Controller {
             $stateDescription = 'LOCKSS boxes have not completed harvesting the content.';
         }
         return array(
-        'state' => $state,
-        'stateDescription' => $stateDescription,
-        'provider' => $provider,
-        'deposit' => $deposit,
+            'state' => $state,
+            'stateDescription' => $stateDescription,
+            'provider' => $provider,
+            'deposit' => $deposit,
         );
     }
 
@@ -413,8 +413,8 @@ class SwordController extends Controller {
      */
     public function receiptAction(Request $request, ContentProvider $provider, Deposit $deposit) {
         return array(
-        'provider' => $provider,
-        'deposit' => $deposit,
+            'provider' => $provider,
+            'deposit' => $deposit,
         );
     }
 
@@ -437,6 +437,7 @@ class SwordController extends Controller {
      * @ParamConverter("deposit", options={"uuid"="depositUuid"})
      */
     public function originalDepositAction(ContentProvider $provider, Deposit $deposit, $filename) {
+
     }
 
 }

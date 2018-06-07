@@ -215,7 +215,7 @@ class SwordControllerTest extends BaseTestCase {
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testStatement() {
+    public function testStatementInProgress() {
         // first create the deposit.
         $provider = $this->getReference('provider.1');
         $deposit = $this->getReference('deposit.1');
@@ -225,6 +225,20 @@ class SwordControllerTest extends BaseTestCase {
         );
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
+        $this->assertContains('LOCKSS boxes have not completed', $response->getContent());
+    }
+
+    public function testStatementComplete() {
+        // first create the deposit.
+        $provider = $this->getReference('provider.1');
+        $deposit = $this->getReference('deposit.2');
+        $client = static::createClient();
+        $crawler = $client->request(
+                'GET', '/api/sword/2.0/cont-iri/' . $provider->getUuid() . '/' . $deposit->getUuid() . '/state'
+        );
+        $response = $client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertContains('LOCKSS boxes have harvested', $response->getContent());
     }
 
     public function testReceipt() {
@@ -237,6 +251,7 @@ class SwordControllerTest extends BaseTestCase {
         );
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
+        $this->assertContains('Content URLs deposited', $response->getContent());
     }
 
 }

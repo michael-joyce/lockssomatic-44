@@ -119,7 +119,7 @@ class LockssClient {
     /**
      *
      */
-    public function call(Box $box, $service, $method, $params = array(), $soapOptions = array()) {
+    public function call(Box $box, $service, $method, $params = array(), $soapOptions = array(), SoapClient $client = null) {
         set_error_handler(array($this, 'errorHandler'), E_ALL);
         set_exception_handler(array($this, 'exceptionHandler'));
 
@@ -132,10 +132,10 @@ class LockssClient {
         $client = null;
         $response = null;
         try {
-            $client = @new SoapClient($wsdl, $options);
-            if ($client) {
-                $response = $client->$method($params);
+            if( ! $client) {
+                $client = @new SoapClient($wsdl, $options);
             }
+            $response = $client->$method($params);
         } catch (Exception $e) {
             $this->exceptionHandler($e);
         }

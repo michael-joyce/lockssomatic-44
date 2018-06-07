@@ -45,6 +45,7 @@ class LoadDeposit extends Fixture implements DependentFixtureInterface {
         $deposit2->setContentProvider($this->getReference('provider.1'));
         $deposit2->setUrl('http://example.com/path/to/second');
         $deposit2->setSize(200);
+        $deposit2->setAgreement(1.0);
         $deposit2->setChecksumType('sha1');
         $deposit2->setChecksumValue('abc223');
         $deposit2->setAu($this->getReference('au.1'));
