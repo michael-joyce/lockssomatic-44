@@ -75,7 +75,7 @@ class Pln extends AbstractEntity {
 
     /**
      * @var string
-     * @ORM\Column(name="email", type="string", length=64, nullable=false)
+     * @ORM\Column(name="email", type="string", length=64, nullable=true)
      */
     private $email;
 

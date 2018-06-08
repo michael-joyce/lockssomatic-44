@@ -2,9 +2,9 @@
 
 {% block title %}Box{% endblock %}
 
-{% block pageheader %} 
+{% block pageheader %}
     <h1>Box</h1>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
     <div class="btn-toolbar">
@@ -27,7 +27,7 @@
             <tr>
                 <th>UI</th>
                 <td><a href="{{ box.getUrl() }}">{{ box.getUrl() }}</a></td>
-            </tr>                    
+            </tr>
             <tr>
                 <th>Hostname</th>
                 <td>{{ box.hostname }}</td>
@@ -75,7 +75,7 @@
             <tr>
                 <th>Updated</th>
                 <td>{% if box.updated %}{{ box.updated|date }}{% endif %}</td>
-            </tr>        
+            </tr>
             <tr>
                 <th>Pln</th>
                 <td>
@@ -83,13 +83,19 @@
                         {{ box.pln }}
                     </a>
                 </td>
-            </tr>        
+            </tr>
         </tbody>
     </table>
-    {% if box.status | length > 0 %}    
+    {% if box.status | length > 0 %}
         <h2>Recent Status</h2>
-        <a href="{{ path('box_status_index', {'plnId': box.pln.id, 'boxId': box.id}) }}">
-            {{ box.status.last() }}
-        </a>
+        <p>
+            <a href="{{ path('box_status_show', {'plnId': box.pln.id, 'boxId': box.id, 'id': box.status.last().id }) }}">
+                {{ box.status.last() }}
+            </a>
+            |
+            <a href="{{ path('box_status_index', {'plnId': box.pln.id, 'boxId': box.id }) }}">
+                Historical list
+            </a>
+        </p>
     {% endif %}
 {% endblock %}

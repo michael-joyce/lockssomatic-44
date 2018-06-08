@@ -39,10 +39,10 @@ framework:
     assets: ~
     php_errors:
         log: true
-        
+
 # Twig Configuration
 twig:
-    form_themes:      
+    form_themes:
         - 'bootstrap_3_horizontal_layout.html.twig'
         - '@NinesUtilBundle/Form/fields.html.twig'
         - '::jquery.collection.html.twig'
@@ -59,22 +59,44 @@ twig:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver: pdo_mysql
-        host: '%database_host%'
-        port: '%database_port%'
-        dbname: '%database_name%'
-        user: '%database_user%'
-        password: '%database_password%'
-        charset: utf8mb4
-        default_table_options:
-            charset: utf8mb4
-            collate: utf8mb4_unicode_ci
-#        logging: false
-#        profiling: false
+        # default_connection: default
+        connections:
+            default:
+                driver: pdo_mysql
+                host: '%database_host%'
+                port: '%database_port%'
+                dbname: '%database_name%'
+                user: '%database_user%'
+                password: '%database_password%'
+                charset: utf8mb4
+                logging: false
+                profiling: false
+                default_table_options:
+                    charset: utf8mb4
+                    collate: utf8mb4_unicode_ci
+
+            oldversion:
+                driver: pdo_mysql
+                host: localhost
+                port: ~
+                dbname: lom
+                user: lom
+                password: abc123
+                charset: utf8mb4
+                logging: false
+                profiling: false
+                default_table_options:
+                    charset: utf8mb4
+                    collate: utf8mb4_unicode_ci
+
     orm:
+        default_entity_manager: default
         auto_generate_proxy_classes: '%kernel.debug%'
-        naming_strategy: doctrine.orm.naming_strategy.underscore
-        auto_mapping: true
+        entity_managers:
+            default:
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                connection: default
+                auto_mapping: true
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -94,7 +116,7 @@ knp_paginator:
     template:
         pagination: KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig     # bootstrapy pagination
         sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template
-        
+
 knp_menu:
     twig:
         template: KnpMenuBundle::menu.html.twig
@@ -112,6 +134,6 @@ fos_user:
     from_email:
         address:        noreply@'%router.request_context.host%'
         sender_name:    Do Not Reply
-        
+
 nines_user:
     permission_levels: [ ROLE_ADMIN ]

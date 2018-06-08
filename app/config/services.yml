@@ -70,3 +70,6 @@ services:
             $sender: '%lom.boxstatus.sender%'
             $contact: '%lom.boxstatus.contact%'
 
+    AppBundle\Command\UpgradeCommand:
+        arguments:
+            $oldEm: '@doctrine.dbal.oldversion_connection'
