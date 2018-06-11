@@ -466,6 +466,11 @@ class Deposit extends AbstractEntity {
         return $this;
     }
 
+    public function setProperties(array $properties) {
+        $this->properties = $properties;
+        return $this;
+    }
+
     /**
      *
      */

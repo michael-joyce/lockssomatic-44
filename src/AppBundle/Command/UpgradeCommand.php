@@ -2,10 +2,15 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Au;
+use AppBundle\Entity\AuProperty;
+use AppBundle\Entity\AuStatus;
 use AppBundle\Entity\Box;
 use AppBundle\Entity\BoxStatus;
 use AppBundle\Entity\ContentOwner;
 use AppBundle\Entity\ContentProvider;
+use AppBundle\Entity\Deposit;
+use AppBundle\Entity\DepositStatus;
 use AppBundle\Entity\Pln;
 use AppBundle\Entity\Plugin;
 use AppBundle\Entity\PluginProperty;
@@ -236,13 +241,103 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('cache_status', $callback);
     }
 
-//    public function upgrade() {
-//        $callback = function($row) {
-//            $entity = new \stdClass();
-//            return $entity;
-//        };
-//        $this->upgradeTable('', $callback);
-//    }
+    public function upgradeAus() {
+        $callback = function($row) {
+            $au = new Au();
+            $au->setPln($this->findEntity(Pln::class, $row['pln_id']));
+            $au->setContentProvider($this->findEntity(ContentProvider::class, $row['contentprovider_id']));
+            $au->setPlugin($this->findEntity(Plugin::class, $row['plugin_id']));
+            $au->setAuid($row['auid']);
+            $au->setComment($row['comment']);
+            $au->setOpen(false);
+            return $au;
+        };
+        $this->upgradeTable('aus', $callback);
+    }
+
+    public function upgradeAuProperties() {
+        $callback = function($row) {
+            $property = new AuProperty();
+            $property->setParent($this->findEntity(AuProperty::class, $row['parent_id']));
+            $property->setAu($this->findEntity(Au::class, $row['au_id']));
+            $property->setPropertyKey($row['property_key']);
+            $property->setPropertyValue($row['property_value']);
+            return $property;
+        };
+        $this->upgradeTable('au_properties', $callback);
+    }
+
+    public function upgradeAuStatus() {
+        $callback = function($row) {
+            $status = new AuStatus();
+            $status->setAu($this->findEntity(Au::class, $row['au_id']));
+            $status->setCreated(new DateTime($row['query_date']));
+            $status->setStatus($row['status']);
+            $status->setErrors($row['errors']);
+            return $status;
+        };
+        $this->upgradeTable('au_status', $callback);
+    }
+
+    public function findContent($depositId) {
+        static $query = null;
+        if( ! $query) {
+            $query = $this->source->prepare('SELECT * FROM content WHERE deposit_id = :id');
+        }
+        $query->execute(array('id' => $depositId));
+        $row = $query->fetch();
+        $query->closeCursor();
+        return $row;
+    }
+
+    public function findContentProperties($contentId) {
+        static $query = null;
+        if( ! $query) {
+            $query = $this->source->prepare('SELECT * FROM content_properties WHERE content_id = :id');
+        }
+        $query->execute(array('id' => $contentId));
+        $properties = array();
+        while($row = $query->fetch()) {
+            $properties[$row['property_key']] = $row['property_value'];
+        }
+        $query->closeCursor();
+        return $properties;
+    }
+
+    public function upgradeDeposits() {
+        $callback = function($row) {
+            $deposit = new Deposit();
+            $deposit->setContentProvider($this->findEntity(ContentProvider::class, $row['content_provider_id']));
+            $deposit->setUser($this->findEntity(User::class, $row['user_id']));
+            $deposit->setUuid($row['uuid']);
+            $deposit->setTitle($row['title']);
+            $deposit->setCreated(new DateTime($row['date_deposited']));
+            $deposit->setAgreement($row['agreement']);
+
+            $contentRow = $this->findContent($row['id']);
+            $deposit->setAu($this->findEntity(Au::class, $contentRow['au_id']));
+            $deposit->setUrl($contentRow['url']);
+            $deposit->setSize($contentRow['size']);
+            $deposit->setChecksumType($contentRow['checksum_type']);
+            $deposit->setChecksumValue($contentRow['checksum_value']);
+
+            $deposit->setProperties($this->findContentProperties($contentRow['id']));
+            return $deposit;
+        };
+        $this->upgradeTable('deposits', $callback);
+    }
+
+    public function upgradeDepositStatus() {
+        $callback = function($row) {
+            $status = new DepositStatus();
+            $status->setDeposit($this->findEntity(Deposit::class, $row['deposit_id']));
+            $status->setAgreement($row['agreement']);
+            $status->setCreated(new DateTime($row['query_date']));
+            $status->setStatus($row['status']);
+            return $status;
+        };
+        $this->upgradeTable('deposit_status', $callback);
+    }
 
     public function execute(InputInterface $input, OutputInterface $output) {
         if (!$input->getOption('force')) {
@@ -258,6 +353,11 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeBoxes();
         $this->upgradeBoxStatus();
         $this->upgradeCacheStatus();
+        $this->upgradeAus();
+        $this->upgradeAuProperties();
+        $this->upgradeAuStatus();
+        $this->upgradeDeposits();
+        $this->upgradeDepositStatus();
     }
 
 }
