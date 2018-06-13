@@ -5,7 +5,8 @@
 {% block pageheader %}
     <h1>Deposit List</h1>
     <p class="count">
-        Displaying {{ deposits|length }} deposits of {{ deposits.getTotalItemCount }} total.
+        Displaying {{ deposits|length }} deposits of {{ deposits.getTotalItemCount }} total in
+        {{ au }}.
     </p>
 {% endblock %}
 
@@ -13,8 +14,8 @@
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
-            <a href="{{ path('deposit_search', { 'plnId': pln.id }) }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search
+            <a href="{{ path('au_show', {'plnId': pln.id, 'id': au.id}) }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-arrow-left"></span> Back
             </a>
         </div>
     </div>

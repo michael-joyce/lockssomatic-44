@@ -30,28 +30,35 @@ class BoxType extends AbstractType {
             'label' => 'Hostname',
             'required' => true,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'DNS host name.',
+            ),
+        ));
+        $builder->add('ipAddress', null, array(
+            'label' => 'Ip Address',
+            'required' => false,
+            'attr' => array(
+                'help_block' => 'LOCKSSOMatic will look up the IP address if it is blank.',
             ),
         ));
         $builder->add('protocol', null, array(
             'label' => 'Protocol',
             'required' => true,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'LOCKSS internal communication protocol. Almost certainly "TCP".',
             ),
         ));
         $builder->add('port', null, array(
             'label' => 'LOCKSS Port',
             'required' => true,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'This is the port number that LOCKSS uses for internal communication, usually 9729.',
             ),
         ));
         $builder->add('webServicePort', null, array(
             'label' => 'SOAP Port',
             'required' => true,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'This is the web front end and SOAP Port, usually 8081.',
             ),
         ));
         $builder->add('webServiceProtocol', ChoiceType::class, array(
@@ -67,25 +74,18 @@ class BoxType extends AbstractType {
             'expanded' => true,
             'multiple' => false,
         ));
-        $builder->add('ipAddress', null, array(
-            'label' => 'Ip Address',
-            'required' => false,
-            'attr' => array(
-                'help_block' => '',
-            ),
-        ));
         $builder->add('contactName', null, array(
             'label' => 'Contact Name',
             'required' => false,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'Name of the box admin.',
             ),
         ));
         $builder->add('contactEmail', null, array(
             'label' => 'Contact Email',
             'required' => false,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'Email address for the box admin.',
             ),
         ));
         $builder->add('sendNotifications', ChoiceType::class, array(
@@ -99,7 +99,7 @@ class BoxType extends AbstractType {
             'required' => true,
             'placeholder' => false,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'Should LOCKSSOMatic send notifications to the box admin if the box is unreachable?',
             ),
         ));
         $builder->add('active', ChoiceType::class, array(
@@ -113,7 +113,7 @@ class BoxType extends AbstractType {
             'required' => true,
             'placeholder' => false,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'Should LOCKSSOMatic attempt to contact the box?',
             ),
         ));
         $builder->add('pln', null, array(

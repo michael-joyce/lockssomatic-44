@@ -31,21 +31,21 @@ class ContentProviderType extends AbstractType {
             'label' => 'Uuid',
             'required' => true,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'Leave UUID blank to have one generated.',
             ),
         ));
         $builder->add('permissionurl', UrlType::class, array(
             'label' => 'Permission Url',
             'required' => true,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'URL for the LOCKSS permission statement.',
             ),
         ));
         $builder->add('name', null, array(
             'label' => 'Name',
             'required' => true,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'Name of the content provider.',
             ),
         ));
         $builder->add('maxFileSize', null, array(

@@ -129,7 +129,6 @@ class LockssClient {
             'password' => $box->getPln()->getPassword(),
         ));
 
-        $client = null;
         $response = null;
         try {
             if( ! $client) {

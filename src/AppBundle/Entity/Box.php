@@ -57,7 +57,7 @@ class Box extends AbstractEntity {
      * @ORM\Column(name="ws_port", type="integer", nullable=false)
      */
     private $webServicePort;
-    
+
     /**
      * Protocol for the LOCKSS-UI and webservices.
      *
@@ -136,17 +136,21 @@ class Box extends AbstractEntity {
      * @ORM\JoinColumn(nullable=false)
      */
     private $pln;
-    
+
     /**
      *
      */
     public function __construct() {
         parent::__construct();
         $this->status = new ArrayCollection();
-        $this->webServicePort = 8080;
+        $this->protocol = 'TCP';
+        $this->port = 9729;
+        $this->webServicePort = 8081;
         $this->webServiceProtocol = 'http';
+        $this->sendNotifications = false;
+        $this->active = false;
     }
-    
+
     /**
      * Return the hostname or IP address.
      */
@@ -156,7 +160,7 @@ class Box extends AbstractEntity {
         }
         return $this->ipAddress;
     }
-    
+
     /**
      *
      */

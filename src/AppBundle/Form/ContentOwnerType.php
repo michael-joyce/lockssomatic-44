@@ -31,14 +31,14 @@ class ContentOwnerType extends AbstractType {
             'label' => 'Name',
             'required' => true,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'Name of the content owner.',
             ),
         ));
         $builder->add('emailAddress', null, array(
             'label' => 'Email Address',
             'required' => false,
             'attr' => array(
-                'help_block' => '',
+                'help_block' => 'Email address to contact the owner.',
             ),
         ));
     }

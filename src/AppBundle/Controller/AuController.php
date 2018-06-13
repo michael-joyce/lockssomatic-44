@@ -12,6 +12,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Au;
 use AppBundle\Entity\Pln;
 use AppBundle\Services\AuManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -76,6 +77,32 @@ class AuController extends Controller {
             'au' => $au,
             'pln' => $pln,
             'manager' => $manager,
+        );
+    }
+
+    /**
+     * Finds and displays a Au entity.
+     *
+     * @param Au $au
+     * @param Pln $pln
+     * @param AuManager $manager
+     *
+     * @return array
+     *
+     * @Route("/{id}", name="au_deposits")
+     * @Method("GET")
+     * @Template()
+     */
+    public function depositsAction(Request $request, Pln $pln, Au $au, EntityManagerInterface $em) {
+        $repo = $em->getRepository(Au::class);
+        $query = $repo->queryDeposits($au);
+        $paginator = $this->get('knp_paginator');
+        $deposits = $paginator->paginate($query, $request->query->getint('page', 1), 25);
+
+        return array(
+            'au' => $au,
+            'pln' => $pln,
+            'deposits' => $deposits,
         );
     }
 

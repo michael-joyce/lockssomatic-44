@@ -12,6 +12,7 @@ namespace AppBundle\Repository;
 use AppBundle\Entity\Au;
 use AppBundle\Entity\Deposit;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 use Generator;
 
 /**
@@ -70,6 +71,24 @@ class AuRepository extends EntityRepository {
     }
 
     /**
+     * Get a query for the deposits in an AU.
+     *
+     * You should probably use $query->iterate() or paginate the list of
+     * deposits - it can grow very large.
+     *
+     * @param Au $au
+     * @return Query
+     */
+    public function queryDeposits(Au $au) {
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('d');
+        $qb->from(Deposit::class, 'd');
+        $qb->andWhere("d.au = :au");
+        $qb->setParameter('au', $au);
+        return $qb->getQuery();
+    }
+
+    /**
      * Get a query for the content items in an AU.
      *
      * @param Au $au
@@ -78,12 +97,8 @@ class AuRepository extends EntityRepository {
      *   The iterator for the deposits.
      */
     public function iterateDeposits(Au $au) {
-        $qb = $this->_em->createQueryBuilder();
-        $qb->select('d');
-        $qb->from(Deposit::class, 'd');
-        $qb->andWhere("d.au = :au");
-        $qb->setParameter('au', $au);
-        $iterator = $qb->getQuery()->iterate();
+        $query = $this->queryDeposits($au);
+        $iterator = $query->iterate();
 
         foreach ($iterator as $row) {
             yield $row[0];

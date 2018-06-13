@@ -145,7 +145,7 @@ class BoxStatus extends AbstractEntity {
      * @return BoxStatus
      */
     public function setData($data) {
-        $this->data = $data;
+            $this->data = $data;
 
         return $this;
     }

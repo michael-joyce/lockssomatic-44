@@ -49,7 +49,16 @@
 
     {% if boxStatus.data | length > 0 %}
         <h2>Cache Status</h2>
-            {{ dump(boxStatus.data) }}
+        <p>This box reported {{ boxStatus.data|length }} cache(s).</p>
+        {% for data in boxStatus.data %}
+            {{ dump(data) }}
+            <dl>
+                {% for key in data|keys|sort %}
+                    <dt>{{ key }}</dt>
+                    <dd>{{ data[key] }}</dd>
+                {% endfor %}
+            </dl>
+        {% endfor %}
     {% endif %}
 
 {% endblock %}

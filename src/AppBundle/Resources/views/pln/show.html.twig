@@ -52,7 +52,7 @@
             </tr>
             <tr>
                 <th>Email</th>
-                <td>{{ pln.email }}</td>
+                <td><a href="mailto:{{ pln.email }}">{{ pln.email }}</a></td>
             </tr>
             <tr>
                 <th>Keystore</th>
@@ -120,7 +120,8 @@
             </div>
         </div>
         <ul>
-            {% for key, values in pln.properties %}
+            {% for key in pln.properties|keys|sort %}
+                {% set values = pln.properties[key] %}
                 <li>
                     {{ key }}:
                     {% if values is iterable %}

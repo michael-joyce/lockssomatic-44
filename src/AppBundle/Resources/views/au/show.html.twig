@@ -12,7 +12,7 @@
                         <ul>
                             {% for v in prop.propertyValue %}
                                 <li>{{ v }} </li>
-                            {% endfor %}
+                                {% endfor %}
                         </ul>
                     {% else %}
                         {{ prop.propertyValue }}
@@ -83,6 +83,10 @@
                     </a>
                 </td>
             </tr>
+            <tr>
+                <th>Deposits</th>
+                <td><a href="{{ path('au_deposits', {'id': au.id, 'plnId': pln.id}) }}">{{ manager.countDeposits(au) }}</a></td>
+            </tr>
         </tbody>
     </table>
 
@@ -93,28 +97,13 @@
     {% endif %}
 
     {% if au.auStatus | length > 0 %}
-        <h2>Au Status</h2>
-        <ul>
-            {% for auStatus in au.auStatus %}
-                <li>
-                    <a href="{{ path("au_status_show", {"id":auStatus.id, 'plnId': pln.id, 'auId': au.id }) }}">
-                        {{ auStatus }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+        <h2>Recent Status</h2>
+        <p>
+            <a href="{{ path("au_status_show", {"id":au.auStatus.last().id, 'plnId': pln.id, 'auId': au.id }) }}">
+                {{ au.auStatus.last() }}
+            </a>
+            |
+            <a href="{{ path('au_status_index', {'plnId': au.pln.id, 'auId': au.id}) }}">Historical list</a>
+        {% endif %}
 
-    {% if au.deposits | length > 0 %}
-        <h2>Deposits</h2>
-        <ul>
-            {% for deposit in au.deposits %}
-                <li>
-                    <a href="{{ path("deposit_show", {"id":deposit.id, 'plnId': pln.id }) }}">
-                        {{ deposit }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endblock %}
+    {% endblock %}
