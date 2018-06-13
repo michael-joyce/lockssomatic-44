@@ -72,7 +72,6 @@ class AuStatusController extends Controller {
      * @Template()
      */
     public function showAction(AuStatus $auStatus, Pln $pln, Au $au) {
-
         return array(
             'auStatus' => $auStatus,
             'pln' => $pln,

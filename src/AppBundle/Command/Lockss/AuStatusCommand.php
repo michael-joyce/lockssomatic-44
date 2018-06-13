@@ -80,7 +80,7 @@ class AuStatusCommand extends ContainerAwareCommand {
         $status = [];
         $errors = [];
         foreach ($boxes as $box) {
-            $status[$box . ':' . $box->getWebServicePort()] = get_object_vars($this->client->getAuStatus($box, $au));
+            $status[$box . ':' . $box->getWebServicePort()] = $this->client->getAuStatus($box, $au);
             if($this->client->hasErrors()) {
                 $errors = array_merge($errors, $this->client->getErrors());
                 $this->client->clearErrors();

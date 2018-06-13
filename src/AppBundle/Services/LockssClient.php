@@ -59,7 +59,7 @@ class LockssClient {
     const CONTENT_SERVICE = 'ws/ContentService?wsdl';
 
     /**
-     * @var AuIdGenerator
+     * @var AuManager
      */
     private $auManager;
 
@@ -117,7 +117,9 @@ class LockssClient {
     }
 
     /**
+     * Call $method in the $service URL for $box.
      *
+     * @return mixed
      */
     public function call(Box $box, $service, $method, $params = array(), $soapOptions = array(), SoapClient $client = null) {
         set_error_handler(array($this, 'errorHandler'), E_ALL);
@@ -145,33 +147,44 @@ class LockssClient {
         restore_error_handler();
         restore_exception_handler();
         if ($response) {
+//            print "called {$method} which returned\n";
+//            var_dump($response->return);
             return $response->return;
         }
         return null;
     }
 
     /**
+     * Check if the box is up and running and ready to communicate.
      *
+     * @return bool
      */
     public function isDaemonReady(Box $box) {
         return $this->call($box, self::STATUS_SERVICE, 'isDaemonReady');
     }
 
     /**
+     * Check on the status of an AU.
      *
+     * @return array
+     *  key => value pairs.
      */
     public function getAuStatus(Box $box, Au $au) {
         if (!$this->isDaemonReady($box)) {
             return;
         }
         $auid = $this->auManager->generateAuidFromAu($au);
-        return $this->call($box, self::STATUS_SERVICE, 'getAuStatus', array(
+        $obj = $this->call($box, self::STATUS_SERVICE, 'getAuStatus', array(
                 'auId' => $auid,
         ));
+        return get_object_vars($obj);
     }
 
     /**
+     * Fetch a list of the URLs preserved by $box in $au.
      *
+     * @return array
+     *  URLs as strings.
      */
     public function getAuUrls(Box $box, Au $au) {
         if (!$this->isDaemonReady($box)) {
@@ -184,27 +197,46 @@ class LockssClient {
     }
 
     /**
+     * List the repositories on $box.
      *
+     * @todo this method is unused. Maybe it should be removed. Most of the
+     * information is available in queryRepositorySpaces().
+     *
+     * @return array
+     *   Array of arrays with key => value pairs.
      */
     public function queryRepositories(Box $box) {
         if (!$this->isDaemonReady($box)) {
             return;
         }
-        return $this->call($box, self::STATUS_SERVICE, 'queryRepositories', array(
+        $list = $this->call($box, self::STATUS_SERVICE, 'queryRepositories', array(
                 'repositoryQuery' => 'SELECT *',
         ));
+        $response = array();
+        foreach($list as $obj) {
+            $response[] = get_object_vars($obj);
+        }
+        return $response;
     }
 
     /**
+     * Check the available space on $box.
      *
+     * @return array
+     *   Array of arrays with key => value pairs.
      */
     public function queryRepositorySpaces(Box $box) {
         if (!$this->isDaemonReady($box)) {
             return;
         }
-        return $this->call($box, self::STATUS_SERVICE, 'queryRepositorySpaces', array(
+        $list = $this->call($box, self::STATUS_SERVICE, 'queryRepositorySpaces', array(
                 'repositorySpaceQuery' => 'SELECT *',
         ));
+        $response = array();
+        foreach($list as $obj) {
+            $response[] = get_object_vars($obj);
+        }
+        return $response;
     }
 
     /**
@@ -246,7 +278,9 @@ class LockssClient {
     }
 
     /**
+     * Check if $box has cached $deposit yet.
      *
+     * @return bool
      */
     public function isUrlCached(Box $box, Deposit $deposit) {
         if (!$this->isDaemonReady($box)) {
@@ -277,7 +311,9 @@ class LockssClient {
         if (!$this->isDaemonReady($box)) {
             return;
         }
-
+        if( ! $this->isUrlCached($box, $deposit)) {
+            return;
+        }
         $client = new Client();
         $baseUrl = "http://{$box->getHostname()}:{$box->getPln()->getContentPort()}/ServeContent";
         $fh = tmpfile();
