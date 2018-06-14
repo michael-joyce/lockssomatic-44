@@ -12,17 +12,18 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Au;
 use AppBundle\Entity\Box;
 use AppBundle\Entity\Deposit;
-use BeSimple\SoapClient\SoapClient;
-use BeSimple\SoapCommon\Cache;
 use BeSimple\SoapCommon\Helper;
 use Exception;
 use GuzzleHttp\Client;
+use Psr\Log\LoggerAwareTrait;
 use ReflectionClass;
 
 /**
  * Description of LockssClient.
  */
 class LockssClient {
+
+    use LoggerAwareTrait;
 
     const GUZZLE_OPTS = array(
         'allow_redirects' => true,
@@ -55,9 +56,19 @@ class LockssClient {
      */
     private $errors;
 
-    public function __construct(AuManager $auManager) {
+    /**
+     * @var SoapClientBuilder
+     */
+    private $builder;
+
+    public function __construct(AuManager $auManager, SoapClientBuilder $builder) {
         $this->auManager = $auManager;
         $this->errors = array();
+        $this->builder = $builder;
+    }
+
+    public function setSoapClientBuilder($builder) {
+        $this->builder = $builder;
     }
 
     public function errorHandler($errno, $errstr, $errfile, $errline) {
@@ -90,22 +101,22 @@ class LockssClient {
      *
      * @return mixed
      */
-    public function call(Box $box, $service, $method, $params = array(), $soapOptions = array(), SoapClient $client = null) {
+    public function call(Box $box, $service, $method, $params = array(), $soapOptions = array()) {
         set_error_handler(array($this, 'errorHandler'), E_ALL);
         set_exception_handler(array($this, 'exceptionHandler'));
 
         $wsdl = "{$box->getWebServiceProtocol()}://{$box->getIpAddress()}:{$box->getWebServicePort()}/{$service}";
-        $options = array_merge(self::SOAP_OPTS, $soapOptions, array(
+        $auth = array(
             'login' => $box->getPln()->getUsername(),
             'password' => $box->getPln()->getPassword(),
-        ));
-
+        );
+        // $response must be defined outside the try.
         $response = null;
         try {
-            if( ! $client) {
-                $client = @new SoapClient($wsdl, $options);
-            }
+            $client = $this->builder->build($wsdl, $auth, $soapOptions);
             $response = $client->$method($params);
+            print("called {$method} of {$service}.");
+            print(print_r($response, true));
         } catch (Exception $e) {
             $this->exceptionHandler($e);
         }
@@ -116,8 +127,6 @@ class LockssClient {
         restore_error_handler();
         restore_exception_handler();
         if ($response) {
-//            print "called {$method} which returned\n";
-//            var_dump($response->return);
             return $response->return;
         }
         return null;

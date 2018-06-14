@@ -52,6 +52,11 @@ services:
         calls:
             - { method: setLogger, arguments: ['@logger'] }
 
+    AppBundle\Services\BoxNotifier:
+        arguments:
+            $sender: '%lom.boxstatus.sender%'
+            $contact: '%lom.boxstatus.contact%'
+
     AppBundle\Services\ConfigExporter:
         arguments:
             $ausPerTitleDb: '%lom.aus_per_titledb%'
@@ -65,10 +70,13 @@ services:
             $root: '%kernel.project_dir%'
             $downloadDir: '%lom.download_dir%'
 
-    AppBundle\Services\BoxNotifier:
-        arguments:
-            $sender: '%lom.boxstatus.sender%'
-            $contact: '%lom.boxstatus.contact%'
+    AppBundle\Services\LockssClient:
+        calls:
+            - { method: setLogger, arguments: ['@logger'] }
+
+    AppBundle\Services\SoapClientBuilder:
+        calls:
+            - { method: setLogger, arguments: ['@logger'] }
 
     AppBundle\Command\UpgradeCommand:
         arguments:
