@@ -588,6 +588,40 @@ class LockssClientTest extends BaseTestCase {
         $this->assertTrue($this->client->hasErrors());
     }
 
+    public function testFetchException() {
+        $mockClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isDaemonReady', 'isUrlCached', 'hash'])
+            ->getMock();
+        $mockClient->method('isDaemonReady')->willReturn((object) [
+                'return' => 1
+        ]);
+        $mockClient->method('isUrlCached')->willReturn((object) [
+                'return' => 1
+        ]);
+        $builder = $this->createMock(SoapClientBuilder::class);
+        $builder->method('build')->willReturn($mockClient);
+        $this->client->setSoapClientBuilder($builder);
+
+        $mockHandler = new MockHandler([
+            new Exception('Network error'),
+        ]);
+        $historyContainer = array();
+        $history = Middleware::history($historyContainer);
+        $handlerStack = HandlerStack::create($mockHandler);
+        $handlerStack->push($history);
+        $httpClient = new Client(['handler' => $handlerStack]);
+        $this->client->setHttpClient($httpClient);
+
+        $box = $this->getReference('box.1');
+        $deposit = $this->getReference('deposit.1');
+        $response = $this->client->fetchFile($box, $deposit);
+        $this->assertNull($response);
+
+        $this->assertCount(1, $historyContainer);
+        $this->assertTrue($this->client->hasErrors());
+    }
+
     // This is a real example of what lockss returns here. sigh.
     private function getHashData() {
         $bfdh = <<<'ENDDATA'
