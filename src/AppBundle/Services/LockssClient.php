@@ -15,6 +15,7 @@ use AppBundle\Entity\Deposit;
 use BeSimple\SoapCommon\Helper;
 use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Psr\Log\LoggerAwareTrait;
 use ReflectionClass;
 
@@ -288,13 +289,21 @@ class LockssClient {
             ],
         ));
 
-        $response = $this->client->get($baseUrl, $options);
-        $body = $response->getBody();
-        while (($data = $body->read(64 * 1024))) {
-            fwrite($fh, $data);
+        try {
+            $response = $this->client->get($baseUrl, $options);
+            $body = $response->getBody();
+            while (($data = $body->read(64 * 1024))) {
+                fwrite($fh, $data);
+            }
+            rewind($fh);
+            return $fh;
+        } catch(RequestException $e) {
+            if($e->hasResponse()) {
+                $this->exceptionHandler(new Exception($e->getMessage() . "\n" . $e->getResponse()->getBody()));
+            }
+        } catch(Exception $e) {
+            $this->exceptionHandler($e);
         }
-        rewind($fh);
-        return $fh;
     }
 
 }

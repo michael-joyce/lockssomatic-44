@@ -585,6 +585,7 @@ class LockssClientTest extends BaseTestCase {
         $this->assertNull($response);
 
         $this->assertCount(1, $historyContainer);
+        $this->assertTrue($this->client->hasErrors());
     }
 
     // This is a real example of what lockss returns here. sigh.
