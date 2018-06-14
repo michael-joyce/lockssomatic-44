@@ -104,7 +104,6 @@ class BoxStatusCommand extends ContainerAwareCommand {
         $status = new BoxStatus();
         $this->em->persist($status);
         $status->setBox($box);
-        $repositoriesResponse = $this->client->queryRepositories($box);
         $response = $this->client->queryRepositorySpaces($box);
         if (!$response) {
             $status->setErrors($this->client->getErrors());

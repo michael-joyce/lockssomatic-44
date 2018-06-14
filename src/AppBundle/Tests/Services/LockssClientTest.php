@@ -1,20 +1,19 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: michael
- * Date: 2018-06-06
- * Time: 4:54 PM
- */
-
 namespace AppBundle\Tests\Services;
 
 use AppBundle\DataFixtures\ORM\LoadAu;
 use AppBundle\DataFixtures\ORM\LoadBox;
+use AppBundle\DataFixtures\ORM\LoadDeposit;
 use AppBundle\Services\LockssClient;
 use AppBundle\Services\SoapClientBuilder;
 use BeSimple\SoapClient\SoapClient;
 use Exception;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Response;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 class LockssClientTest extends BaseTestCase {
@@ -28,6 +27,7 @@ class LockssClientTest extends BaseTestCase {
         return [
             LoadBox::class,
             LoadAu::class,
+            LoadDeposit::class,
         ];
     }
 
@@ -256,9 +256,9 @@ class LockssClientTest extends BaseTestCase {
         $au = $this->getReference('au.1');
         $response = $this->client->getAuUrls($box, $au);
         $this->assertEquals([
-                    'http://example.com/manifest',
-                    'http://example.com/path/to/one',
-                ], $response);
+            'http://example.com/manifest',
+            'http://example.com/path/to/one',
+            ], $response);
     }
 
     public function testGetAuUrlsBoxDown() {
@@ -280,6 +280,332 @@ class LockssClientTest extends BaseTestCase {
         $response = $this->client->getAuUrls($box, $au);
         $this->assertNull($response);
         $this->assertFalse($this->client->hasErrors());
+    }
+
+    public function testQueryRepositorySpaces() {
+        $mockClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isDaemonReady', 'queryRepositorySpaces'])
+            ->getMock();
+        $mockClient->method('isDaemonReady')->willReturn((object) [
+                'return' => 1
+        ]);
+        $mockClient->method('queryRepositorySpaces')->willReturn((object) [
+                'return' => [
+                    (object) [
+                        'active' => 2,
+                        'size' => 123,
+                    ],
+                    (object) [
+                        'active' => 1,
+                        'size' => 1234
+                    ],
+                ]
+        ]);
+
+        $builder = $this->createMock(SoapClientBuilder::class);
+        $builder->method('build')->willReturn($mockClient);
+        $this->client->setSoapClientBuilder($builder);
+
+        $box = $this->getReference('box.1');
+        $au = $this->getReference('au.1');
+        $response = $this->client->queryRepositorySpaces($box, $au);
+        $this->assertFalse($this->client->hasErrors());
+        $this->assertCount(2, $response);
+        $this->assertEquals([
+            'active' => 2,
+            'size' => 123,
+            ], $response[0]);
+        $this->assertEquals([
+            'active' => 1,
+            'size' => 1234
+            ], $response[1]);
+    }
+
+    public function testQueryRepositorySpacesBoxDown() {
+        $mockClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isDaemonReady', 'queryRepositorySpaces'])
+            ->getMock();
+        $mockClient->method('isDaemonReady')->willReturn((object) [
+                'return' => 0
+        ]);
+        $mockClient->method('queryRepositorySpaces')->will($this->throwException(new Exception("Shouldn't get here.")));
+
+        $builder = $this->createMock(SoapClientBuilder::class);
+        $builder->method('build')->willReturn($mockClient);
+        $this->client->setSoapClientBuilder($builder);
+
+        $box = $this->getReference('box.1');
+        $au = $this->getReference('au.1');
+        $response = $this->client->getAuUrls($box, $au);
+        $this->assertNull($response);
+        $this->assertFalse($this->client->hasErrors());
+    }
+
+    public function testIsUrlCached() {
+        $mockClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isDaemonReady', 'isUrlCached'])
+            ->getMock();
+        $mockClient->method('isDaemonReady')->willReturn((object) [
+                'return' => 1
+        ]);
+        $mockClient->method('isUrlCached')->willReturn((object)[
+            'return' => 1
+        ]);
+        $builder = $this->createMock(SoapClientBuilder::class);
+        $builder->method('build')->willReturn($mockClient);
+        $this->client->setSoapClientBuilder($builder);
+
+        $box = $this->getReference('box.1');
+        $deposit = $this->getReference('deposit.1');
+        $response = $this->client->isUrlCached($box, $deposit);
+        $this->assertEquals(true, $response);
+    }
+
+    public function testIsUrlCachedBoxDown() {
+        $mockClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isDaemonReady', 'isUrlCached'])
+            ->getMock();
+        $mockClient->method('isDaemonReady')->willReturn((object) [
+                'return' => 0
+        ]);
+        $mockClient->method('isUrlCached')->will($this->throwException(new Exception("Impossible.")));
+        $builder = $this->createMock(SoapClientBuilder::class);
+        $builder->method('build')->willReturn($mockClient);
+        $this->client->setSoapClientBuilder($builder);
+
+        $box = $this->getReference('box.1');
+        $deposit = $this->getReference('deposit.1');
+        $response = $this->client->isUrlCached($box, $deposit);
+        $this->assertNull($response);
+    }
+
+    public function testHash() {
+        $mockClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isDaemonReady', 'isUrlCached', 'hash'])
+            ->getMock();
+        $mockClient->method('isDaemonReady')->willReturn((object) [
+                'return' => 1
+        ]);
+        $mockClient->method('isUrlCached')->willReturn((object)[
+            'return' => 1
+        ]);
+        $mockClient->method('hash')->willReturn((object)$this->getHashData());
+
+        $builder = $this->createMock(SoapClientBuilder::class);
+        $builder->method('build')->willReturn($mockClient);
+        $this->client->setSoapClientBuilder($builder);
+
+        $box = $this->getReference('box.1');
+        $deposit = $this->getReference('deposit.1');
+        $response = $this->client->hash($box, $deposit);
+        $this->assertEquals('601936759D11400112402DA98C24860D986DA8E5', $response);
+    }
+
+    public function testHashBoxDown() {
+        $mockClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isDaemonReady', 'isUrlCached', 'hash'])
+            ->getMock();
+        $mockClient->method('isDaemonReady')->willReturn((object) [
+                'return' => 0
+        ]);
+        $mockClient->method('isUrlCached')->will($this->throwException(new Exception("Impossible.")));
+        $mockClient->method('hash')->will($this->throwException(new Exception("Impossible.")));
+
+        $builder = $this->createMock(SoapClientBuilder::class);
+        $builder->method('build')->willReturn($mockClient);
+        $this->client->setSoapClientBuilder($builder);
+
+        $box = $this->getReference('box.1');
+        $deposit = $this->getReference('deposit.1');
+        $response = $this->client->hash($box, $deposit);
+        $this->assertNull($response);
+    }
+
+    public function testHashNotCached() {
+        $mockClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isDaemonReady', 'isUrlCached', 'hash'])
+            ->getMock();
+        $mockClient->method('isDaemonReady')->willReturn((object) [
+                'return' => 1
+        ]);
+        $mockClient->method('isUrlCached')->willReturn((object)[
+            'return' => 0
+        ]);
+        $mockClient->method('hash')->will($this->throwException(new Exception("Impossible.")));
+
+        $builder = $this->createMock(SoapClientBuilder::class);
+        $builder->method('build')->willReturn($mockClient);
+        $this->client->setSoapClientBuilder($builder);
+
+        $box = $this->getReference('box.1');
+        $deposit = $this->getReference('deposit.1');
+        $response = $this->client->hash($box, $deposit);
+        $this->assertNull($response);
+    }
+
+    public function testFetchFile() {
+        $mockClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isDaemonReady', 'isUrlCached', 'hash'])
+            ->getMock();
+        $mockClient->method('isDaemonReady')->willReturn((object) [
+                'return' => 1
+        ]);
+        $mockClient->method('isUrlCached')->willReturn((object)[
+            'return' => 1
+        ]);
+
+        $builder = $this->createMock(SoapClientBuilder::class);
+        $builder->method('build')->willReturn($mockClient);
+        $this->client->setSoapClientBuilder($builder);
+
+        $mockHandler = new MockHandler([
+            new Response(200, [], 'I am a cheese'),
+        ]);
+        $historyContainer = array();
+        $history = Middleware::history($historyContainer);
+        $handlerStack = HandlerStack::create($mockHandler);
+        $handlerStack->push($history);
+        $httpClient = new Client(['handler' => $handlerStack]);
+        $this->client->setHttpClient($httpClient);
+
+        $box = $this->getReference('box.1');
+        $deposit = $this->getReference('deposit.1');
+        $response = $this->client->fetchFile($box, $deposit);
+        $this->assertTrue(is_resource($response));
+        $content = fread($response, 100);
+        $this->assertEquals('I am a cheese', $content);
+
+        $this->assertCount(1, $historyContainer);
+        $request = $historyContainer[0]['request'];
+        $this->assertEquals('GET', $request->getMethod());
+        $this->assertStringStartsWith('http://localhost:8080/ServeContent?url', (string)$request->getUri());
+    }
+
+    public function testFetchFileBoxDown() {
+        $mockClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isDaemonReady', 'isUrlCached', 'hash'])
+            ->getMock();
+        $mockClient->method('isDaemonReady')->willReturn((object) [
+                'return' => 0
+        ]);
+        $mockClient->method('isUrlCached')->will($this->throwException(new Exception("Impossible.")));
+
+        $builder = $this->createMock(SoapClientBuilder::class);
+        $builder->method('build')->willReturn($mockClient);
+        $this->client->setSoapClientBuilder($builder);
+
+        $mockHandler = new MockHandler([
+            new Response(200, [], 'I am a cheese'),
+        ]);
+        $historyContainer = array();
+        $history = Middleware::history($historyContainer);
+        $handlerStack = HandlerStack::create($mockHandler);
+        $handlerStack->push($history);
+        $httpClient = new Client(['handler' => $handlerStack]);
+        $this->client->setHttpClient($httpClient);
+
+        $box = $this->getReference('box.1');
+        $deposit = $this->getReference('deposit.1');
+        $response = $this->client->fetchFile($box, $deposit);
+        $this->assertNull($response);
+
+        $this->assertCount(0, $historyContainer);
+    }
+
+    public function testFetchFileNotCached() {
+        $mockClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isDaemonReady', 'isUrlCached', 'hash'])
+            ->getMock();
+        $mockClient->method('isDaemonReady')->willReturn((object) [
+                'return' => 1
+        ]);
+        $mockClient->method('isUrlCached')->willReturn((object) [
+                'return' => 0
+        ]);
+        $builder = $this->createMock(SoapClientBuilder::class);
+        $builder->method('build')->willReturn($mockClient);
+        $this->client->setSoapClientBuilder($builder);
+
+        $mockHandler = new MockHandler([
+            new Response(404, [], 'NOT FOUND'),
+        ]);
+        $historyContainer = array();
+        $history = Middleware::history($historyContainer);
+        $handlerStack = HandlerStack::create($mockHandler);
+        $handlerStack->push($history);
+        $httpClient = new Client(['handler' => $handlerStack]);
+        $this->client->setHttpClient($httpClient);
+
+        $box = $this->getReference('box.1');
+        $deposit = $this->getReference('deposit.1');
+        $response = $this->client->fetchFile($box, $deposit);
+        $this->assertNull($response);
+
+        $this->assertCount(0, $historyContainer);
+    }
+
+    public function testFetchHttp500() {
+        $mockClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isDaemonReady', 'isUrlCached', 'hash'])
+            ->getMock();
+        $mockClient->method('isDaemonReady')->willReturn((object) [
+                'return' => 1
+        ]);
+        $mockClient->method('isUrlCached')->willReturn((object) [
+                'return' => 1
+        ]);
+        $builder = $this->createMock(SoapClientBuilder::class);
+        $builder->method('build')->willReturn($mockClient);
+        $this->client->setSoapClientBuilder($builder);
+
+        $mockHandler = new MockHandler([
+            new Response(500, [], 'Internal Error'),
+        ]);
+        $historyContainer = array();
+        $history = Middleware::history($historyContainer);
+        $handlerStack = HandlerStack::create($mockHandler);
+        $handlerStack->push($history);
+        $httpClient = new Client(['handler' => $handlerStack]);
+        $this->client->setHttpClient($httpClient);
+
+        $box = $this->getReference('box.1');
+        $deposit = $this->getReference('deposit.1');
+        $response = $this->client->fetchFile($box, $deposit);
+        $this->assertNull($response);
+
+        $this->assertCount(1, $historyContainer);
+    }
+
+    // This is a real example of what lockss returns here. sigh.
+    private function getHashData() {
+        $bfdh = <<<'ENDDATA'
+# Block hashes from sophie.local, 15:46:21 06/14/18
+# AU: LOCKSSOMatic AU 1 Deposit from OJS
+# Hash algorithm: sha1
+# Encoding: Hex
+
+601936759D11400112402DA98C24860D986DA8E5   http://localhost/path.zip
+# end
+
+ENDDATA;
+        return [
+            'return' => (object) [
+                'blockFileDataHandler' => $bfdh,
+                'blockFileName' => 'foo.tmp',
+                'bytesHashed' => 1234,
+            ]
+        ];
     }
 
 }

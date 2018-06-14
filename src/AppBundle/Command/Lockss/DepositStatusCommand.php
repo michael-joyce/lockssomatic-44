@@ -69,6 +69,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
         $this->setName('lockss:deposit:status');
         $this->setDescription('Check the status of a deposit.');
         $this->addOption('all', '-a', InputOption::VALUE_NONE, 'Process all deposits.');
+        $this->addOption('limit', null, InputOption::VALUE_REQUIRED, 'Limit the number of deposits checked.');
         $this->addOption('pln', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Optional list of PLNs to check.');
         $this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
     }
@@ -96,13 +97,16 @@ class DepositStatusCommand extends ContainerAwareCommand {
      *
      * @return Generator|Deposit[]
      */
-    protected function getDeposits(Au $au, $all) {
+    protected function getDeposits(Au $au, $all, $limit = null) {
         $repo = $this->em->getRepository(Deposit::class);
         $qb = $repo->createQueryBuilder('d');
         $qb->andWhere('d.au = :au');
         $qb->setParameter('au', $au);
         if (!$all) {
             $qb->andWhere('(d.agreement is null OR d.agreement <> 1)');
+        }
+        if($limit) {
+            $qb->setMaxResults($limit);
         }
         $iterator = $qb->getQuery()->iterate();
         foreach ($iterator as $row) {
@@ -148,11 +152,11 @@ class DepositStatusCommand extends ContainerAwareCommand {
         return $depositStatus;
     }
 
-    protected function queryPln(Pln $pln, $all, $dryRun) {
+    protected function queryPln(Pln $pln, $all, $dryRun, $limit) {
         $boxes = $pln->getBoxes();
 
         foreach ($pln->getAus() as $au) {
-            $deposits = $this->getDeposits($au, $all);
+            $deposits = $this->getDeposits($au, $all, $limit);
             foreach ($deposits as $deposit) {
                 $this->queryDeposit($deposit, $boxes);
                 if( ! $dryRun) {
@@ -169,11 +173,12 @@ class DepositStatusCommand extends ContainerAwareCommand {
     public function execute(InputInterface $input, OutputInterface $output) {
         $all = $input->getOption('all');
         $plnIds = $input->getOption('pln');
+        $limit = $input->getOption('limit');
         $dryRun = $input->getOption('dry-run');
 
         $plns = $this->getPlns($plnIds);
         foreach ($plns as $pln) {
-            $this->queryPln($pln, $all, $dryRun);
+            $this->queryPln($pln, $all, $dryRun, $limit);
         }
     }
 

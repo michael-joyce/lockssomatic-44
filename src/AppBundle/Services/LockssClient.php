@@ -61,14 +61,24 @@ class LockssClient {
      */
     private $builder;
 
+    /**
+     * @var Client
+     */
+    private $httpClient;
+
     public function __construct(AuManager $auManager, SoapClientBuilder $builder) {
         $this->auManager = $auManager;
         $this->errors = array();
         $this->builder = $builder;
+        $this->httpClient = new Client();
     }
 
     public function setSoapClientBuilder($builder) {
         $this->builder = $builder;
+    }
+
+    public function setHttpClient(Client $client) {
+        $this->client = $client;
     }
 
     public function errorHandler($errno, $errstr, $errfile, $errline) {
@@ -115,8 +125,8 @@ class LockssClient {
         try {
             $client = $this->builder->build($wsdl, $auth, $soapOptions);
             $response = $client->$method($params);
-            print("called {$method} of {$service}.");
-            print(print_r($response, true));
+//            print("called {$method} of {$service}.");
+//            print(print_r($response, true));
         } catch (Exception $e) {
             $this->exceptionHandler($e);
         }
@@ -153,7 +163,7 @@ class LockssClient {
         }
         $auid = $this->auManager->generateAuidFromAu($au);
         $obj = $this->call($box, self::STATUS_SERVICE, 'getAuStatus', array(
-                'auId' => $auid,
+            'auId' => $auid,
         ));
         return get_object_vars($obj);
     }
@@ -175,29 +185,6 @@ class LockssClient {
     }
 
     /**
-     * List the repositories on $box.
-     *
-     * @todo this method is unused. Maybe it should be removed. Most of the
-     * information is available in queryRepositorySpaces().
-     *
-     * @return array
-     *   Array of arrays with key => value pairs.
-     */
-    public function queryRepositories(Box $box) {
-        if (!$this->isDaemonReady($box)) {
-            return;
-        }
-        $list = $this->call($box, self::STATUS_SERVICE, 'queryRepositories', array(
-                'repositoryQuery' => 'SELECT *',
-        ));
-        $response = array();
-        foreach($list as $obj) {
-            $response[] = get_object_vars($obj);
-        }
-        return $response;
-    }
-
-    /**
      * Check the available space on $box.
      *
      * @return array
@@ -208,10 +195,10 @@ class LockssClient {
             return;
         }
         $list = $this->call($box, self::STATUS_SERVICE, 'queryRepositorySpaces', array(
-                'repositorySpaceQuery' => 'SELECT *',
+            'repositorySpaceQuery' => 'SELECT *',
         ));
         $response = array();
-        foreach($list as $obj) {
+        foreach ($list as $obj) {
             $response[] = get_object_vars($obj);
         }
         return $response;
@@ -268,9 +255,10 @@ class LockssClient {
         return $this->call($box, self::CONTENT_SERVICE, 'isUrlCached', array(
                 'url' => $deposit->getUrl(),
                 'auId' => $auid,
-                ), array(
+            ), array(
                 'attachment_type' => Helper::ATTACHMENTS_TYPE_MTOM,
-        ));
+            )
+        );
     }
 
     /**
@@ -289,10 +277,9 @@ class LockssClient {
         if (!$this->isDaemonReady($box)) {
             return;
         }
-        if( ! $this->isUrlCached($box, $deposit)) {
+        if (!$this->isUrlCached($box, $deposit)) {
             return;
         }
-        $client = new Client();
         $baseUrl = "http://{$box->getHostname()}:{$box->getPln()->getContentPort()}/ServeContent";
         $fh = tmpfile();
         $options = array_merge(self::GUZZLE_OPTS, array(
@@ -301,7 +288,7 @@ class LockssClient {
             ],
         ));
 
-        $response = $client->get($baseUrl, $options);
+        $response = $this->client->get($baseUrl, $options);
         $body = $response->getBody();
         while (($data = $body->read(64 * 1024))) {
             fwrite($fh, $data);
