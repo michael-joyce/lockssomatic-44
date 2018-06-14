@@ -72,17 +72,11 @@ class AuProperty extends AbstractEntity {
      */
     private $children;
     
-    /**
-     *
-     */
     public function __construct() {
         parent::__construct();
         $this->children = new ArrayCollection();
     }
 
-    /**
-     *
-     */
     public function __toString() {
         return $this->propertyKey;
     }
@@ -206,9 +200,6 @@ class AuProperty extends AbstractEntity {
         return $this->children;
     }
     
-    /**
-     *
-     */
     public function hasChildren() {
         return $this->children->count() > 0;
     }

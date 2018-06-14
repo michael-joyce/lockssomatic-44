@@ -35,9 +35,6 @@ class BoxListener {
         return $ip;
     }
 
-    /**
-     *
-     */
     public function prePersist(LifecycleEventArgs $args) {
         $entity = $args->getEntity();
         if (!$entity instanceof Box) {

@@ -53,9 +53,6 @@ class ConfigExporter {
      */
     private $manager;
 
-    /**
-     *
-     */
     public function __construct($ausPerTitleDb, EntityManagerInterface $em, EngineInterface $templating, FilePaths $fp, AuManager $manager) {
         $this->ausPerTitleDb = $ausPerTitleDb;
         $this->em = $em;
@@ -65,16 +62,10 @@ class ConfigExporter {
         $this->manager = $manager;
     }
 
-    /**
-     *
-     */
     public function setFilePaths(FilePaths $fp) {
         $this->fp = $fp;
     }
 
-    /**
-     *
-     */
     public function setEntityManager(EntityManagerInterface $em) {
         $this->em = $em;
     }

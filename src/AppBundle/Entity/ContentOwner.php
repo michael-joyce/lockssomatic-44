@@ -48,9 +48,6 @@ class ContentOwner extends AbstractEntity {
      */
     private $contentProviders;
 
-    /**
-     *
-     */
     public function __toString() {
         return $this->name;
     }

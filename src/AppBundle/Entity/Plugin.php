@@ -101,9 +101,6 @@ class Plugin extends AbstractEntity {
      */
     private $pluginProperties;
 
-    /**
-     *
-     */
     public function __construct() {
         parent::__construct();
         $this->generatedParams = array();
@@ -113,9 +110,6 @@ class Plugin extends AbstractEntity {
         $this->pluginProperties = new ArrayCollection();
     }
 
-    /**
-     *
-     */
     public function __toString() {
         if ($this->name) {
             return $this->name;
@@ -177,9 +171,6 @@ class Plugin extends AbstractEntity {
         return $fileinfo->getBasename();
     }
 
-    /**
-     *
-     */
     public function getOriginalFilename() {
         $filename = preg_replace('/-v[0-9]+\.jar$/', '.jar', $this->getFilename());
         return $filename;
@@ -322,9 +313,6 @@ class Plugin extends AbstractEntity {
         return $this->pluginProperties;
     }
 
-    /**
-     *
-     */
     public function getRootPluginProperties() {
         return $this->pluginProperties->filter(function (PluginProperty $p) {
             return $p->getParent() === null;

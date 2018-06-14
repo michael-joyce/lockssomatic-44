@@ -28,9 +28,6 @@ class BoxNotifier {
 
     private $mailer;
 
-    /**
-     *
-     */
     public function __construct($sender, $contact, EngineInterface $templating, Swift_Mailer $mailer) {
         $this->sender = $sender;
         $this->contact = $contact;
@@ -38,9 +35,6 @@ class BoxNotifier {
         $this->mailer = $mailer;
     }
 
-    /**
-     *
-     */
     public function unreachable(Box $box, BoxStatus $boxStatus) {
         if (!$box->getSendNotifications() || !$box->getContactEmail()) {
             return;
@@ -57,9 +51,6 @@ class BoxNotifier {
         $this->mailer->send($message);
     }
 
-    /**
-     *
-     */
     public function freeSpaceWarning(Box $box, BoxStatus $boxStatus) {
         if (!$box->getSendNotifications() || !$box->getContactEmail()) {
             return;

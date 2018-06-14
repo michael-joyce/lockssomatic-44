@@ -137,9 +137,6 @@ class Box extends AbstractEntity {
      */
     private $pln;
 
-    /**
-     *
-     */
     public function __construct() {
         parent::__construct();
         $this->status = new ArrayCollection();
@@ -161,9 +158,6 @@ class Box extends AbstractEntity {
         return $this->ipAddress;
     }
 
-    /**
-     *
-     */
     public function getUrl() {
         return "{$this->webServiceProtocol}://{$this}:{$this->webServicePort}";
     }

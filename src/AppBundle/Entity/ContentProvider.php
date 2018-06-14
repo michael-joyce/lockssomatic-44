@@ -126,9 +126,6 @@ class ContentProvider extends AbstractEntity {
      */
     private $deposits;
 
-    /**
-     *
-     */
     public function __toString() {
         return $this->name;
     }
@@ -177,9 +174,6 @@ class ContentProvider extends AbstractEntity {
         return $this->permissionurl;
     }
 
-    /**
-     *
-     */
     public function getPermissionHost() {
         return parse_url($this->getPermissionUrl(), PHP_URL_HOST);
     }
@@ -347,9 +341,6 @@ class ContentProvider extends AbstractEntity {
         return $this->aus;
     }
 
-    /**
-     *
-     */
     public function setAus($aus) {
         $this->aus = $aus;
     }

@@ -58,9 +58,6 @@ class DepositStatus extends AbstractEntity {
         $this->errors = array();
     }
 
-    /**
-     *
-     */
     public function __toString() {
         return $this->deposit . ' ' . $this->created->format('c');
     }

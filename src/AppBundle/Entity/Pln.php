@@ -139,9 +139,6 @@ class Pln extends AbstractEntity {
      */
     private $contentProviders;
 
-    /**
-     *
-     */
     public function __construct() {
         parent::__construct();
         $this->enableContentUi = false;
@@ -152,9 +149,6 @@ class Pln extends AbstractEntity {
         $this->aus = new ArrayCollection();
     }
 
-    /**
-     *
-     */
     public function __toString() {
         return $this->name;
     }
@@ -291,9 +285,6 @@ class Pln extends AbstractEntity {
         return $this->contentPort;
     }
 
-    /**
-     *
-     */
     public function clearProperties() {
         $this->properties = [];
         return $this;
@@ -330,9 +321,6 @@ class Pln extends AbstractEntity {
         return $this;
     }
 
-    /**
-     *
-     */
     public function getProperty($key) {
         if (!array_key_exists($key, $this->properties)) {
             return null;
@@ -340,9 +328,6 @@ class Pln extends AbstractEntity {
         return $this->properties[$key];
     }
 
-    /**
-     *
-     */
     public function removeProperty($key) {
         unset($this->properties[$key]);
     }
@@ -440,9 +425,6 @@ class Pln extends AbstractEntity {
         return $this->keystore;
     }
 
-    /**
-     *
-     */
     public function getKeystoreFilename() {
         $fileinfo = new SplFileInfo($this->keystore);
         return $fileinfo->getBasename();

@@ -64,9 +64,6 @@ class FilePaths {
         $this->downloadDir = $downloadDir;
     }
 
-    /**
-     *
-     */
     public function setRoot($root) {
         $this->root = $root;
     }
@@ -300,9 +297,6 @@ class FilePaths {
         return $path;
     }
 
-    /**
-     *
-     */
     public function getTitleDbPath(ContentProvider $provider, $id) {
         $path = implode('/', array(
             $this->getTitleDbDir($provider->getPln(), $provider),

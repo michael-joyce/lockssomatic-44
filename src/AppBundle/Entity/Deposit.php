@@ -197,9 +197,6 @@ class Deposit extends AbstractEntity {
         return $this->url;
     }
 
-    /**
-     *
-     */
     public function getFilename() {
         return basename($this->url);
     }
@@ -389,9 +386,6 @@ class Deposit extends AbstractEntity {
         return $this->au;
     }
 
-    /**
-     *
-     */
     public function getPlugin() {
         if ($this->au && $this->au->getPlugin()) {
             return $this->au->getPlugin();
@@ -471,9 +465,6 @@ class Deposit extends AbstractEntity {
         return $this;
     }
 
-    /**
-     *
-     */
     public function getProperties() {
         return array_keys($this->properties);
     }
@@ -493,9 +484,6 @@ class Deposit extends AbstractEntity {
         return null;
     }
 
-    /**
-     *
-     */
     public function hasProperty($key) {
         return isset($this->properties[$key]);
     }

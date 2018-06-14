@@ -275,9 +275,6 @@ class Au extends AbstractEntity {
         return $this->auProperties;
     }
 
-    /**
-     *
-     */
     public function hasAuProperties() {
         return !$this->auProperties->isEmpty();
     }
@@ -291,9 +288,6 @@ class Au extends AbstractEntity {
         });
     }
 
-    /**
-     *
-     */
     public function getSimpleAuProperty($name) {
         foreach ($this->auProperties as $property) {
             if ($property->getPropertyKey() === $name) {

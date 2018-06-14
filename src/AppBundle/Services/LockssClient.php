@@ -24,19 +24,6 @@ use ReflectionClass;
  */
 class LockssClient {
 
-    /**
-     * Default options for SOAP clients.
-     */
-    const SOAP_OPTS = array(
-        'soap_version' => SOAP_1_1,
-        'cache_wsdl' => Cache::TYPE_NONE,
-        'features' => SOAP_SINGLE_ELEMENT_ARRAYS,
-        'trace' => true,
-        'exceptions' => true,
-        'user_agent' => 'LOCKSSOMatic 1.0',
-        'authentication' => SOAP_AUTHENTICATION_BASIC,
-    );
-
     const GUZZLE_OPTS = array(
         'allow_redirects' => true,
         'headers' => array(
@@ -68,24 +55,15 @@ class LockssClient {
      */
     private $errors;
 
-    /**
-     *
-     */
     public function __construct(AuManager $auManager) {
         $this->auManager = $auManager;
         $this->errors = array();
     }
 
-    /**
-     *
-     */
     public function errorHandler($errno, $errstr, $errfile, $errline) {
         $this->errors[] = implode(':', ['Error', $errstr]);
     }
 
-    /**
-     *
-     */
     public function exceptionHandler(Exception $e) {
         $reflection = new ReflectionClass($e);
         $this->errors[] = implode(':', [
@@ -95,23 +73,14 @@ class LockssClient {
         ]);
     }
 
-    /**
-     *
-     */
     public function getErrors() {
         return $this->errors;
     }
 
-    /**
-     *
-     */
     public function clearErrors() {
         $this->errors = array();
     }
 
-    /**
-     *
-     */
     public function hasErrors() {
         return count($this->errors) > 0;
     }

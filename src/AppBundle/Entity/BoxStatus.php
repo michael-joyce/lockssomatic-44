@@ -51,9 +51,6 @@ class BoxStatus extends AbstractEntity {
      */
     private $data;
 
-    /**
-     *
-     */
     public function __construct() {
         parent::__construct();
         $this->success = false;

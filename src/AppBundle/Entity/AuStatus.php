@@ -43,9 +43,6 @@ class AuStatus extends AbstractEntity {
      */
     private $au;
 
-    /**
-     *
-     */
     public function __toString() {
         return $this->created->format('c') . ' - Errors: ' . count($this->errors);
     }
