@@ -45,3 +45,8 @@ services:
             $sender: '%lom.boxstatus.sender%'
             $contact: '%lom.boxstatus.contact%'
 
+    # I don't know why this one needs to be explicitly
+    # made public but it does.
+    AppBundle\Services\SoapClientBuilder:
+        public: true
+
