@@ -126,8 +126,6 @@ class LockssClient {
         try {
             $client = $this->builder->build($wsdl, $auth, $soapOptions);
             $response = $client->$method($params);
-//            print("called {$method} of {$service}.");
-//            print(print_r($response, true));
         } catch (Exception $e) {
             $this->exceptionHandler($e);
         }

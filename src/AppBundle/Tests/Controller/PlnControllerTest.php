@@ -9,10 +9,12 @@
 
 namespace AppBundle\Tests\Controller;
 
-use AppBundle\Entity\Pln;
 use AppBundle\DataFixtures\ORM\LoadPln;
+use AppBundle\Entity\Pln;
+use AppBundle\Services\FilePaths;
 use Nines\UserBundle\DataFixtures\ORM\LoadUser;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use org\bovigo\vfs\vfsStream;
 
 class PlnControllerTest extends BaseTestCase {
 
@@ -154,6 +156,34 @@ class PlnControllerTest extends BaseTestCase {
         $responseCrawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertContains('dummy.keystore', $responseCrawler->text());
+    }
+
+    public function testAdminKeystoreBadFile() {
+        $client = $this->makeClient(LoadUser::ADMIN);
+        $formCrawler = $client->request('GET', '/pln/1/keystore');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $form = $formCrawler->selectButton('Create')->form();
+        $form['file_upload[file]']->upload('src/AppBundle/Tests/Data/dummy.fakekeystore');
+
+        $client->submit($form);
+        $this->assertFalse($client->getResponse()->isRedirect());
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
+        $this->assertContains('File name is strange.', $client->getResponse()->getContent());
+    }
+
+    public function testAnonExport() {
+        $client = $this->makeClient();
+        $crawler = $client->request('GET', '/pln/1/export');
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertEquals(0, $crawler->selectLink('New')->count());
+    }
+
+    public function testUserExport() {
+        $client = $this->makeClient(LoadUser::USER);
+        $crawler = $client->request('GET', '/pln/1/export');
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertEquals(0, $crawler->selectLink('New')->count());
     }
 
     public function testAnonDelete() {
