@@ -10,13 +10,10 @@
 namespace AppBundle\Tests\Controller;
 
 use AppBundle\DataFixtures\ORM\LoadPln;
-use AppBundle\Entity\Pln;
-use AppBundle\Services\FilePaths;
 use Nines\UserBundle\DataFixtures\ORM\LoadUser;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
-use org\bovigo\vfs\vfsStream;
 
-class PlnControllerTest extends BaseTestCase {
+class PlnPropertyControllerTest extends BaseTestCase {
 
     protected function getFixtures() {
         return [
