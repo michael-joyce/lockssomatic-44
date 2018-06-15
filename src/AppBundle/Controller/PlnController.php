@@ -15,14 +15,15 @@ use AppBundle\Form\PlnType;
 use AppBundle\Services\ConfigExporter;
 use AppBundle\Services\ConfigUpdater;
 use AppBundle\Services\FilePaths;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Pln controller.
@@ -115,10 +116,10 @@ class PlnController extends Controller {
             $data = $form->getData();
             $file = $data['file'];
             if (!in_array($file->getMimeType(), Pln::KEYSTORE_MIMETYPES)) {
-                throw new Exception("Upload does not look like a keystore. Mime type is {$file->getMimeType()}");
+                throw new BadRequestHttpException("Upload does not look like a keystore. Mime type is {$file->getMimeType()}");
             }
             if (!preg_match('/^[a-zA-Z0-9 .-]+\.keystore$/', $file->getClientOriginalName())) {
-                throw new Exception("Upload does not look like a keystore. File name is strange.");
+                throw new BadRequestHttpException("Upload does not look like a keystore. File name is strange.");
             }
             $filename = $file->getClientOriginalName();
             $file->move($filePaths->getLockssKeystoreDir($pln), $filename);
