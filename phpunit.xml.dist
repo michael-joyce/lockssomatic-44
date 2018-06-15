@@ -11,7 +11,7 @@
     colors="false"
     processIsolation="true"
     stopOnError="true"
-    stopOnFailure="false"
+    stopOnFailure="true"
     verbose="false">
 
     <php>
@@ -22,10 +22,17 @@
     </php>
 
     <testsuites>
-        <testsuite name="LOCKSSOmatic">
+        <testsuite name="PKP PLN">
             <directory>src/AppBundle/Tests</directory>
         </testsuite>
     </testsuites>
+
+    <groups>
+        <!-- Virus scanner tests require a working clamav install. -->
+        <exclude>
+            <group>virusscanner</group>
+        </exclude>
+    </groups>
 
     <filter>
         <whitelist>

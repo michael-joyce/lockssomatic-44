@@ -1,22 +1,11 @@
 <?php
 
-use BeSimple\SoapClient\SoapClient;
-use BeSimple\SoapClient\SoapClientBuilder;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace AppBundle\Tests\Services;
 
-/**
- * Description of SoapClientBuilderTest
- *
- * @author mjoyce
- */
+use AppBundle\Services\SoapClientBuilder;
+use BeSimple\SoapClient\SoapClient;
+use Nines\UtilBundle\Tests\Util\BaseTestCase;
+
 class SoapClientBuilderTest extends BaseTestCase {
 
     /**
@@ -39,4 +28,21 @@ class SoapClientBuilderTest extends BaseTestCase {
         $this->assertInstanceOf(SoapClient::class, $client);
     }
 
+    /**
+     * @expectedException Exception
+     */
+    public function testBuildNotFound() {
+        $client = $this->builder->build(dirname(__DIR__) . '/Data/dummy.notafile', array());
+        $this->assertNotNull($client);
+        $this->assertInstanceOf(SoapClient::class, $client);
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testBuildNotXml() {
+        $client = $this->builder->build(dirname(__DIR__) . '/Data/dummy.keystore', array());
+        $this->assertNotNull($client);
+        $this->assertInstanceOf(SoapClient::class, $client);
+    }
 }
