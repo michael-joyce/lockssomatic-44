@@ -33,8 +33,7 @@ class SoapClientBuilderTest extends BaseTestCase {
      */
     public function testBuildNotFound() {
         $client = $this->builder->build(dirname(__DIR__) . '/Data/dummy.notafile', array());
-        $this->assertNotNull($client);
-        $this->assertInstanceOf(SoapClient::class, $client);
+        $this->fail("No exception thrown.");
     }
 
     /**
@@ -42,7 +41,6 @@ class SoapClientBuilderTest extends BaseTestCase {
      */
     public function testBuildNotXml() {
         $client = $this->builder->build(dirname(__DIR__) . '/Data/dummy.keystore', array());
-        $this->assertNotNull($client);
-        $this->assertInstanceOf(SoapClient::class, $client);
+        $this->fail("No exception thrown.");
     }
 }

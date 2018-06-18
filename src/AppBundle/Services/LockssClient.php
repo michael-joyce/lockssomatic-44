@@ -126,6 +126,7 @@ class LockssClient {
         try {
             $client = $this->builder->build($wsdl, $auth, $soapOptions);
             $response = $client->$method($params);
+            unset($client); // memory leak in BeSimpleSoapClient or SoapClient.
         } catch (Exception $e) {
             $this->exceptionHandler($e);
         }
