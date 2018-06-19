@@ -66,10 +66,6 @@ class ConfigExporter {
         $this->fp = $fp;
     }
 
-    public function setEntityManager(EntityManagerInterface $em) {
-        $this->em = $em;
-    }
-
     public function setAuManager(AuManager $manager) {
         $this->manager = $manager;
     }

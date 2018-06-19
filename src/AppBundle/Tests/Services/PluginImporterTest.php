@@ -21,21 +21,21 @@ use ZipArchive;
  * Description of PluginImporterTest
  */
 class PluginImporterTest extends BaseTestCase {
-    
+
     /**
      * @var PluginImporter
      */
     private $importer;
-    
+
     protected function getFixtures() {
         return [];
     }
-    
+
     protected function setUp() {
         parent::setUp();
         $this->importer = $this->container->get(PluginImporter::class);
     }
-    
+
     protected function getArchiveStub() {
         $stub = $this->createMock(ZipArchive::class);
         $stub->method('open')->willReturn(true);
@@ -53,9 +53,24 @@ class PluginImporterTest extends BaseTestCase {
         }));
         return $stub;
     }
-    
+
     public function testSanity() {
         $this->assertInstanceOf(PluginImporter::class, $this->importer);
+    }
+
+    public function testGetManifest() {
+        $archive = $this->getArchiveStub();
+        $manifest = $this->importer->getManifest($archive);
+        $this->assertCount(2, $manifest);
+    }
+
+    public function testManifestWithSpaces() {
+        $data = $this->manifestData();
+        // This is legitimate and allowed at the end of a manifest.
+        // But it also caused a lot of problems in parsing so test it.
+        $data .= "\n\n ";
+        $manifest = $this->importer->parseManifest($data);
+        $this->assertEquals(2, count($manifest));
     }
 
     public function testManifestSectionCount() {
@@ -63,7 +78,7 @@ class PluginImporterTest extends BaseTestCase {
         $manifest = $this->importer->parseManifest($data);
         $this->assertEquals(2, count($manifest));
     }
-    
+
     public function testManifestFirstSection() {
         $data = $this->manifestData();
         $manifest = $this->importer->parseManifest($data);
@@ -73,7 +88,7 @@ class PluginImporterTest extends BaseTestCase {
             'created-by' => '1.8.0_144-b01 (Oracle Corporation)',
         ), $manifest[0]);
     }
-    
+
     public function testManifestSecondSection() {
         $data = $this->manifestData();
         $manifest = $this->importer->parseManifest($data);
@@ -83,32 +98,32 @@ class PluginImporterTest extends BaseTestCase {
             'sha-256-digest' => '1PNUJEn9tHPeDE3qiIgXCzvi6eblJayHNZK1M3YWq30=',
         ), $manifest[1]);
     }
-    
+
     public function testManifestBlankLines() {
         $data = $this->manifestData() . "\n\n\n";
         $manifest = $this->importer->parseManifest($data);
         $this->assertEquals(2, count($manifest));
     }
-    
+
     public function testFindPluginEntries() {
         $data = $this->manifestData();
-        $manifest = $this->importer->parseManifest($data);        
+        $manifest = $this->importer->parseManifest($data);
         $entries = $this->importer->findPluginEntries($manifest);
         $this->assertEquals(['ca/sfu/lib/plugin/coppul/WestVaultPlugin.xml'], $entries);
     }
-    
+
     public function testFindPluginXml() {
         $stub = $this->getArchiveStub();
         $xml = $this->importer->getPluginXml($stub, 'ca/sfu/lib/plugin/coppul/WestVaultPlugin.xml');
         $this->assertInstanceOf(SimpleXMLElement::class, $xml);
     }
-    
+
     public function testFindXmlPropString() {
         $xml = simplexml_load_string($this->xmlData());
         $this->assertEquals('COPPUL WestVault Plugin', $this->importer->findXmlPropString($xml, 'plugin_name'));
         $this->assertEquals(null, $this->importer->findXmlPropString($xml, 'fancy_dan'));
     }
-    
+
     /**
      * @expectedException Exception
      */
@@ -116,13 +131,13 @@ class PluginImporterTest extends BaseTestCase {
         $xml = simplexml_load_string($this->xmlData());
         $this->importer->findXmlPropString($xml, 'bad_entry');
     }
-    
+
     public function testFindXmlPropElement() {
         $xml = simplexml_load_string($this->xmlData());
         $this->assertInstanceOf(SimpleXMLElement::class, $this->importer->findXmlPropElement($xml, 'au_permission_url'));
         $this->assertEquals(null, $this->importer->findXmlPropElement($xml, 'fancy_dan'));
     }
-    
+
     /**
      * @expectedException Exception
      */
@@ -130,7 +145,7 @@ class PluginImporterTest extends BaseTestCase {
         $xml = simplexml_load_string($this->xmlData());
         $this->importer->findXmlPropElement($xml, 'other_bad_entry');
     }
-    
+
     public function testNewPluginPropertyString() {
         $xml = simplexml_load_string($this->xmlData());
         $plugin = new Plugin();
@@ -142,7 +157,7 @@ class PluginImporterTest extends BaseTestCase {
         $this->assertNull($property->getChildren());
         $this->assertFalse($property->isList());
     }
-    
+
     public function testNewPluginPropertyList() {
         $xml = simplexml_load_string($this->xmlData());
         $plugin = new Plugin();
@@ -154,20 +169,20 @@ class PluginImporterTest extends BaseTestCase {
         $this->assertNull($property->getChildren());
         $this->assertTrue($property->isList());
     }
-    
+
     public function testImportChildren() {
         $xml = simplexml_load_string($this->xmlData());
         $property = new PluginProperty();
-        
-        $plugin = new Plugin();        
+
+        $plugin = new Plugin();
         $property->setPlugin($plugin);
         $plugin->addPluginProperty($property);
-        
+
         $childProp = $this->importer->importChildren($property, $xml->xpath('//org.lockss.daemon.ConfigParamDescr[1]')[0]);
         $this->assertInstanceOf(PluginProperty::class, $childProp);
         $this->assertEquals($plugin, $childProp->getPlugin());
         $this->assertEquals($property, $childProp->getParent());
-        
+
         $children = $childProp->getChildren();
         $this->assertEquals(7, count($children));
         $this->assertEquals('key', $children[0]->getPropertyKey());
@@ -185,7 +200,7 @@ class PluginImporterTest extends BaseTestCase {
         $this->assertEquals('defaultOnly', $children[6]->getPropertyKey());
         $this->assertEquals('false', $children[6]->getPropertyValue());
     }
-    
+
     public function testNewPluginConfig() {
         $xml = simplexml_load_string($this->xmlData());
         $plugin = new Plugin();
@@ -193,10 +208,10 @@ class PluginImporterTest extends BaseTestCase {
         $this->assertInstanceOf(PluginProperty::class, $property);
         $this->assertEquals(4, count($property->getChildren()));
     }
-    
+
     public function testAddProperties() {
         $em = $this->getDoctrine();
-        
+
         $xml = simplexml_load_string($this->xmlData());
         $plugin = new Plugin();
         $plugin->setName('test plugin');
@@ -207,15 +222,15 @@ class PluginImporterTest extends BaseTestCase {
         $em->flush();
         $this->assertEquals(45, count($plugin->getPluginProperties()));
     }
-    
+
     public function testBuildPlugin() {
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $this->importer->buildPlugin($xml);
         $this->assertInstanceOf(Plugin::class, $plugin);
         $this->getDoctrine()->flush(); // make sure it was flushed to the db.
-        $this->assertNotNull($plugin->getId()); 
+        $this->assertNotNull($plugin->getId());
     }
-    
+
     /**
      * @expectedException Exception
      */
@@ -225,7 +240,7 @@ class PluginImporterTest extends BaseTestCase {
         unset($node[0]); // remove plugin_identifier.
         $this->importer->buildPlugin($xml);
     }
-    
+
     /**
      * @expectedException Exception
      */
@@ -235,14 +250,14 @@ class PluginImporterTest extends BaseTestCase {
         $this->getDoctrine()->flush();
         $this->importer->buildPlugin($xml);
     }
-    
+
     public function testImport() {
         $zipArchive = $this->getArchiveStub();
         $plugin = $this->importer->import($zipArchive);
         $this->assertInstanceOf(Plugin::class, $plugin);
         $this->assertEquals('ca.sfu.lib.plugin.coppul.WestVaultPlugin', $plugin->getIdentifier());
     }
-    
+
     public function manifestData() {
         return <<<'ENDMANIFEST'
 Manifest-Version: 1.0
@@ -255,7 +270,7 @@ SHA-256-Digest: 1PNUJEn9tHPeDE3qiIgXCzvi6eblJayHNZK1M3YWq30=
 
 ENDMANIFEST;
     }
-    
+
     public function xmlData() {
         return <<<'ENDXML'
 <map>
@@ -379,5 +394,5 @@ ENDMANIFEST;
 </map>
 ENDXML;
     }
-    
+
 }

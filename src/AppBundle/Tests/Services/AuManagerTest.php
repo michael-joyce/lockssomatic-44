@@ -476,7 +476,7 @@ class AuManagerTest extends BaseTestCase {
         $plugin->method('getName')->will($this->returnValue('dummy'));
 
         $au = $this->createMock(Au::class);
-        $au->method('getPlugin')->willReturn(null);
+        $au->method('getPlugin')->will($this->returnValue($plugin));
         $au->method('getAuPropertyValue')->will($this->returnValueMap($data['auValues']));
 
         $str = $this->manager->generateSymbol($au, 'testable');

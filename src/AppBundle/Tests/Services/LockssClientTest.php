@@ -338,7 +338,7 @@ class LockssClientTest extends BaseTestCase {
 
         $box = $this->getReference('box.1');
         $au = $this->getReference('au.1');
-        $response = $this->client->getAuUrls($box, $au);
+        $response = $this->client->queryRepositorySpaces($box, $au);
         $this->assertNull($response);
         $this->assertFalse($this->client->hasErrors());
     }
@@ -404,6 +404,35 @@ class LockssClientTest extends BaseTestCase {
         $deposit = $this->getReference('deposit.1');
         $response = $this->client->hash($box, $deposit);
         $this->assertEquals('601936759D11400112402DA98C24860D986DA8E5', $response);
+    }
+
+    public function testHashBadReturn() {
+        $mockClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isDaemonReady', 'isUrlCached', 'hash'])
+            ->getMock();
+        $mockClient->method('isDaemonReady')->willReturn((object) [
+                'return' => 1
+        ]);
+        $mockClient->method('isUrlCached')->willReturn((object)[
+            'return' => 1
+        ]);
+        $mockClient->method('hash')->willReturn((object) [
+            'return' => (object) [
+                'blockFileDataHandler' => '',
+                'blockFileName' => 'foo.tmp',
+                'bytesHashed' => 1234,
+            ]
+        ]);
+
+        $builder = $this->createMock(SoapClientBuilder::class);
+        $builder->method('build')->willReturn($mockClient);
+        $this->client->setSoapClientBuilder($builder);
+
+        $box = $this->getReference('box.1');
+        $deposit = $this->getReference('deposit.1');
+        $response = $this->client->hash($box, $deposit);
+        $this->assertNull($response);
     }
 
     public function testHashBoxDown() {

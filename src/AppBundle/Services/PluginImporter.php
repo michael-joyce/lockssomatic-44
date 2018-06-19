@@ -28,12 +28,12 @@ class PluginImporter {
         'application/java-archive',
         'application/zip',
     );
-    
+
     /**
      * Location of the manifest file inside a .jar file.
      */
     const MANIFEST = 'META-INF/MANIFEST.MF';
-   
+
     /**
      * Name of the manifest key that identifes a lockss plugin xml file.
      */
@@ -62,7 +62,7 @@ class PluginImporter {
         'au_crawlrules',
         'au_start_url',
     );
-    
+
     /**
      * Property trees to import from a plugin's XML.
      */
@@ -97,7 +97,6 @@ class PluginImporter {
         $raw = $zipArchive->getFromName(self::MANIFEST);
         $data = preg_replace('/\r\n/', "\n", $raw);
         $manifest = $this->parseManifest($data);
-        print_r($manifest);
         return $manifest;
     }
 
@@ -339,7 +338,7 @@ class PluginImporter {
             $this->newPluginConfig($plugin, $propName, $value);
         }
     }
-    
+
     /**
      * Build a plugin entity from the XML data and return it.
      *

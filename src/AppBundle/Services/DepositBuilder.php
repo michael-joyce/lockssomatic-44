@@ -12,6 +12,7 @@ namespace AppBundle\Services;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Deposit;
 use AppBundle\Utilities\Namespaces;
+use Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use SimpleXMLElement;
