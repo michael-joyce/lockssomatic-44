@@ -76,7 +76,7 @@ class LockssController extends Controller {
      * @param Request $request
      * @param Pln $pln
      *
-     * @Route("/properties/lockss.{_format}", name="lockss_config", requirements={"_format":"xml"})
+     * @Route("/properties/lockss.xml", name="lockss_config")
      *
      * @Method("GET")
      */
@@ -102,7 +102,7 @@ class LockssController extends Controller {
      * @param ContentProvider $provider
      * @param string $id
      *
-     * @Route("/titledbs/{ownerId}/{providerId}/titledb_{id}.{_format}", name="lockss_titledb", requirements={"_format":"xml"})
+     * @Route("/titledbs/{ownerId}/{providerId}/titledb_{id}.xml", name="lockss_titledb")
      * @ParamConverter("owner", options={"id"="ownerId"})
      * @ParamConverter("provider", options={"id"="providerId"})
      */
