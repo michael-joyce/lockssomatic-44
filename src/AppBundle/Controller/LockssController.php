@@ -7,8 +7,8 @@ use AppBundle\Entity\Box;
 use AppBundle\Entity\ContentOwner;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Pln;
-use AppBundle\Entity\Plugin;
 use AppBundle\Services\FilePaths;
+use Psr\Log\LoggerAwareTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -30,6 +30,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @Method("GET")
  */
 class LockssController extends Controller {
+
+    use LoggerAwareTrait;
 
     /**
      * File path service.
@@ -63,6 +65,7 @@ class LockssController extends Controller {
         $allowed = array_merge($boxIps, $this->getParameter('lom.allowed_ips'));
         $ip = $request->getClientIp();
         if (!IpUtils::checkIp($ip, $allowed)) {
+            $this->logger->critical("Client IP {$ip} is not authorized for {$pln->getName()}.");
             throw new AccessDeniedHttpException("Client IP {$ip} is not authorized for this PLN.");
         }
     }
@@ -73,10 +76,12 @@ class LockssController extends Controller {
      * @param Request $request
      * @param Pln $pln
      *
-     * @Route("/properties/lockss.xml", name="lockss_config")
+     * @Route("/properties/lockss.{_format}", name="lockss_config", requirements={"_format":"xml"})
+     *
      * @Method("GET")
      */
     public function lockssAction(Request $request, Pln $pln) {
+        $this->logger->notice("{$request->getClientIp()} - lockss.xml - {$pln->getName()}");
         $this->checkIp($request, $pln);
         $path = $this->fp->getLockssXmlFile($pln);
         if (!file_exists($path)) {
@@ -97,11 +102,12 @@ class LockssController extends Controller {
      * @param ContentProvider $provider
      * @param string $id
      *
-     * @Route("/titledbs/{ownerId}/{providerId}/titledb_{id}.xml", name="lockss_titledb")
+     * @Route("/titledbs/{ownerId}/{providerId}/titledb_{id}.{_format}", name="lockss_titledb", requirements={"_format":"xml"})
      * @ParamConverter("owner", options={"id"="ownerId"})
      * @ParamConverter("provider", options={"id"="providerId"})
      */
     public function titleDbAction(Request $request, Pln $pln, ContentOwner $owner, ContentProvider $provider, $id) {
+        $this->logger->notice("{$request->getClientIp()} - titledb - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - titledb_{$id}.xml");
         $this->checkIp($request, $pln);
         $path = $this->fp->getTitleDbPath($provider, $id);
         if (!file_exists($path)) {
@@ -128,6 +134,7 @@ class LockssController extends Controller {
      * @ParamConverter("au", options={"id"="auId"})
      */
     public function manifestAction(Request $request, Pln $pln, ContentOwner $owner, ContentProvider $provider, Au $au) {
+        $this->logger->notice("{$request->getClientIp()} - manifest - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - Au #{$au->getId()}");
         $this->checkIp($request, $pln);
         $path = $this->fp->getManifestPath($au);
         if (!file_exists($path)) {
@@ -147,6 +154,7 @@ class LockssController extends Controller {
      * @Route("/plugins/lockssomatic.keystore", name="lockss_keystore")
      */
     public function keystoreAction(Request $request, Pln $pln) {
+        $this->logger->notice("{$request->getClientIp()} - keystore - {$pln->getName()}");
         $this->checkIp($request, $pln);
         $keystore = $pln->getKeystorePath();
         if (!$keystore) {
@@ -172,6 +180,7 @@ class LockssController extends Controller {
      * @Route("/plugins")
      */
     public function pluginListAction(Request $request, Pln $pln) {
+        $this->logger->notice("{$request->getClientIp()} - plugin list - {$pln->getName()}");
         $this->checkIp($request, $pln);
         $path = $this->fp->getPluginsManifestFile($pln);
         if (!$path) {
@@ -192,6 +201,7 @@ class LockssController extends Controller {
      * @Route("/plugins/{filename}", name="lockss_plugin")
      */
     public function pluginAction(Request $request, Pln $pln, $filename) {
+        $this->logger->notice("{$request->getClientIp()} - plugin - {$pln->getName()} - {$filename}");
         $this->checkIp($request, $pln);
 
         $dir = $this->fp->getPluginsExportDir($pln);

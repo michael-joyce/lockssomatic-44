@@ -17,6 +17,7 @@ use AppBundle\Services\DepositBuilder;
 use AppBundle\Utilities\Namespaces;
 use Doctrine\ORM\EntityManagerInterface;
 use Monolog\Logger;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -37,21 +38,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class SwordController extends Controller {
 
-    /**
-     * Logger for the controller.
-     *
-     * @var Logger
-     */
-    private $logger;
-
-    /**
-     * Build the controller.
-     *
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger) {
-        $this->logger = $logger;
-    }
+    use LoggerAwareTrait;
 
     /**
      * Fetch an HTTP header.
@@ -122,6 +109,7 @@ class SwordController extends Controller {
      * @Template()
      */
     public function serviceDocumentAction(Request $request) {
+        $this->logger->notice("{$request->getClientIp()} - service document");
         $uuid = $this->fetchHeader($request, 'On-Behalf-Of', true);
         $provider = $this->getProvider(strtoupper($uuid));
         $plugin = $provider->getPlugin();
@@ -260,6 +248,7 @@ class SwordController extends Controller {
      * @return Response
      */
     public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, AuManager $auManager) {
+        $this->logger->notice("{$request->getClientIp()} - create deposit - {$provider->getName()}");
         $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);
         $deposit = $depositBuilder->fromXml($atom, $provider);
@@ -298,6 +287,7 @@ class SwordController extends Controller {
      * @return Response
      */
     public function editDepositAction(Request $request, ContentProvider $provider, Deposit $deposit, EntityManagerInterface $em) {
+        $this->logger->notice("{$request->getClientIp()} - edit deposit - {$provider->getName()} - {$deposit->getUuid()}");
         $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);
         foreach ($atom->xpath('lom:content') as $node) {
@@ -340,6 +330,7 @@ class SwordController extends Controller {
      * @Template
      */
     public function viewDepositAction(Request $request, ContentProvider $provider, Deposit $deposit) {
+        $this->logger->notice("{$request->getClientIp()} - view deposit - {$provider->getName()} - {$deposit->getUuid()}");
         return array(
             'provider' => $provider,
             'deposit' => $deposit,
@@ -374,6 +365,7 @@ class SwordController extends Controller {
      * @ParamConverter("deposit", class="AppBundle:Deposit", options={"mapping": {"depositUuid"="uuid"}})
      */
     public function statementAction(Request $request, ContentProvider $provider, Deposit $deposit) {
+        $this->logger->notice("{$request->getClientIp()} - statement - {$provider->getName()} - {$deposit->getUuid()}");
         if ($deposit->getAgreement() == 1) {
             $state = 'agreement';
             $stateDescription = 'LOCKSS boxes have harvested the content and agree on the checksum.';
@@ -412,6 +404,7 @@ class SwordController extends Controller {
      * @ParamConverter("deposit", class="AppBundle:Deposit", options={"mapping": {"depositUuid"="uuid"}})
      */
     public function receiptAction(Request $request, ContentProvider $provider, Deposit $deposit) {
+        $this->logger->notice("{$request->getClientIp()} - receipt - {$provider->getName()} - {$deposit->getUuid()}");
         return array(
             'provider' => $provider,
             'deposit' => $deposit,
@@ -437,7 +430,7 @@ class SwordController extends Controller {
      * @ParamConverter("deposit", options={"uuid"="depositUuid"})
      */
     public function originalDepositAction(ContentProvider $provider, Deposit $deposit, $filename) {
-
+        $this->logger->notice("{$request->getClientIp()} - original deposit - {$provider->getName()} - {$deposit->getUuid()} - {$filename}");
     }
 
 }

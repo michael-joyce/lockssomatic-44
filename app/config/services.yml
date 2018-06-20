@@ -30,6 +30,14 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
+    AppBundle\Controller\LockssController:
+        calls:
+            - { method: setLogger, arguments: ['@monolog.logger.lockss'] }
+
+    AppBundle\Controller\SwordController:
+        calls:
+            - { method: setLogger, arguments: ['@monolog.logger.sword'] }
+
     AppBundle\EventListener\BoxListener:
         tags:
             - { name: doctrine.event_listener, event: prePersist }

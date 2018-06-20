@@ -49,6 +49,13 @@
                 <td>{{ deposit.checksumType }}</td>
             </tr>
             <tr>
+                <th>SWORD Statement</th>
+                <td>
+                    <a href="{{ path('sword_statement', {'providerUuid': deposit.contentProvider.uuid, 'depositUuid': deposit.uuid}) }}">
+                        {{ url('sword_statement', {'providerUuid': deposit.contentProvider.uuid, 'depositUuid': deposit.uuid}) }}
+                    </a>
+                </td>
+            <tr>
                 <th>Checksum Value</th>
                 <td>{{ deposit.checksumValue }}</td>
             </tr>
