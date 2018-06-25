@@ -106,7 +106,7 @@ class FetchFileCommand extends ContainerAwareCommand {
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritdoc}
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         $ids = $input->getArgument('id');

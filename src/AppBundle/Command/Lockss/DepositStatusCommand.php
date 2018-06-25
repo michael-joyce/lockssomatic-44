@@ -171,7 +171,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritdoc}
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         $all = $input->getOption('all');

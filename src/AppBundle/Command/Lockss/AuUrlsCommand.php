@@ -67,7 +67,7 @@ class AuUrlsCommand extends ContainerAwareCommand {
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritdoc}
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         $aus = $this->getAus();

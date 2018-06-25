@@ -116,7 +116,7 @@ class BoxStatusCommand extends ContainerAwareCommand {
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritdoc}
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         $boxes = $this->getBoxes($input->getOption('box'));

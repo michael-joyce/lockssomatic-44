@@ -473,7 +473,7 @@ class UpgradeCommand extends ContainerAwareCommand {
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritdoc}
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         if (!$input->getOption('force')) {
