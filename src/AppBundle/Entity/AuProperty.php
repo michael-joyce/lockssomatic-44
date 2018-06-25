@@ -26,15 +26,18 @@ class AuProperty extends AbstractEntity {
      * The name of the property, corresponding to the name attribute in XML.
      *
      * @var string
+     *
      * @ORM\Column(name="property_key", type="string", length=255, nullable=false)
      */
     private $propertyKey;
 
     /**
-     * The value of the property, if the property has a value. Properties with
-     * child properties don't have values.
+     * The value of the property, if the property has a value.
+     *
+     * Properties with child properties don't have values.
      *
      * @var string|array
+     *
      * @ORM\Column(name="property_value", type="text", nullable=true)
      */
     private $propertyValue;
@@ -46,7 +49,7 @@ class AuProperty extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="AuProperty", inversedBy="children")
      * @ORM\JoinColumns({
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
+     *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $parent;
@@ -66,12 +69,12 @@ class AuProperty extends AbstractEntity {
     /**
      * The children of the property.
      *
-     * @ORM\OneToMany(targetEntity="AuProperty", mappedBy="parent")
-     *
      * @var Collection|AuProperty[]
+     *
+     * @ORM\OneToMany(targetEntity="AuProperty", mappedBy="parent")
      */
     private $children;
-    
+
     public function __construct() {
         parent::__construct();
         $this->children = new ArrayCollection();
@@ -199,7 +202,7 @@ class AuProperty extends AbstractEntity {
     public function getChildren() {
         return $this->children;
     }
-    
+
     public function hasChildren() {
         return $this->children->count() > 0;
     }

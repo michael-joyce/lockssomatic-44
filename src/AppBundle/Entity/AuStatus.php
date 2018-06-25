@@ -22,6 +22,8 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 class AuStatus extends AbstractEntity {
 
     /**
+     * Status data as returned from LOCKSS.
+     *
      * @var string
      *
      * @ORM\Column(name="status", type="array")
@@ -29,6 +31,8 @@ class AuStatus extends AbstractEntity {
     private $status;
 
     /**
+     * List fo errors during status check.
+     *
      * @var string
      *
      * @ORM\Column(name="errors", type="array")
@@ -36,6 +40,8 @@ class AuStatus extends AbstractEntity {
     private $errors;
 
     /**
+     * Archival unit for the status.
+     *
      * @var Au
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="auStatus")
@@ -54,7 +60,7 @@ class AuStatus extends AbstractEntity {
      *
      * @return AuStatus
      */
-    public function setStatus($status) {
+    public function setStatus(array $status) {
         $this->status = $status;
 
         return $this;
@@ -76,7 +82,7 @@ class AuStatus extends AbstractEntity {
      *
      * @return AuStatus
      */
-    public function setErrors($errors) {
+    public function setErrors(array $errors) {
         $this->errors = $errors;
 
         return $this;

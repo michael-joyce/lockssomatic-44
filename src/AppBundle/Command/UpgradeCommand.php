@@ -26,28 +26,53 @@ use Symfony\Component\Console\Output\OutputInterface;
 class UpgradeCommand extends ContainerAwareCommand {
 
     /**
+     * Doctrine database connection for the old database.
+     *
      * @var Connection
      */
     private $source;
 
     /**
+     * Entity manager connected to the new database.
+     *
      * @var EntityManagerInterface
      */
     private $em;
 
+
     /**
+     * Mapping of old IDs to new IDs based on class names.
+     *
+     * Something like this if the old user ID was three and the new one was 5.
+     * $idMapping[User::class][3] = 5
+     *
      * @var array
      */
     private $idMapping;
 
     /**
+     * If true the changes will be flushed to the new database.
      * @var bool
      */
     private $force;
 
     /**
+     * Construct the command instance.
+     *
+     * $oldEm is a Doctrine connection configured for the previous version
+     * of the database. $em is an entity manager configured for the current
+     * version.
+     *
+     * This file and the corresponding configuration should both be removed
+     * after the upgrade is complete.
+     *
+     * see app/config/config.yml for examples of the configuration.
+     * see app/config/services.yml to configure the dependency injection.
+     *
      * @param Connection $oldEm
      * @param EntityManagerInterface $em
+     *
+     *
      */
     public function __construct(Connection $oldEm, EntityManagerInterface $em) {
         parent::__construct();
@@ -57,10 +82,25 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->force = false;
     }
 
+    /**
+     * Map an old database ID to a new one.
+     *
+     * @param string $class
+     * @param int $old
+     * @param int $new
+     */
     protected function setIdMap($class, $old, $new) {
         $this->idMapping[$class][$old] = $new;
     }
 
+    /**
+     * Get the new database ID for a $class.
+     *
+     * @param string $class
+     * @param int $old
+     * @param int $default
+     * @return int|null
+     */
     protected function getIdMap($class, $old, $default = null) {
         if (isset($this->idMapping[$class][$old])) {
             return $this->idMapping[$class][$old];
@@ -73,7 +113,14 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->addOption('force', null, InputOption::VALUE_NONE, 'Actually make the database changes.');
     }
 
-
+    /**
+     * Find a new entity based on its class and old ID.
+     *
+     * @param string $class
+     * @param int $oldId
+     * @param mixed $default
+     * @return mixed
+     */
     public function findEntity($class, $oldId, $default = null) {
         $newId = $this->getIdMap($class, $oldId);
         if( ! $newId) {
@@ -83,6 +130,11 @@ class UpgradeCommand extends ContainerAwareCommand {
     }
 
     /**
+     * Perform an upgrade on one table.
+     *
+     * Processes each row of the table with $callback. If $callback returns an
+     * object it is persisted and flushed, and the old ID is mapped to the new one.
+     *
      * @param string $table
      * @param callable $callback
      */
@@ -108,6 +160,9 @@ class UpgradeCommand extends ContainerAwareCommand {
         print "\n";
     }
 
+    /**
+     * Upgrade the users table.
+     */
     public function upgradeUsers() {
         $callback = function($row) {
             if ($row['username'] === 'admin@example.com') {
@@ -128,6 +183,9 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('lom_user', $callback);
     }
 
+    /**
+     * Upgrade the content owners table.
+     */
     public function upgradeContentOwners() {
         $callback = function($row) {
             $owner = new ContentOwner();
@@ -138,6 +196,9 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('content_owners', $callback);
     }
 
+    /**
+     * Upgrade the pln table.
+     */
     public function upgradePlns() {
         $callback = function($row) {
             $entity = new Pln();
@@ -158,6 +219,9 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('plns', $callback);
     }
 
+    /**
+     * Upgrade the plugin table.
+     */
     public function upgradePlugins() {
         $callback = function($row) {
             $entity = new Plugin();
@@ -170,6 +234,11 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('plugins', $callback);
     }
 
+    /**
+     * Upgrade the plugin property table.
+     *
+     * Requires the plugins updated first.
+     */
     public function upgradePluginProperties() {
         $callback = function($row) {
             $entity = new PluginProperty();
@@ -182,6 +251,11 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('plugin_properties', $callback);
     }
 
+    /**
+     * Upgrade the content provider table.
+     *
+     * Requires the pln and plugin tables upgraded first.
+     */
     public function upgradeContentProviders() {
         $callback = function($row) {
             $entity = new ContentProvider();
@@ -198,6 +272,11 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('content_providers', $callback);
     }
 
+    /**
+     * Upgrade the box table.
+     *
+     * Requires the pln table updated first.
+     */
     public function upgradeBoxes() {
         $callback = function($row) {
             $box = new Box();
@@ -215,6 +294,11 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('boxes', $callback);
     }
 
+    /**
+     * Upgrade the box status table.
+     *
+     * Requires the box table upgraded first.
+     */
     public function upgradeBoxStatus() {
         $callback = function($row) {
             $status = new BoxStatus();
@@ -227,6 +311,11 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('box_status', $callback);
     }
 
+    /**
+     * Upgrade the cache status table by moving the statuses to box status.
+     *
+     * Requires the box status table upgraded first.
+     */
     public function upgradeCacheStatus() {
         $callback = function($row) {
             $status = $this->findEntity(BoxStatus::class, $row['boxstatus_id']);
@@ -238,6 +327,11 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('cache_status', $callback);
     }
 
+    /**
+     * Upgrade the Au table.
+     *
+     * Requires the pln, content provider, and plugin tables upgraded first.
+     */
     public function upgradeAus() {
         $callback = function($row) {
             $au = new Au();
@@ -252,6 +346,11 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('aus', $callback);
     }
 
+    /**
+     * Upgrade the AU property table.
+     *
+     * Requires the Au table upgraded first.
+     */
     public function upgradeAuProperties() {
         $callback = function($row) {
             $property = new AuProperty();
@@ -264,6 +363,11 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('au_properties', $callback);
     }
 
+    /**
+     * Upgrade the AU status table.
+     *
+     * Requires the Au table upgraded first.
+     */
     public function upgradeAuStatus() {
         $callback = function($row) {
             $status = new AuStatus();
@@ -276,9 +380,19 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('au_status', $callback);
     }
 
+    /**
+     * Find a row from the content table.
+     *
+     * @staticvar Statement $query
+     *
+     * @param int $depositId
+     *
+     * @return array
+     */
     public function findContent($depositId) {
         static $query = null;
         if( ! $query) {
+            // only initialize the query once. It can be reused.
             $query = $this->source->prepare('SELECT * FROM content WHERE deposit_id = :id');
         }
         $query->execute(array('id' => $depositId));
@@ -287,9 +401,19 @@ class UpgradeCommand extends ContainerAwareCommand {
         return $row;
     }
 
+    /**
+     * Find the properties associated with a content row.
+     *
+     * @staticvar type $query
+     *
+     * @param int $contentId
+     *
+     * @return array
+     */
     public function findContentProperties($contentId) {
         static $query = null;
         if( ! $query) {
+            // only initialize the query once. It can be reused.
             $query = $this->source->prepare('SELECT * FROM content_properties WHERE content_id = :id');
         }
         $query->execute(array('id' => $contentId));
@@ -301,6 +425,13 @@ class UpgradeCommand extends ContainerAwareCommand {
         return $properties;
     }
 
+    /**
+     * Upgrade the deposit table.
+     *
+     * Requires content provider, au, user tables upgraded first.
+     *
+     * Moves all content and content items into the appropriate deposit.
+     */
     public function upgradeDeposits() {
         $callback = function($row) {
             $deposit = new Deposit();
@@ -324,6 +455,11 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('deposits', $callback);
     }
 
+    /**
+     * Upgrade the deposit status table.
+     *
+     * Requires the depost table upgraded first.
+     */
     public function upgradeDepositStatus() {
         $callback = function($row) {
             $status = new DepositStatus();
@@ -336,6 +472,9 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeTable('deposit_status', $callback);
     }
 
+    /**
+     * {@inheritDocs}
+     */
     public function execute(InputInterface $input, OutputInterface $output) {
         if (!$input->getOption('force')) {
             $output->writeln("Will not run without --force.");

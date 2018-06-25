@@ -41,11 +41,15 @@ class FetchFileCommand extends ContainerAwareCommand {
     private $client;
 
     /**
+     * File path service.
+     *
      * @var FilePaths
      */
     private $filePaths;
 
     /**
+     * File system utility.
+     *
      * @var Filesystem
      */
     private $fs;
@@ -102,7 +106,7 @@ class FetchFileCommand extends ContainerAwareCommand {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDocs}
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         $ids = $input->getArgument('id');

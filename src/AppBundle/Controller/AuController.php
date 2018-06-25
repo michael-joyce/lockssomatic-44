@@ -83,9 +83,10 @@ class AuController extends Controller {
     /**
      * Finds and displays a Au entity.
      *
-     * @param Au $au
+     * @param Request $request
      * @param Pln $pln
-     * @param AuManager $manager
+     * @param Au $au
+     * @param EntityManagerInterface $em
      *
      * @return array
      *

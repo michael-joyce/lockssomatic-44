@@ -69,8 +69,10 @@ class Box extends AbstractEntity {
     private $webServiceProtocol;
 
     /**
-     * The box's IP address. The class will resolve it automatically from the
-     * domain name if the ipAddress is null or blank.
+     * The box's IP address.
+     *
+     * The class will resolve it automatically from the domain name if the
+     * ipAddress is null or blank.
      *
      * @var string
      *
@@ -101,10 +103,13 @@ class Box extends AbstractEntity {
     private $contactEmail;
 
     /**
+     * Should LOM send notifications about the box to the box admin?
+     *
      * If true, send the contact email a notification if the box is down or
      * otherwise unreachable.
      *
      * @var bool
+     *
      * @ORM\Column(name="send_notifications", type="boolean", nullable=false, options={"default": false})
      */
     private $sendNotifications;
@@ -112,17 +117,20 @@ class Box extends AbstractEntity {
     /**
      * Timestamped list of box status query results.
      *
-     * @ORM\OneToMany(targetEntity="BoxStatus", mappedBy="box", orphanRemoval=true)
-     *
      * @var Collection|BoxStatus
+     *
+     * @ORM\OneToMany(targetEntity="BoxStatus", mappedBy="box", orphanRemoval=true)
      */
     private $status;
 
     /**
+     * Is the box active and expected to communicate with LOM?
+     *
      * True if the box is active. If the box is inactive, LOCKSSOMatic will
      * not attempt to interact with it. Defaults to true.
      *
      * @var bool
+     *
      * @ORM\Column(name="active", type="boolean", nullable=false, options={"default": true})
      */
     private $active;
@@ -137,6 +145,9 @@ class Box extends AbstractEntity {
      */
     private $pln;
 
+    /**
+     * Construct the Box object.
+     */
     public function __construct() {
         parent::__construct();
         $this->status = new ArrayCollection();
@@ -158,6 +169,11 @@ class Box extends AbstractEntity {
         return $this->ipAddress;
     }
 
+    /**
+     * Get the url to the UI.
+     *
+     * @return string
+     */
     public function getUrl() {
         return "{$this->webServiceProtocol}://{$this}:{$this->webServicePort}";
     }

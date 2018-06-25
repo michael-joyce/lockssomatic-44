@@ -44,6 +44,8 @@ class DepositStatusCommand extends ContainerAwareCommand {
     private $client;
 
     /**
+     * Au manager service.
+     *
      * @var AuManager
      */
     private $manager;
@@ -94,6 +96,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
      *
      * @param Au $au
      * @param boolean $all
+     * @param int $limit
      *
      * @return Generator|Deposit[]
      */
@@ -168,7 +171,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDocs}
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         $all = $input->getOption('all');

@@ -9,11 +9,9 @@
 
 namespace AppBundle\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Default controller for LOCKSSOMatic. Totally open to the public.
@@ -23,21 +21,18 @@ class DefaultController extends Controller {
     /**
      * LOCKSSOMatic home page.
      *
-     * @param Request $request
-     *
      * @return Response
      *
      * @Route("/", name="homepage")
      */
-    public function indexAction(Request $request, EntityManagerInterface $em) {
+    public function indexAction() {
         $user = $this->getUser();
 
         if (!$user || !$user->hasRole('ROLE_USER')) {
             return $this->render('default/index_anon.html.twig');
         }
 
-        return $this->render('default/index_user.html.twig', array(
-        ));
+        return $this->render('default/index_user.html.twig');
     }
 
 }

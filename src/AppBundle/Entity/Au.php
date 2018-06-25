@@ -26,14 +26,17 @@ class Au extends AbstractEntity {
      * True if this AU is managed by LOCKSSOMatic. Defaults to false.
      *
      * @var bool
+     *
      * @ORM\Column(name="open", type="boolean", nullable=false)
      */
     private $open;
 
     /**
-     * @ORM\Column(name="auid", type="string", length=512, nullable=false)
+     * LOCKSSOMatic AUID based on the au properties.
      *
      * @var mixed
+     *
+     * @ORM\Column(name="auid", type="string", length=512, nullable=false)
      */
     private $auid;
 
@@ -275,11 +278,18 @@ class Au extends AbstractEntity {
         return $this->auProperties;
     }
 
+    /**
+     * Check if the AU has any properties.
+     *
+     * @return bool
+     */
     public function hasAuProperties() {
         return !$this->auProperties->isEmpty();
     }
 
     /**
+     * Get the top level AU properties.
+     *
      * @return Collection|AuProperty[]
      */
     public function getRootAuProperties() {
@@ -288,6 +298,12 @@ class Au extends AbstractEntity {
         });
     }
 
+    /**
+     * Get the value of a property.
+     *
+     * @param string $name
+     * @return string|null
+     */
     public function getSimpleAuProperty($name) {
         foreach ($this->auProperties as $property) {
             if ($property->getPropertyKey() === $name) {
@@ -298,6 +314,8 @@ class Au extends AbstractEntity {
     }
 
     /**
+     * Get an AU Property based on the property key.
+     *
      * @return AuProperty|null
      */
     public function getAuProperty($name) {
@@ -310,6 +328,8 @@ class Au extends AbstractEntity {
     }
 
     /**
+     * Get an AU property value based on the key.
+     *
      * @param string $key
      * @return string
      */
