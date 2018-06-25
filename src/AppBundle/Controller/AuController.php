@@ -20,6 +20,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Au controller.
@@ -46,7 +47,8 @@ class AuController extends Controller {
     public function indexAction(Request $request, Pln $pln, AuManager $manager) {
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
-        $qb->select('e')->from(Au::class, 'e')->orderBy('e.id', 'ASC');
+        $qb->select('e')->from(Au::class, 'e')->where('e.pln = :pln')->orderBy('e.id', 'ASC');
+        $qb->setParameter('pln', $pln);
         $query = $qb->getQuery();
         $paginator = $this->get('knp_paginator');
         $aus = $paginator->paginate($query, $request->query->getint('page', 1), 25);
@@ -72,7 +74,9 @@ class AuController extends Controller {
      * @Template()
      */
     public function showAction(Au $au, Pln $pln, AuManager $manager) {
-
+        if($au->getPln() !== $pln) {
+            throw new NotFoundHttpException("PLN {$pln->getName()} does not contain that AU.");
+        }
         return array(
             'au' => $au,
             'pln' => $pln,
@@ -95,6 +99,9 @@ class AuController extends Controller {
      * @Template()
      */
     public function depositsAction(Request $request, Pln $pln, Au $au, EntityManagerInterface $em) {
+        if($au->getPln() !== $pln) {
+            throw new NotFoundHttpException("PLN {$pln->getName()} does not contain that AU.");
+        }
         $repo = $em->getRepository(Au::class);
         $query = $repo->queryDeposits($au);
         $paginator = $this->get('knp_paginator');

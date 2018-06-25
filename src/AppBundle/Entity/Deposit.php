@@ -19,7 +19,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Deposit.
  *
- * @ORM\Table(name="deposit")
+ * @ORM\Table(name="deposit", indexes={
+ *   @ORM\Index(columns={"uuid", "url", "title"}, flags={"fulltext"})
+ * })
  * @ORM\Entity(repositoryClass="AppBundle\Repository\DepositRepository")
  */
 class Deposit extends AbstractEntity {

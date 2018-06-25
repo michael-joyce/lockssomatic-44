@@ -45,7 +45,10 @@
             </tr>
             <tr>
                 <th>Size</th>
-                <td>{{ manager.auSize(au) }}</td>
+                <td>
+                    {% embed 'AppBundle:partial:size.html.twig' with {bytes: manager.auSize(au)} %}
+                    {% endembed %}
+                </td>
             </tr>
             <tr>
                 <th>Comment</th>

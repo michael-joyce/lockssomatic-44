@@ -2,9 +2,9 @@
 
 {% block title %}ContentProvider{% endblock %}
 
-{% block pageheader %} 
+{% block pageheader %}
     <h1>ContentProvider</h1>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
     <div class="btn-toolbar">
@@ -42,11 +42,11 @@
             </tr>
             <tr>
                 <th>Max File Size</th>
-                <td>{{ contentProvider.maxFileSize }}</td>
+                <td>{% embed 'AppBundle:partial:size.html.twig' with {bytes: contentProvider.maxFileSize} %}{% endembed %}</td>
             </tr>
             <tr>
                 <th>Max Au Size</th>
-                <td>{{ contentProvider.maxAuSize }}</td>
+                <td>{% embed 'AppBundle:partial:size.html.twig' with {bytes: contentProvider.maxAuSize} %}{% endembed %}</td>
             </tr>
             <tr>
                 <th>Created</th>
@@ -55,7 +55,7 @@
             <tr>
                 <th>Updated</th>
                 <td>{% if contentProvider.updated %}{{ contentProvider.updated|date }}{% endif %}</td>
-            </tr>        
+            </tr>
             <tr>
                 <th>Content Owner</th>
                 <td>
@@ -63,7 +63,7 @@
                         {{ contentProvider.contentOwner }}
                     </a>
                 </td>
-            </tr>        
+            </tr>
             <tr>
                 <th>Pln</th>
                 <td>
@@ -71,7 +71,7 @@
                         {{ contentProvider.pln }}
                     </a>
                 </td>
-            </tr>        
+            </tr>
             <tr>
                 <th>Plugin</th>
                 <td>
@@ -79,10 +79,10 @@
                         {{ contentProvider.plugin }}
                     </a>
                 </td>
-            </tr>        
+            </tr>
         </tbody>
     </table>
-    {% if contentProvider.aus | length > 0 %}    
+    {% if contentProvider.aus | length > 0 %}
         <h2>AUs</h2>
         <ul>
             {% for au in contentProvider.aus %}
@@ -91,10 +91,10 @@
                         {{ au }}
                     </a>
                 </li>
-            {% endfor %} 
+            {% endfor %}
         </ul>
     {% endif %}
-    {% if contentProvider.deposits | length > 0 %}    
+    {% if contentProvider.deposits | length > 0 %}
         <h2>Deposits</h2>
         <ul>
             {% for deposit in contentProvider.deposits %}
@@ -103,7 +103,7 @@
                         {{ deposit }}
                     </a>
                 </li>
-            {% endfor %} 
+            {% endfor %}
         </ul>
     {% endif %}
 {% endblock %}

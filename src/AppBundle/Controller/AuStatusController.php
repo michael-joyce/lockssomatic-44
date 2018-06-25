@@ -19,6 +19,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * AuStatus controller.
@@ -44,6 +45,9 @@ class AuStatusController extends Controller {
      * @Template()
      */
     public function indexAction(Request $request, Pln $pln, Au $au) {
+        if($au->getPln() !== $pln) {
+            throw new NotFoundHttpException("Unknown AU Status.");
+        }
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
         $qb->select('e')->from(AuStatus::class, 'e')->orderBy('e.id', 'ASC');
@@ -72,6 +76,12 @@ class AuStatusController extends Controller {
      * @Template()
      */
     public function showAction(AuStatus $auStatus, Pln $pln, Au $au) {
+        if($au->getPln() !== $pln) {
+            throw new NotFoundHttpException("Unknown AU Status.");
+        }
+        if($auStatus->getAu() !== $au) {
+            throw new NotFoundHttpException("Unknown AU Status.");
+        }
         return array(
             'auStatus' => $auStatus,
             'pln' => $pln,

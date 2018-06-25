@@ -11,8 +11,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Pln;
-use AppBundle\Form\DepositType;
-use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -20,6 +18,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Deposit controller.
@@ -44,9 +43,8 @@ class DepositController extends Controller {
      */
     public function indexAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
-        $qb = $em->createQueryBuilder();
-        $qb->select('e')->from(Deposit::class, 'e')->orderBy('e.id', 'ASC');
-        $query = $qb->getQuery();
+        $repo = $em->getRepository(Deposit::class);
+        $query = $repo->indexQuery($pln);
         $paginator = $this->get('knp_paginator');
         $deposits = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
@@ -58,19 +56,6 @@ class DepositController extends Controller {
 
     /**
      * Search for Deposit entities.
-     *
-     * To make this work, add a method like this one to the
-     * AppBundle:Deposit repository. Replace the fieldName with
-     * something appropriate, and adjust the generated search.html.twig
-     * template.
-     *
-     * <code><pre>
-     *     public function searchQuery($q) {
-     *         $qb = $this->createQueryBuilder('e');
-     *         $qb->where("e.fieldName like '%$q%'");
-     *         return $qb->getQuery();
-     *     }
-     * </pre></code>
      *
      * @param Request $request
      * @param Pln $pln
@@ -86,7 +71,7 @@ class DepositController extends Controller {
         $repo = $em->getRepository('AppBundle:Deposit');
         $q = $request->query->get('q');
         if ($q) {
-            $query = $repo->searchQuery($q);
+            $query = $repo->searchQuery($q, $pln);
             $paginator = $this->get('knp_paginator');
             $deposits = $paginator->paginate($query, $request->query->getInt('page', 1), 25);
         } else {
@@ -113,7 +98,9 @@ class DepositController extends Controller {
      * @Template()
      */
     public function showAction(Deposit $deposit, Pln $pln) {
-
+        if($deposit->getAu()->getPln() !== $pln) {
+            throw new NotFoundHttpException('No such deposit.');
+        }
         return array(
             'deposit' => $deposit,
             'pln' => $pln,

@@ -7,9 +7,9 @@ it reported the disk space remaining as follows:
 {% for data in boxStatus.data %}
     Cache ID: {{ data.repositorySpaceId }}
     Percentage Full: {{ data.percentageFull * 100 }}%
-    Disk Size: {{ include('AppBundle:util:size.html.twig', {'bytes': data.size}) }}
-    Free Space: {{ include('AppBundle:util:size.html.twig', {'bytes': data.free}) }}
-    Used Space: {{ include('AppBundle:util:size.html.twig', {'bytes': data.used}) }}
+    Disk Size: {% embed 'AppBundle:partial:size.html.twig' with {bytes: data.size} %}{% endembed %}
+    Free Space: {% embed 'AppBundle:partial:size.html.twig' with {bytes: data.size} %}{% endembed %}
+    Used Space: {% embed 'AppBundle:partial:size.html.twig' with {bytes: data.size} %}{% endembed %}
 {% endfor %}
 If you need assistance or have questions about this email, please
 contact {{ contact }}.

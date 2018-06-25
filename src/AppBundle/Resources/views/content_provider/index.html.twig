@@ -7,7 +7,7 @@
     <p class="count">
         Displaying {{ contentProviders|length }} contentProviders of {{ contentProviders.getTotalItemCount }} total.
     </p>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
 
@@ -41,8 +41,8 @@
                     </td>
                     <td>{{ contentProvider.permissionUrl }}</td>
                     <td>{{ contentProvider.name }}</td>
-                    <td>{{ contentProvider.maxFileSize }}</td>
-                    <td>{{ contentProvider.maxAuSize }}</td>
+                    <td>{% embed 'AppBundle:partial:size.html.twig' with {bytes: contentProvider.maxFileSize} %}{% endembed %}</td>
+                    <td>{% embed 'AppBundle:partial:size.html.twig' with {bytes: contentProvider.maxAuSize} %}{% endembed %}</td>
                 </tr>
             {% endfor %}
         </tbody>

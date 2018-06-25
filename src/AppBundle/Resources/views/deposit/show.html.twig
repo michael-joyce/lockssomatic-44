@@ -34,7 +34,7 @@
             </tr>
             <tr>
                 <th>Size</th>
-                <td>{{ deposit.size }}</td>
+                <td>{% embed 'AppBundle:partial:size.html.twig' with {bytes: deposit.size} %}{% endembed %}</td>
             </tr>
             <tr>
                 <th>Agreement</th>

@@ -19,6 +19,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * DepositStatus controller.
@@ -44,9 +45,13 @@ class DepositStatusController extends Controller {
      * @Template()
      */
     public function indexAction(Request $request, Pln $pln, Deposit $deposit) {
+        if($deposit->getAu()->getPln() !== $pln) {
+            throw new NotFoundHttpException('No such deposit.');
+        }
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
-        $qb->select('e')->from(DepositStatus::class, 'e')->orderBy('e.id', 'ASC');
+        $qb->select('e')->from(DepositStatus::class, 'e')->where('e.deposit = :deposit')->orderBy('e.id', 'ASC');
+        $qb->setParameter('deposit', $deposit);
         $query = $qb->getQuery();
         $paginator = $this->get('knp_paginator');
         $depositStatuses = $paginator->paginate($query, $request->query->getint('page', 1), 25);
@@ -72,7 +77,12 @@ class DepositStatusController extends Controller {
      * @Template()
      */
     public function showAction(DepositStatus $depositStatus, Pln $pln, Deposit $deposit) {
-
+        if($deposit->getAu()->getPln() !== $pln) {
+            throw new NotFoundHttpException('No such deposit.');
+        }
+        if($depositStatus->getDeposit() !== $deposit) {
+            throw new NotFoundHttpException('No such deposit status.');
+        }
         return array(
             'depositStatus' => $depositStatus,
             'deposit' => $deposit,

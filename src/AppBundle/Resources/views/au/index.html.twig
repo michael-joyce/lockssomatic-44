@@ -29,7 +29,10 @@
                         </a>
                     </td>
                     <td>{% if au.open %} Yes {% else %} No {% endif %}</td>
-                    <td>{{ manager.auSize(au) }}</td>
+                    <td>
+                        {% embed 'AppBundle:partial:size.html.twig' with {bytes: manager.auSize(au)} %}
+                        {% endembed %}
+                    </td>
                     <td>{{ au.comment }}</td>
                 </tr>
             {% endfor %}

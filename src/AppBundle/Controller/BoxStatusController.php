@@ -44,6 +44,9 @@ class BoxStatusController extends Controller {
      * @Template()
      */
     public function indexAction(Request $request, Pln $pln, Box $box) {
+        if($box->getPln() !== $pln) {
+            throw new NotFoundHttpException("Unknown box.");
+        }
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
         $qb->select('e')->from(BoxStatus::class, 'e')->where('e.box = :box')->orderBy('e.id', 'DESC');
@@ -73,6 +76,12 @@ class BoxStatusController extends Controller {
      * @Template()
      */
     public function showAction(BoxStatus $boxStatus, Pln $pln, Box $box) {
+        if($box->getPln() !== $pln) {
+            throw new NotFoundHttpException("Unknown box.");
+        }
+        if($boxStatus->getBox() !== $box) {
+            throw new NotFoundHttpException("Unknown status.");
+        }
 
         return array(
             'boxStatus' => $boxStatus,

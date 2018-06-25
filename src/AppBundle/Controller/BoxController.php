@@ -103,7 +103,7 @@ class BoxController extends Controller {
      * @Template()
      */
     public function showAction(Pln $pln, Box $box) {
-        if ($pln->getId() !== $box->getPln()->getId()) {
+        if ($box->getPln() !== $pln) {
             throw new NotFoundHttpException("No such box.");
         }
         return array(
@@ -127,7 +127,7 @@ class BoxController extends Controller {
      * @Template()
      */
     public function editAction(Request $request, Pln $pln, Box $box) {
-        if ($pln->getId() !== $box->getId()) {
+        if ($box->getPln() !== $pln) {
             throw new NotFoundHttpException("No such box.");
         }
         $editForm = $this->createForm(BoxType::class, $box);
@@ -161,7 +161,7 @@ class BoxController extends Controller {
      * @Method("GET")
      */
     public function deleteAction(Request $request, Pln $pln, Box $box) {
-        if ($pln->getId() !== $box->getId()) {
+        if ($box->getPln() !== $pln) {
             throw new NotFoundHttpException("No such box.");
         }
         $em = $this->getDoctrine()->getManager();
