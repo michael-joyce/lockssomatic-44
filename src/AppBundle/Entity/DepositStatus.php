@@ -22,6 +22,8 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 class DepositStatus extends AbstractEntity {
 
     /**
+     * Deposit that owns this status.
+     *
      * @var Deposit
      *
      * @ORM\ManyToOne(targetEntity="Deposit", inversedBy="status")
@@ -30,6 +32,8 @@ class DepositStatus extends AbstractEntity {
     private $deposit;
 
     /**
+     * Agreement level, between 0 (no agreement) and 1 (complete agreement).
+     *
      * @var float
      * @ORM\Column(name="agreement", type="float")
      */
@@ -53,11 +57,19 @@ class DepositStatus extends AbstractEntity {
      */
     private $errors;
 
+    /**
+     * Build the deposit status object.
+     */
     public function __construct() {
         parent::__construct();
         $this->errors = array();
     }
 
+    /**
+     * Return the deposit identifier and date of this status check.
+     *
+     * @return string
+     */
     public function __toString() {
         return $this->deposit . ' ' . $this->created->format('c');
     }
@@ -91,7 +103,7 @@ class DepositStatus extends AbstractEntity {
      *
      * @return DepositStatus
      */
-    public function setStatus($status) {
+    public function setStatus(array $status) {
         $this->status = $status;
 
         return $this;
@@ -136,7 +148,7 @@ class DepositStatus extends AbstractEntity {
      *
      * @return DepositStatus
      */
-    public function setErrors($errors)
+    public function setErrors(array $errors)
     {
         $this->errors = $errors;
 

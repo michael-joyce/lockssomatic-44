@@ -88,7 +88,6 @@ class FetchFileCommand extends ContainerAwareCommand {
      * @param bool $uuids
      *
      * @return Generator|Deposit[]
-     *   List of deposits to fetch.
      */
     protected function getDeposits(array $ids, $uuids) {
         $repo = $this->em->getRepository(Deposit::class);

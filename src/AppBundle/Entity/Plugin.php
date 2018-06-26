@@ -23,8 +23,14 @@ use SplFileInfo;
  */
 class Plugin extends AbstractEntity {
 
+    /**
+     * Name of the XML element that defines the plugin properties.
+     */
     const CONFIG_PROPS = 'plugin_config_props';
 
+    /**
+     * Name of the XML element that defines the configuration parameters.
+     */
     const DESCR_NAME = 'org.lockss.daemon.ConfigParamDescr';
 
     /**
@@ -69,6 +75,8 @@ class Plugin extends AbstractEntity {
     private $generateManifests;
 
     /**
+     * List of LOM-generated parameters.
+     *
      * @var array
      * @ORM\Column(name="generated_params", type="array", nullable=false)
      */
@@ -77,30 +85,33 @@ class Plugin extends AbstractEntity {
     /**
      * AUs created for this plugin.
      *
+     * @var Au[]|Collection
      * @ORM\OneToMany(targetEntity="Au", mappedBy="plugin")
      *
-     * @var Au[]|Collection
      */
     private $aus;
 
     /**
      * Content owners which use the plugin.
      *
+     * @var ContentOwner[]|Collection
      * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="plugin")
      *
-     * @var ContentOwner[]|Collection
      */
     private $contentProviders;
 
     /**
      * Properties for the plugin.
      *
+     * @var PluginProperty[]|Collection
      * @ORM\OneToMany(targetEntity="PluginProperty", mappedBy="plugin")
      *
-     * @var PluginProperty[]|Collection
      */
     private $pluginProperties;
 
+    /**
+     * Build the plugin.
+     */
     public function __construct() {
         parent::__construct();
         $this->generatedParams = array();
@@ -110,6 +121,11 @@ class Plugin extends AbstractEntity {
         $this->pluginProperties = new ArrayCollection();
     }
 
+    /**
+     * Get the name of the plugin or the empty string if it does not have one.
+     *
+     * @return string
+     */
     public function __toString() {
         if ($this->name) {
             return $this->name;
@@ -412,8 +428,7 @@ class Plugin extends AbstractEntity {
     }
 
     /**
-     * Convenience method. Get the plugin parameter names which are not
-     * definitonal.
+     * Get the plugin parameter names which are not definitonal.
      *
      * @return ArrayCollection|PluginProperty[]
      */
@@ -471,7 +486,7 @@ class Plugin extends AbstractEntity {
      *
      * @return Plugin
      */
-    public function setGeneratedParams($generatedParams) {
+    public function setGeneratedParams(array $generatedParams) {
         $this->generatedParams = $generatedParams;
 
         return $this;

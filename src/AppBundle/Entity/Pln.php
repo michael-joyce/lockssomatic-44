@@ -23,13 +23,15 @@ use SplFileInfo;
  */
 class Pln extends AbstractEntity {
 
+    /**
+     * Mime types acceptable for java keystores.
+     */
     const KEYSTORE_MIMETYPES = array(
         'application/x-java-keystore',
     );
 
     /**
-     * LOCKSS will only recognize these properties in an XML file if they
-     * are lists.
+     * LOCKSS will only recognize these properties in an XML file if they are lists.
      */
     const LIST_REQUIRED = array(
         'org.lockss.id.initialV3PeerList',
@@ -55,8 +57,9 @@ class Pln extends AbstractEntity {
     private $description;
 
     /**
-     * The username for LOCKSSOMatic to communicate with the box. Not in the
-     * lockss.xml file.
+     * The username for LOCKSSOMatic to communicate with the box.
+     *
+     * Not in the lockss.xml file.
      *
      * @var string
      *
@@ -74,6 +77,8 @@ class Pln extends AbstractEntity {
     private $password;
 
     /**
+     * Contact email address for automated notifications.
+     *
      * @var string
      * @ORM\Column(name="email", type="string", length=64, nullable=true)
      */
@@ -98,6 +103,8 @@ class Pln extends AbstractEntity {
     /**
      * Java Keystore file.
      *
+     * @var string
+     *
      * @ORM\Column(name="keystore_path", type="string", length=255, nullable=true)
      */
     private $keystore;
@@ -105,40 +112,44 @@ class Pln extends AbstractEntity {
     /**
      * PLN Properties, as defined by the lockss.xml file and LOCKSSOMatic.
      *
-     * @ORM\Column(name="property", type="array", nullable=false);
-     *
      * @var array
+     *
+     * @ORM\Column(name="property", type="array", nullable=false);
      */
     private $properties;
 
     /**
      * A list of all AUs in the PLN. Probably very large.
      *
-     * @ORM\OneToMany(targetEntity="Au", mappedBy="pln")
-     *
      * @var Collection|Au[]
+     *
+     * @ORM\OneToMany(targetEntity="Au", mappedBy="pln")
      */
     private $aus;
 
     /**
      * List of boxes in the PLN.
      *
-     * @ORM\OneToMany(targetEntity="Box", mappedBy="pln");
-     *
      * @var Collection|Box[]
+     *
+     * @ORM\OneToMany(targetEntity="Box", mappedBy="pln");
      */
     private $boxes;
 
     /**
-     * List of content providers for this PLN. Each provider is associated with
-     * exactly one PLN.
+     * List of content providers for this PLN.
      *
-     * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="pln")
+     * Each provider is associated with exactly one PLN.
      *
      * @var Pln[]|Collection
+     *
+     * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="pln")
      */
     private $contentProviders;
 
+    /**
+     * Construct the pln objects.
+     */
     public function __construct() {
         parent::__construct();
         $this->enableContentUi = false;
@@ -149,6 +160,11 @@ class Pln extends AbstractEntity {
         $this->aus = new ArrayCollection();
     }
 
+    /**
+     * Return the name of the PLN.
+     *
+     * @return string
+     */
     public function __toString() {
         return $this->name;
     }
@@ -300,6 +316,8 @@ class Pln extends AbstractEntity {
     }
 
     /**
+     * Set a property of the PLN.
+     *
      * @param string $key
      * @param string|array $value
      * @return Pln
@@ -321,6 +339,12 @@ class Pln extends AbstractEntity {
         return $this;
     }
 
+    /**
+     * Get a property of the PLN.
+     *
+     * @param string $key
+     * @return mixed
+     */
     public function getProperty($key) {
         if (!array_key_exists($key, $this->properties)) {
             return null;
@@ -328,6 +352,11 @@ class Pln extends AbstractEntity {
         return $this->properties[$key];
     }
 
+    /**
+     * Remove a property from the PLN.
+     *
+     * @param string $key
+     */
     public function removeProperty($key) {
         unset($this->properties[$key]);
     }
@@ -425,6 +454,11 @@ class Pln extends AbstractEntity {
         return $this->keystore;
     }
 
+    /**
+     * Get the name of the keystore file.
+     *
+     * @return string
+     */
     public function getKeystoreFilename() {
         $fileinfo = new SplFileInfo($this->keystore);
         return $fileinfo->getBasename();
@@ -462,6 +496,8 @@ class Pln extends AbstractEntity {
     }
 
     /**
+     * Get a list of plugins for the PLN.
+     *
      * @return Plugin[]
      */
     public function getPlugins() {
@@ -516,7 +552,7 @@ class Pln extends AbstractEntity {
      *
      * @return Pln
      */
-    public function setProperties($properties)
+    public function setProperties(array $properties)
     {
         $this->properties = $properties;
 
@@ -526,11 +562,11 @@ class Pln extends AbstractEntity {
     /**
      * Add aus
      *
-     * @param \AppBundle\Entity\Au $aus
+     * @param Au $aus
      *
      * @return Pln
      */
-    public function addAus(\AppBundle\Entity\Au $aus)
+    public function addAus(Au $aus)
     {
         $this->aus[] = $aus;
 
@@ -540,9 +576,9 @@ class Pln extends AbstractEntity {
     /**
      * Remove aus
      *
-     * @param \AppBundle\Entity\Au $aus
+     * @param Au $aus
      */
-    public function removeAus(\AppBundle\Entity\Au $aus)
+    public function removeAus(Au $aus)
     {
         $this->aus->removeElement($aus);
     }

@@ -23,8 +23,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ContentProvider extends AbstractEntity {
 
     /**
-     * The UUID for the provider. SWORD requests must include this UUID in the
-     * On-Behalf-Of header or in the URL.
+     * The UUID for the provider.
+     *
+     * SWORD requests must include this UUID in the On-Behalf-Of header
+     * or in the URL.
      *
      * @var string
      *
@@ -34,8 +36,9 @@ class ContentProvider extends AbstractEntity {
     private $uuid;
 
     /**
-     * LOCKSS permission URL for the provider. Must be on the same host
-     * as the content.
+     * LOCKSS permission URL for the provider.
+     *
+     * Must be on the same host as the content.
      *
      * @var string
      *
@@ -72,8 +75,9 @@ class ContentProvider extends AbstractEntity {
     private $maxAuSize;
 
     /**
-     * The owner for the provider. Providers make deposit on behalf
-     * of owners.
+     * The owner for the provider.
+     *
+     * Providers make deposit on behalf of owners.
      *
      * @var ContentOwner
      *
@@ -111,18 +115,18 @@ class ContentProvider extends AbstractEntity {
     /**
      * List of AUs for the provider.
      *
-     * @ORM\OneToMany(targetEntity="Au", mappedBy="contentProvider")
-     *
      * @var Au[]|Collection
+     *
+     * @ORM\OneToMany(targetEntity="Au", mappedBy="contentProvider")
      */
     private $aus;
 
     /**
      * Deposits made by the provider.
      *
-     * @ORM\OneToMany(targetEntity="Deposit", mappedBy="contentProvider")
-     *
      * @var Collection|Deposit[]
+     *
+     * @ORM\OneToMany(targetEntity="Deposit", mappedBy="contentProvider")
      */
     private $deposits;
 

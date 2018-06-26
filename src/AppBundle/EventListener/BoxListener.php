@@ -23,8 +23,9 @@ class BoxListener {
     use LoggerAwareTrait;
 
     /**
-     * Look up the IP address of a host name. Returns null if the hostname
-     * cannot be found.
+     * Look up the IP address of a host name.
+     *
+     * Returns null if the hostname cannot be found.
      */
     private function lookup($hostname) {
         $ip = gethostbyname($hostname);
@@ -35,6 +36,11 @@ class BoxListener {
         return $ip;
     }
 
+    /**
+     * Automatically called before persisting a box to find its IP.
+     *
+     * @param LifecycleEventArgs $args
+     */
     public function prePersist(LifecycleEventArgs $args) {
         $entity = $args->getEntity();
         if (!$entity instanceof Box) {

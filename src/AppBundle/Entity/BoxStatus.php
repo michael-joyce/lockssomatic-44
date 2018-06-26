@@ -23,6 +23,8 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 class BoxStatus extends AbstractEntity {
 
     /**
+     * Box that owns the status.
+     *
      * @var Box
      *
      * @ORM\ManyToOne(targetEntity="Box", inversedBy="status")
@@ -31,6 +33,8 @@ class BoxStatus extends AbstractEntity {
     private $box;
 
     /**
+     * Was the status check successful?
+     *
      * @var bool
      *
      * @ORM\Column(name="success", type="boolean")
@@ -38,6 +42,8 @@ class BoxStatus extends AbstractEntity {
     private $success;
 
     /**
+     * Errors during the status check.
+     *
      * @var string
      *
      * @ORM\Column(name="errors", type="text", nullable=true)
@@ -45,6 +51,8 @@ class BoxStatus extends AbstractEntity {
     private $errors;
 
     /**
+     * Status data.
+     *
      * @var array
      *
      * @ORM\Column(name="data", type="array", nullable=false)
@@ -141,7 +149,7 @@ class BoxStatus extends AbstractEntity {
      *
      * @return BoxStatus
      */
-    public function setData($data) {
+    public function setData(array $data) {
             $this->data = $data;
 
         return $this;

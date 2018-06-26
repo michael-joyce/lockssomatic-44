@@ -155,6 +155,18 @@ class DepositStatusCommand extends ContainerAwareCommand {
         return $depositStatus;
     }
 
+    /**
+     * Query the deposits in a PLN.
+     *
+     * If $all is true, all deposits will be queried regardless of status. If
+     * $dryRun is true the results will not be flushed to the database. If $limit
+     * is not zero, only the first $limit deposits will be checked.
+     *
+     * @param Pln $pln
+     * @param bool $all
+     * @param bool $dryRun
+     * @param int $limit
+     */
     protected function queryPln(Pln $pln, $all, $dryRun, $limit) {
         $boxes = $pln->getBoxes();
 

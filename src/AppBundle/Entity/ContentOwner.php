@@ -42,9 +42,11 @@ class ContentOwner extends AbstractEntity {
     private $emailAddress;
 
     /**
-     * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="contentOwner")
+     * List of content providers for this owner.
      *
      * @var Collection|ContentProvider[]
+     *
+     * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="contentOwner")
      */
     private $contentProviders;
 

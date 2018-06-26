@@ -18,25 +18,32 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ConfigUpdater {
 
     /**
-     * @var string
+     * Number of AUs in a titledb XML file.
+     *
+     * @var int
      */
     private $ausPerTitleDb;
 
     /**
+     * URL Generator.
+     *
      * @var UrlGeneratorInterface
      */
     private $urlGenerator;
 
     /**
+     * AU Manager service.
+     *
      * @var AuManager
      */
     private $auManager;
 
     /**
+     * Construct the updater service.
      *
      * @param int $ausPerTitleDb
      * @param UrlGeneratorInterface $urlGenerator
-     * @param AuPropertyGenerator $auManager
+     * @param AuManager $auManager
      */
     public function __construct($ausPerTitleDb, UrlGeneratorInterface $urlGenerator, AuManager $auManager) {
         $this->ausPerTitleDb = $ausPerTitleDb;

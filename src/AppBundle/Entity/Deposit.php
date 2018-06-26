@@ -27,7 +27,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Deposit extends AbstractEntity {
 
     /**
-     * The UUID for the deposit. Should be UPPERCASE.
+     * The UUID for the deposit.
+     *
+     * Should be UPPERCASE.
      *
      * @var string
      *
@@ -39,9 +41,9 @@ class Deposit extends AbstractEntity {
     /**
      * The URL for the content.
      *
-     * @todo is 255 long enough?
-     *
      * @var string
+     *
+     * @todo is 255 long enough?
      *
      * @Assert\Url()
      * @ORM\Column(name="url", type="string", length=255, nullable=false)
@@ -123,9 +125,10 @@ class Deposit extends AbstractEntity {
     /**
      * The (optional) user making the deposit, perhaps via the gui.
      *
+     * @var User
+     *
      * @ORM\ManyToOne(targetEntity="Nines\UserBundle\Entity\User")
      *
-     * @var User
      */
     private $user;
 
@@ -472,8 +475,7 @@ class Deposit extends AbstractEntity {
     }
 
     /**
-     * Get the value of a content property, optionally encoded to
-     * LOCKSS standards.
+     * Get the value of a content property, optionally encoded to LOCKSS standards.
      *
      * @param string $key
      *

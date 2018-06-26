@@ -14,7 +14,7 @@ use BeSimple\SoapCommon\Cache;
 use Exception;
 
 /**
- * Description of SoapClientBuilder
+ * Injectable and overrideable SOAP client builder.
  */
 class SoapClientBuilder {
 
@@ -32,12 +32,14 @@ class SoapClientBuilder {
     );
 
     /**
+     * Build and return a SOAP client.
+     *
      * @param string $wsdl
      * @param array $auth
      * @param array $soapOptions
      * @return SoapClient
      */
-    public function build($wsdl, $auth, array $soapOptions = []) {
+    public function build($wsdl, array $auth, array $soapOptions = []) {
         $options = array_merge(self::SOAP_OPTS, $soapOptions, $auth);
         try {
             $client = @new SoapClient($wsdl, $options);

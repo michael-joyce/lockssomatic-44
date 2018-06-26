@@ -9,7 +9,6 @@
 
 namespace AppBundle\Services;
 
-use AppBundle\Entity\Deposit;
 use AppBundle\Entity\Pln;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -29,30 +28,49 @@ class ConfigExporter {
     private $ausPerTitleDb;
 
     /**
+     * Doctrine instance.
+     *
      * @var EntityManagerInterface
      */
     private $em;
 
     /**
+     * Templating engine service.
+     *
      * @var EngineInterface
      */
     private $templating;
 
     /**
+     * File path service.
+     *
      * @var FilePaths
      */
     private $fp;
 
     /**
+     * File system utility.
+     *
      * @var Filesystem
      */
     private $fs;
 
     /**
+     * Au manager service.
+     * 
      * @var AuManager
      */
     private $manager;
 
+    /**
+     * Build the exporter.
+     *
+     * @param type $ausPerTitleDb
+     * @param EntityManagerInterface $em
+     * @param EngineInterface $templating
+     * @param FilePaths $fp
+     * @param AuManager $manager
+     */
     public function __construct($ausPerTitleDb, EntityManagerInterface $em, EngineInterface $templating, FilePaths $fp, AuManager $manager) {
         $this->ausPerTitleDb = $ausPerTitleDb;
         $this->em = $em;
@@ -62,10 +80,20 @@ class ConfigExporter {
         $this->manager = $manager;
     }
 
+    /**
+     * Set or override the file path service.
+     *
+     * @param FilePaths $fp
+     */
     public function setFilePaths(FilePaths $fp) {
         $this->fp = $fp;
     }
 
+    /**
+     * Set or override the AU manager service.
+     *
+     * @param AuManager $manager
+     */
     public function setAuManager(AuManager $manager) {
         $this->manager = $manager;
     }
@@ -153,6 +181,10 @@ class ConfigExporter {
     }
 
     /**
+     * Export a PLN.
+     *
+     * @param Pln $pln
+     *
      * @codeCoverageIgnore
      */
     public function export(Pln $pln) {

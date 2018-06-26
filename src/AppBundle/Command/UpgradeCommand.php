@@ -138,7 +138,7 @@ class UpgradeCommand extends ContainerAwareCommand {
      * @param string $table
      * @param callable $callback
      */
-    public function upgradeTable($table, $callback) {
+    public function upgradeTable($table, callable $callback) {
         $countQuery = $this->source->query("SELECT count(*) c FROM {$table}");
         $countRow = $countQuery->fetch();
         print "upgrading {$countRow['c']} entities in {$table}.\n";
@@ -383,9 +383,9 @@ class UpgradeCommand extends ContainerAwareCommand {
     /**
      * Find a row from the content table.
      *
-     * @staticvar Statement $query
-     *
      * @param int $depositId
+     *
+     * @staticvar Statement $query
      *
      * @return array
      */
@@ -404,9 +404,9 @@ class UpgradeCommand extends ContainerAwareCommand {
     /**
      * Find the properties associated with a content row.
      *
-     * @staticvar type $query
-     *
      * @param int $contentId
+     *
+     * @staticvar type $query
      *
      * @return array
      */

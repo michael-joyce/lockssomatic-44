@@ -20,12 +20,17 @@ use Psr\Log\LoggerAwareTrait;
 use ReflectionClass;
 
 /**
- * Description of LockssClient.
+ * Client to interact with the LOCKSS daemon.
  */
 class LockssClient {
 
     use LoggerAwareTrait;
 
+    /**
+     * Default http options.
+     *
+     * Not used for the SOAP calls, just the content fetch command.
+     */
     const GUZZLE_OPTS = array(
         'allow_redirects' => true,
         'headers' => array(
@@ -34,39 +39,62 @@ class LockssClient {
         'decode_content' => false,
     );
 
-    // getAuStatus
-    // isDaemonReady
-    // queryRepositories
-    // queryRepositorySpaces.
+    /**
+     * URL suffix for the status service.
+     *
+     * Used for calls to getAuStatus, isDaemonReady, queryRepositories and
+     * queryRepositorySpaces.
+     */
     const STATUS_SERVICE = 'ws/DaemonStatusService?wsdl';
 
-    // Hash.
+    /**
+     * URL suffix for the hasher service.
+     */
     const HASHER_SERVICE = 'ws/HasherService?wsdl';
 
-    // isUrlCached
-    // fetchFile.
+    /**
+     * URL suffix for the content service.
+     *
+     * Used for calls to isUrlCached.
+     */
     const CONTENT_SERVICE = 'ws/ContentService?wsdl';
 
     /**
+     * Au manager service.
+     *
      * @var AuManager
      */
     private $auManager;
 
     /**
+     * List of errors in the most recent SOAP call.
+     *
      * @var array
      */
     private $errors;
 
     /**
+     * SOAP client builder service.
+     *
      * @var SoapClientBuilder
      */
     private $builder;
 
     /**
+     * Guzzle HTTP client.
+     *
      * @var Client
      */
     private $httpClient;
 
+    /**
+     * Construct the LOCKSS client.
+     *
+     * This client is reusable.
+     *
+     * @param AuManager $auManager
+     * @param SoapClientBuilder $builder
+     */
     public function __construct(AuManager $auManager, SoapClientBuilder $builder) {
         $this->auManager = $auManager;
         $this->errors = array();
@@ -74,18 +102,41 @@ class LockssClient {
         $this->httpClient = new Client();
     }
 
-    public function setSoapClientBuilder($builder) {
+    /**
+     * Set or override the soap client builder service.
+     *
+     * @param SoapClientBuilder $builder
+     */
+    public function setSoapClientBuilder(SoapClientBuilder $builder) {
         $this->builder = $builder;
     }
 
+    /**
+     * Set or override the http client.
+     *
+     * @param Client $client
+     */
     public function setHttpClient(Client $client) {
         $this->client = $client;
     }
 
+    /**
+     * Error handler for SOAP errors.
+     *
+     * @param int $errno
+     * @param string $errstr
+     * @param string $errfile
+     * @param string $errline
+     */
     public function errorHandler($errno, $errstr, $errfile, $errline) {
         $this->errors[] = implode(':', ['Error', $errstr]);
     }
 
+    /**
+     * Exception handler for the SOAP calls.
+     *
+     * @param Exception $e
+     */
     public function exceptionHandler(Exception $e) {
         $reflection = new ReflectionClass($e);
         $this->errors[] = implode(':', [
@@ -95,14 +146,27 @@ class LockssClient {
         ]);
     }
 
+    /**
+     * Fetch a list of errors during the most recent SOAP call.
+     *
+     * @return array
+     */
     public function getErrors() {
         return $this->errors;
     }
 
+    /**
+     * Clear error list.
+     */
     public function clearErrors() {
         $this->errors = array();
     }
 
+    /**
+     * Check if the most recent SOAP call generated errors.
+     *
+     * @return bool
+     */
     public function hasErrors() {
         return count($this->errors) > 0;
     }
@@ -110,9 +174,20 @@ class LockssClient {
     /**
      * Call $method in the $service URL for $box.
      *
+     * The caller should $client->clearErrors() beforehand.
+     *
+     * Calls out $method in $service with parameters $params and SOAP options
+     * in $soapOptions.
+     *
+     * @param Box $box
+     * @param string $service
+     * @param string $method
+     * @param array $params
+     * @param array $soapOptions
+     *
      * @return mixed
      */
-    public function call(Box $box, $service, $method, $params = array(), $soapOptions = array()) {
+    public function call(Box $box, $service, $method, array $params = array(), array $soapOptions = array()) {
         set_error_handler(array($this, 'errorHandler'), E_ALL);
         set_exception_handler(array($this, 'exceptionHandler'));
 
@@ -145,6 +220,8 @@ class LockssClient {
     /**
      * Check if the box is up and running and ready to communicate.
      *
+     * @param Box $box
+     *
      * @return bool
      */
     public function isDaemonReady(Box $box) {
@@ -154,8 +231,10 @@ class LockssClient {
     /**
      * Check on the status of an AU.
      *
-     * @return array
-     *  key => value pairs.
+     * @param Box $box
+     * @param Au $au
+     *
+     * @return null|array
      */
     public function getAuStatus(Box $box, Au $au) {
         if (!$this->isDaemonReady($box)) {
@@ -171,8 +250,10 @@ class LockssClient {
     /**
      * Fetch a list of the URLs preserved by $box in $au.
      *
-     * @return array
-     *  URLs as strings.
+     * @param Box $box
+     * @param Au $au
+     *
+     * @return null|array
      */
     public function getAuUrls(Box $box, Au $au) {
         if (!$this->isDaemonReady($box)) {
@@ -187,8 +268,9 @@ class LockssClient {
     /**
      * Check the available space on $box.
      *
-     * @return array
-     *   Array of arrays with key => value pairs.
+     * @param Box $box
+     *
+     * @return null|array
      */
     public function queryRepositorySpaces(Box $box) {
         if (!$this->isDaemonReady($box)) {
@@ -245,11 +327,14 @@ class LockssClient {
     /**
      * Check if $box has cached $deposit yet.
      *
+     * @param Box $box
+     * @param Deposit $deposit
+     *
      * @return bool
      */
     public function isUrlCached(Box $box, Deposit $deposit) {
         if (!$this->isDaemonReady($box)) {
-            return;
+            return false;
         }
         $auid = $this->auManager->generateAuidFromAu($deposit->getAu());
         return $this->call($box, self::CONTENT_SERVICE, 'isUrlCached', array(
@@ -271,7 +356,7 @@ class LockssClient {
      * @param Box $box
      * @param Deposit $deposit
      *
-     * @return resource
+     * @return null|array
      */
     public function fetchFile(Box $box, Deposit $deposit) {
         if (!$this->isDaemonReady($box)) {
