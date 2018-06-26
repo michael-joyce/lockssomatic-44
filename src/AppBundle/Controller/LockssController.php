@@ -182,7 +182,7 @@ class LockssController extends Controller {
         $this->logger->notice("{$request->getClientIp()} - plugin list - {$pln->getName()}");
         $this->checkIp($request, $pln);
         $path = $this->fp->getPluginsManifestFile($pln);
-        if (!$path) {
+        if (!file_exists($path)) {
             throw new NotFoundHttpException('The requested plugin manifest does not exist.');
         }
         return new BinaryFileResponse($path, 200, array(
@@ -205,8 +205,8 @@ class LockssController extends Controller {
 
         $dir = $this->fp->getPluginsExportDir($pln);
         $path = $dir . '/' . $filename;
-        if (!$path) {
-            throw new NotFoundHttpException('The requested plugin does not exist.');
+        if (!file_exists($path)) {
+            throw new NotFoundHttpException('The requested plugin does not exist at ' . $path);
         }
         return new BinaryFileResponse($path, 200, array(
             'Content-Type' => 'application/java-archive',
