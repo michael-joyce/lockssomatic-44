@@ -60,4 +60,22 @@ class AuControllerTest extends BaseTestCase {
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
+
+    public function testAnonDeposits() {
+        $client = $this->makeClient();
+        $crawler = $client->request('GET', '/pln/1/au/1/deposits');
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+    }
+
+    public function testUserDeposits() {
+        $client = $this->makeClient(LoadUser::USER);
+        $crawler = $client->request('GET', '/pln/1/au/1/deposits');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminDeposits() {
+        $client = $this->makeClient(LoadUser::ADMIN);
+        $crawler = $client->request('GET', '/pln/1/au/1/deposits');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    }
 }

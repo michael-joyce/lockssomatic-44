@@ -94,7 +94,7 @@ class AuController extends Controller {
      *
      * @return array
      *
-     * @Route("/{id}", name="au_deposits")
+     * @Route("/{id}/deposits", name="au_deposits")
      * @Method("GET")
      * @Template()
      */
