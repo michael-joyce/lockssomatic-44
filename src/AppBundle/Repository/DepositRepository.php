@@ -30,7 +30,7 @@ class DepositRepository extends EntityRepository {
         $qb = $this->createQueryBuilder('e');
         $qb->addSelect("MATCH(e.uuid, e.url, e.title) AGAINST(:q BOOLEAN) AS HIDDEN score");
         $qb->setParameter('q', $q);
-        $qb->andWhere('MATCH(e.uuid, e.url, e.title) AGAINST(:q BOOLEAN) > 0.5');
+        $qb->andWhere('MATCH(e.uuid, e.url, e.title) AGAINST(:q BOOLEAN) > 0.0');
         $qb->orderBy("score", "desc");
         if ($pln) {
             $qb->innerJoin('e.au', 'a');

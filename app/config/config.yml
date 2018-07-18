@@ -61,7 +61,7 @@ framework:
 twig:
     form_themes:
         - 'bootstrap_3_horizontal_layout.html.twig'
-        - '@NinesUtilBundle/Form/fields.html.twig'
+        - 'NinesUtilBundle:form:fields.html.twig'
         - '::jquery.collection.html.twig'
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
