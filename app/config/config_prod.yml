@@ -1,23 +1,12 @@
 imports:
     - { resource: config.yml }
 
-#doctrine:
-#    orm:
-#        metadata_cache_driver: apc
-#        result_cache_driver: apc
-#        query_cache_driver: apc
-
 monolog:
     use_microseconds: false
     handlers:
         main:
-            type: fingers_crossed
-            action_level: error
-            handler: nested
-        nested:
-            type: stream
+            type: rotating_file
             path: '%kernel.logs_dir%/%kernel.environment%.log'
             level: warning
-        console:
-            type: console
-            process_psr_3_messages: false
+            channels: ['!lockss', '!sword', '!event', '!doctrine', '!console', '!translation']
+            max_files: 30
