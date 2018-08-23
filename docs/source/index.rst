@@ -10,6 +10,11 @@ Welcome to LOCKSSOMatic's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   parameters
+   install
+   install-dev
+   setup
+   curling
 
 
 Indices and tables
