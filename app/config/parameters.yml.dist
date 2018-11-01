@@ -29,7 +29,7 @@ parameters:
     lom.hash_methods: [ 'SHA1', 'MD5' ]
 
     # IPs that are allowed to access LOCKSS configs, in addition to the boxes.
-    # IPs and CIDRs are allowed, in both v4 and v6. These IPs are allowed to 
+    # IPs and CIDRs are allowed, in both v4 and v6. These IPs are allowed to
     # access the LOCKSS configs for any network.
     lom.allowed_ips:
         - 127.0.0.1
@@ -39,7 +39,7 @@ parameters:
     # Number of AUs to include in a titledb.xml file.
     lom.aus_per_titledb: 50
 
-    # LOM can send a warning to boxes which are using more than this much 
+    # LOM can send a warning to boxes which are using more than this much
     # disk space.
     lom.boxstatus.sizewarning: 0.90
 
@@ -48,3 +48,6 @@ parameters:
     lom.boxstatus.subject: 'LOCKSSOMatic Box Status'
     lom.boxstatus.sender: noreply@example.com
     lom.boxstatus.contact: lom@example.com
+
+    # If you cannot serve https, change this to http.
+    lom.secure_channel: https
