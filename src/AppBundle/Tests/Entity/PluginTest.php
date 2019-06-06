@@ -24,7 +24,7 @@ class PluginTest extends BaseTestCase {
         ];
     }
     
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
     }
     

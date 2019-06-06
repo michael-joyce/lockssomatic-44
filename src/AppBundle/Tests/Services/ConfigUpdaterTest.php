@@ -35,7 +35,7 @@ class ConfigUpdaterTest extends BaseTestCase {
      */
     private $updater;
 
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->updater = $this->container->get(ConfigUpdater::class);
     }

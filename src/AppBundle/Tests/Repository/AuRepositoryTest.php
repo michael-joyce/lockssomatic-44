@@ -17,7 +17,7 @@ class AuRepositoryTest extends BaseTestCase {
      */
     private $repo;
 
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->repo = $this->em->getRepository(Au::class);
     }

@@ -14,6 +14,7 @@ use AppBundle\Entity\Deposit;
 use AppBundle\Services\DepositBuilder;
 use AppBundle\Utilities\Namespaces;
 use DateTime;
+use Exception;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 use SimpleXMLElement;
 
@@ -33,7 +34,7 @@ class DepositBuilderTest extends BaseTestCase {
         ];
     }
 
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->builder = $this->container->get(DepositBuilder::class);
     }
@@ -52,11 +53,8 @@ class DepositBuilderTest extends BaseTestCase {
         $this->assertEquals('', $deposit->getSummary());
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Multiple content elements not supported in deposit.
-     */
     public function testFromXmlMultipleDeposits() {
+        $this->expectException(Exception::class);
         $xml = $this->getXml();
         $node = $xml->xpath('/atom:entry')[0];
         $node->addChild('content', null, Namespaces::NS['lom']);

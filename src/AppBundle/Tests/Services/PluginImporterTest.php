@@ -31,7 +31,7 @@ class PluginImporterTest extends BaseTestCase {
         return [];
     }
 
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->importer = $this->container->get(PluginImporter::class);
     }
@@ -124,10 +124,8 @@ class PluginImporterTest extends BaseTestCase {
         $this->assertEquals(null, $this->importer->findXmlPropString($xml, 'fancy_dan'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testFindXmlPropStringException() {
+        $this->expectException(Exception::class);
         $xml = simplexml_load_string($this->xmlData());
         $this->importer->findXmlPropString($xml, 'bad_entry');
     }
@@ -138,10 +136,8 @@ class PluginImporterTest extends BaseTestCase {
         $this->assertEquals(null, $this->importer->findXmlPropElement($xml, 'fancy_dan'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testFindXmlPropElementException() {
+        $this->expectException(Exception::class);
         $xml = simplexml_load_string($this->xmlData());
         $this->importer->findXmlPropElement($xml, 'other_bad_entry');
     }
@@ -231,20 +227,16 @@ class PluginImporterTest extends BaseTestCase {
         $this->assertNotNull($plugin->getId());
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testBuildPluginMissingId() {
+        $this->expectException(Exception::class);
         $xml = simplexml_load_string($this->xmlData());
         $node = $xml->xpath('//entry[string/text()="plugin_version"]')[0];
         unset($node[0]); // remove plugin_identifier.
         $this->importer->buildPlugin($xml);
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testBuildPluginDuplicate() {
+        $this->expectException(Exception::class);
         $xml = simplexml_load_string($this->xmlData());
         $this->importer->buildPlugin($xml);
         $this->getDoctrine()->flush();

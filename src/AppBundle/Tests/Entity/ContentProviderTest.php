@@ -24,7 +24,7 @@ class ProviderTest extends BaseTestCase {
      */
     private $provider;
     
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->provider = new ContentProvider();
     }

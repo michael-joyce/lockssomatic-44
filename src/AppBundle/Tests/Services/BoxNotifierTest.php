@@ -32,7 +32,7 @@ class BoxNotifierTest extends BaseTestCase {
      */
     private $messageLogger;
 
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->notifier = $this->container->get(BoxNotifier::class);
         $this->messageLogger = $this->container->get('swiftmailer.mailer.default.plugin.messagelogger');
@@ -56,7 +56,7 @@ class BoxNotifierTest extends BaseTestCase {
         $this->assertEquals('LOCKSSOMatic Notification: Box Unreachable', $message->getSubject());
         $this->assertEquals('noreply@example.com', key($message->getFrom()));
         $this->assertEquals('box@example.com', key($message->getTo()));
-        $this->assertContains("This is a test.", $message->getBody());
+        $this->assertStringContainsStringIgnoringCase("This is a test.", $message->getBody());
     }
 
     public function testUnreachableDisabled() {
@@ -94,7 +94,7 @@ class BoxNotifierTest extends BaseTestCase {
         $this->assertEquals('LOCKSSOMatic Notification: Disk Space Warning', $message->getSubject());
         $this->assertEquals('noreply@example.com', key($message->getFrom()));
         $this->assertEquals('box@example.com', key($message->getTo()));
-        $this->assertContains("running low", $message->getBody());
+        $this->assertStringContainsStringIgnoringCase("running low", $message->getBody());
     }
 
     public function testFreeSpaceWarningDisabled() {

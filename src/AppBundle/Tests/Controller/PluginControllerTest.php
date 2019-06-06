@@ -86,7 +86,7 @@ class PluginControllerTest extends BaseTestCase {
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertContains('plugin.DummyPlugin', $responseCrawler->text());
+        $this->assertStringContainsStringIgnoringCase('plugin.DummyPlugin', $responseCrawler->text());
     }
 
     public function testAnonEdit() {
@@ -114,6 +114,6 @@ class PluginControllerTest extends BaseTestCase {
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertContains('settings have been updated.', $responseCrawler->text());
+        $this->assertStringContainsStringIgnoringCase('settings have been updated.', $responseCrawler->text());
     }
 }

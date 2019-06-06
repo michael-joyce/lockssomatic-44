@@ -35,7 +35,7 @@ class LockssControllerTest extends BaseTestCase {
         ];
     }
 
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
     }
 
@@ -82,13 +82,13 @@ class LockssControllerTest extends BaseTestCase {
 
         $root = vfsStream::setUp();
         $url = vfsStream::url('root/lockss.xml');
-        // file_put_contents($url, $data);
+        file_put_contents($url, $data);
 
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getLockssXmlFile')->willReturn($url);
 
         $client = $this->makeClient([], [
-            'REMOTE_ADDR' => '10.0.0.0',
+            'REMOTE_ADDR' => '11.0.0.0',
         ]);
         $client->getContainer()->set(FilePaths::class, $fp);
         $client->request('GET', '/plnconfigs/1/properties/lockss.xml');

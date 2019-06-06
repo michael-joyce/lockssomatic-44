@@ -31,7 +31,7 @@ class PluginPropertyTest extends BaseTestCase {
      */
     private $reflection;
     
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->property = new PluginProperty();
         $this->reflection = new ReflectionObject($this->property);

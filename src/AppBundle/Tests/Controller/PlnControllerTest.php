@@ -155,7 +155,7 @@ class PlnControllerTest extends BaseTestCase {
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertContains('dummy.keystore', $responseCrawler->text());
+        $this->assertStringContainsStringIgnoringCase('dummy.keystore', $responseCrawler->text());
     }
 
     public function testAdminKeystoreBadFile() {
@@ -169,7 +169,7 @@ class PlnControllerTest extends BaseTestCase {
         $client->submit($form);
         $this->assertFalse($client->getResponse()->isRedirect());
         $this->assertEquals(400, $client->getResponse()->getStatusCode());
-        $this->assertContains('File name is strange.', $client->getResponse()->getContent());
+        $this->assertStringContainsStringIgnoringCase('File name is strange.', $client->getResponse()->getContent());
     }
 
     public function testAnonExport() {

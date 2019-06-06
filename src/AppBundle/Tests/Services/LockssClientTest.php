@@ -21,7 +21,7 @@ class LockssClientTest extends BaseTestCase {
     /**
      * @var LockssClient
      */
-    private $client;
+    private $lockssClient;
 
     protected function getFixtures() {
         return [
@@ -31,37 +31,37 @@ class LockssClientTest extends BaseTestCase {
         ];
     }
 
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
-        $this->client = $this->getContainer()->get(LockssClient::class);
+        $this->lockssClient = $this->getContainer()->get(LockssClient::class);
     }
 
     public function testSanity() {
-        $this->assertInstanceOf(LockssClient::Class, $this->client);
+        $this->assertInstanceOf(LockssClient::Class, $this->lockssClient);
     }
 
     public function testErrorHandler() {
-        $this->client->errorHandler(1, "error string", __file__, __line__);
-        $this->assertTrue($this->client->hasErrors());
-        $errors = $this->client->getErrors();
+        $this->lockssClient->errorHandler(1, "error string", __file__, __line__);
+        $this->assertTrue($this->lockssClient->hasErrors());
+        $errors = $this->lockssClient->getErrors();
         $this->assertCount(1, $errors);
         $this->assertEquals("Error:error string", $errors[0]);
-        $this->client->clearErrors();
-        $this->assertFalse($this->client->hasErrors());
-        $this->assertCount(0, $this->client->getErrors());
+        $this->lockssClient->clearErrors();
+        $this->assertFalse($this->lockssClient->hasErrors());
+        $this->assertCount(0, $this->lockssClient->getErrors());
     }
 
     public function testExceptionHandler() {
         $exception = new Exception("hi hi", 23);
-        $this->client->exceptionHandler($exception);
+        $this->lockssClient->exceptionHandler($exception);
 
-        $this->assertTrue($this->client->hasErrors());
-        $errors = $this->client->getErrors();
+        $this->assertTrue($this->lockssClient->hasErrors());
+        $errors = $this->lockssClient->getErrors();
         $this->assertCount(1, $errors);
         $this->assertEquals("Exception:23:hi hi", $errors[0]);
-        $this->client->clearErrors();
-        $this->assertFalse($this->client->hasErrors());
-        $this->assertCount(0, $this->client->getErrors());
+        $this->lockssClient->clearErrors();
+        $this->assertFalse($this->lockssClient->hasErrors());
+        $this->assertCount(0, $this->lockssClient->getErrors());
     }
 
     public function testCallReturnString() {
@@ -73,10 +73,10 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
-        $response = $this->client->call($box, 'path/to/service', 'test');
+        $response = $this->lockssClient->call($box, 'path/to/service', 'test');
         $this->assertEquals('cheddar', $response);
     }
 
@@ -89,10 +89,10 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
-        $response = $this->client->call($box, 'path/to/service', 'test');
+        $response = $this->lockssClient->call($box, 'path/to/service', 'test');
         $this->assertNull($response);
     }
 
@@ -105,10 +105,10 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
-        $response = $this->client->call($box, 'path/to/service', 'test');
+        $response = $this->lockssClient->call($box, 'path/to/service', 'test');
         $this->assertEquals(['a', 'b'], $response);
     }
 
@@ -123,10 +123,10 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
-        $response = $this->client->call($box, 'path/to/service', 'test');
+        $response = $this->lockssClient->call($box, 'path/to/service', 'test');
         $this->assertEquals((object) ['a' => 'b'], $response);
     }
 
@@ -139,13 +139,13 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
-        $response = $this->client->call($box, 'path/to/service', 'test');
+        $response = $this->lockssClient->call($box, 'path/to/service', 'test');
         $this->assertNull($response);
-        $this->assertTrue($this->client->hasErrors());
-        $this->assertEquals(['Exception:0:OOPS'], $this->client->getErrors());
+        $this->assertTrue($this->lockssClient->hasErrors());
+        $this->assertEquals(['Exception:0:OOPS'], $this->lockssClient->getErrors());
     }
 
     public function testIsDaemonReady() {
@@ -159,10 +159,10 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
-        $response = $this->client->isDaemonReady($box);
+        $response = $this->lockssClient->isDaemonReady($box);
         $this->assertEquals(true, $response);
     }
 
@@ -177,10 +177,10 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
-        $response = $this->client->call($box, 'path/to/service', 'isDaemonReady');
+        $response = $this->lockssClient->call($box, 'path/to/service', 'isDaemonReady');
         $this->assertEquals(false, $response);
     }
 
@@ -201,11 +201,11 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
         $au = $this->getReference('au.1');
-        $response = $this->client->getAuStatus($box, $au);
+        $response = $this->lockssClient->getAuStatus($box, $au);
         $this->assertEquals([
             'contentSize' => 123,
             'publisher' => 'Publisher Inc.'
@@ -224,13 +224,13 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
         $au = $this->getReference('au.1');
-        $response = $this->client->getAuStatus($box, $au);
+        $response = $this->lockssClient->getAuStatus($box, $au);
         $this->assertNull($response);
-        $this->assertFalse($this->client->hasErrors());
+        $this->assertFalse($this->lockssClient->hasErrors());
     }
 
     public function testGetAuUrls() {
@@ -250,11 +250,11 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
         $au = $this->getReference('au.1');
-        $response = $this->client->getAuUrls($box, $au);
+        $response = $this->lockssClient->getAuUrls($box, $au);
         $this->assertEquals([
             'http://example.com/manifest',
             'http://example.com/path/to/one',
@@ -273,13 +273,13 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
         $au = $this->getReference('au.1');
-        $response = $this->client->getAuUrls($box, $au);
+        $response = $this->lockssClient->getAuUrls($box, $au);
         $this->assertNull($response);
-        $this->assertFalse($this->client->hasErrors());
+        $this->assertFalse($this->lockssClient->hasErrors());
     }
 
     public function testQueryRepositorySpaces() {
@@ -305,12 +305,12 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
         $au = $this->getReference('au.1');
-        $response = $this->client->queryRepositorySpaces($box, $au);
-        $this->assertFalse($this->client->hasErrors());
+        $response = $this->lockssClient->queryRepositorySpaces($box, $au);
+        $this->assertFalse($this->lockssClient->hasErrors());
         $this->assertCount(2, $response);
         $this->assertEquals([
             'active' => 2,
@@ -334,13 +334,13 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
         $au = $this->getReference('au.1');
-        $response = $this->client->queryRepositorySpaces($box, $au);
+        $response = $this->lockssClient->queryRepositorySpaces($box, $au);
         $this->assertNull($response);
-        $this->assertFalse($this->client->hasErrors());
+        $this->assertFalse($this->lockssClient->hasErrors());
     }
 
     public function testIsUrlCached() {
@@ -356,11 +356,11 @@ class LockssClientTest extends BaseTestCase {
         ]);
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
         $deposit = $this->getReference('deposit.1');
-        $response = $this->client->isUrlCached($box, $deposit);
+        $response = $this->lockssClient->isUrlCached($box, $deposit);
         $this->assertEquals(true, $response);
     }
 
@@ -375,11 +375,11 @@ class LockssClientTest extends BaseTestCase {
         $mockClient->method('isUrlCached')->will($this->throwException(new Exception("Impossible.")));
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
         $deposit = $this->getReference('deposit.1');
-        $response = $this->client->isUrlCached($box, $deposit);
+        $response = $this->lockssClient->isUrlCached($box, $deposit);
         $this->assertNull($response);
     }
 
@@ -398,11 +398,11 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
         $deposit = $this->getReference('deposit.1');
-        $response = $this->client->hash($box, $deposit);
+        $response = $this->lockssClient->hash($box, $deposit);
         $this->assertEquals('601936759D11400112402DA98C24860D986DA8E5', $response);
     }
 
@@ -427,11 +427,11 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
         $deposit = $this->getReference('deposit.1');
-        $response = $this->client->hash($box, $deposit);
+        $response = $this->lockssClient->hash($box, $deposit);
         $this->assertNull($response);
     }
 
@@ -448,11 +448,11 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
         $deposit = $this->getReference('deposit.1');
-        $response = $this->client->hash($box, $deposit);
+        $response = $this->lockssClient->hash($box, $deposit);
         $this->assertNull($response);
     }
 
@@ -471,11 +471,11 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $box = $this->getReference('box.1');
         $deposit = $this->getReference('deposit.1');
-        $response = $this->client->hash($box, $deposit);
+        $response = $this->lockssClient->hash($box, $deposit);
         $this->assertNull($response);
     }
 
@@ -493,7 +493,7 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $mockHandler = new MockHandler([
             new Response(200, [], 'I am a cheese'),
@@ -503,11 +503,11 @@ class LockssClientTest extends BaseTestCase {
         $handlerStack = HandlerStack::create($mockHandler);
         $handlerStack->push($history);
         $httpClient = new Client(['handler' => $handlerStack]);
-        $this->client->setHttpClient($httpClient);
+        $this->lockssClient->setHttpClient($httpClient);
 
         $box = $this->getReference('box.1');
         $deposit = $this->getReference('deposit.1');
-        $response = $this->client->fetchFile($box, $deposit);
+        $response = $this->lockssClient->fetchFile($box, $deposit);
         $this->assertTrue(is_resource($response));
         $content = fread($response, 100);
         $this->assertEquals('I am a cheese', $content);
@@ -530,7 +530,7 @@ class LockssClientTest extends BaseTestCase {
 
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $mockHandler = new MockHandler([
             new Response(200, [], 'I am a cheese'),
@@ -540,11 +540,11 @@ class LockssClientTest extends BaseTestCase {
         $handlerStack = HandlerStack::create($mockHandler);
         $handlerStack->push($history);
         $httpClient = new Client(['handler' => $handlerStack]);
-        $this->client->setHttpClient($httpClient);
+        $this->lockssClient->setHttpClient($httpClient);
 
         $box = $this->getReference('box.1');
         $deposit = $this->getReference('deposit.1');
-        $response = $this->client->fetchFile($box, $deposit);
+        $response = $this->lockssClient->fetchFile($box, $deposit);
         $this->assertNull($response);
 
         $this->assertCount(0, $historyContainer);
@@ -563,7 +563,7 @@ class LockssClientTest extends BaseTestCase {
         ]);
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $mockHandler = new MockHandler([
             new Response(404, [], 'NOT FOUND'),
@@ -573,11 +573,11 @@ class LockssClientTest extends BaseTestCase {
         $handlerStack = HandlerStack::create($mockHandler);
         $handlerStack->push($history);
         $httpClient = new Client(['handler' => $handlerStack]);
-        $this->client->setHttpClient($httpClient);
+        $this->lockssClient->setHttpClient($httpClient);
 
         $box = $this->getReference('box.1');
         $deposit = $this->getReference('deposit.1');
-        $response = $this->client->fetchFile($box, $deposit);
+        $response = $this->lockssClient->fetchFile($box, $deposit);
         $this->assertNull($response);
 
         $this->assertCount(0, $historyContainer);
@@ -596,7 +596,7 @@ class LockssClientTest extends BaseTestCase {
         ]);
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $mockHandler = new MockHandler([
             new Response(500, [], 'Internal Error'),
@@ -606,15 +606,15 @@ class LockssClientTest extends BaseTestCase {
         $handlerStack = HandlerStack::create($mockHandler);
         $handlerStack->push($history);
         $httpClient = new Client(['handler' => $handlerStack]);
-        $this->client->setHttpClient($httpClient);
+        $this->lockssClient->setHttpClient($httpClient);
 
         $box = $this->getReference('box.1');
         $deposit = $this->getReference('deposit.1');
-        $response = $this->client->fetchFile($box, $deposit);
+        $response = $this->lockssClient->fetchFile($box, $deposit);
         $this->assertNull($response);
 
         $this->assertCount(1, $historyContainer);
-        $this->assertTrue($this->client->hasErrors());
+        $this->assertTrue($this->lockssClient->hasErrors());
     }
 
     public function testFetchException() {
@@ -630,7 +630,7 @@ class LockssClientTest extends BaseTestCase {
         ]);
         $builder = $this->createMock(SoapClientBuilder::class);
         $builder->method('build')->willReturn($mockClient);
-        $this->client->setSoapClientBuilder($builder);
+        $this->lockssClient->setSoapClientBuilder($builder);
 
         $mockHandler = new MockHandler([
             new Exception('Network error'),
@@ -640,15 +640,15 @@ class LockssClientTest extends BaseTestCase {
         $handlerStack = HandlerStack::create($mockHandler);
         $handlerStack->push($history);
         $httpClient = new Client(['handler' => $handlerStack]);
-        $this->client->setHttpClient($httpClient);
+        $this->lockssClient->setHttpClient($httpClient);
 
         $box = $this->getReference('box.1');
         $deposit = $this->getReference('deposit.1');
-        $response = $this->client->fetchFile($box, $deposit);
+        $response = $this->lockssClient->fetchFile($box, $deposit);
         $this->assertNull($response);
 
         $this->assertCount(1, $historyContainer);
-        $this->assertTrue($this->client->hasErrors());
+        $this->assertTrue($this->lockssClient->hasErrors());
     }
 
     // This is a real example of what lockss returns here. sigh.

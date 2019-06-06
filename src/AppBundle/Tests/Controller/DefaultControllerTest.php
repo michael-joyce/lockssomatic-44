@@ -29,21 +29,21 @@ class DefaultControllerTest extends BaseTestCase {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertContains('LOCKSSOMatic', $crawler->filter('h1')->text());
+        $this->assertStringContainsStringIgnoringCase('LOCKSSOMatic', $crawler->filter('h1')->text());
     }
 
     public function testUserHomePage() {
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertContains('LOCKSSOMatic', $crawler->filter('p')->text());
+        $this->assertStringContainsStringIgnoringCase('LOCKSSOMatic', $crawler->filter('p')->text());
     }
 
     public function testAdminHomePage() {
         $client = $this->makeClient(LoadUser::ADMIN);
         $crawler = $client->request('GET', '/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertContains('LOCKSSOMatic', $crawler->filter('p')->text());
+        $this->assertStringContainsStringIgnoringCase('LOCKSSOMatic', $crawler->filter('p')->text());
     }
 
 }

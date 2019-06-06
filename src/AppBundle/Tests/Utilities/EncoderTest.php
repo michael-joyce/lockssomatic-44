@@ -19,7 +19,7 @@ class EncoderTest extends TestCase {
      */
     private $encoder;
 
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->encoder = new Encoder();
     }

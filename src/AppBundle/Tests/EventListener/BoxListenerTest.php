@@ -31,7 +31,7 @@ class BoxListenerTest extends BaseTestCase {
 
     private $listener;
 
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->listener = $this->getContainer()->get(BoxListener::class);
     }

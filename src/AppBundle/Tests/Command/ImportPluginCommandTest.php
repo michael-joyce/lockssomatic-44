@@ -26,7 +26,7 @@ class ImportPluginCommandTest extends BaseTestCase
      */
     private $tester;
     
-    public function setUp() {
+    public function setup() : void {
         parent::setUp();
         $application = new Application(static::$kernel);
         $command = $application->find(self::NAME);

@@ -25,7 +25,7 @@ class AuTest extends BaseTestCase {
      */
     private $au;
     
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->au = new Au();
     }

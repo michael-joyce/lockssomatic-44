@@ -5,6 +5,7 @@ namespace AppBundle\Tests\Services;
 use AppBundle\Services\SoapClientBuilder;
 use BeSimple\SoapClient\SoapClient;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Exception;
 
 class SoapClientBuilderTest extends BaseTestCase {
 
@@ -13,7 +14,7 @@ class SoapClientBuilderTest extends BaseTestCase {
      */
     private $builder;
 
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->builder = $this->getContainer()->get(SoapClientBuilder::class);
     }
@@ -28,19 +29,13 @@ class SoapClientBuilderTest extends BaseTestCase {
         $this->assertInstanceOf(SoapClient::class, $client);
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testBuildNotFound() {
+        $this->expectException(Exception::class);
         $client = $this->builder->build(dirname(__DIR__) . '/Data/dummy.notafile', array());
-        $this->fail("No exception thrown.");
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testBuildNotXml() {
+        $this->expectException(Exception::class);
         $client = $this->builder->build(dirname(__DIR__) . '/Data/dummy.keystore', array());
-        $this->fail("No exception thrown.");
     }
 }

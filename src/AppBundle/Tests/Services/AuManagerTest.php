@@ -37,7 +37,7 @@ class AuManagerTest extends BaseTestCase {
      */
     private $manager;
 
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->manager = $this->container->get(AuManager::class);
     }
@@ -311,28 +311,22 @@ class AuManagerTest extends BaseTestCase {
         $this->assertEquals(9, $this->manager->validate($au));
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testValidateNoPlugin() {
+        $this->expectException(Exception::class);
         $au = new Au();
         $this->manager->validate($au);
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testValidateNoDefinitionalProps() {
+        $this->expectException(Exception::class);
         $au = new Au();
         $plugin = $this->createMock(Plugin::class);
         $au->setPlugin($plugin);
         $this->manager->validate($au);
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testValidateNoDeposits() {
+        $this->expectException(Exception::class);
         $au = new Au();
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
@@ -399,9 +393,9 @@ class AuManagerTest extends BaseTestCase {
 
     /**
      * @dataProvider generateStringBadData
-     * @expectedException Exception
      */
     public function testGenerateBadString($expected, $value, $map) {
+        $this->expectException(Exception::class);
         $au = $this->createMock(Au::class);
         $au->method('getAuPropertyValue')->will($this->returnValueMap($map));
 
@@ -422,7 +416,7 @@ class AuManagerTest extends BaseTestCase {
     }
 
     /**
-     * @dataProvider testGenerateSymbolData
+     * @dataProvider generateSymbolData
      */
     public function testGenerateSymbolString(array $data) {
         $property = $this->createMock(PluginProperty::class);
@@ -442,10 +436,10 @@ class AuManagerTest extends BaseTestCase {
     }
 
     /**
-     * @dataProvider testGenerateSymbolData
-     * @expectedException \Exception
+     * @dataProvider generateSymbolData
      */
     public function testGenerateSymbolMissingPlugin(array $data) {
+        $this->expectException(Exception::class);
         $property = $this->createMock(PluginProperty::class);
         $property->method('isList')->will($this->returnValue($data['list']));
         $property->method('getPropertyValue')->will($this->returnValue($data['propValue']));
@@ -463,10 +457,10 @@ class AuManagerTest extends BaseTestCase {
     }
 
     /**
-     * @dataProvider testGenerateSymbolData
-     * @expectedException \Exception
+     * @dataProvider generateSymbolData
      */
     public function testGenerateSymbolMissingParameter(array $data) {
+        $this->expectException(Exception::class);
         $property = $this->createMock(PluginProperty::class);
         $property->method('isList')->will($this->returnValue($data['list']));
         $property->method('getPropertyValue')->will($this->returnValue($data['propValue']));
@@ -483,7 +477,7 @@ class AuManagerTest extends BaseTestCase {
         $this->assertEquals($data['expected'], $str);
     }
 
-    public function testGenerateSymbolData() {
+    public function generateSymbolData() {
         return [
             [[
             'list' => false,
@@ -790,10 +784,8 @@ class AuManagerTest extends BaseTestCase {
         $this->assertEquals('ca|example|plugin&bar~other%2Eproperty&bax~property+the+third%21&foo~Some+complex+title', $id);
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testGenerateAuidFromDepositMissingProperty() {
+        $this->expectException(Exception::class);
         $plugin = $this->createMock(Plugin::class);
         $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
         $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([

@@ -9,14 +9,6 @@ services:
         autoconfigure: true
         public: false
 
-    Nines\UserBundle\:
-        resource: '../../src/Nines/UserBundle/*'
-        exclude: '../../src/Nines/UserBundle/{Entity,Repository,Resources,Tests}'
-
-    Nines\UserBundle\Menu\Builder:
-        tags:
-            - { name: knp_menu.menu_builder, method: userNavMenu, alias: user}
-
     AppBundle\:
         resource: '../../src/AppBundle/*'
         exclude: '../../src/AppBundle/{Entity,Repository,Resources,Tests}'

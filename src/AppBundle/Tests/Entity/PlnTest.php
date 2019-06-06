@@ -25,7 +25,7 @@ class PlnTest extends BaseTestCase {
      */
     private $pln;
     
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->pln = new Pln();
     }

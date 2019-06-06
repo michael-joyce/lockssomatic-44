@@ -39,7 +39,7 @@ class ConfigExporterTest extends BaseTestCase {
      */
     private $root;
 
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->exporter = $this->container->get(ConfigExporter::class);
 
@@ -100,10 +100,8 @@ class ConfigExporterTest extends BaseTestCase {
         $this->assertTrue(file_exists("vfs://confdir/data/plnconfigs/1/plugins/index.html"));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testExportMissingPlugins() {
+        $this->expectException(Exception::class);
         $url = vfsStream::url('confdir/plugin.jar');
 
         $plugin = new Plugin();

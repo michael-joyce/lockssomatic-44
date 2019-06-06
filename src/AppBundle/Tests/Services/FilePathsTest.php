@@ -29,7 +29,7 @@ class FilePathsTest extends BaseTestCase {
      */
     private $root;
 
-    protected function setUp() {
+    protected function setup() : void {
         parent::setUp();
         $this->filePaths = $this->container->get(FilePaths::class);
         $this->root = $this->container->getParameter('kernel.project_dir');

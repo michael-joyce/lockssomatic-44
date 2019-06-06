@@ -107,7 +107,7 @@ class SwordControllerTest extends BaseTestCase {
         );
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertContains('multiple content elements are not allowed.', $response->getContent());
+        $this->assertStringContainsStringIgnoringCase('multiple content elements are not allowed.', $response->getContent());
     }
 
     public function testCreateDeposits() {
@@ -140,7 +140,7 @@ class SwordControllerTest extends BaseTestCase {
         );
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertContains('Empty deposits are not allowed.', $response->getContent());
+        $this->assertStringContainsStringIgnoringCase('Empty deposits are not allowed.', $response->getContent());
     }
 
     public function testCreateDepositWrongPermissionUrl() {
@@ -154,7 +154,7 @@ class SwordControllerTest extends BaseTestCase {
         );
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertContains('Permission host for', $response->getContent());
+        $this->assertStringContainsStringIgnoringCase('Permission host for', $response->getContent());
     }
 
     public function testCreateLargeDeposit() {
@@ -171,7 +171,7 @@ class SwordControllerTest extends BaseTestCase {
         );
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertContains('Content size 1000000 exceeds provider&#039;s maximum: 10000', $response->getContent());
+        $this->assertStringContainsStringIgnoringCase('Content size 1000000 exceeds provider&#039;s maximum: 10000', $response->getContent());
     }
 
     public function testEditDeposit() {
@@ -225,7 +225,7 @@ class SwordControllerTest extends BaseTestCase {
         );
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains('LOCKSS boxes have not completed', $response->getContent());
+        $this->assertStringContainsStringIgnoringCase('LOCKSS boxes have not completed', $response->getContent());
     }
 
     public function testStatementComplete() {
@@ -238,7 +238,7 @@ class SwordControllerTest extends BaseTestCase {
         );
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains('LOCKSS boxes have harvested', $response->getContent());
+        $this->assertStringContainsStringIgnoringCase('LOCKSS boxes have harvested', $response->getContent());
     }
 
     public function testReceipt() {
@@ -251,7 +251,7 @@ class SwordControllerTest extends BaseTestCase {
         );
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains('Content URLs deposited', $response->getContent());
+        $this->assertStringContainsStringIgnoringCase('Content URLs deposited', $response->getContent());
     }
 
 }
