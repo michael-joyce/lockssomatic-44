@@ -91,10 +91,7 @@ class ConfigUpdaterTest extends BaseTestCase {
         $provider->setAus(new ArrayCollection([$au]));
 
         $this->updater->updateTitleDbs($pln);
-        $this->assertEquals(
-            ['http://localhost/lom2/web/app_dev.php/plnconfigs/1/titledbs/3/5/titledb_1.xml'],
-            $pln->getProperty('org.lockss.titleDbs')
-        );
+        $this->assertStringEndsWith('/plnconfigs/1/titledbs/3/5/titledb_1.xml', $pln->getProperty('org.lockss.titleDbs')[0]);
     }
 
     // If an AU already has properties, they should not be generated.
@@ -198,10 +195,7 @@ class ConfigUpdaterTest extends BaseTestCase {
         $pln->setKeystore('/path/to/file.keystore');
 
         $this->updater->updateKeystoreLocation($pln);
-        $this->assertEquals(
-            'http://localhost/lom2/web/app_dev.php/plnconfigs/1/plugins/lockssomatic.keystore',
-            $pln->getProperty('org.lockss.plugin.keystore.location')
-        );
+        $this->assertStringEndsWith('/plnconfigs/1/plugins/lockssomatic.keystore', $pln->getProperty('org.lockss.plugin.keystore.location'));
     }
 
     public function testUpdateAuthenticationEmpty() {
@@ -255,10 +249,7 @@ class ConfigUpdaterTest extends BaseTestCase {
         $plnRef->setAccessible(true);
         $plnRef->setValue($pln, 1);
         $this->updater->updatePluginRegistries($pln);
-        $this->assertEquals(
-            ['http://localhost/lom2/web/app_dev.php/plnconfigs/1/plugins/index.html'],
-            $pln->getProperty('org.lockss.plugin.registries')
-        );
+        $this->assertStringEndsWith('/plnconfigs/1/plugins/index.html', $pln->getProperty('org.lockss.plugin.registries')[0]);
     }
 
 }

@@ -380,7 +380,7 @@ class LockssClientTest extends BaseTestCase {
         $box = $this->getReference('box.1');
         $deposit = $this->getReference('deposit.1');
         $response = $this->lockssClient->isUrlCached($box, $deposit);
-        $this->assertNull($response);
+        $this->assertFalse($response);
     }
 
     public function testHash() {

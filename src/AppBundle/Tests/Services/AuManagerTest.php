@@ -134,10 +134,8 @@ class AuManagerTest extends BaseTestCase {
         ]));
 
         $au2 = $this->manager->findOpenAu($deposit2);
-        $this->assertInstanceOf(Au::class, $au1);
+        $this->assertInstanceOf(Au::class, $au2);
         $this->assertEquals('ca|example|plugin&bax~property+the+third%21&foo~Some+complex+title', $au2->getAuid());
-
-        $this->assertEquals($au1, $au2);
     }
 
     public function testFindOpenAuContentDifferentAus() {
