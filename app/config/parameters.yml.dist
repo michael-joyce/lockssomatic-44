@@ -56,8 +56,5 @@ parameters:
     lom.boxstatus.sender: noreply@example.com
     lom.boxstatus.contact: lom@example.com
 
-    # If you cannot serve https, change this to http.
-    lom.secure_channel: https
-
     # Text trimming length
     nines_text.trim_length: 50
