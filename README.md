@@ -30,3 +30,27 @@ provided they are compatible with the included LOCKSS plugins (which, initially,
 means that the files are compressed archives such as ZIP, 7z, or tgz formats).
  types of content will be possible with the appropraite LOCKSS plugins.
 Archivematica will include a plugin to enable integration with LOCKSS-O-Matic.
+
+
+Quality Tools
+-------------
+
+PHP Unit
+
+`./vendor/bin/phpunit`
+
+`./vendor/bin/phpunit --coverage-html=web/docs/coverage`
+
+Sami
+
+`sami -vv update --force sami.php`
+
+PHP CS
+
+`./vendor/bin/phpcs --report-xml=tmp.xml`
+
+`saxon -xsl:phpcs.xsl -s:tmp.xml -o:web/docs/phpcs/index.html`
+
+Sphinx
+
+TBD
