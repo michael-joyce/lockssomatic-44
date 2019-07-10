@@ -20,6 +20,16 @@
             "vendor/symfony/symfony/src/Symfony/Component/VarDumper/Resources/functions/dump.php"
         ]
     },
+    "repositories": [
+        {
+            "type": "github",
+            "url": "https://github.com/ubermichael/nines-bundles.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/ubermichael/BeSimpleSoap.git"
+        }
+    ],
     "require": {
         "php": ">=7.2.0",
         "beberlei/doctrineextensions": "^1.0",
@@ -32,7 +42,7 @@
         "guzzlehttp/guzzle": "^6.3",
         "incenteev/composer-parameter-handler": "^2.0",
         "knplabs/knp-menu-bundle": "^2.2",
-        "knplabs/knp-paginator-bundle": "^3.0",
+        "knplabs/knp-paginator-bundle": "^4.0",
         "ninsuo/symfony-collection": "^2.1",
         "ocramius/proxy-manager": "^2.2",
         "ramsey/uuid": "^3.7",
@@ -45,7 +55,8 @@
         "symfony/templating": "^3.4",
         "tetranz/select2entity-bundle": "^2.9",
         "twig/extensions": "^1.5",
-        "twig/twig": "^2.5"
+        "twig/twig": "^2.5",
+        "ubermichael/nines": "1.x-dev"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.0",
@@ -57,12 +68,6 @@
         "squizlabs/php_codesniffer": "^3.3",
         "symfony/phpunit-bridge": "^4.1"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/ubermichael/BeSimpleSoap.git"
-        }
-    ],
     "scripts": {
         "symfony-scripts": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",

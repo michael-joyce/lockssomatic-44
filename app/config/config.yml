@@ -73,7 +73,7 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     paths:
-        '%kernel.project_dir%/src/Nines/UtilBundle/Resources/views': NinesUtilBundle
+        '%kernel.project_dir%/vendor/ubermichael/nines/UtilBundle/Resources/views': NinesUtilBundle
         '%kernel.project_dir%/vendor/ninsuo/symfony-collection': NinsuoSymfonyCollection
         '%kernel.project_dir%/src/AppBundle/Resources/views': ~
     date:
