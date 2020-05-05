@@ -1,119 +1,118 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Tests\Controller;
 
 use AppBundle\DataFixtures\ORM\LoadPlugin;
-use AppBundle\Entity\Plugin;
 use Nines\UserBundle\DataFixtures\ORM\LoadUser;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 class PluginControllerTest extends BaseTestCase {
-
     protected function getFixtures() {
         return [
             LoadUser::class,
-            LoadPlugin::class
+            LoadPlugin::class,
         ];
     }
 
-    public function testAnonIndex() {
+    public function testAnonIndex() : void {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/plugin/');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertSame(302, $client->getResponse()->getStatusCode());
     }
 
-    public function testUserIndex() {
+    public function testUserIndex() : void {
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/plugin/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->count());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
-    public function testAdminIndex() {
+    public function testAdminIndex() : void {
         $client = $this->makeClient(LoadUser::ADMIN);
         $crawler = $client->request('GET', '/plugin/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $crawler->selectLink('New')->count());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(1, $crawler->selectLink('New')->count());
     }
 
-    public function testAnonShow() {
+    public function testAnonShow() : void {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/plugin/1');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('Edit')->count());
+        $this->assertSame(302, $client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('Edit')->count());
     }
 
-    public function testUserShow() {
+    public function testUserShow() : void {
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/plugin/1');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
 
-    public function testAdminShow() {
+    public function testAdminShow() : void {
         $client = $this->makeClient(LoadUser::ADMIN);
         $crawler = $client->request('GET', '/plugin/1');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
 
-    public function testAnonNew() {
+    public function testAnonNew() : void {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/plugin/new');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertSame(302, $client->getResponse()->getStatusCode());
     }
 
-    public function testUserNew() {
+    public function testUserNew() : void {
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/plugin/new');
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertSame(403, $client->getResponse()->getStatusCode());
     }
 
-    public function testAdminNew() {
+    public function testAdminNew() : void {
         $client = $this->makeClient(LoadUser::ADMIN);
         $formCrawler = $client->request('GET', '/plugin/new');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+
         $form = $formCrawler->selectButton('Create')->form();
         $form['file_upload[file]']->upload('src/AppBundle/Tests/Data/DummyPlugin.jar');
 
         $client->submit($form);
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('plugin.DummyPlugin', $responseCrawler->text());
     }
 
-    public function testAnonEdit() {
+    public function testAnonEdit() : void {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/plugin/1/edit');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertSame(302, $client->getResponse()->getStatusCode());
     }
 
-    public function testUserEdit() {
+    public function testUserEdit() : void {
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/plugin/1/edit');
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertSame(403, $client->getResponse()->getStatusCode());
     }
 
-    public function testAdminEdit() {
+    public function testAdminEdit() : void {
         $client = $this->makeClient(LoadUser::ADMIN);
         $formCrawler = $client->request('GET', '/plugin/1/edit');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        
-        $form = $formCrawler->selectButton('Update')->form(array(
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+
+        $form = $formCrawler->selectButton('Update')->form([
             'plugin[generateManifests]' => 0,
-        ));
+        ]);
 
         $client->submit($form);
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('settings have been updated.', $responseCrawler->text());
     }
 }

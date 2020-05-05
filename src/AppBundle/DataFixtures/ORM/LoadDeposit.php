@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\DataFixtures\ORM;
@@ -18,13 +19,10 @@ use Doctrine\Common\Persistence\ObjectManager;
  * Load some deposits.
  */
 class LoadDeposit extends Fixture implements DependentFixtureInterface {
-
     /**
      * Load the objects.
-     *
-     * @param ObjectManager $em
      */
-    public function load(ObjectManager $em) {
+    public function load(ObjectManager $em) : void {
         $deposit1 = new Deposit();
         $deposit1->setUuid('3E40ACE2-7F1A-4AD5-8622-416EC740D9A1');
         $deposit1->setTitle('Deposit 1');
@@ -80,5 +78,4 @@ class LoadDeposit extends Fixture implements DependentFixtureInterface {
             LoadAu::class,
         ];
     }
-
 }

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Command\Lockss;
@@ -24,7 +25,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Description of DaemonStatusCommand.
  */
 class BoxStatusCommand extends ContainerAwareCommand {
-
     /**
      * Warn if the cache is more than this percent full.
      *
@@ -57,9 +57,6 @@ class BoxStatusCommand extends ContainerAwareCommand {
      * Build the command.
      *
      * @param float $sizeWarning
-     * @param EntityManagerInterface $em
-     * @param LockssClient $client
-     * @param BoxNotifier $notifier
      */
     public function __construct($sizeWarning, EntityManagerInterface $em, LockssClient $client, BoxNotifier $notifier) {
         parent::__construct();
@@ -72,9 +69,9 @@ class BoxStatusCommand extends ContainerAwareCommand {
     /**
      * Configure the command.
      */
-    protected function configure() {
+    protected function configure() : void {
         $this->setName('lockss:box:status');
-        $this->addOption('box', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, "Optional. One or more box IDs to contact.", array());
+        $this->addOption('box', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Optional. One or more box IDs to contact.', []);
         $this->setDescription('Report the status of the boxes.');
         parent::configure();
     }
@@ -82,22 +79,23 @@ class BoxStatusCommand extends ContainerAwareCommand {
     /**
      * Fetch a list of boxes to check.
      *
-     * @return Collection|Box[]
+     * @param mixed $boxIds
+     *
+     * @return Box[]|Collection
      */
-    protected function getBoxes($boxIds = array()) {
+    protected function getBoxes($boxIds = []) {
         if ($boxIds && count($boxIds)) {
-            return $this->em->getRepository(Box::class)->findBy(array(
-                        'id' => $boxIds,
+            return $this->em->getRepository(Box::class)->findBy([
+                'id' => $boxIds,
                 'active' => true,
-            ));
+            ]);
         }
+
         return $this->em->getRepository(Box::class)->findAll();
     }
 
     /**
      * Get a box status frmo the LOCKSS client.
-     *
-     * @param Box $box
      *
      * @return BoxStatus
      */
@@ -106,25 +104,28 @@ class BoxStatusCommand extends ContainerAwareCommand {
         $this->em->persist($status);
         $status->setBox($box);
         $response = $this->client->queryRepositorySpaces($box);
-        if (!$response) {
+        if ( ! $response) {
             $status->setErrors($this->client->getErrors());
             $this->client->clearErrors();
+
             return $status;
         }
         $status->setSuccess(true);
         $status->setData($response);
+
         return $status;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output) : void {
         $boxes = $this->getBoxes($input->getOption('box'));
         foreach ($boxes as $box) {
             $boxStatus = $this->getBoxStatus($box);
-            if (!$boxStatus->getSuccess()) {
+            if ( ! $boxStatus->getSuccess()) {
                 $this->notifier->unreachable($box, $boxStatus);
+
                 continue;
             }
             foreach ($boxStatus->getData() as $data) {
@@ -135,5 +136,4 @@ class BoxStatusCommand extends ContainerAwareCommand {
         }
         $this->em->flush();
     }
-
 }

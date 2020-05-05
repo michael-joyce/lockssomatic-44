@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Entity;
@@ -21,7 +22,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ContentProviderRepository")
  */
 class ContentProvider extends AbstractEntity {
-
     /**
      * The UUID for the provider.
      *
@@ -317,8 +317,6 @@ class ContentProvider extends AbstractEntity {
     /**
      * Add aus.
      *
-     * @param Au $aus
-     *
      * @return ContentProvider
      */
     public function addAus(Au $aus) {
@@ -329,10 +327,8 @@ class ContentProvider extends AbstractEntity {
 
     /**
      * Remove aus.
-     *
-     * @param Au $aus
      */
-    public function removeAus(Au $aus) {
+    public function removeAus(Au $aus) : void {
         $this->aus->removeElement($aus);
     }
 
@@ -345,14 +341,12 @@ class ContentProvider extends AbstractEntity {
         return $this->aus;
     }
 
-    public function setAus($aus) {
+    public function setAus($aus) : void {
         $this->aus = $aus;
     }
 
     /**
      * Add deposit.
-     *
-     * @param Deposit $deposit
      *
      * @return ContentProvider
      */
@@ -364,10 +358,8 @@ class ContentProvider extends AbstractEntity {
 
     /**
      * Remove deposit.
-     *
-     * @param Deposit $deposit
      */
-    public function removeDeposit(Deposit $deposit) {
+    public function removeDeposit(Deposit $deposit) : void {
         $this->deposits->removeElement($deposit);
     }
 
@@ -379,5 +371,4 @@ class ContentProvider extends AbstractEntity {
     public function getDeposits() {
         return $this->deposits;
     }
-
 }

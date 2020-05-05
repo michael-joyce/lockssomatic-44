@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Entity;
@@ -22,7 +23,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\BoxRepository")
  */
 class Box extends AbstractEntity {
-
     /**
      * The DNS name.
      *
@@ -117,7 +117,7 @@ class Box extends AbstractEntity {
     /**
      * Timestamped list of box status query results.
      *
-     * @var Collection|BoxStatus
+     * @var BoxStatus|Collection
      *
      * @ORM\OneToMany(targetEntity="BoxStatus", mappedBy="box", orphanRemoval=true)
      */
@@ -166,6 +166,7 @@ class Box extends AbstractEntity {
         if ($this->hostname) {
             return $this->hostname;
         }
+
         return $this->ipAddress;
     }
 
@@ -401,8 +402,6 @@ class Box extends AbstractEntity {
     /**
      * Add status.
      *
-     * @param BoxStatus $status
-     *
      * @return Box
      */
     public function addStatus(BoxStatus $status) {
@@ -413,10 +412,8 @@ class Box extends AbstractEntity {
 
     /**
      * Remove status.
-     *
-     * @param BoxStatus $status
      */
-    public function removeStatus(BoxStatus $status) {
+    public function removeStatus(BoxStatus $status) : void {
         $this->status->removeElement($status);
     }
 
@@ -450,5 +447,4 @@ class Box extends AbstractEntity {
     public function getWebServiceProtocol() {
         return $this->webServiceProtocol;
     }
-
 }

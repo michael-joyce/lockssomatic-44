@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Repository;
@@ -19,14 +20,13 @@ use Generator;
  * AU queries in Doctrine.
  */
 class AuRepository extends EntityRepository {
-
     /**
      * Find an open AU and return it.
      *
      * @param string $auid
      *
-     * @return Au|null
-     *   The open AU or null if one cannot be found.
+     * @return null|Au
+     *                 The open AU or null if one cannot be found.
      */
     public function findOpenAu($auid) {
         $qb = $this->createQueryBuilder('au');
@@ -35,13 +35,12 @@ class AuRepository extends EntityRepository {
         $qb->andWhere('au.open = true');
         $qb->orderBy('au.id', 'ASC');
         $qb->setMaxResults(1);
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
      * Calculate the size of an AU.
-     *
-     * @param Au $au
      *
      * @return int
      */
@@ -51,13 +50,12 @@ class AuRepository extends EntityRepository {
         $qb->from(Deposit::class, 'd');
         $qb->where('d.au = :au');
         $qb->setParameter('au', $au);
+
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
      * Count the deposits in an AU.
-     *
-     * @param Au $au
      *
      * @return int
      */
@@ -67,6 +65,7 @@ class AuRepository extends EntityRepository {
         $qb->from(Deposit::class, 'd');
         $qb->where('d.au = :au');
         $qb->setParameter('au', $au);
+
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
@@ -76,25 +75,23 @@ class AuRepository extends EntityRepository {
      * You should probably use $query->iterate() or paginate the list of
      * deposits - it can grow very large.
      *
-     * @param Au $au
      * @return Query
      */
     public function queryDeposits(Au $au) {
         $qb = $this->_em->createQueryBuilder();
         $qb->select('d');
         $qb->from(Deposit::class, 'd');
-        $qb->andWhere("d.au = :au");
+        $qb->andWhere('d.au = :au');
         $qb->setParameter('au', $au);
+
         return $qb->getQuery();
     }
 
     /**
      * Get a query for the content items in an AU.
      *
-     * @param Au $au
-     *
-     * @return Generator|Deposit[]
-     *   The iterator for the deposits.
+     * @return Deposit[]|Generator
+     *                             The iterator for the deposits.
      */
     public function iterateDeposits(Au $au) {
         $query = $this->queryDeposits($au);
@@ -104,5 +101,4 @@ class AuRepository extends EntityRepository {
             yield $row[0];
         }
     }
-
 }

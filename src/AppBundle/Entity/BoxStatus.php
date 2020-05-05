@@ -1,16 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Entity;
 
-use DateTime;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
@@ -21,7 +20,6 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\BoxStatusRepository")
  */
 class BoxStatus extends AbstractEntity {
-
     /**
      * Box that owns the status.
      *
@@ -62,14 +60,14 @@ class BoxStatus extends AbstractEntity {
     public function __construct() {
         parent::__construct();
         $this->success = false;
-        $this->data = array();
+        $this->data = [];
     }
 
     /**
      * Generate a string representation of the status.
      */
     public function __toString() {
-        return $this->box . " " . $this->created->format('c');
+        return $this->box . ' ' . $this->created->format('c');
     }
 
     /**
@@ -97,7 +95,7 @@ class BoxStatus extends AbstractEntity {
     /**
      * Set errors.
      *
-     * @param string|array $errors
+     * @param array|string $errors
      *
      * @return BoxStatus
      */
@@ -145,12 +143,10 @@ class BoxStatus extends AbstractEntity {
     /**
      * Set data.
      *
-     * @param array $data
-     *
      * @return BoxStatus
      */
     public function setData(array $data) {
-            $this->data = $data;
+        $this->data = $data;
 
         return $this;
     }
@@ -163,5 +159,4 @@ class BoxStatus extends AbstractEntity {
     public function getData() {
         return $this->data;
     }
-
 }

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\DataFixtures\ORM;
@@ -20,13 +21,10 @@ use Doctrine\Common\Persistence\ObjectManager;
  * @author Michael Joyce <ubermichael@gmail.com>
  */
 class LoadBox extends Fixture implements DependentFixtureInterface {
-
     /**
      * Load the objects.
-     *
-     * @param ObjectManager $em
      */
-    public function load(ObjectManager $em) {
+    public function load(ObjectManager $em) : void {
         $box1 = new Box();
         $box1->setHostname('localhost');
         $box1->setIpAddress('127.0.0.1');
@@ -61,5 +59,4 @@ class LoadBox extends Fixture implements DependentFixtureInterface {
             LoadPln::class,
         ];
     }
-
 }

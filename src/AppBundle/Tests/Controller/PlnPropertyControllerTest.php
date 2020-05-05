@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Tests\Controller;
@@ -15,7 +16,6 @@ use Nines\UserBundle\DataFixtures\ORM\LoadUser;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 class PlnPropertyControllerTest extends BaseTestCase {
-
     protected function getFixtures() {
         return [
             LoadUser::class,
@@ -23,55 +23,55 @@ class PlnPropertyControllerTest extends BaseTestCase {
         ];
     }
 
-    public function testAnonIndex() {
+    public function testAnonIndex() : void {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/pln/1/property');
-        $this->assertEquals(301, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->count());
+        $this->assertSame(301, $client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
-    public function testUserIndex() {
+    public function testUserIndex() : void {
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/pln/1/property');
-        $this->assertEquals(301, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->count());
+        $this->assertSame(301, $client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
-    public function testAdminIndex() {
+    public function testAdminIndex() : void {
         $client = $this->makeClient(LoadUser::ADMIN);
         $crawler = $client->request('GET', '/pln/1/property/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $crawler->selectLink('New')->count());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(1, $crawler->selectLink('New')->count());
     }
 
-    public function testAnonEdit() {
+    public function testAnonEdit() : void {
         $pln = $this->getReference('pln.1');
         $pln->setProperty('org.test', 'this is a test.');
         $this->em->flush();
 
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/pln/1/property/org.test/edit');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertSame(302, $client->getResponse()->getStatusCode());
     }
 
-    public function testUserEdit() {
+    public function testUserEdit() : void {
         $pln = $this->getReference('pln.1');
         $pln->setProperty('org.test', 'this is a test.');
         $this->em->flush();
 
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/pln/1/property/org.test/edit');
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertSame(403, $client->getResponse()->getStatusCode());
     }
 
-    public function testAdminEdit() {
+    public function testAdminEdit() : void {
         $pln = $this->getReference('pln.1');
         $pln->setProperty('org.test', 'this is a test.');
         $this->em->flush();
 
         $client = $this->makeClient(LoadUser::ADMIN);
         $formCrawler = $client->request('GET', '/pln/1/property/org.test/edit');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Update')->form();
         $values = $form->getPhpValues();
@@ -82,44 +82,44 @@ class PlnPropertyControllerTest extends BaseTestCase {
         $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $responseCrawler->filter('td:contains("first")')->count());
-        $this->assertEquals(1, $responseCrawler->filter('td:contains("second")')->count());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("first")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("second")')->count());
     }
 
-    public function testAnonNew() {
+    public function testAnonNew() : void {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/pln/1/property/new');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertSame(302, $client->getResponse()->getStatusCode());
     }
 
-    public function testUserNew() {
+    public function testUserNew() : void {
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/pln/1/property/new');
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertSame(403, $client->getResponse()->getStatusCode());
     }
 
-    public function testAdminNew() {
+    public function testAdminNew() : void {
         $client = $this->makeClient(LoadUser::ADMIN);
         $formCrawler = $client->request('GET', '/pln/1/property/new');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Create')->form([
             'pln_property[name]' => 'org.lockss.fireball',
-            'pln_property[values][0]' => 'true'
+            'pln_property[values][0]' => 'true',
         ]);
 
         $client->submit($form);
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $responseCrawler->filter('td:contains("true")')->count());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("true")')->count());
     }
 
-    public function testAdminNewNullValue() {
+    public function testAdminNewNullValue() : void {
         $client = $this->makeClient(LoadUser::ADMIN);
         $formCrawler = $client->request('GET', '/pln/1/property/new');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
 
         // If you add a prperty with no values chaos reigns supreme.
         $form = $formCrawler->selectButton('Create')->form([
@@ -129,14 +129,14 @@ class PlnPropertyControllerTest extends BaseTestCase {
         $client->submit($form);
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $responseCrawler->filter('td:contains("true")')->count());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(0, $responseCrawler->filter('td:contains("true")')->count());
     }
 
-    public function testAdminNewMultipleValues() {
+    public function testAdminNewMultipleValues() : void {
         $client = $this->makeClient(LoadUser::ADMIN);
         $formCrawler = $client->request('GET', '/pln/1/property/new');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Create')->form();
         $values = $form->getPhpValues();
@@ -147,43 +147,42 @@ class PlnPropertyControllerTest extends BaseTestCase {
         $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $responseCrawler->filter('td:contains("first")')->count());
-        $this->assertEquals(1, $responseCrawler->filter('td:contains("second")')->count());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("first")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("second")')->count());
     }
 
-
-    public function testAnonDelete() {
+    public function testAnonDelete() : void {
         $pln = $this->getReference('pln.1');
         $pln->setProperty('org.test', 'this is a test.');
         $this->em->flush();
 
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/pln/1/property/org.test/delete');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertSame(302, $client->getResponse()->getStatusCode());
     }
 
-    public function testUserDelete() {
+    public function testUserDelete() : void {
         $pln = $this->getReference('pln.1');
         $pln->setProperty('org.test', 'this is a test.');
         $this->em->flush();
 
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/pln/1/property/org.test/delete');
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertSame(403, $client->getResponse()->getStatusCode());
     }
 
-    public function testAdminDelete() {
+    public function testAdminDelete() : void {
         $pln = $this->getReference('pln.1');
         $pln->setProperty('org.test', 'this is a test.');
         $this->em->flush();
 
         $client = $this->makeClient(LoadUser::ADMIN);
         $crawler = $client->request('GET', '/pln/1/property/org.test/delete');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertSame(302, $client->getResponse()->getStatusCode());
         $this->assertTrue($client->getResponse()->isRedirect());
         $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
 
         $this->em->clear();
         $pln = $this->em->find(Pln::class, 1);

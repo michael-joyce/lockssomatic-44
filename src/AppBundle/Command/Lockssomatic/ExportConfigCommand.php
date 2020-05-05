@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace AppBundle\Command\Lockssomatic;
 
 use AppBundle\Entity\Pln;
@@ -16,7 +24,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * LomExportConfigCommand command.
  */
 class ExportConfigCommand extends ContainerAwareCommand {
-
     /**
      * Exporter service instance.
      *
@@ -40,26 +47,12 @@ class ExportConfigCommand extends ContainerAwareCommand {
 
     /**
      * Construct the command.
-     *
-     * @param EntityManagerInterface $em
-     * @param ConfigExporter $exporter
-     * @param ConfigUpdater $updater
      */
     public function __construct(EntityManagerInterface $em, ConfigExporter $exporter, ConfigUpdater $updater) {
         $this->em = $em;
         $this->exporter = $exporter;
         $this->updater = $updater;
         parent::__construct();
-    }
-
-    /**
-     * Configure the command.
-     */
-    protected function configure() {
-        $this->setName('lom:export:config');
-        $this->addOption('update', null, InputOption::VALUE_NONE, 'Update the configs before exporting.');
-        $this->setDescription('Export the configuration for one or more PLNs.');
-        $this->addArgument('pln', InputArgument::IS_ARRAY, 'Optional list of database PLN IDs to update.');
     }
 
     /**
@@ -71,19 +64,27 @@ class ExportConfigCommand extends ContainerAwareCommand {
      */
     private function getPlns(array $plnIds = null) {
         $repo = $this->em->getRepository(Pln::class);
-        if ($plnIds === null || count($plnIds) === 0) {
+        if (null === $plnIds || 0 === count($plnIds)) {
             return $repo->findAll();
         }
+
         return $repo->findById($plnIds);
     }
 
     /**
-     * Execute the command.
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * Configure the command.
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function configure() : void {
+        $this->setName('lom:export:config');
+        $this->addOption('update', null, InputOption::VALUE_NONE, 'Update the configs before exporting.');
+        $this->setDescription('Export the configuration for one or more PLNs.');
+        $this->addArgument('pln', InputArgument::IS_ARRAY, 'Optional list of database PLN IDs to update.');
+    }
+
+    /**
+     * Execute the command.
+     */
+    protected function execute(InputInterface $input, OutputInterface $output) : void {
         $plnIds = $input->getArgument('pln');
         foreach ($this->getPlns($plnIds) as $pln) {
             if ($input->getOption('update')) {
@@ -95,5 +96,4 @@ class ExportConfigCommand extends ContainerAwareCommand {
             $this->exporter->export($pln);
         }
     }
-
 }

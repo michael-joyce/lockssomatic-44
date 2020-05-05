@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Tests\Entity;
@@ -14,40 +15,38 @@ use AppBundle\Services\PluginImporter;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 /**
- * Description of PluginPropertyTest
+ * Description of PluginPropertyTest.
  */
 class PluginTest extends BaseTestCase {
-    
     protected function getFixtures() {
         return [
             LoadPluginProperty::class,
         ];
     }
-    
-    protected function setup() : void {
-        parent::setUp();
-    }
-    
-    public function testGetRootPluginProperties() {
+
+    public function testGetRootPluginProperties() : void {
         $plugin = $this->getReference('plugin.1');
         $properties = $plugin->getRootPluginProperties();
         $this->assertCount(5, $properties);
-        $this->assertEquals('plugin_identifier', $properties[0]->getPropertyKey());
-        $this->assertEquals('au_name', $properties[1]->getPropertyKey());
-        $this->assertEquals('plugin_version', $properties[2]->getPropertyKey());
-        $this->assertEquals('au_permission_url', $properties[3]->getPropertyKey());
-        $this->assertEquals('plugin_config_props', $properties[4]->getPropertyKey());
+        $this->assertSame('plugin_identifier', $properties[0]->getPropertyKey());
+        $this->assertSame('au_name', $properties[1]->getPropertyKey());
+        $this->assertSame('plugin_version', $properties[2]->getPropertyKey());
+        $this->assertSame('au_permission_url', $properties[3]->getPropertyKey());
+        $this->assertSame('plugin_config_props', $properties[4]->getPropertyKey());
     }
-    
+
     /**
      * @dataProvider getPropertyData
+     *
+     * @param mixed $key
+     * @param mixed $value
      */
-    public function testGetProperty($key, $value) {
+    public function testGetProperty($key, $value) : void {
         $plugin = $this->getReference('plugin.1');
         $property = $plugin->getProperty($key);
-        $this->assertEquals($value, $property->getPropertyValue());
+        $this->assertSame($value, $property->getPropertyValue());
     }
-    
+
     public function getPropertyData() {
         return [
             ['plugin_identifier', 'ca.example.lockss.plugin'],
@@ -55,50 +54,50 @@ class PluginTest extends BaseTestCase {
             ['plugin_version', 301],
             ['au_permission_url', [
                 '"%s", manifest_url',
-                '"%s", permission_url'
+                '"%s", permission_url',
             ]],
         ];
     }
-    
-    public function testGetPluginConfigParams() {
+
+    public function testGetPluginConfigParams() : void {
         $importer = $this->container->get(PluginImporter::class);
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
         $definitionals = $plugin->getPluginConfigParams();
-        $this->assertEquals(4, count($definitionals));
-        $this->assertEquals('org.lockss.daemon.ConfigParamDescr', $definitionals[0]->getPropertyKey());
-        $this->assertEquals('base_url', $definitionals[0]->getChildren()[0]->getPropertyValue());
-        
-        $this->assertEquals('org.lockss.daemon.ConfigParamDescr', $definitionals[1]->getPropertyKey());
-        $this->assertEquals('container_number', $definitionals[1]->getChildren()[0]->getPropertyValue());
-        
-        $this->assertEquals('org.lockss.daemon.ConfigParamDescr', $definitionals[2]->getPropertyKey());
-        $this->assertEquals('manifest_url', $definitionals[2]->getChildren()[0]->getPropertyValue());
-        
-        $this->assertEquals('org.lockss.daemon.ConfigParamDescr', $definitionals[3]->getPropertyKey());
-        $this->assertEquals('permission_url', $definitionals[3]->getChildren()[0]->getPropertyValue());
+        $this->assertSame(4, count($definitionals));
+        $this->assertSame('org.lockss.daemon.ConfigParamDescr', $definitionals[0]->getPropertyKey());
+        $this->assertSame('base_url', $definitionals[0]->getChildren()[0]->getPropertyValue());
+
+        $this->assertSame('org.lockss.daemon.ConfigParamDescr', $definitionals[1]->getPropertyKey());
+        $this->assertSame('container_number', $definitionals[1]->getChildren()[0]->getPropertyValue());
+
+        $this->assertSame('org.lockss.daemon.ConfigParamDescr', $definitionals[2]->getPropertyKey());
+        $this->assertSame('manifest_url', $definitionals[2]->getChildren()[0]->getPropertyValue());
+
+        $this->assertSame('org.lockss.daemon.ConfigParamDescr', $definitionals[3]->getPropertyKey());
+        $this->assertSame('permission_url', $definitionals[3]->getChildren()[0]->getPropertyValue());
     }
-    
-    public function testGetDefinitionalParams() {
+
+    public function testGetDefinitionalParams() : void {
         $importer = $this->container->get(PluginImporter::class);
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
         $definitionals = $plugin->getDefinitionalPropertyNames();
-        $this->assertEquals(2, count($definitionals));
-        $this->assertEquals('base_url', $definitionals[0]);        
-        $this->assertEquals('container_number', $definitionals[1]);
+        $this->assertSame(2, count($definitionals));
+        $this->assertSame('base_url', $definitionals[0]);
+        $this->assertSame('container_number', $definitionals[1]);
     }
-    
-    public function testGetNonDefinitionalParams() {
+
+    public function testGetNonDefinitionalParams() : void {
         $importer = $this->container->get(PluginImporter::class);
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
         $nonDefinitionals = $plugin->getNonDefinitionalProperties();
-        $this->assertEquals(2, count($nonDefinitionals));
-        $this->assertEquals('manifest_url', $nonDefinitionals[0]);        
-        $this->assertEquals('permission_url', $nonDefinitionals[1]);
+        $this->assertSame(2, count($nonDefinitionals));
+        $this->assertSame('manifest_url', $nonDefinitionals[0]);
+        $this->assertSame('permission_url', $nonDefinitionals[1]);
     }
-    
+
     public function xmlData() {
         return <<<'ENDXML'
 <map>
@@ -130,5 +129,8 @@ class PluginTest extends BaseTestCase {
 </map>
 ENDXML;
     }
-    
+
+    protected function setup() : void {
+        parent::setUp();
+    }
 }

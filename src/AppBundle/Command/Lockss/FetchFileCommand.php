@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Command\Lockss;
@@ -25,7 +26,6 @@ use Symfony\Component\Filesystem\Filesystem;
  * Fetch a file from the LOCKSS network.
  */
 class FetchFileCommand extends ContainerAwareCommand {
-
     /**
      * Doctrine instance.
      *
@@ -56,10 +56,6 @@ class FetchFileCommand extends ContainerAwareCommand {
 
     /**
      * Build the command.
-     *
-     * @param EntityManagerInterface $em
-     * @param LockssClient $client
-     * @param FilePaths $filePaths
      */
     public function __construct(EntityManagerInterface $em, LockssClient $client, FilePaths $filePaths) {
         parent::__construct();
@@ -72,7 +68,7 @@ class FetchFileCommand extends ContainerAwareCommand {
     /**
      * Configure the command.
      */
-    protected function configure() {
+    protected function configure() : void {
         $this->setName('lockss:deposit:fetch');
         $this->addOption('uuid', null, InputOption::VALUE_NONE, 'Arguments are deposit UUIDs.');
         $this->addArgument('id', InputArgument::IS_ARRAY, 'One or more IDs to fetch.');
@@ -84,10 +80,9 @@ class FetchFileCommand extends ContainerAwareCommand {
      *
      * At least one of $ids, $uuids must not be empty.
      *
-     * @param array $ids
      * @param bool $uuids
      *
-     * @return Generator|Deposit[]
+     * @return Deposit[]|Generator
      */
     protected function getDeposits(array $ids, $uuids) {
         $repo = $this->em->getRepository(Deposit::class);
@@ -99,7 +94,7 @@ class FetchFileCommand extends ContainerAwareCommand {
         }
         $qb->setParameter('ids', $ids);
         $iterator = $qb->getQuery()->iterate();
-        foreach($iterator as $row) {
+        foreach ($iterator as $row) {
             yield $row[0];
         }
     }
@@ -107,7 +102,7 @@ class FetchFileCommand extends ContainerAwareCommand {
     /**
      * {@inheritdoc}
      */
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output) : void {
         $ids = $input->getArgument('id');
         $uuids = $input->getOption('uuid');
         $deposits = $this->getDeposits($ids, $uuids);
@@ -118,11 +113,13 @@ class FetchFileCommand extends ContainerAwareCommand {
             $boxes = $pln->getActiveBoxes(true);
             foreach ($boxes as $box) {
                 // debugging crap.
-                if($box->getId() !== 1) { continue; }
+                if (1 !== $box->getId()) {
+                    continue;
+                }
 
-                print "fetching from {$box}\n";
+                echo "fetching from {$box}\n";
                 $fh = $this->client->fetchFile($box, $deposit);
-                if( ! $fh) {
+                if ( ! $fh) {
                     continue;
                 }
                 $context = hash_init($deposit->getChecksumType());
@@ -130,19 +127,20 @@ class FetchFileCommand extends ContainerAwareCommand {
                     hash_update($context, $data);
                 }
                 $checksum = strtoupper(hash_final($context));
-                if($checksum !== $deposit->getChecksumValue()) {
+                if ($checksum !== $deposit->getChecksumValue()) {
                     $output->writeln("Checksum verification failed for {$box->getHostname()}");
+
                     continue;
                 }
                 rewind($fh);
                 $path = $this->filePaths->getDownloadContentPath($deposit);
-                while(($data = fread($fh, 64*1024))) {
+                while (($data = fread($fh, 64 * 1024))) {
                     $this->fs->appendToFile($path, $data);
                 }
                 $output->writeln("Deposit written to {$path}.");
+
                 break;
             }
         }
     }
-
 }

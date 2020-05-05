@@ -1,15 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
@@ -20,7 +20,6 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\DepositStatusRepository")
  */
 class DepositStatus extends AbstractEntity {
-
     /**
      * Deposit that owns this status.
      *
@@ -62,7 +61,7 @@ class DepositStatus extends AbstractEntity {
      */
     public function __construct() {
         parent::__construct();
-        $this->errors = array();
+        $this->errors = [];
     }
 
     /**
@@ -98,8 +97,6 @@ class DepositStatus extends AbstractEntity {
 
     /**
      * Set status.
-     *
-     * @param array $status
      *
      * @return DepositStatus
      */
@@ -140,28 +137,23 @@ class DepositStatus extends AbstractEntity {
         return $this->deposit;
     }
 
-
     /**
-     * Set errors
-     *
-     * @param array $errors
+     * Set errors.
      *
      * @return DepositStatus
      */
-    public function setErrors(array $errors)
-    {
+    public function setErrors(array $errors) {
         $this->errors = $errors;
 
         return $this;
     }
 
     /**
-     * Get errors
+     * Get errors.
      *
      * @return array
      */
-    public function getErrors()
-    {
+    public function getErrors() {
         return $this->errors;
     }
 }

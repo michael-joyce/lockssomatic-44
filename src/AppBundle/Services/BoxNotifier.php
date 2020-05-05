@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Services;
@@ -19,7 +20,6 @@ use Symfony\Component\Templating\EngineInterface;
  * Description of BoxNotifier.
  */
 class BoxNotifier {
-
     private $sender;
 
     private $contact;
@@ -35,24 +35,24 @@ class BoxNotifier {
         $this->mailer = $mailer;
     }
 
-    public function unreachable(Box $box, BoxStatus $boxStatus) {
-        if (!$box->getSendNotifications() || !$box->getContactEmail()) {
+    public function unreachable(Box $box, BoxStatus $boxStatus) : void {
+        if ( ! $box->getSendNotifications() || ! $box->getContactEmail()) {
             return;
         }
         $message = new Swift_Message('LOCKSSOMatic Notification: Box Unreachable', null, 'text/plain', '7bit');
         $message->setTo($box->getContactEmail());
         $message->setCc($this->contact);
         $message->setFrom($this->sender);
-        $message->setBody($this->templating->render('AppBundle:box:unreachable.txt.twig', array(
+        $message->setBody($this->templating->render('AppBundle:box:unreachable.txt.twig', [
             'box' => $box,
             'boxStatus' => $boxStatus,
             'contact' => $this->contact,
-        )));
+        ]));
         $this->mailer->send($message);
     }
 
-    public function freeSpaceWarning(Box $box, BoxStatus $boxStatus) {
-        if (!$box->getSendNotifications() || !$box->getContactEmail()) {
+    public function freeSpaceWarning(Box $box, BoxStatus $boxStatus) : void {
+        if ( ! $box->getSendNotifications() || ! $box->getContactEmail()) {
             return;
         }
 
@@ -60,12 +60,11 @@ class BoxNotifier {
         $message->setTo($box->getContactEmail());
         $message->setCc($this->contact);
         $message->setFrom($this->sender);
-        $message->setBody($this->templating->render('AppBundle:box:diskspace.txt.twig', array(
+        $message->setBody($this->templating->render('AppBundle:box:diskspace.txt.twig', [
             'box' => $box,
             'boxStatus' => $boxStatus,
             'contact' => $this->contact,
-        )));
+        ]));
         $this->mailer->send($message);
     }
-
 }

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Entity;
@@ -22,22 +23,21 @@ use SplFileInfo;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PlnRepository")
  */
 class Pln extends AbstractEntity {
-
     /**
      * Mime types acceptable for java keystores.
      */
-    const KEYSTORE_MIMETYPES = array(
+    public const KEYSTORE_MIMETYPES = [
         'application/x-java-keystore',
-    );
+    ];
 
     /**
      * LOCKSS will only recognize these properties in an XML file if they are lists.
      */
-    const LIST_REQUIRED = array(
+    public const LIST_REQUIRED = [
         'org.lockss.id.initialV3PeerList',
         'org.lockss.titleDbs',
         'org.lockss.plugin.registries',
-    );
+    ];
 
     /**
      * Name of the PLN.
@@ -121,7 +121,7 @@ class Pln extends AbstractEntity {
     /**
      * A list of all AUs in the PLN. Probably very large.
      *
-     * @var Collection|Au[]
+     * @var Au[]|Collection
      *
      * @ORM\OneToMany(targetEntity="Au", mappedBy="pln")
      */
@@ -130,7 +130,7 @@ class Pln extends AbstractEntity {
     /**
      * List of boxes in the PLN.
      *
-     * @var Collection|Box[]
+     * @var Box[]|Collection
      *
      * @ORM\OneToMany(targetEntity="Box", mappedBy="pln");
      */
@@ -141,7 +141,7 @@ class Pln extends AbstractEntity {
      *
      * Each provider is associated with exactly one PLN.
      *
-     * @var Pln[]|Collection
+     * @var Collection|Pln[]
      *
      * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="pln")
      */
@@ -154,7 +154,7 @@ class Pln extends AbstractEntity {
         parent::__construct();
         $this->enableContentUi = false;
         $this->contentPort = '8080';
-        $this->properties = array();
+        $this->properties = [];
         $this->contentProviders = new ArrayCollection();
         $this->boxes = new ArrayCollection();
         $this->aus = new ArrayCollection();
@@ -303,6 +303,7 @@ class Pln extends AbstractEntity {
 
     public function clearProperties() {
         $this->properties = [];
+
         return $this;
     }
 
@@ -319,23 +320,25 @@ class Pln extends AbstractEntity {
      * Set a property of the PLN.
      *
      * @param string $key
-     * @param string|array $value
+     * @param array|string $value
+     *
      * @return Pln
      */
     public function setProperty($key, $value) {
-        if (in_array($key, self::LIST_REQUIRED)) {
+        if (in_array($key, self::LIST_REQUIRED, true)) {
             if (is_array($value)) {
                 $this->properties[$key] = $value;
             } else {
                 $this->properties[$key] = [$value];
             }
         } else {
-            if (is_array($value) && count($value) === 1) {
+            if (is_array($value) && 1 === count($value)) {
                 $this->properties[$key] = $value[0];
             } else {
                 $this->properties[$key] = $value;
             }
         }
+
         return $this;
     }
 
@@ -343,12 +346,14 @@ class Pln extends AbstractEntity {
      * Get a property of the PLN.
      *
      * @param string $key
+     *
      * @return mixed
      */
     public function getProperty($key) {
-        if (!array_key_exists($key, $this->properties)) {
-            return null;
+        if ( ! array_key_exists($key, $this->properties)) {
+            return;
         }
+
         return $this->properties[$key];
     }
 
@@ -357,19 +362,17 @@ class Pln extends AbstractEntity {
      *
      * @param string $key
      */
-    public function removeProperty($key) {
+    public function removeProperty($key) : void {
         unset($this->properties[$key]);
     }
 
     /**
      * Add aus.
      *
-     * @param Au $au
-     *
      * @return Pln
      */
     public function addAu(Au $au) {
-        if (!$this->aus->contains($au)) {
+        if ( ! $this->aus->contains($au)) {
             $this->aus->add($au);
         }
 
@@ -378,10 +381,8 @@ class Pln extends AbstractEntity {
 
     /**
      * Remove aus.
-     *
-     * @param Au $au
      */
-    public function removeAu(Au $au) {
+    public function removeAu(Au $au) : void {
         $this->aus->removeElement($au);
     }
 
@@ -397,8 +398,6 @@ class Pln extends AbstractEntity {
     /**
      * Add box.
      *
-     * @param Box $box
-     *
      * @return Pln
      */
     public function addBox(Box $box) {
@@ -409,10 +408,8 @@ class Pln extends AbstractEntity {
 
     /**
      * Remove box.
-     *
-     * @param Box $box
      */
-    public function removeBox(Box $box) {
+    public function removeBox(Box $box) : void {
         $this->boxes->removeElement($box);
     }
 
@@ -421,14 +418,18 @@ class Pln extends AbstractEntity {
      *
      * If $shuffle is true, the boxes will be returned in a random order.
      *
-     * @return Collection|Box[]
+     * @param mixed $shuffle
+     *
+     * @return Box[]|Collection
      */
     public function getBoxes($shuffle = false) {
-        if($shuffle) {
+        if ($shuffle) {
             $array = $this->boxes->toArray();
             shuffle($array);
+
             return new ArrayCollection($array);
         }
+
         return $this->boxes;
     }
 
@@ -437,16 +438,19 @@ class Pln extends AbstractEntity {
      *
      * If $shuffle is true, the boxes will be returned in a random order.
      *
-     * @return Collection|Box[]
+     * @param mixed $shuffle
+     *
+     * @return Box[]|Collection
      */
     public function getActiveBoxes($shuffle = false) {
         $boxes = $this->boxes;
-        if($shuffle) {
+        if ($shuffle) {
             $array = $this->boxes->toArray();
             shuffle($array);
             $boxes = new ArrayCollection($array);
         }
-        return $this->boxes->filter(function(Box $box) {return $box->getActive();});
+
+        return $this->boxes->filter(function (Box $box) {return $box->getActive(); });
     }
 
     /**
@@ -478,13 +482,12 @@ class Pln extends AbstractEntity {
      */
     public function getKeystoreFilename() {
         $fileinfo = new SplFileInfo($this->keystore);
+
         return $fileinfo->getBasename();
     }
 
     /**
      * Add contentProvider.
-     *
-     * @param ContentProvider $contentProvider
      *
      * @return Pln
      */
@@ -496,10 +499,8 @@ class Pln extends AbstractEntity {
 
     /**
      * Remove contentProvider.
-     *
-     * @param ContentProvider $contentProvider
      */
-    public function removeContentProvider(ContentProvider $contentProvider) {
+    public function removeContentProvider(ContentProvider $contentProvider) : void {
         $this->contentProviders->removeElement($contentProvider);
     }
 
@@ -520,83 +521,71 @@ class Pln extends AbstractEntity {
     public function getPlugins() {
         $plugins = [];
         foreach ($this->contentProviders as $provider) {
-            if (!in_array($provider->getPlugin(), $plugins)) {
+            if ( ! in_array($provider->getPlugin(), $plugins, true)) {
                 $plugins[] = $provider->getPlugin();
             }
         }
+
         return $plugins;
     }
 
-
     /**
-     * Set email
+     * Set email.
      *
      * @param string $email
      *
      * @return Pln
      */
-    public function setEmail($email)
-    {
+    public function setEmail($email) {
         $this->email = $email;
 
         return $this;
     }
 
     /**
-     * Get email
+     * Get email.
      *
      * @return string
      */
-    public function getEmail()
-    {
+    public function getEmail() {
         return $this->email;
     }
 
     /**
-     * Get keystore
+     * Get keystore.
      *
      * @return string
      */
-    public function getKeystore()
-    {
+    public function getKeystore() {
         return $this->keystore;
     }
 
     /**
-     * Set properties
-     *
-     * @param array $properties
+     * Set properties.
      *
      * @return Pln
      */
-    public function setProperties(array $properties)
-    {
+    public function setProperties(array $properties) {
         $this->properties = $properties;
 
         return $this;
     }
 
     /**
-     * Add aus
-     *
-     * @param Au $aus
+     * Add aus.
      *
      * @return Pln
      */
-    public function addAus(Au $aus)
-    {
+    public function addAus(Au $aus) {
         $this->aus[] = $aus;
 
         return $this;
     }
 
     /**
-     * Remove aus
-     *
-     * @param Au $aus
+     * Remove aus.
      */
-    public function removeAus(Au $aus)
-    {
+    public function removeAus(Au $aus) : void {
         $this->aus->removeElement($aus);
     }
 }

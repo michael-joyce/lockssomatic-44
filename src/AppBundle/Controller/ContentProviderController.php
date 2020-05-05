@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Controller;
@@ -25,11 +26,8 @@ use Symfony\Component\HttpFoundation\Request;
  * @Route("/content_provider")
  */
 class ContentProviderController extends Controller {
-
     /**
      * Lists all ContentProvider entities.
-     *
-     * @param Request $request
      *
      * @return array
      *
@@ -45,15 +43,13 @@ class ContentProviderController extends Controller {
         $paginator = $this->get('knp_paginator');
         $contentProviders = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        return [
             'contentProviders' => $contentProviders,
-        );
+        ];
     }
 
     /**
      * Creates a new ContentProvider entity.
-     *
-     * @param Request $request
      *
      * @return array
      *
@@ -73,19 +69,18 @@ class ContentProviderController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new contentProvider was created.');
-            return $this->redirectToRoute('content_provider_show', array('id' => $contentProvider->getId()));
+
+            return $this->redirectToRoute('content_provider_show', ['id' => $contentProvider->getId()]);
         }
 
-        return array(
+        return [
             'contentProvider' => $contentProvider,
             'form' => $form->createView(),
-        );
+        ];
     }
 
     /**
      * Finds and displays a ContentProvider entity.
-     *
-     * @param ContentProvider $contentProvider
      *
      * @return array
      *
@@ -94,17 +89,13 @@ class ContentProviderController extends Controller {
      * @Template()
      */
     public function showAction(ContentProvider $contentProvider) {
-
-        return array(
+        return [
             'contentProvider' => $contentProvider,
-        );
+        ];
     }
 
     /**
      * Displays a form to edit an existing ContentProvider entity.
-     *
-     * @param Request $request
-     * @param ContentProvider $contentProvider
      *
      * @return array
      *
@@ -121,20 +112,18 @@ class ContentProviderController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The contentProvider has been updated.');
-            return $this->redirectToRoute('content_provider_show', array('id' => $contentProvider->getId()));
+
+            return $this->redirectToRoute('content_provider_show', ['id' => $contentProvider->getId()]);
         }
 
-        return array(
+        return [
             'contentProvider' => $contentProvider,
             'edit_form' => $editForm->createView(),
-        );
+        ];
     }
 
     /**
      * Deletes a ContentProvider entity.
-     *
-     * @param Request $request
-     * @param ContentProvider $contentProvider
      *
      * @return array
      *
@@ -150,5 +139,4 @@ class ContentProviderController extends Controller {
 
         return $this->redirectToRoute('content_provider_index');
     }
-
 }

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Controller;
@@ -29,12 +30,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @ParamConverter("pln", options={"id"="plnId"})
  */
 class BoxController extends Controller {
-
     /**
      * Lists all Box entities.
-     *
-     * @param Request $request
-     * @param Pln $pln
      *
      * @return array
      *
@@ -45,21 +42,18 @@ class BoxController extends Controller {
     public function indexAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Box::class);
-        $query = $repo->findBy(array('pln' => $pln), array('id' => 'ASC'));
+        $query = $repo->findBy(['pln' => $pln], ['id' => 'ASC']);
         $paginator = $this->get('knp_paginator');
         $boxes = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        return [
             'boxes' => $boxes,
             'pln' => $pln,
-        );
+        ];
     }
 
     /**
      * Creates a new Box entity.
-     *
-     * @param Request $request
-     * @param Pln $pln
      *
      * @return array
      *
@@ -80,21 +74,19 @@ class BoxController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new box was created. You should check deposit status manually with --force once content is copied.');
-            return $this->redirectToRoute('box_show', array('id' => $box->getId(), 'plnId' => $pln->getId()));
+
+            return $this->redirectToRoute('box_show', ['id' => $box->getId(), 'plnId' => $pln->getId()]);
         }
 
-        return array(
+        return [
             'box' => $box,
             'pln' => $pln,
             'form' => $form->createView(),
-        );
+        ];
     }
 
     /**
      * Finds and displays a Box entity.
-     *
-     * @param Pln $pln
-     * @param Box $box
      *
      * @return array
      *
@@ -104,20 +96,17 @@ class BoxController extends Controller {
      */
     public function showAction(Pln $pln, Box $box) {
         if ($box->getPln() !== $pln) {
-            throw new NotFoundHttpException("No such box.");
+            throw new NotFoundHttpException('No such box.');
         }
-        return array(
+
+        return [
             'box' => $box,
             'pln' => $pln,
-        );
+        ];
     }
 
     /**
      * Displays a form to edit an existing Box entity.
-     *
-     * @param Request $request
-     * @param Pln $pln
-     * @param Box $box
      *
      * @return array
      *
@@ -128,7 +117,7 @@ class BoxController extends Controller {
      */
     public function editAction(Request $request, Pln $pln, Box $box) {
         if ($box->getPln() !== $pln) {
-            throw new NotFoundHttpException("No such box.");
+            throw new NotFoundHttpException('No such box.');
         }
         $editForm = $this->createForm(BoxType::class, $box);
         $editForm->handleRequest($request);
@@ -137,22 +126,19 @@ class BoxController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The box has been updated.');
-            return $this->redirectToRoute('box_show', array('id' => $box->getId(), 'plnId' => $pln->getId()));
+
+            return $this->redirectToRoute('box_show', ['id' => $box->getId(), 'plnId' => $pln->getId()]);
         }
 
-        return array(
+        return [
             'box' => $box,
             'pln' => $pln,
             'edit_form' => $editForm->createView(),
-        );
+        ];
     }
 
     /**
      * Deletes a Box entity.
-     *
-     * @param Request $request
-     * @param Pln $pln
-     * @param Box $box
      *
      * @return array
      *
@@ -162,16 +148,15 @@ class BoxController extends Controller {
      */
     public function deleteAction(Request $request, Pln $pln, Box $box) {
         if ($box->getPln() !== $pln) {
-            throw new NotFoundHttpException("No such box.");
+            throw new NotFoundHttpException('No such box.');
         }
         $em = $this->getDoctrine()->getManager();
         $em->remove($box);
         $em->flush();
         $this->addFlash('success', 'The box was deleted.');
 
-        return $this->redirectToRoute('box_index', array(
+        return $this->redirectToRoute('box_index', [
             'plnId' => $pln->getId(),
-        ));
+        ]);
     }
-
 }

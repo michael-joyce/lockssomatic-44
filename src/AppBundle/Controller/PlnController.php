@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Controller;
@@ -15,7 +16,6 @@ use AppBundle\Form\PlnType;
 use AppBundle\Services\ConfigExporter;
 use AppBundle\Services\ConfigUpdater;
 use AppBundle\Services\FilePaths;
-use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -32,11 +32,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  * @Route("/pln")
  */
 class PlnController extends Controller {
-
     /**
      * Lists all Pln entities.
-     *
-     * @param Request $request
      *
      * @return array
      *
@@ -52,15 +49,13 @@ class PlnController extends Controller {
         $paginator = $this->get('knp_paginator');
         $plns = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        return [
             'plns' => $plns,
-        );
+        ];
     }
 
     /**
      * Creates a new Pln entity.
-     *
-     * @param Request $request
      *
      * @return array
      *
@@ -80,23 +75,20 @@ class PlnController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new pln was created.');
-            return $this->redirectToRoute('pln_show', array(
+
+            return $this->redirectToRoute('pln_show', [
                 'id' => $pln->getId(),
-            ));
+            ]);
         }
 
-        return array(
+        return [
             'pln' => $pln,
             'form' => $form->createView(),
-        );
+        ];
     }
 
     /**
      * Upload and add/replace the java keystore file for the Pln's plugins.
-     *
-     * @param Request $request
-     * @param Pln $pln
-     * @param FilePaths $filePaths
      *
      * @return array
      *
@@ -115,11 +107,11 @@ class PlnController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $file = $data['file'];
-            if (!in_array($file->getMimeType(), Pln::KEYSTORE_MIMETYPES)) {
+            if ( ! in_array($file->getMimeType(), Pln::KEYSTORE_MIMETYPES, true)) {
                 throw new BadRequestHttpException("Upload does not look like a keystore. Mime type is {$file->getMimeType()}");
             }
-            if (!preg_match('/^[a-zA-Z0-9 .-]+\.keystore$/', $file->getClientOriginalName())) {
-                throw new BadRequestHttpException("Upload does not look like a keystore. File name is strange.");
+            if ( ! preg_match('/^[a-zA-Z0-9 .-]+\.keystore$/', $file->getClientOriginalName())) {
+                throw new BadRequestHttpException('Upload does not look like a keystore. File name is strange.');
             }
             $filename = $file->getClientOriginalName();
             $file->move($filePaths->getLockssKeystoreDir($pln), $filename);
@@ -129,21 +121,20 @@ class PlnController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The keystore has been updated.');
-            return $this->redirectToRoute('pln_show', array(
+
+            return $this->redirectToRoute('pln_show', [
                 'id' => $pln->getId(),
-            ));
+            ]);
         }
 
-        return array(
+        return [
             'form' => $form->createView(),
             'pln' => $pln,
-        );
+        ];
     }
 
     /**
      * Finds and displays a Pln entity.
-     *
-     * @param Pln $pln
      *
      * @return array
      *
@@ -152,17 +143,13 @@ class PlnController extends Controller {
      * @Template()
      */
     public function showAction(Pln $pln) {
-
-        return array(
+        return [
             'pln' => $pln,
-        );
+        ];
     }
 
     /**
      * Displays a form to edit an existing Pln entity.
-     *
-     * @param Request $request
-     * @param Pln $pln
      *
      * @return array
      *
@@ -179,15 +166,16 @@ class PlnController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The pln has been updated.');
-            return $this->redirectToRoute('pln_show', array(
+
+            return $this->redirectToRoute('pln_show', [
                 'id' => $pln->getId(),
-            ));
+            ]);
         }
 
-        return array(
+        return [
             'pln' => $pln,
             'edit_form' => $editForm->createView(),
-        );
+        ];
     }
 
     /**
@@ -196,11 +184,6 @@ class PlnController extends Controller {
      * Updates all configuration for a PLN and exports it to disk for LOCKSS
      * to access. Usually this should be done in a regularly scheduled cron
      * job.
-     *
-     * @param Request $request
-     * @param Pln $pln
-     * @param ConfigExporter $exporter
-     * @param ConfigUpdater $updater
      *
      * @return RedirectResponse
      *
@@ -215,16 +198,14 @@ class PlnController extends Controller {
         $em->flush();
         $exporter->export($pln);
         $this->addFlash('success', 'The pln configuration has been updated and exported.');
-        return $this->redirectToRoute('pln_show', array(
+
+        return $this->redirectToRoute('pln_show', [
             'id' => $pln->getId(),
-        ));
+        ]);
     }
 
     /**
      * Deletes a Pln entity.
-     *
-     * @param Request $request
-     * @param Pln $pln
      *
      * @return array
      *
@@ -240,5 +221,4 @@ class PlnController extends Controller {
 
         return $this->redirectToRoute('pln_index');
     }
-
 }

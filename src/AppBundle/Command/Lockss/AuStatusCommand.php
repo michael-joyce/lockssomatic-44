@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Command\Lockss;
@@ -24,7 +25,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Description of DaemonStatusCommand.
  */
 class AuStatusCommand extends ContainerAwareCommand {
-
     /**
      * Dependency injected entity manager.
      *
@@ -41,9 +41,6 @@ class AuStatusCommand extends ContainerAwareCommand {
 
     /**
      * Construct the command.
-     *
-     * @param EntityManagerInterface $em
-     * @param LockssClient $client
      */
     public function __construct(EntityManagerInterface $em, LockssClient $client) {
         parent::__construct();
@@ -54,7 +51,7 @@ class AuStatusCommand extends ContainerAwareCommand {
     /**
      * Configure the command.
      */
-    protected function configure() {
+    protected function configure() : void {
         $this->setName('lockss:au:status');
         $this->addOption('pln', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Optional list of PLNs to check.');
         $this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Export only, do not update any internal configs.');
@@ -64,15 +61,14 @@ class AuStatusCommand extends ContainerAwareCommand {
     /**
      * Get a list of PLNs to query.
      *
-     * @param array $plnIds
-     *
      * @return Collection|Pln[]
      */
     protected function getPlns(array $plnIds) {
         $repo = $this->em->getRepository(Pln::class);
         if (count($plnIds) > 0) {
-            return $repo->findBy(array('id' => $plnIds));
+            return $repo->findBy(['id' => $plnIds]);
         }
+
         return $repo->findAll();
     }
 
@@ -91,15 +87,16 @@ class AuStatusCommand extends ContainerAwareCommand {
         $auStatus->setStatus($status);
         $auStatus->setErrors($errors);
         $this->em->persist($auStatus);
+
         return $auStatus;
     }
 
-    protected function queryPln(Pln $pln, $dryRun) {
+    protected function queryPln(Pln $pln, $dryRun) : void {
         $boxes = $pln->getActiveBoxes();
 
         foreach ($pln->getAus() as $au) {
             $this->queryAu($au, $boxes);
-            if (!$dryRun) {
+            if ( ! $dryRun) {
                 $this->em->flush();
             }
         }
@@ -107,11 +104,8 @@ class AuStatusCommand extends ContainerAwareCommand {
 
     /**
      * Execute the command.
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
      */
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output) : void {
         $plnIds = $input->getOption('pln');
         $dryRun = $input->getOption('dry-run');
 
@@ -120,5 +114,4 @@ class AuStatusCommand extends ContainerAwareCommand {
             $this->queryPln($pln, $dryRun);
         }
     }
-
 }

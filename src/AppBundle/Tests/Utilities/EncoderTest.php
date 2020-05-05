@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Tests\Utilities;
@@ -13,18 +14,12 @@ use AppBundle\Utilities\Encoder;
 use PHPUnit\Framework\TestCase;
 
 class EncoderTest extends TestCase {
-
     /**
      * @var Encoder
      */
     private $encoder;
 
-    protected function setup() : void {
-        parent::setUp();
-        $this->encoder = new Encoder();
-    }
-
-    public function testSanity() {
+    public function testSanity() : void {
         $this->assertInstanceOf(Encoder::class, $this->encoder);
     }
 
@@ -34,8 +29,8 @@ class EncoderTest extends TestCase {
      * @param string $encoded
      * @param string $raw
      */
-    public function testEncode($encoded, $raw) {
-        $this->assertEquals($encoded, $this->encoder->encode($raw));
+    public function testEncode($encoded, $raw) : void {
+        $this->assertSame($encoded, $this->encoder->encode($raw));
     }
 
     public function encodeData() {
@@ -55,7 +50,7 @@ class EncoderTest extends TestCase {
             ['abc%26123', 'abc&123'],
             ['abc%7C123', 'abc|123'],
             [null, null],
-            ['', '']
+            ['', ''],
         ];
     }
 
@@ -65,8 +60,12 @@ class EncoderTest extends TestCase {
      * @param string $encoded
      * @param string $raw
      */
-    public function testDecode($encoded, $raw) {
-        $this->assertEquals($raw, $this->encoder->decode($encoded));
+    public function testDecode($encoded, $raw) : void {
+        $this->assertSame($raw, $this->encoder->decode($encoded));
     }
 
+    protected function setup() : void {
+        parent::setUp();
+        $this->encoder = new Encoder();
+    }
 }

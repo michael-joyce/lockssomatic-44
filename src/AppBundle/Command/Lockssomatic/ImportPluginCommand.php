@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Command\Lockssomatic;
@@ -23,7 +24,6 @@ use ZipArchive;
  * Import one or more LOCKSS plugins.
  */
 class ImportPluginCommand extends ContainerAwareCommand {
-
     /**
      * Doctrine instance.
      *
@@ -47,10 +47,6 @@ class ImportPluginCommand extends ContainerAwareCommand {
 
     /**
      * Build the import plugin command.
-     *
-     * @param EntityManagerInterface $em
-     * @param PluginImporter $importer
-     * @param FilePaths $filePaths
      */
     public function __construct(EntityManagerInterface $em, PluginImporter $importer, FilePaths $filePaths) {
         $this->em = $em;
@@ -62,7 +58,7 @@ class ImportPluginCommand extends ContainerAwareCommand {
     /**
      * {@inheritdoc}
      */
-    protected function configure() {
+    protected function configure() : void {
         $this->setName('lom:import:plugin');
         $this->setDescription('Import one or more LOCKSS .jar plugins.');
         $this->addArgument('files', InputArgument::IS_ARRAY, 'List of .jar files');
@@ -71,34 +67,39 @@ class ImportPluginCommand extends ContainerAwareCommand {
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output) : void {
         $files = $input->getArgument('files');
         foreach ($files as $file) {
             $output->writeln($file);
             $type = mime_content_type($file);
-            if (!in_array($type, PluginImporter::MIMETYPES)) {
+            if ( ! in_array($type, PluginImporter::MIMETYPES, true)) {
                 $output->writeln("{$file} does not look like a .jar file: Mime type {$type} is unexpected.");
+
                 continue;
             }
-            if (!preg_match('/^[a-zA-Z0-9 .-]+\.jar$/', basename($file))) {
+            if ( ! preg_match('/^[a-zA-Z0-9 .-]+\.jar$/', basename($file))) {
                 $output->writeln("{$file} does not look like a Java .jar file. File name is strange. Skipped.");
+
                 continue;
             }
 
             $zipArchive = new ZipArchive();
             $res = $zipArchive->open($file);
-            if ($res !== true) {
+            if (true !== $res) {
                 $output->writeln("Cannot open {$file} as a zip archive: " . $res);
+
                 continue;
             }
+
             try {
                 $plugin = $this->importer->import($zipArchive, false);
             } catch (Exception $e) {
                 $output->writeln("Cannot import {$file}: {$e->getMessage()}.");
+
                 continue;
             }
             $filename = basename($file, '.jar') . '-v' . $plugin->getVersion() . '.jar';
-            if (!file_exists($this->filePaths->getPluginsDir())) {
+            if ( ! file_exists($this->filePaths->getPluginsDir())) {
                 mkdir($this->filePaths->getPluginsDir(), 0777, true);
             }
             $path = $this->filePaths->getPluginsDir() . '/' . $filename;
@@ -107,5 +108,4 @@ class ImportPluginCommand extends ContainerAwareCommand {
             $this->em->flush();
         }
     }
-
 }

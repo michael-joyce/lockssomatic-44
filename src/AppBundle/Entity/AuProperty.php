@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Entity;
@@ -21,7 +22,6 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AuPropertyRepository")
  */
 class AuProperty extends AbstractEntity {
-
     /**
      * The name of the property, corresponding to the name attribute in XML.
      *
@@ -36,7 +36,7 @@ class AuProperty extends AbstractEntity {
      *
      * Properties with child properties don't have values.
      *
-     * @var string|array
+     * @var array|string
      *
      * @ORM\Column(name="property_value", type="text", nullable=true)
      */
@@ -69,7 +69,7 @@ class AuProperty extends AbstractEntity {
     /**
      * The children of the property.
      *
-     * @var Collection|AuProperty[]
+     * @var AuProperty[]|Collection
      *
      * @ORM\OneToMany(targetEntity="AuProperty", mappedBy="parent")
      */
@@ -153,8 +153,6 @@ class AuProperty extends AbstractEntity {
     /**
      * Set au.
      *
-     * @param Au $au
-     *
      * @return AuProperty
      */
     public function setAu(Au $au) {
@@ -175,8 +173,6 @@ class AuProperty extends AbstractEntity {
     /**
      * Add child.
      *
-     * @param AuProperty $child
-     *
      * @return AuProperty
      */
     public function addChild(AuProperty $child) {
@@ -187,10 +183,8 @@ class AuProperty extends AbstractEntity {
 
     /**
      * Remove child.
-     *
-     * @param AuProperty $child
      */
-    public function removeChild(AuProperty $child) {
+    public function removeChild(AuProperty $child) : void {
         $this->children->removeElement($child);
     }
 
@@ -206,5 +200,4 @@ class AuProperty extends AbstractEntity {
     public function hasChildren() {
         return $this->children->count() > 0;
     }
-
 }

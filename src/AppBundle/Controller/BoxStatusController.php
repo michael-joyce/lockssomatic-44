@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Controller;
@@ -29,13 +30,8 @@ use Symfony\Component\HttpFoundation\Request;
  * @ParamConverter("box", options={"id"="boxId"})
  */
 class BoxStatusController extends Controller {
-
     /**
      * Lists all BoxStatus entities.
-     *
-     * @param Request $request
-     * @param Pln $pln
-     * @param Box $box
      *
      * @return array
      *
@@ -44,8 +40,8 @@ class BoxStatusController extends Controller {
      * @Template()
      */
     public function indexAction(Request $request, Pln $pln, Box $box) {
-        if($box->getPln() !== $pln) {
-            throw new NotFoundHttpException("Unknown box.");
+        if ($box->getPln() !== $pln) {
+            throw new NotFoundHttpException('Unknown box.');
         }
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
@@ -55,19 +51,15 @@ class BoxStatusController extends Controller {
         $paginator = $this->get('knp_paginator');
         $boxStatuses = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        return [
             'boxStatuses' => $boxStatuses,
             'pln' => $pln,
             'box' => $box,
-        );
+        ];
     }
 
     /**
      * Finds and displays a BoxStatus entity.
-     *
-     * @param BoxStatus $boxStatus
-     * @param Pln $pln
-     * @param Box $box
      *
      * @return array
      *
@@ -76,18 +68,17 @@ class BoxStatusController extends Controller {
      * @Template()
      */
     public function showAction(BoxStatus $boxStatus, Pln $pln, Box $box) {
-        if($box->getPln() !== $pln) {
-            throw new NotFoundHttpException("Unknown box.");
+        if ($box->getPln() !== $pln) {
+            throw new NotFoundHttpException('Unknown box.');
         }
-        if($boxStatus->getBox() !== $box) {
-            throw new NotFoundHttpException("Unknown status.");
+        if ($boxStatus->getBox() !== $box) {
+            throw new NotFoundHttpException('Unknown status.');
         }
 
-        return array(
+        return [
             'boxStatus' => $boxStatus,
             'pln' => $pln,
             'box' => $box,
-        );
+        ];
     }
-
 }

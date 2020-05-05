@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Controller;
@@ -30,13 +31,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @ParamConverter("au", options={"id"="auId"})
  */
 class AuStatusController extends Controller {
-
     /**
      * Lists all AuStatus entities.
-     *
-     * @param Request $request
-     * @param Pln $pln
-     * @param Au $au
      *
      * @return array
      *
@@ -45,8 +41,8 @@ class AuStatusController extends Controller {
      * @Template()
      */
     public function indexAction(Request $request, Pln $pln, Au $au) {
-        if($au->getPln() !== $pln) {
-            throw new NotFoundHttpException("Unknown AU Status.");
+        if ($au->getPln() !== $pln) {
+            throw new NotFoundHttpException('Unknown AU Status.');
         }
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
@@ -55,19 +51,15 @@ class AuStatusController extends Controller {
         $paginator = $this->get('knp_paginator');
         $auStatuses = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        return [
             'auStatuses' => $auStatuses,
             'pln' => $pln,
             'au' => $au,
-        );
+        ];
     }
 
     /**
      * Finds and displays a AuStatus entity.
-     *
-     * @param AuStatus $auStatus
-     * @param Pln $pln
-     * @param Au $au
      *
      * @return array
      *
@@ -76,17 +68,17 @@ class AuStatusController extends Controller {
      * @Template()
      */
     public function showAction(AuStatus $auStatus, Pln $pln, Au $au) {
-        if($au->getPln() !== $pln) {
-            throw new NotFoundHttpException("Unknown AU Status.");
+        if ($au->getPln() !== $pln) {
+            throw new NotFoundHttpException('Unknown AU Status.');
         }
-        if($auStatus->getAu() !== $au) {
-            throw new NotFoundHttpException("Unknown AU Status.");
+        if ($auStatus->getAu() !== $au) {
+            throw new NotFoundHttpException('Unknown AU Status.');
         }
-        return array(
+
+        return [
             'auStatus' => $auStatus,
             'pln' => $pln,
             'au' => $au,
-        );
+        ];
     }
-
 }

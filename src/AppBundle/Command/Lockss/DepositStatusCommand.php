@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Command\Lockss;
@@ -28,7 +29,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Check the status of deposits in LOCKSS.
  */
 class DepositStatusCommand extends ContainerAwareCommand {
-
     /**
      * Dependency injected doctrine instance.
      *
@@ -52,10 +52,6 @@ class DepositStatusCommand extends ContainerAwareCommand {
 
     /**
      * Build the command.
-     *
-     * @param EntityManagerInterface $em
-     * @param LockssClient $client
-     * @param AuManager $manager
      */
     public function __construct(EntityManagerInterface $em, LockssClient $client, AuManager $manager) {
         parent::__construct();
@@ -67,7 +63,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
     /**
      * Configure the command.
      */
-    protected function configure() {
+    protected function configure() : void {
         $this->setName('lockss:deposit:status');
         $this->setDescription('Check the status of a deposit.');
         $this->addOption('all', '-a', InputOption::VALUE_NONE, 'Process all deposits.');
@@ -79,36 +75,34 @@ class DepositStatusCommand extends ContainerAwareCommand {
     /**
      * Get a list of PLNs to query.
      *
-     * @param array $plnIds
-     *
      * @return Collection|Pln[]
      */
     protected function getPlns(array $plnIds) {
         $repo = $this->em->getRepository(Pln::class);
         if (count($plnIds) > 0) {
-            return $repo->findBy(array('id' => $plnIds));
+            return $repo->findBy(['id' => $plnIds]);
         }
+
         return $repo->findAll();
     }
 
     /**
      * Get a list of deposits to check.
      *
-     * @param Au $au
-     * @param boolean $all
+     * @param bool $all
      * @param int $limit
      *
-     * @return Generator|Deposit[]
+     * @return Deposit[]|Generator
      */
     protected function getDeposits(Au $au, $all, $limit = null) {
         $repo = $this->em->getRepository(Deposit::class);
         $qb = $repo->createQueryBuilder('d');
         $qb->andWhere('d.au = :au');
         $qb->setParameter('au', $au);
-        if (!$all) {
+        if ( ! $all) {
             $qb->andWhere('(d.agreement is null OR d.agreement <> 1)');
         }
-        if($limit) {
+        if ($limit) {
             $qb->setMaxResults($limit);
         }
         $iterator = $qb->getQuery()->iterate();
@@ -120,8 +114,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
     /**
      * Query one deposit across all the boxes in the deposit's network.
      *
-     * @param Deposit $deposit
-     * @param Collection|Box[] $boxes
+     * @param Box[]|Collection $boxes
      *
      * @return DepositStatus
      */
@@ -132,11 +125,11 @@ class DepositStatusCommand extends ContainerAwareCommand {
         $errors = [];
 
         foreach ($boxes as $box) {
-            if (!$box->getActive()) {
+            if ( ! $box->getActive()) {
                 continue;
             }
             $checksum = $this->client->hash($box, $deposit);
-            if($this->client->hasErrors()) {
+            if ($this->client->hasErrors()) {
                 $errors = array_merge($errors, $this->client->getErrors());
                 $this->client->clearErrors();
             }
@@ -152,6 +145,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
         $depositStatus->setErrors($errors);
         $deposit->setAgreement($agree / $boxCount);
         $this->em->persist($depositStatus);
+
         return $depositStatus;
     }
 
@@ -162,19 +156,18 @@ class DepositStatusCommand extends ContainerAwareCommand {
      * $dryRun is true the results will not be flushed to the database. If $limit
      * is not zero, only the first $limit deposits will be checked.
      *
-     * @param Pln $pln
      * @param bool $all
      * @param bool $dryRun
      * @param int $limit
      */
-    protected function queryPln(Pln $pln, $all, $dryRun, $limit) {
+    protected function queryPln(Pln $pln, $all, $dryRun, $limit) : void {
         $boxes = $pln->getActiveBoxes();
 
         foreach ($pln->getAus() as $au) {
             $deposits = $this->getDeposits($au, $all, $limit);
             foreach ($deposits as $deposit) {
                 $this->queryDeposit($deposit, $boxes);
-                if( ! $dryRun) {
+                if ( ! $dryRun) {
                     $this->em->flush();
                 }
                 //$this->em->detach($deposit);
@@ -185,7 +178,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
     /**
      * {@inheritdoc}
      */
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output) : void {
         $all = $input->getOption('all');
         $plnIds = $input->getOption('pln');
         $limit = $input->getOption('limit');
@@ -196,5 +189,4 @@ class DepositStatusCommand extends ContainerAwareCommand {
             $this->queryPln($pln, $all, $dryRun, $limit);
         }
     }
-
 }

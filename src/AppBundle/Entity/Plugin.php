@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Entity;
@@ -22,16 +23,15 @@ use SplFileInfo;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PluginRepository")
  */
 class Plugin extends AbstractEntity {
-
     /**
      * Name of the XML element that defines the plugin properties.
      */
-    const CONFIG_PROPS = 'plugin_config_props';
+    public const CONFIG_PROPS = 'plugin_config_props';
 
     /**
      * Name of the XML element that defines the configuration parameters.
      */
-    const DESCR_NAME = 'org.lockss.daemon.ConfigParamDescr';
+    public const DESCR_NAME = 'org.lockss.daemon.ConfigParamDescr';
 
     /**
      * Name of the plugin.
@@ -87,25 +87,22 @@ class Plugin extends AbstractEntity {
      *
      * @var Au[]|Collection
      * @ORM\OneToMany(targetEntity="Au", mappedBy="plugin")
-     *
      */
     private $aus;
 
     /**
      * Content owners which use the plugin.
      *
-     * @var ContentOwner[]|Collection
+     * @var Collection|ContentOwner[]
      * @ORM\OneToMany(targetEntity="ContentProvider", mappedBy="plugin")
-     *
      */
     private $contentProviders;
 
     /**
      * Properties for the plugin.
      *
-     * @var PluginProperty[]|Collection
+     * @var Collection|PluginProperty[]
      * @ORM\OneToMany(targetEntity="PluginProperty", mappedBy="plugin")
-     *
      */
     private $pluginProperties;
 
@@ -114,7 +111,7 @@ class Plugin extends AbstractEntity {
      */
     public function __construct() {
         parent::__construct();
-        $this->generatedParams = array();
+        $this->generatedParams = [];
         $this->generateManifests = false;
         $this->aus = new ArrayCollection();
         $this->contentProviders = new ArrayCollection();
@@ -130,7 +127,8 @@ class Plugin extends AbstractEntity {
         if ($this->name) {
             return $this->name;
         }
-        return "";
+
+        return '';
     }
 
     /**
@@ -184,12 +182,12 @@ class Plugin extends AbstractEntity {
      */
     public function getFilename() {
         $fileinfo = new SplFileInfo($this->path);
+
         return $fileinfo->getBasename();
     }
 
     public function getOriginalFilename() {
-        $filename = preg_replace('/-v[0-9]+\.jar$/', '.jar', $this->getFilename());
-        return $filename;
+        return preg_replace('/-v[0-9]+\.jar$/', '.jar', $this->getFilename());
     }
 
     /**
@@ -239,8 +237,6 @@ class Plugin extends AbstractEntity {
     /**
      * Add aus.
      *
-     * @param Au $aus
-     *
      * @return Plugin
      */
     public function addAus(Au $aus) {
@@ -251,10 +247,8 @@ class Plugin extends AbstractEntity {
 
     /**
      * Remove aus.
-     *
-     * @param Au $aus
      */
-    public function removeAus(Au $aus) {
+    public function removeAus(Au $aus) : void {
         $this->aus->removeElement($aus);
     }
 
@@ -270,8 +264,6 @@ class Plugin extends AbstractEntity {
     /**
      * Add contentProvider.
      *
-     * @param ContentProvider $contentProvider
-     *
      * @return Plugin
      */
     public function addContentProvider(ContentProvider $contentProvider) {
@@ -282,10 +274,8 @@ class Plugin extends AbstractEntity {
 
     /**
      * Remove contentProvider.
-     *
-     * @param ContentProvider $contentProvider
      */
-    public function removeContentProvider(ContentProvider $contentProvider) {
+    public function removeContentProvider(ContentProvider $contentProvider) : void {
         $this->contentProviders->removeElement($contentProvider);
     }
 
@@ -301,8 +291,6 @@ class Plugin extends AbstractEntity {
     /**
      * Add pluginProperty.
      *
-     * @param PluginProperty $pluginProperty
-     *
      * @return Plugin
      */
     public function addPluginProperty(PluginProperty $pluginProperty) {
@@ -313,10 +301,8 @@ class Plugin extends AbstractEntity {
 
     /**
      * Remove pluginProperty.
-     *
-     * @param PluginProperty $pluginProperty
      */
-    public function removePluginProperty(PluginProperty $pluginProperty) {
+    public function removePluginProperty(PluginProperty $pluginProperty) : void {
         $this->pluginProperties->removeElement($pluginProperty);
     }
 
@@ -331,7 +317,7 @@ class Plugin extends AbstractEntity {
 
     public function getRootPluginProperties() {
         return $this->pluginProperties->filter(function (PluginProperty $p) {
-            return $p->getParent() === null;
+            return null === $p->getParent();
         });
     }
 
@@ -340,7 +326,7 @@ class Plugin extends AbstractEntity {
      *
      * @param mixed $propertyKey
      *
-     * @return PluginProperty|null
+     * @return null|PluginProperty
      */
     public function getProperty($propertyKey) {
         foreach ($this->getPluginProperties() as $property) {
@@ -348,8 +334,6 @@ class Plugin extends AbstractEntity {
                 return $property;
             }
         }
-
-        return null;
     }
 
     /**
@@ -358,19 +342,20 @@ class Plugin extends AbstractEntity {
      * @return PluginProperties[]
      */
     public function getPluginConfigParams() {
-        $properties = array();
+        $properties = [];
         foreach ($this->getPluginProperties()->toArray() as $prop) {
             /** @var PluginProperties $prop */
-            if ($prop->getPropertyKey() !== self::CONFIG_PROPS) {
+            if (self::CONFIG_PROPS !== $prop->getPropertyKey()) {
                 continue;
             }
             foreach ($prop->getChildren() as $child) {
-                if ($child->getPropertyKey() !== self::DESCR_NAME) {
+                if (self::DESCR_NAME !== $child->getPropertyKey()) {
                     continue;
                 }
                 $properties[] = $child;
             }
         }
+
         return $properties;
     }
 
@@ -380,16 +365,16 @@ class Plugin extends AbstractEntity {
      * @return ArrayCollection|PluginProperty[]
      */
     public function getConfigPropertyNames() {
-        $properties = array();
+        $properties = [];
 
         foreach ($this->getPluginConfigParams() as $prop) {
             $key = '';
             foreach ($prop->getChildren() as $child) {
-                if ($child->getPropertyKey() === 'key') {
+                if ('key' === $child->getPropertyKey()) {
                     $key = $child->getPropertyValue();
                 }
             }
-            if ($key !== '') {
+            if ('' !== $key) {
                 $properties[] = $key;
             }
         }
@@ -403,23 +388,23 @@ class Plugin extends AbstractEntity {
      * @return ArrayCollection|PluginProperty[]
      */
     public function getDefinitionalPropertyNames() {
-        $properties = array();
+        $properties = [];
 
         foreach ($this->getPluginConfigParams() as $prop) {
             $key = '';
             $definitional = false;
             foreach ($prop->getChildren() as $child) {
-                if ($child->getPropertyKey() === 'key') {
+                if ('key' === $child->getPropertyKey()) {
                     $key = $child->getPropertyValue();
                 }
-                if ($child->getPropertyKey() !== 'definitional') {
+                if ('definitional' !== $child->getPropertyKey()) {
                     continue;
                 }
-                if ($child->getPropertyValue() === 'true') {
+                if ('true' === $child->getPropertyValue()) {
                     $definitional = true;
                 }
             }
-            if ($key !== '' && $definitional === true) {
+            if ('' !== $key && true === $definitional) {
                 $properties[] = $key;
             }
         }
@@ -433,23 +418,23 @@ class Plugin extends AbstractEntity {
      * @return ArrayCollection|PluginProperty[]
      */
     public function getNonDefinitionalProperties() {
-        $properties = array();
+        $properties = [];
 
         foreach ($this->getPluginConfigParams() as $prop) {
             $key = '';
             $nonDefinitional = false;
             foreach ($prop->getChildren() as $child) {
-                if ($child->getPropertyKey() === 'key') {
+                if ('key' === $child->getPropertyKey()) {
                     $key = $child->getPropertyValue();
                 }
-                if ($child->getPropertyKey() !== 'definitional') {
+                if ('definitional' !== $child->getPropertyKey()) {
                     continue;
                 }
-                if ($child->getPropertyValue() === 'false') {
+                if ('false' === $child->getPropertyValue()) {
                     $nonDefinitional = true;
                 }
             }
-            if ($key !== '' && $nonDefinitional === true) {
+            if ('' !== $key && true === $nonDefinitional) {
                 $properties[] = $key;
             }
         }
@@ -482,8 +467,6 @@ class Plugin extends AbstractEntity {
     /**
      * Set generatedParams.
      *
-     * @param array $generatedParams
-     *
      * @return Plugin
      */
     public function setGeneratedParams(array $generatedParams) {
@@ -500,5 +483,4 @@ class Plugin extends AbstractEntity {
     public function getGeneratedParams() {
         return $this->generatedParams;
     }
-
 }

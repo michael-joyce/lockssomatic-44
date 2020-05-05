@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\DataFixtures\ORM;
@@ -17,24 +18,20 @@ use Doctrine\Common\Persistence\ObjectManager;
  * Load some content owners.
  */
 class LoadContentOwner extends Fixture {
-    
     /**
      * Load the objects.
-     *
-     * @param ObjectManager $em
      */
-    public function load(ObjectManager $em) {
+    public function load(ObjectManager $em) : void {
         $owner1 = new ContentOwner();
-        $owner1->setName("Owner 1");
+        $owner1->setName('Owner 1');
         $em->persist($owner1);
         $this->setReference('owner.1', $owner1);
-        
+
         $owner2 = new ContentOwner();
-        $owner2->setName("Owner 2");
+        $owner2->setName('Owner 2');
         $em->persist($owner2);
         $this->setReference('owner.2', $owner2);
-        
+
         $em->flush();
     }
-
 }

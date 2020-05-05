@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Tests\Utilities;
@@ -16,12 +17,14 @@ use PHPUnit\Framework\TestCase;
  * Simplify handling namespaces for SWORD XML documents.
  */
 class NamespacesTest extends TestCase {
-
     /**
      * @dataProvider getNamespaceData
+     *
+     * @param mixed $prefix
+     * @param mixed $expected
      */
-    public function testGetNamespace($prefix, $expected) {
-        $this->assertEquals($expected, Namespaces::getNamespace($prefix));
+    public function testGetNamespace($prefix, $expected) : void {
+        $this->assertSame($expected, Namespaces::getNamespace($prefix));
     }
 
     public function getNamespaceData() {
@@ -35,23 +38,23 @@ class NamespacesTest extends TestCase {
         ];
     }
 
-    public function testRegisterNamespaces() {
+    public function testRegisterNamespaces() : void {
         $xml = simplexml_load_string($this->getXml());
         Namespaces::registerNamespaces($xml);
-        $this->assertEquals(1, (string)$xml->xpath('//dcterms:a[1]/text()')[0]);
-        $this->assertEquals(2, (string)$xml->xpath('//sword:b[1]/text()')[0]);
-        $this->assertEquals(3, (string)$xml->xpath('//atom:c[1]/text()')[0]);
-        $this->assertEquals(4, (string)$xml->xpath('//lom:d[1]/text()')[0]);
-        $this->assertEquals(5, (string)$xml->xpath('//rdf:e[1]/text()')[0]);
-        $this->assertEquals(6, (string)$xml->xpath('//app:f[1]/text()')[0]);
+        $this->assertSame(1, (string) $xml->xpath('//dcterms:a[1]/text()')[0]);
+        $this->assertSame(2, (string) $xml->xpath('//sword:b[1]/text()')[0]);
+        $this->assertSame(3, (string) $xml->xpath('//atom:c[1]/text()')[0]);
+        $this->assertSame(4, (string) $xml->xpath('//lom:d[1]/text()')[0]);
+        $this->assertSame(5, (string) $xml->xpath('//rdf:e[1]/text()')[0]);
+        $this->assertSame(6, (string) $xml->xpath('//app:f[1]/text()')[0]);
     }
 
-    public function testGetNullNamespace() {
-        $this->assertNull(Namespaces::getNamespace("foo"));
+    public function testGetNullNamespace() : void {
+        $this->assertNull(Namespaces::getNamespace('foo'));
     }
 
     public function getXml() {
-        return <<<"ENDXML"
+        return <<<'ENDXML'
         <root>
           <a xmlns="http://purl.org/dc/terms/">1</a>
           <b xmlns="http://purl.org/net/sword/">2</b>
@@ -62,5 +65,4 @@ class NamespacesTest extends TestCase {
         </root>
 ENDXML;
     }
-
 }

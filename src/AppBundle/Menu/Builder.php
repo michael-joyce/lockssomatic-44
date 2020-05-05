@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Menu;
@@ -26,8 +27,8 @@ class Builder implements ContainerAwareInterface {
     /**
      * U+25BE, black down-pointing small triangle.
      */
-    const CARET = ' ▾';
-    
+    public const CARET = ' ▾';
+
     /**
      * Menu item factory.
      *
@@ -48,7 +49,7 @@ class Builder implements ContainerAwareInterface {
      * @var TokenStorageInterface
      */
     private $tokenStorage;
-    
+
     /**
      * Doctrine instance.
      *
@@ -58,11 +59,6 @@ class Builder implements ContainerAwareInterface {
 
     /**
      * Construct the menu builder.
-     *
-     * @param FactoryInterface $factory
-     * @param AuthorizationCheckerInterface $authChecker
-     * @param TokenStorageInterface $tokenStorage
-     * @param EntityManagerInterface $em
      */
     public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, EntityManagerInterface $em) {
         $this->factory = $factory;
@@ -77,102 +73,100 @@ class Builder implements ContainerAwareInterface {
      * @param string $role
      */
     private function hasRole($role) {
-        if (!$this->tokenStorage->getToken()) {
+        if ( ! $this->tokenStorage->getToken()) {
             return false;
         }
+
         return $this->authChecker->isGranted($role);
     }
 
     /**
      * Build the main menu.
-     *
-     * @param array $options
      */
     public function mainMenu(array $options) {
         $menu = $this->factory->createItem('root');
-        $menu->setChildrenAttributes(array(
+        $menu->setChildrenAttributes([
             'class' => 'nav navbar-nav',
-        ));
-        
-        $menu->addChild('home', array(
+        ]);
+
+        $menu->addChild('home', [
             'label' => 'Home',
             'route' => 'homepage',
-        ));
-        
-        if (!$this->hasRole('ROLE_USER')) {
+        ]);
+
+        if ( ! $this->hasRole('ROLE_USER')) {
             return $menu;
         }
-        
-        $menu->addChild('lockss', array(
+
+        $menu->addChild('lockss', [
             'uri' => '#',
             'label' => 'LOCKSS ' . self::CARET,
-        ));
+        ]);
         $menu['lockss']->setAttribute('dropdown', true);
         $menu['lockss']->setLinkAttribute('class', 'dropdown-toggle');
         $menu['lockss']->setLinkAttribute('data-toggle', 'dropdown');
         $menu['lockss']->setChildrenAttribute('class', 'dropdown-menu');
-        
-        $menu['lockss']->addChild('Content Owners', array(
+
+        $menu['lockss']->addChild('Content Owners', [
             'route' => 'content_owner_index',
-        ));
-        $menu['lockss']->addChild('Networks', array(
+        ]);
+        $menu['lockss']->addChild('Networks', [
             'route' => 'pln_index',
-        ));
-        $menu['lockss']->addChild('LOCKSS Plugins', array(
+        ]);
+        $menu['lockss']->addChild('LOCKSS Plugins', [
             'route' => 'plugin_index',
-        ));
-        $menu['lockss']->addChild('Content Providers', array(
+        ]);
+        $menu['lockss']->addChild('Content Providers', [
             'route' => 'content_provider_index',
-        ));
-        
-        $networkMenu = $menu->addChild('networks', array(
+        ]);
+
+        $networkMenu = $menu->addChild('networks', [
             'uri' => '#',
             'label' => 'Networks ' . self::CARET,
-        ));
+        ]);
         $networkMenu->setAttribute('dropdown', true);
         $networkMenu->setLinkAttribute('class', 'dropdown-toggle');
         $networkMenu->setLinkAttribute('data-toggle', 'dropdown');
         $networkMenu->setChildrenAttribute('class', 'dropdown-menu');
-        
+
         $networks = $this->em->getRepository(Pln::class)->findAll();
         foreach ($networks as $pln) {
             $id = 'network_' . $pln->getId();
-            $item = $networkMenu->addChild($id, array(
-            'uri' => '#',
-            'label' => $pln->getName(),
-            ));
+            $item = $networkMenu->addChild($id, [
+                'uri' => '#',
+                'label' => $pln->getName(),
+            ]);
             $item->setAttribute('class', 'dropdown-submenu');
             $item->setChildrenAttribute('class', 'dropdown-menu');
             $item->setLinkAttribute('data-toggle', 'dropdown');
             $item->setLinkAttribute('class', 'dropdown-toggle');
-            
-            $item->addChild($pln->getName(), array(
+
+            $item->addChild($pln->getName(), [
                 'route' => 'pln_show',
-                'routeParameters' => array(
-                'id' => $pln->getId(),
-                ),
-            ));
-            $item->addChild('Archival Units', array(
+                'routeParameters' => [
+                    'id' => $pln->getId(),
+                ],
+            ]);
+            $item->addChild('Archival Units', [
                 'route' => 'au_index',
-                'routeParameters' => array(
-                'plnId' => $pln->getId(),
-                ),
-            ));
-            $item->addChild('Boxes', array(
+                'routeParameters' => [
+                    'plnId' => $pln->getId(),
+                ],
+            ]);
+            $item->addChild('Boxes', [
                 'route' => 'box_index',
-                'routeParameters' => array(
-                'plnId' => $pln->getId(),
-                ),
-            ));
-            $item->addChild('Deposits', array(
+                'routeParameters' => [
+                    'plnId' => $pln->getId(),
+                ],
+            ]);
+            $item->addChild('Deposits', [
                 'route' => 'deposit_index',
-                'routeParameters' => array(
-                'plnId' => $pln->getId(),
-                ),
-            ));
+                'routeParameters' => [
+                    'plnId' => $pln->getId(),
+                ],
+            ]);
         }
-        
+
         return $menu;
     }
-
 }

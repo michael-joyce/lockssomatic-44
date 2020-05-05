@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Tests\Controller;
@@ -23,7 +24,6 @@ use org\bovigo\vfs\vfsStream;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LockssControllerTest extends BaseTestCase {
-
     public function getFixtures() {
         return [
             LoadPln::class,
@@ -35,11 +35,7 @@ class LockssControllerTest extends BaseTestCase {
         ];
     }
 
-    protected function setup() : void {
-        parent::setUp();
-    }
-
-    public function testLockss() {
+    public function testLockss() : void {
         $data = '<root/>';
 
         $root = vfsStream::setUp();
@@ -53,14 +49,14 @@ class LockssControllerTest extends BaseTestCase {
         $client->getContainer()->set(FilePaths::class, $fp);
         $client->request('GET', '/plnconfigs/1/properties/lockss.xml');
         $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('text/xml', $response->headers->get('Content-Type', null, true));
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('text/xml', $response->headers->get('Content-Type', null, true));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertEquals(strlen($data), $response->getFile()->getSize());
-        $this->assertEquals($data, $response->getFile()->openFile()->fread(strlen($data)));
+        $this->assertSame(strlen($data), $response->getFile()->getSize());
+        $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
     }
 
-    public function testLockss404() {
+    public function testLockss404() : void {
         $data = '<root/>';
 
         $root = vfsStream::setUp();
@@ -74,10 +70,10 @@ class LockssControllerTest extends BaseTestCase {
         $client->getContainer()->set(FilePaths::class, $fp);
         $client->request('GET', '/plnconfigs/1/properties/lockss.xml');
         $response = $client->getResponse();
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertSame(404, $response->getStatusCode());
     }
 
-    public function testLockssBadIp() {
+    public function testLockssBadIp() : void {
         $data = '<root/>';
 
         $root = vfsStream::setUp();
@@ -93,10 +89,10 @@ class LockssControllerTest extends BaseTestCase {
         $client->getContainer()->set(FilePaths::class, $fp);
         $client->request('GET', '/plnconfigs/1/properties/lockss.xml');
         $response = $client->getResponse();
-        $this->assertEquals(403, $response->getStatusCode());
+        $this->assertSame(403, $response->getStatusCode());
     }
 
-    public function testLockssGoodIp() {
+    public function testLockssGoodIp() : void {
         $box = new Box();
         $box->setHostname('bananarama');
         $box->setIpAddress('10.0.0.12');
@@ -126,10 +122,10 @@ class LockssControllerTest extends BaseTestCase {
         $client->getContainer()->set(FilePaths::class, $fp);
         $client->request('GET', '/plnconfigs/1/properties/lockss.xml');
         $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
     }
 
-    public function testTitleDb() {
+    public function testTitleDb() : void {
         $data = '<root/>';
 
         $root = vfsStream::setUp();
@@ -143,14 +139,14 @@ class LockssControllerTest extends BaseTestCase {
         $client->getContainer()->set(FilePaths::class, $fp);
         $client->request('GET', '/plnconfigs/1/titledbs/1/1/titledb_1.xml');
         $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('text/xml', $response->headers->get('Content-Type', null, true));
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('text/xml', $response->headers->get('Content-Type', null, true));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertEquals(strlen($data), $response->getFile()->getSize());
-        $this->assertEquals($data, $response->getFile()->openFile()->fread(strlen($data)));
+        $this->assertSame(strlen($data), $response->getFile()->getSize());
+        $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
     }
 
-    public function testTitleDb404() {
+    public function testTitleDb404() : void {
         $data = '<root/>';
 
         $root = vfsStream::setUp();
@@ -164,10 +160,10 @@ class LockssControllerTest extends BaseTestCase {
         $client->getContainer()->set(FilePaths::class, $fp);
         $client->request('GET', '/plnconfigs/1/titledbs/1/1/titledb_1.xml');
         $response = $client->getResponse();
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertSame(404, $response->getStatusCode());
     }
 
-    public function testManifest() {
+    public function testManifest() : void {
         $data = '<root/>';
 
         $root = vfsStream::setUp();
@@ -181,14 +177,14 @@ class LockssControllerTest extends BaseTestCase {
         $client->getContainer()->set(FilePaths::class, $fp);
         $client->request('GET', '/plnconfigs/1/manifests/1/1/manifest_1.html');
         $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('text/html', $response->headers->get('Content-Type', null, true));
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('text/html', $response->headers->get('Content-Type', null, true));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertEquals(strlen($data), $response->getFile()->getSize());
-        $this->assertEquals($data, $response->getFile()->openFile()->fread(strlen($data)));
+        $this->assertSame(strlen($data), $response->getFile()->getSize());
+        $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
     }
 
-    public function testManifest404() {
+    public function testManifest404() : void {
         $data = '<root/>';
 
         $root = vfsStream::setUp();
@@ -202,10 +198,10 @@ class LockssControllerTest extends BaseTestCase {
         $client->getContainer()->set(FilePaths::class, $fp);
         $client->request('GET', '/plnconfigs/1/manifests/1/1/manifest_1.html');
         $response = $client->getResponse();
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertSame(404, $response->getStatusCode());
     }
 
-    public function testKeystore() {
+    public function testKeystore() : void {
         $data = '<root/>';
 
         $root = vfsStream::setUp();
@@ -224,14 +220,14 @@ class LockssControllerTest extends BaseTestCase {
 
         $client->request('GET', '/plnconfigs/1/plugins/lockssomatic.keystore');
         $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('application/x-java-keystore', $response->headers->get('Content-Type', null, true));
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('application/x-java-keystore', $response->headers->get('Content-Type', null, true));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertEquals(strlen($data), $response->getFile()->getSize());
-        $this->assertEquals($data, $response->getFile()->openFile()->fread(strlen($data)));
+        $this->assertSame(strlen($data), $response->getFile()->getSize());
+        $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
     }
 
-    public function testKeystore404Null() {
+    public function testKeystore404Null() : void {
         $pln = $this->em->find(Pln::class, 1);
         $pln->setKeystore(null);
         $this->em->flush();
@@ -239,10 +235,10 @@ class LockssControllerTest extends BaseTestCase {
         $client = $this->makeClient();
         $client->request('GET', '/plnconfigs/1/plugins/lockssomatic.keystore');
         $response = $client->getResponse();
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertSame(404, $response->getStatusCode());
     }
 
-    public function testPluginList() {
+    public function testPluginList() : void {
         $data = '<root/>';
 
         $root = vfsStream::setUp();
@@ -257,14 +253,14 @@ class LockssControllerTest extends BaseTestCase {
 
         $client->request('GET', '/plnconfigs/1/plugins/index.html');
         $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('text/html', $response->headers->get('Content-Type', null, true));
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('text/html', $response->headers->get('Content-Type', null, true));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertEquals(strlen($data), $response->getFile()->getSize());
-        $this->assertEquals($data, $response->getFile()->openFile()->fread(strlen($data)));
+        $this->assertSame(strlen($data), $response->getFile()->getSize());
+        $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
     }
 
-    public function testPluginList404() {
+    public function testPluginList404() : void {
         $data = '<root/>';
 
         $root = vfsStream::setUp();
@@ -279,10 +275,10 @@ class LockssControllerTest extends BaseTestCase {
 
         $client->request('GET', '/plnconfigs/1/plugins/index.html');
         $response = $client->getResponse();
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertSame(404, $response->getStatusCode());
     }
 
-    public function testPlugin() {
+    public function testPlugin() : void {
         $data = '<root/>';
 
         $root = vfsStream::setUp();
@@ -297,14 +293,14 @@ class LockssControllerTest extends BaseTestCase {
 
         $client->request('GET', '/plnconfigs/1/plugins/dummy.jar');
         $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('application/java-archive', $response->headers->get('Content-Type', null, true));
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('application/java-archive', $response->headers->get('Content-Type', null, true));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertEquals(strlen($data), $response->getFile()->getSize());
-        $this->assertEquals($data, $response->getFile()->openFile()->fread(strlen($data)));
+        $this->assertSame(strlen($data), $response->getFile()->getSize());
+        $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
     }
 
-    public function testPlugin404() {
+    public function testPlugin404() : void {
         $data = '<root/>';
 
         $root = vfsStream::setUp();
@@ -319,7 +315,10 @@ class LockssControllerTest extends BaseTestCase {
 
         $client->request('GET', '/plnconfigs/1/plugins/dummy.jar');
         $response = $client->getResponse();
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertSame(404, $response->getStatusCode());
     }
 
+    protected function setup() : void {
+        parent::setUp();
+    }
 }

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Controller;
@@ -30,13 +31,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @ParamConverter("pln", options={"id"="plnId"})
  */
 class AuController extends Controller {
-
     /**
      * Lists all Au entities.
-     *
-     * @param Request $request
-     * @param Pln $pln
-     * @param AuManager $manager
      *
      * @return array
      *
@@ -53,19 +49,15 @@ class AuController extends Controller {
         $paginator = $this->get('knp_paginator');
         $aus = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        return [
             'aus' => $aus,
             'pln' => $pln,
             'manager' => $manager,
-        );
+        ];
     }
 
     /**
      * Finds and displays a Au entity.
-     *
-     * @param Au $au
-     * @param Pln $pln
-     * @param AuManager $manager
      *
      * @return array
      *
@@ -74,23 +66,19 @@ class AuController extends Controller {
      * @Template()
      */
     public function showAction(Au $au, Pln $pln, AuManager $manager) {
-        if($au->getPln() !== $pln) {
+        if ($au->getPln() !== $pln) {
             throw new NotFoundHttpException("PLN {$pln->getName()} does not contain that AU.");
         }
-        return array(
+
+        return [
             'au' => $au,
             'pln' => $pln,
             'manager' => $manager,
-        );
+        ];
     }
 
     /**
      * Finds and displays a Au entity.
-     *
-     * @param Request $request
-     * @param Pln $pln
-     * @param Au $au
-     * @param EntityManagerInterface $em
      *
      * @return array
      *
@@ -99,7 +87,7 @@ class AuController extends Controller {
      * @Template()
      */
     public function depositsAction(Request $request, Pln $pln, Au $au, EntityManagerInterface $em) {
-        if($au->getPln() !== $pln) {
+        if ($au->getPln() !== $pln) {
             throw new NotFoundHttpException("PLN {$pln->getName()} does not contain that AU.");
         }
         $repo = $em->getRepository(Au::class);
@@ -107,11 +95,10 @@ class AuController extends Controller {
         $paginator = $this->get('knp_paginator');
         $deposits = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        return [
             'au' => $au,
             'pln' => $pln,
             'deposits' => $deposits,
-        );
+        ];
     }
-
 }

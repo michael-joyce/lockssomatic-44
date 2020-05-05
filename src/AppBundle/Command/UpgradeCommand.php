@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Au;
@@ -24,7 +32,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class UpgradeCommand extends ContainerAwareCommand {
-
     /**
      * Doctrine database connection for the old database.
      *
@@ -39,7 +46,6 @@ class UpgradeCommand extends ContainerAwareCommand {
      */
     private $em;
 
-
     /**
      * Mapping of old IDs to new IDs based on class names.
      *
@@ -52,6 +58,7 @@ class UpgradeCommand extends ContainerAwareCommand {
 
     /**
      * If true the changes will be flushed to the new database.
+     *
      * @var bool
      */
     private $force;
@@ -68,17 +75,12 @@ class UpgradeCommand extends ContainerAwareCommand {
      *
      * see app/config/config.yml for examples of the configuration.
      * see app/config/services.yml to configure the dependency injection.
-     *
-     * @param Connection $oldEm
-     * @param EntityManagerInterface $em
-     *
-     *
      */
     public function __construct(Connection $oldEm, EntityManagerInterface $em) {
         parent::__construct();
         $this->source = $oldEm;
         $this->em = $em;
-        $this->idMapping = array();
+        $this->idMapping = [];
         $this->force = false;
     }
 
@@ -89,7 +91,7 @@ class UpgradeCommand extends ContainerAwareCommand {
      * @param int $old
      * @param int $new
      */
-    protected function setIdMap($class, $old, $new) {
+    protected function setIdMap($class, $old, $new) : void {
         $this->idMapping[$class][$old] = $new;
     }
 
@@ -99,16 +101,18 @@ class UpgradeCommand extends ContainerAwareCommand {
      * @param string $class
      * @param int $old
      * @param int $default
-     * @return int|null
+     *
+     * @return null|int
      */
     protected function getIdMap($class, $old, $default = null) {
         if (isset($this->idMapping[$class][$old])) {
             return $this->idMapping[$class][$old];
         }
+
         return $default;
     }
 
-    public function configure() {
+    public function configure() : void {
         $this->setName('lom:upgrade');
         $this->addOption('force', null, InputOption::VALUE_NONE, 'Actually make the database changes.');
     }
@@ -119,13 +123,15 @@ class UpgradeCommand extends ContainerAwareCommand {
      * @param string $class
      * @param int $oldId
      * @param mixed $default
+     *
      * @return mixed
      */
     public function findEntity($class, $oldId, $default = null) {
         $newId = $this->getIdMap($class, $oldId);
-        if( ! $newId) {
+        if ( ! $newId) {
             return $default;
         }
+
         return $this->em->find($class, $newId);
     }
 
@@ -136,16 +142,15 @@ class UpgradeCommand extends ContainerAwareCommand {
      * object it is persisted and flushed, and the old ID is mapped to the new one.
      *
      * @param string $table
-     * @param callable $callback
      */
-    public function upgradeTable($table, callable $callback) {
+    public function upgradeTable($table, callable $callback) : void {
         $countQuery = $this->source->query("SELECT count(*) c FROM {$table}");
         $countRow = $countQuery->fetch();
-        print "upgrading {$countRow['c']} entities in {$table}.\n";
+        echo "upgrading {$countRow['c']} entities in {$table}.\n";
 
         $query = $this->source->query("SELECT * FROM {$table}");
         $n = 0;
-        print "$n\r";
+        echo "{$n}\r";
         while ($row = $query->fetch()) {
             $entity = $callback($row);
             if ($entity) {
@@ -155,18 +160,18 @@ class UpgradeCommand extends ContainerAwareCommand {
                 $this->em->detach($entity);
             }
             $n++;
-            print "$n\r";
+            echo "{$n}\r";
         }
-        print "\n";
+        echo "\n";
     }
 
     /**
      * Upgrade the users table.
      */
-    public function upgradeUsers() {
-        $callback = function($row) {
-            if ($row['username'] === 'admin@example.com') {
-                return null;
+    public function upgradeUsers() : void {
+        $callback = function ($row) {
+            if ('admin@example.com' === $row['username']) {
+                return;
             }
             $entry = new User();
             $entry->setUsername($row['username']);
@@ -178,6 +183,7 @@ class UpgradeCommand extends ContainerAwareCommand {
             $entry->setRoles(unserialize($row['roles']));
             $entry->setFullname($row['fullname']);
             $entry->setInstitution($row['institution']);
+
             return $entry;
         };
         $this->upgradeTable('lom_user', $callback);
@@ -186,11 +192,12 @@ class UpgradeCommand extends ContainerAwareCommand {
     /**
      * Upgrade the content owners table.
      */
-    public function upgradeContentOwners() {
-        $callback = function($row) {
+    public function upgradeContentOwners() : void {
+        $callback = function ($row) {
             $owner = new ContentOwner();
             $owner->setEmailAddress($row['email_address']);
             $owner->setName($row['name']);
+
             return $owner;
         };
         $this->upgradeTable('content_owners', $callback);
@@ -199,8 +206,8 @@ class UpgradeCommand extends ContainerAwareCommand {
     /**
      * Upgrade the pln table.
      */
-    public function upgradePlns() {
-        $callback = function($row) {
+    public function upgradePlns() : void {
+        $callback = function ($row) {
             $entity = new Pln();
             $entity->setName($row['name']);
             $entity->setDescription($row['description']);
@@ -208,7 +215,8 @@ class UpgradeCommand extends ContainerAwareCommand {
             $entity->setUsername($row['username']);
             $entity->setPassword($row['password']);
 
-            $query = $this->source->executeQuery('SELECT * FROM keystore WHERE id = :id',
+            $query = $this->source->executeQuery(
+                'SELECT * FROM keystore WHERE id = :id',
                 ['id' => $row['keystore_id']]
             );
             $keystoreRow = $query->fetch();
@@ -222,13 +230,14 @@ class UpgradeCommand extends ContainerAwareCommand {
     /**
      * Upgrade the plugin table.
      */
-    public function upgradePlugins() {
-        $callback = function($row) {
+    public function upgradePlugins() : void {
+        $callback = function ($row) {
             $entity = new Plugin();
             $entity->setGenerateManifests(true);
             $entity->setIdentifier($row['identifier']);
             $entity->setName($row['name']);
             $entity->setVersion($row['version']);
+
             return $entity;
         };
         $this->upgradeTable('plugins', $callback);
@@ -239,13 +248,14 @@ class UpgradeCommand extends ContainerAwareCommand {
      *
      * Requires the plugins updated first.
      */
-    public function upgradePluginProperties() {
-        $callback = function($row) {
+    public function upgradePluginProperties() : void {
+        $callback = function ($row) {
             $entity = new PluginProperty();
             $entity->setPropertyKey($row['property_key']);
             $entity->setPropertyValue($row['property_value']);
             $entity->setPlugin($this->findEntity(Plugin::class, $row['plugin_id']));
             $entity->setParent($this->findEntity(PluginProperty::class, $row['parent_id']));
+
             return $entity;
         };
         $this->upgradeTable('plugin_properties', $callback);
@@ -256,8 +266,8 @@ class UpgradeCommand extends ContainerAwareCommand {
      *
      * Requires the pln and plugin tables upgraded first.
      */
-    public function upgradeContentProviders() {
-        $callback = function($row) {
+    public function upgradeContentProviders() : void {
+        $callback = function ($row) {
             $entity = new ContentProvider();
             $entity->setContentOwner($this->findEntity(ContentOwner::class, $row['content_owner_id']));
             $entity->setPln($this->findEntity(Pln::class, $row['pln_id']));
@@ -267,6 +277,7 @@ class UpgradeCommand extends ContainerAwareCommand {
             $entity->setName($row['name']);
             $entity->setMaxFileSize($row['max_file_size']);
             $entity->setMaxAuSize($row['max_au_size']);
+
             return $entity;
         };
         $this->upgradeTable('content_providers', $callback);
@@ -277,8 +288,8 @@ class UpgradeCommand extends ContainerAwareCommand {
      *
      * Requires the pln table updated first.
      */
-    public function upgradeBoxes() {
-        $callback = function($row) {
+    public function upgradeBoxes() : void {
+        $callback = function ($row) {
             $box = new Box();
             $box->setHostname($row['hostname']);
             $box->setIpAddress($row['ip_address']);
@@ -286,9 +297,10 @@ class UpgradeCommand extends ContainerAwareCommand {
             $box->setPort($row['port']);
             $box->setWebServicePort($row['ws_port']);
             $box->setWebServiceProtocol('http');
-            $box->setActive($row['active'] == 1);
+            $box->setActive(1 === $row['active']);
             $box->setSendNotifications(false);
             $box->setPln($this->findEntity(Pln::class, $row['pln_id']));
+
             return $box;
         };
         $this->upgradeTable('boxes', $callback);
@@ -299,13 +311,14 @@ class UpgradeCommand extends ContainerAwareCommand {
      *
      * Requires the box table upgraded first.
      */
-    public function upgradeBoxStatus() {
-        $callback = function($row) {
+    public function upgradeBoxStatus() : void {
+        $callback = function ($row) {
             $status = new BoxStatus();
             $status->setBox($this->findEntity(Box::class, $row['box_id']));
             $status->setCreated(new DateTime($row['query_date']));
-            $status->setSuccess($row['success'] == 1);
+            $status->setSuccess(1 === $row['success']);
             $status->setErrors($row['errors']);
+
             return $status;
         };
         $this->upgradeTable('box_status', $callback);
@@ -316,13 +329,12 @@ class UpgradeCommand extends ContainerAwareCommand {
      *
      * Requires the box status table upgraded first.
      */
-    public function upgradeCacheStatus() {
-        $callback = function($row) {
+    public function upgradeCacheStatus() : void {
+        $callback = function ($row) {
             $status = $this->findEntity(BoxStatus::class, $row['boxstatus_id']);
             $status->setData(unserialize($row['response']));
             $this->em->flush();
             $this->em->detach($status);
-            return null;
         };
         $this->upgradeTable('cache_status', $callback);
     }
@@ -332,8 +344,8 @@ class UpgradeCommand extends ContainerAwareCommand {
      *
      * Requires the pln, content provider, and plugin tables upgraded first.
      */
-    public function upgradeAus() {
-        $callback = function($row) {
+    public function upgradeAus() : void {
+        $callback = function ($row) {
             $au = new Au();
             $au->setPln($this->findEntity(Pln::class, $row['pln_id']));
             $au->setContentProvider($this->findEntity(ContentProvider::class, $row['contentprovider_id']));
@@ -341,6 +353,7 @@ class UpgradeCommand extends ContainerAwareCommand {
             $au->setAuid($row['auid']);
             $au->setComment($row['comment']);
             $au->setOpen(false);
+
             return $au;
         };
         $this->upgradeTable('aus', $callback);
@@ -351,13 +364,14 @@ class UpgradeCommand extends ContainerAwareCommand {
      *
      * Requires the Au table upgraded first.
      */
-    public function upgradeAuProperties() {
-        $callback = function($row) {
+    public function upgradeAuProperties() : void {
+        $callback = function ($row) {
             $property = new AuProperty();
             $property->setParent($this->findEntity(AuProperty::class, $row['parent_id']));
             $property->setAu($this->findEntity(Au::class, $row['au_id']));
             $property->setPropertyKey($row['property_key']);
             $property->setPropertyValue($row['property_value']);
+
             return $property;
         };
         $this->upgradeTable('au_properties', $callback);
@@ -368,13 +382,14 @@ class UpgradeCommand extends ContainerAwareCommand {
      *
      * Requires the Au table upgraded first.
      */
-    public function upgradeAuStatus() {
-        $callback = function($row) {
+    public function upgradeAuStatus() : void {
+        $callback = function ($row) {
             $status = new AuStatus();
             $status->setAu($this->findEntity(Au::class, $row['au_id']));
             $status->setCreated(new DateTime($row['query_date']));
             $status->setStatus($row['status']);
             $status->setErrors($row['errors']);
+
             return $status;
         };
         $this->upgradeTable('au_status', $callback);
@@ -391,13 +406,14 @@ class UpgradeCommand extends ContainerAwareCommand {
      */
     public function findContent($depositId) {
         static $query = null;
-        if( ! $query) {
+        if ( ! $query) {
             // only initialize the query once. It can be reused.
             $query = $this->source->prepare('SELECT * FROM content WHERE deposit_id = :id');
         }
-        $query->execute(array('id' => $depositId));
+        $query->execute(['id' => $depositId]);
         $row = $query->fetch();
         $query->closeCursor();
+
         return $row;
     }
 
@@ -412,16 +428,17 @@ class UpgradeCommand extends ContainerAwareCommand {
      */
     public function findContentProperties($contentId) {
         static $query = null;
-        if( ! $query) {
+        if ( ! $query) {
             // only initialize the query once. It can be reused.
             $query = $this->source->prepare('SELECT * FROM content_properties WHERE content_id = :id');
         }
-        $query->execute(array('id' => $contentId));
-        $properties = array();
-        while($row = $query->fetch()) {
+        $query->execute(['id' => $contentId]);
+        $properties = [];
+        while ($row = $query->fetch()) {
             $properties[$row['property_key']] = $row['property_value'];
         }
         $query->closeCursor();
+
         return $properties;
     }
 
@@ -432,8 +449,8 @@ class UpgradeCommand extends ContainerAwareCommand {
      *
      * Moves all content and content items into the appropriate deposit.
      */
-    public function upgradeDeposits() {
-        $callback = function($row) {
+    public function upgradeDeposits() : void {
+        $callback = function ($row) {
             $deposit = new Deposit();
             $deposit->setContentProvider($this->findEntity(ContentProvider::class, $row['content_provider_id']));
             $deposit->setUser($this->findEntity(User::class, $row['user_id']));
@@ -450,6 +467,7 @@ class UpgradeCommand extends ContainerAwareCommand {
             $deposit->setChecksumValue($contentRow['checksum_value']);
 
             $deposit->setProperties($this->findContentProperties($contentRow['id']));
+
             return $deposit;
         };
         $this->upgradeTable('deposits', $callback);
@@ -460,13 +478,14 @@ class UpgradeCommand extends ContainerAwareCommand {
      *
      * Requires the depost table upgraded first.
      */
-    public function upgradeDepositStatus() {
-        $callback = function($row) {
+    public function upgradeDepositStatus() : void {
+        $callback = function ($row) {
             $status = new DepositStatus();
             $status->setDeposit($this->findEntity(Deposit::class, $row['deposit_id']));
             $status->setAgreement($row['agreement']);
             $status->setCreated(new DateTime($row['query_date']));
             $status->setStatus($row['status']);
+
             return $status;
         };
         $this->upgradeTable('deposit_status', $callback);
@@ -475,9 +494,9 @@ class UpgradeCommand extends ContainerAwareCommand {
     /**
      * {@inheritdoc}
      */
-    public function execute(InputInterface $input, OutputInterface $output) {
-        if (!$input->getOption('force')) {
-            $output->writeln("Will not run without --force.");
+    public function execute(InputInterface $input, OutputInterface $output) : void {
+        if ( ! $input->getOption('force')) {
+            $output->writeln('Will not run without --force.');
             exit;
         }
         $this->upgradeUsers();
@@ -495,5 +514,4 @@ class UpgradeCommand extends ContainerAwareCommand {
         $this->upgradeDeposits();
         $this->upgradeDepositStatus();
     }
-
 }

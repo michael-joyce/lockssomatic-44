@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Services;
@@ -12,8 +13,8 @@ namespace AppBundle\Services;
 use AppBundle\Entity\ContentProvider;
 use AppBundle\Entity\Deposit;
 use AppBundle\Utilities\Namespaces;
-use Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Ramsey\Uuid\Uuid;
 use SimpleXMLElement;
 
@@ -24,7 +25,6 @@ use SimpleXMLElement;
  * items.
  */
 class DepositBuilder {
-
     /**
      * Database manager.
      *
@@ -34,8 +34,6 @@ class DepositBuilder {
 
     /**
      * Construct the builder.
-     *
-     * @param EntityManagerInterface $em
      */
     public function __construct(EntityManagerInterface $em) {
         $this->em = $em;
@@ -45,9 +43,6 @@ class DepositBuilder {
      * Build and persist a deposit from an XML element.
      *
      * The deposit isn't flushed to the database.
-     *
-     * @param SimpleXMLElement $xml
-     * @param ContentProvider $provider
      *
      * @return Deposit
      */
@@ -61,7 +56,7 @@ class DepositBuilder {
         $deposit->setUuid($id);
         $elements = $xml->xpath('lom:content');
         if (count($elements) > 1) {
-            throw new Exception("Multiple content elements not supported in deposit.");
+            throw new Exception('Multiple content elements not supported in deposit.');
         }
         $content = $elements[0];
         $deposit->setSize((string) $content->attributes()->size);
@@ -83,9 +78,6 @@ class DepositBuilder {
     /**
      * Build a deposit from array data.
      *
-     * @param array $data
-     * @param ContentProvider $provider
-     *
      * @return Deposit
      */
     public function fromArray(array $data, ContentProvider $provider) {
@@ -94,7 +86,7 @@ class DepositBuilder {
         $deposit->setSummary($data['summary']);
         $deposit->setContentProvider($provider);
 
-        if (array_key_exists('uuid', $data) && $data['uuid'] !== null && $data['uuid'] !== '') {
+        if (array_key_exists('uuid', $data) && null !== $data['uuid'] && '' !== $data['uuid']) {
             $deposit->setUuid($data['uuid']);
         } else {
             $deposit->setUuid((string) Uuid::uuid4());
@@ -113,5 +105,4 @@ class DepositBuilder {
 
         return $deposit;
     }
-
 }

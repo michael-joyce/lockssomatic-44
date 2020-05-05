@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\DataFixtures\ORM;
@@ -18,13 +19,10 @@ use Doctrine\Common\Persistence\ObjectManager;
  * Load some plugins.
  */
 class LoadPlugin extends Fixture implements DependentFixtureInterface {
-    
     /**
      * Load the objects.
-     *
-     * @param ObjectManager $em
      */
-    public function load(ObjectManager $em) {
+    public function load(ObjectManager $em) : void {
         $plugin1 = new Plugin();
         $plugin1->setName('Dummy Plugin');
         $plugin1->setPath('/path/to/plugin1.jar');
@@ -36,7 +34,7 @@ class LoadPlugin extends Fixture implements DependentFixtureInterface {
         ]);
         $em->persist($plugin1);
         $this->setReference('plugin.1', $plugin1);
-        
+
         $em->flush();
     }
 
@@ -48,5 +46,4 @@ class LoadPlugin extends Fixture implements DependentFixtureInterface {
             LoadPln::class,
         ];
     }
-
 }

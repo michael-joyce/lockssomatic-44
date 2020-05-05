@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Tests\Menu;
@@ -15,21 +16,20 @@ use Nines\UserBundle\DataFixtures\ORM\LoadUser;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 class BuilderTest extends BaseTestCase {
-    
     protected function getFixtures() {
         return [
             LoadUser::class,
         ];
     }
 
-    public function testAnonLockssMenu() {
+    public function testAnonLockssMenu() : void {
         $client = $this->makeClient();
         $menu = $client->getContainer()->get(Builder::class)->mainMenu([]);
         $this->assertInstanceOf(MenuItem::class, $menu);
-        $this->assertEquals(1, count($menu->getChildren()));
+        $this->assertSame(1, count($menu->getChildren()));
     }
-    
-    public function testUserLockssMenu() {
+
+    public function testUserLockssMenu() : void {
         $client = $this->makeClient([
             'username' => 'user@example.com',
             'password' => 'secret',
@@ -38,6 +38,6 @@ class BuilderTest extends BaseTestCase {
         $client->request('get', '/');
         $menu = $client->getContainer()->get(Builder::class)->mainMenu([]);
         $this->assertInstanceOf(MenuItem::class, $menu);
-        $this->assertEquals(3, count($menu->getChildren()));
+        $this->assertSame(3, count($menu->getChildren()));
     }
 }

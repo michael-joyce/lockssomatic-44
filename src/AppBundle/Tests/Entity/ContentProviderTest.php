@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Tests\Entity;
@@ -13,43 +14,45 @@ use AppBundle\Entity\ContentProvider;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 /**
- * Description of PluginPropertyTest
+ * Description of PluginPropertyTest.
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
 class ProviderTest extends BaseTestCase {
-
     /**
      * @var ContentProvider
      */
     private $provider;
-    
-    protected function setup() : void {
-        parent::setUp();
-        $this->provider = new ContentProvider();
-    }
 
     /**
      * @dataProvider getPermissionHostData
+     *
+     * @param mixed $expected
+     * @param mixed $url
      */
-    public function testGetPermissionHost($expected, $url) {
+    public function testGetPermissionHost($expected, $url) : void {
         $this->provider->setPermissionUrl(
-                $url);
-        $this->assertEquals($expected, $this->provider->getPermissionHost());
+            $url
+        );
+        $this->assertSame($expected, $this->provider->getPermissionHost());
     }
-    
+
     public function getPermissionHostData() {
-        return array(
+        return [
             ['example.com', 'http://example.com/path/to/stuff'],
             ['www.example.com', 'http://www.example.com/path/to/stuff'],
             ['example.com', 'http://example.com/path/to/stuff?foo=bar'],
             ['www.example.com', 'http://www.example.com/path/to/stuff#fancy'],
-            
+
             ['example.com', 'httpss://example.com/path/to/stuff'],
             ['www.example.com', 'https://www.example.com/path/to/stuff'],
             ['example.com', 'https://example.com/path/to/stuff?foo=bar'],
             ['www.example.com', 'https://www.example.com/path/to/stuff#fancy'],
-        );
+        ];
     }
-    
+
+    protected function setup() : void {
+        parent::setUp();
+        $this->provider = new ContentProvider();
+    }
 }

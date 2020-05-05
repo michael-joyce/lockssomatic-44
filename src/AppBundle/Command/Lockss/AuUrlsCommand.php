@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Command\Lockss;
@@ -20,7 +21,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Query the URLs preserved in an AU.
  */
 class AuUrlsCommand extends ContainerAwareCommand {
-
     /**
      * Doctrine instance.
      *
@@ -37,9 +37,6 @@ class AuUrlsCommand extends ContainerAwareCommand {
 
     /**
      * Build the command.
-     *
-     * @param EntityManagerInterface $em
-     * @param LockssClient $client
      */
     public function __construct(EntityManagerInterface $em, LockssClient $client) {
         parent::__construct();
@@ -50,7 +47,7 @@ class AuUrlsCommand extends ContainerAwareCommand {
     /**
      * Configure the command.
      */
-    protected function configure() {
+    protected function configure() : void {
         $this->setName('lockss:au:urls');
         $this->setDescription('Report the urls preserved in an AU.');
     }
@@ -59,17 +56,16 @@ class AuUrlsCommand extends ContainerAwareCommand {
      * Fetch a list of AUs to query from the database.
      *
      * @return Au[]|Collection
-     *   List of AUs to query.
+     *                         List of AUs to query.
      */
     protected function getAus() {
-        $aus = $this->em->getRepository(Au::class)->findAll();
-        return $aus;
+        return $this->em->getRepository(Au::class)->findAll();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output) : void {
         $aus = $this->getAus();
         foreach ($aus as $au) {
             $output->writeln($au->getId());
@@ -81,5 +77,4 @@ class AuUrlsCommand extends ContainerAwareCommand {
             }
         }
     }
-
 }

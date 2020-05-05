@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Tests\Command;
@@ -15,37 +16,36 @@ use Nines\UtilBundle\Tests\Util\BaseTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class ImportKeystoreCommandTest extends BaseTestCase
-{
-    const NAME = 'lom:import:keystore';
-    
-    const KEYSTORE = 'src/AppBundle/Tests/Data/dummy.keystore';
+class ImportKeystoreCommandTest extends BaseTestCase {
+    public const NAME = 'lom:import:keystore';
+
+    public const KEYSTORE = 'src/AppBundle/Tests/Data/dummy.keystore';
 
     /**
      * @var CommandTester
      */
     private $tester;
-    
-    public function setup() : void {
-        parent::setUp();
-        $application = new Application(static::$kernel);
-        $command = $application->find(self::NAME);
-        $this->tester = new CommandTester($command);
-    }
-    
+
     public function getFixtures() {
         return [
             LoadPln::class,
         ];
     }
-    
-    public function testExecute() {
+
+    public function testExecute() : void {
         $this->tester->execute([
             'command' => self::NAME,
             'plnId' => 1,
             'path' => self::KEYSTORE,
         ]);
         $pln = $this->getDoctrine()->find(Pln::class, 1);
-        $this->assertEquals(basename(self::KEYSTORE), $pln->getKeystoreFilename());
+        $this->assertSame(basename(self::KEYSTORE), $pln->getKeystoreFilename());
+    }
+
+    public function setup() : void {
+        parent::setUp();
+        $application = new Application(static::$kernel);
+        $command = $application->find(self::NAME);
+        $this->tester = new CommandTester($command);
     }
 }

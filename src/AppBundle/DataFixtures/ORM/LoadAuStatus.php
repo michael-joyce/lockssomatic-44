@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\DataFixtures\ORM;
@@ -18,13 +19,10 @@ use Doctrine\Common\Persistence\ObjectManager;
  * Load some AU status objects.
  */
 class LoadAuStatus extends Fixture implements DependentFixtureInterface {
-    
     /**
      * Load the objects.
-     *
-     * @param ObjectManager $em
      */
-    public function load(ObjectManager $em) {
+    public function load(ObjectManager $em) : void {
         $status1 = new AuStatus();
         $status1->setErrors([
             'Cannot contact host foo.example.com',
@@ -40,7 +38,7 @@ class LoadAuStatus extends Fixture implements DependentFixtureInterface {
         $status1->setAu($this->getReference('au.1'));
         $em->persist($status1);
         $this->setReference('auStatus.1', $status1);
-        
+
         $status2 = new AuStatus();
         $status2->setStatus([
             'localhost' => [
@@ -53,7 +51,7 @@ class LoadAuStatus extends Fixture implements DependentFixtureInterface {
         $status2->setAu($this->getReference('au.1'));
         $em->persist($status2);
         $this->setReference('auStatus.2', $status2);
-        
+
         $em->flush();
     }
 
@@ -65,5 +63,4 @@ class LoadAuStatus extends Fixture implements DependentFixtureInterface {
             LoadAu::class,
         ];
     }
-
 }

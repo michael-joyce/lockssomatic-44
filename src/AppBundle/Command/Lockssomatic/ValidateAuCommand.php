@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace AppBundle\Command\Lockssomatic;
 
 use AppBundle\Entity\Au;
@@ -15,7 +23,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * LomValidateAuCommand command.
  */
 class ValidateAuCommand extends ContainerAwareCommand {
-
     /**
      * AU Manager.
      *
@@ -32,9 +39,6 @@ class ValidateAuCommand extends ContainerAwareCommand {
 
     /**
      * Construct the command.
-     *
-     * @param EntityManagerInterface $em
-     * @param AuManager $manager
      */
     public function __construct(EntityManagerInterface $em, AuManager $manager) {
         parent::__construct(null);
@@ -45,41 +49,36 @@ class ValidateAuCommand extends ContainerAwareCommand {
     /**
      * Configure the command.
      */
-    protected function configure() {
+    protected function configure() : void {
         $this->setName('lom:validate:au');
         $this->setDescription('Check that AUs have matching content.');
-        $this->addArgument('ids', InputArgument::IS_ARRAY, "List of AU database ids to check");
+        $this->addArgument('ids', InputArgument::IS_ARRAY, 'List of AU database ids to check');
     }
 
     /**
      * Fetch a list of AUs to query from the database.
      *
-     * @param array $ids
-     *
      * @return Au[]|Collection
      */
     protected function getAus(array $ids) {
-        if (count($ids) === 0) {
+        if (0 === count($ids)) {
             return $this->em->getRepository(Au::class)->findAll();
         }
-        return $this->em->getRepository(Au::class)->findBy(array(
+
+        return $this->em->getRepository(Au::class)->findBy([
             'id' => $ids,
-        ));
+        ]);
     }
 
     /**
      * Execute the command.
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output) : void {
         foreach ($this->getAus($input->getArgument('ids')) as $au) {
             $errors = $this->manager->validate($au);
-            if ($errors != 0) {
+            if (0 !== $errors) {
                 $output->writeln("AU {$au->getId()} has {$errors} problems.");
             }
         }
     }
-
 }

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Tests\Services;
@@ -19,74 +20,13 @@ use Nines\UtilBundle\Tests\Util\BaseTestCase;
 use SimpleXMLElement;
 
 /**
- * Description of DepositBuilderTest
+ * Description of DepositBuilderTest.
  */
 class DepositBuilderTest extends BaseTestCase {
-
     /**
      * @var DepositBuilder
      */
     private $builder;
-
-    protected function getFixtures() {
-        return [
-            LoadContentProvider::class,
-        ];
-    }
-
-    protected function setup() : void {
-        parent::setUp();
-        $this->builder = $this->container->get(DepositBuilder::class);
-    }
-
-    public function testInstance() {
-        $this->assertInstanceOf(DepositBuilder::class, $this->builder);
-    }
-
-    public function testFromXml() {
-        $xml = $this->getXml();
-        $deposit = $this->builder->fromXml($xml, $this->getReference('provider.1'));
-        $this->assertInstanceOf(Deposit::class, $deposit);
-        $this->assertEquals('771E96EC-5486-4E34-A1F6-AB113AFB642D', $deposit->getUuid());
-        $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
-        $this->assertEquals('Test Deposit', $deposit->getTitle());
-        $this->assertEquals('', $deposit->getSummary());
-    }
-
-    public function testFromXmlMultipleDeposits() {
-        $this->expectException(Exception::class);
-        $xml = $this->getXml();
-        $node = $xml->xpath('/atom:entry')[0];
-        $node->addChild('content', null, Namespaces::NS['lom']);
-        $deposit = $this->builder->fromXml($xml, $this->getReference('provider.1'));
-        dump($xml->asXML());
-        $this->assertInstanceOf(Deposit::class, $deposit);
-        $this->assertEquals('771E96EC-5486-4E34-A1F6-AB113AFB642D', $deposit->getUuid());
-        $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
-        $this->assertEquals('Test Deposit', $deposit->getTitle());
-        $this->assertEquals('', $deposit->getSummary());
-    }
-
-    public function testFromArray() {
-        $data = $this->getArray();
-        $deposit = $this->builder->fromArray($data, $this->getReference('provider.1'));
-        $this->assertInstanceOf(Deposit::class, $deposit);
-        $this->assertEquals('771E96EC-5486-4E34-A1F6-AB113AFB642D', $deposit->getUuid());
-        $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
-        $this->assertEquals('Deposit 1', $deposit->getTitle());
-        $this->assertEquals('Judgement', $deposit->getSummary());
-    }
-
-    public function testFromArrayNoUuid() {
-        $data = $this->getArray();
-        unset($data['uuid']);
-        $deposit = $this->builder->fromArray($data, $this->getReference('provider.1'));
-        $this->assertInstanceOf(Deposit::class, $deposit);
-        $this->assertEquals(36, strlen($deposit->getUuid()));
-        $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
-        $this->assertEquals('Deposit 1', $deposit->getTitle());
-        $this->assertEquals('Judgement', $deposit->getSummary());
-    }
 
     private function getArray() {
         return [
@@ -102,7 +42,7 @@ class DepositBuilderTest extends BaseTestCase {
     }
 
     private function getXml() {
-        $str = <<<XML
+        $str = <<<'XML'
 <entry xmlns="http://www.w3.org/2005/Atom"
         xmlns:dcterms="http://purl.org/dc/terms/"
         xmlns:lom="http://lockssomatic.info/SWORD2"
@@ -137,7 +77,67 @@ class DepositBuilderTest extends BaseTestCase {
 XML;
         $xml = new SimpleXMLElement($str);
         Namespaces::registerNamespaces($xml);
+
         return $xml;
     }
 
+    protected function getFixtures() {
+        return [
+            LoadContentProvider::class,
+        ];
+    }
+
+    public function testInstance() : void {
+        $this->assertInstanceOf(DepositBuilder::class, $this->builder);
+    }
+
+    public function testFromXml() : void {
+        $xml = $this->getXml();
+        $deposit = $this->builder->fromXml($xml, $this->getReference('provider.1'));
+        $this->assertInstanceOf(Deposit::class, $deposit);
+        $this->assertSame('771E96EC-5486-4E34-A1F6-AB113AFB642D', $deposit->getUuid());
+        $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
+        $this->assertSame('Test Deposit', $deposit->getTitle());
+        $this->assertSame('', $deposit->getSummary());
+    }
+
+    public function testFromXmlMultipleDeposits() : void {
+        $this->expectException(Exception::class);
+        $xml = $this->getXml();
+        $node = $xml->xpath('/atom:entry')[0];
+        $node->addChild('content', null, Namespaces::NS['lom']);
+        $deposit = $this->builder->fromXml($xml, $this->getReference('provider.1'));
+        dump($xml->asXML());
+        $this->assertInstanceOf(Deposit::class, $deposit);
+        $this->assertSame('771E96EC-5486-4E34-A1F6-AB113AFB642D', $deposit->getUuid());
+        $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
+        $this->assertSame('Test Deposit', $deposit->getTitle());
+        $this->assertSame('', $deposit->getSummary());
+    }
+
+    public function testFromArray() : void {
+        $data = $this->getArray();
+        $deposit = $this->builder->fromArray($data, $this->getReference('provider.1'));
+        $this->assertInstanceOf(Deposit::class, $deposit);
+        $this->assertSame('771E96EC-5486-4E34-A1F6-AB113AFB642D', $deposit->getUuid());
+        $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
+        $this->assertSame('Deposit 1', $deposit->getTitle());
+        $this->assertSame('Judgement', $deposit->getSummary());
+    }
+
+    public function testFromArrayNoUuid() : void {
+        $data = $this->getArray();
+        unset($data['uuid']);
+        $deposit = $this->builder->fromArray($data, $this->getReference('provider.1'));
+        $this->assertInstanceOf(Deposit::class, $deposit);
+        $this->assertSame(36, strlen($deposit->getUuid()));
+        $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
+        $this->assertSame('Deposit 1', $deposit->getTitle());
+        $this->assertSame('Judgement', $deposit->getSummary());
+    }
+
+    protected function setup() : void {
+        parent::setUp();
+        $this->builder = $this->container->get(DepositBuilder::class);
+    }
 }

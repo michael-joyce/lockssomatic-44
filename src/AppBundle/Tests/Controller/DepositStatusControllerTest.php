@@ -1,62 +1,60 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Tests\Controller;
 
 use AppBundle\DataFixtures\ORM\LoadDepositStatus;
-use AppBundle\Entity\DepositStatus;
 use Nines\UserBundle\DataFixtures\ORM\LoadUser;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 class DepositStatusControllerTest extends BaseTestCase {
-
     protected function getFixtures() {
         return [
             LoadUser::class,
-            LoadDepositStatus::class
+            LoadDepositStatus::class,
         ];
     }
 
-    public function testAnonIndex() {
+    public function testAnonIndex() : void {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/pln/1/deposit/1/status/');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertSame(302, $client->getResponse()->getStatusCode());
     }
 
-    public function testUserIndex() {
+    public function testUserIndex() : void {
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/pln/1/deposit/1/status/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
 
-    public function testAdminIndex() {
+    public function testAdminIndex() : void {
         $client = $this->makeClient(LoadUser::ADMIN);
         $crawler = $client->request('GET', '/pln/1/deposit/1/status/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
 
-    public function testAnonShow() {
+    public function testAnonShow() : void {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/pln/1/deposit/1/status/1');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertSame(302, $client->getResponse()->getStatusCode());
     }
 
-    public function testUserShow() {
+    public function testUserShow() : void {
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/pln/1/deposit/1/status/1');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
 
-    public function testAdminShow() {
+    public function testAdminShow() : void {
         $client = $this->makeClient(LoadUser::ADMIN);
         $crawler = $client->request('GET', '/pln/1/deposit/1/status/1');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
-
 }

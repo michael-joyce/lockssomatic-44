@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Services;
@@ -19,7 +20,6 @@ use Symfony\Component\Templating\EngineInterface;
  * Export all the configuration for a PLN.
  */
 class ConfigExporter {
-
     /**
      * Dependency-injected number of AUs in a title db file.
      *
@@ -57,7 +57,7 @@ class ConfigExporter {
 
     /**
      * Au manager service.
-     * 
+     *
      * @var AuManager
      */
     private $manager;
@@ -66,10 +66,6 @@ class ConfigExporter {
      * Build the exporter.
      *
      * @param type $ausPerTitleDb
-     * @param EntityManagerInterface $em
-     * @param EngineInterface $templating
-     * @param FilePaths $fp
-     * @param AuManager $manager
      */
     public function __construct($ausPerTitleDb, EntityManagerInterface $em, EngineInterface $templating, FilePaths $fp, AuManager $manager) {
         $this->ausPerTitleDb = $ausPerTitleDb;
@@ -82,43 +78,35 @@ class ConfigExporter {
 
     /**
      * Set or override the file path service.
-     *
-     * @param FilePaths $fp
      */
-    public function setFilePaths(FilePaths $fp) {
+    public function setFilePaths(FilePaths $fp) : void {
         $this->fp = $fp;
     }
 
     /**
      * Set or override the AU manager service.
-     *
-     * @param AuManager $manager
      */
-    public function setAuManager(AuManager $manager) {
+    public function setAuManager(AuManager $manager) : void {
         $this->manager = $manager;
     }
 
     /**
      * Export the lockss.xml configuration file.
-     *
-     * @param Pln $pln
      */
-    public function exportLockssXml(Pln $pln) {
-        $xml = $this->templating->render('AppBundle:lockss:lockss.xml.twig', array(
-        'pln' => $pln,
-        ));
+    public function exportLockssXml(Pln $pln) : void {
+        $xml = $this->templating->render('AppBundle:lockss:lockss.xml.twig', [
+            'pln' => $pln,
+        ]);
         $path = $this->fp->getLockssXmlFile($pln);
         $this->fs->dumpFile($path, $xml);
     }
 
     /**
      * Export a PLN's java keystore.
-     *
-     * @param Pln $pln
      */
-    public function exportKeystore(Pln $pln) {
+    public function exportKeystore(Pln $pln) : void {
         $keystore = $pln->getKeystorePath();
-        if (!$keystore) {
+        if ( ! $keystore) {
             return;
         }
         $path = $this->fp->getPluginsExportDir($pln);
@@ -127,54 +115,48 @@ class ConfigExporter {
 
     /**
      * Export the java plugins.
-     *
-     * @param Pln $pln
      */
-    public function exportPlugins(Pln $pln) {
+    public function exportPlugins(Pln $pln) : void {
         foreach ($pln->getPlugins() as $plugin) {
-            if (!file_exists($plugin->getPath())) {
+            if ( ! file_exists($plugin->getPath())) {
                 throw new Exception("Cannot find {$plugin->getPath()} to export plugin.");
             }
             $path = $this->fp->getPluginsExportFile($pln, $plugin);
             $this->fs->copy($plugin->getPath(), $path);
         }
-        $html = $this->templating->render('AppBundle:lockss:plugin_list.html.twig', array(
-        'pln' => $pln,
-        ));
+        $html = $this->templating->render('AppBundle:lockss:plugin_list.html.twig', [
+            'pln' => $pln,
+        ]);
         $this->fs->dumpFile($this->fp->getPluginsManifestFile($pln), $html);
     }
 
     /**
      * Export the manifests for a PLN.
-     *
-     * @param Pln $pln
      */
-    public function exportManifests(Pln $pln) {
+    public function exportManifests(Pln $pln) : void {
         foreach ($pln->getAus() as $au) {
             $manifestPath = $this->fp->getManifestPath($au);
             $iterator = $this->manager->auDeposits($au);
-            $html = $this->templating->render('AppBundle:lockss:manifest.html.twig', array(
+            $html = $this->templating->render('AppBundle:lockss:manifest.html.twig', [
                 'pln' => $pln,
                 'content' => $iterator,
-            ));
+            ]);
             $this->fs->dumpFile($manifestPath, $html);
         }
     }
 
     /**
      * Export the lOCKSS titledbs for a PLN.
-     *
-     * @param Pln $pln
      */
-    public function exportTitleDbs(Pln $pln) {
+    public function exportTitleDbs(Pln $pln) : void {
         foreach ($pln->getContentProviders() as $provider) {
             $aus = $provider->getAus();
             for ($i = 0; $i < ceil($aus->count() / $this->ausPerTitleDb); $i++) {
                 $slice = $aus->slice($i * $this->ausPerTitleDb, $this->ausPerTitleDb);
                 $titleDbPath = $this->fp->getTitleDbPath($provider, $i + 1);
-                $xml = $this->templating->render('AppBundle:lockss:titledb.xml.twig', array(
-                'aus' => $slice,
-                ));
+                $xml = $this->templating->render('AppBundle:lockss:titledb.xml.twig', [
+                    'aus' => $slice,
+                ]);
                 $this->fs->dumpFile($titleDbPath, $xml);
             }
         }
@@ -183,16 +165,13 @@ class ConfigExporter {
     /**
      * Export a PLN.
      *
-     * @param Pln $pln
-     *
      * @codeCoverageIgnore
      */
-    public function export(Pln $pln) {
+    public function export(Pln $pln) : void {
         $this->exportLockssXml($pln);
         $this->exportKeystore($pln);
         $this->exportPlugins($pln);
         $this->exportManifests($pln);
         $this->exportTitleDbs($pln);
     }
-
 }

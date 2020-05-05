@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\EventListener;
@@ -14,7 +15,7 @@ namespace AppBundle\EventListener;
 function gethostbyname($hostname) {
     switch ($hostname) {
         case 'frobinicate.com':
-            return "1.2.3.4";
+            return '1.2.3.4';
         default:
             return $hostname;
     }
@@ -28,24 +29,22 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 class BoxListenerTest extends BaseTestCase {
-
     private $listener;
-
-    protected function setup() : void {
-        parent::setUp();
-        $this->listener = $this->getContainer()->get(BoxListener::class);
-    }
 
     /**
      * @dataProvider prePersistData
+     *
+     * @param mixed $hostname
+     * @param mixed $ip
+     * @param mixed $expected
      */
-    public function testPrePersist($hostname, $ip, $expected) {
+    public function testPrePersist($hostname, $ip, $expected) : void {
         $box = new Box();
         $box->setHostname($hostname);
         $box->setIpAddress($ip);
         $args = new LifecycleEventArgs($box, $this->getDoctrine());
         $this->listener->prePersist($args);
-        $this->assertEquals($expected, $box->getIpAddress());
+        $this->assertSame($expected, $box->getIpAddress());
     }
 
     public function prePersistData() {
@@ -58,14 +57,18 @@ class BoxListenerTest extends BaseTestCase {
 
     /**
      * @dataProvider preUpdateData
+     *
+     * @param mixed $hostname
+     * @param mixed $ip
+     * @param mixed $expected
      */
-    public function testPreUpdate($hostname, $ip, $expected) {
+    public function testPreUpdate($hostname, $ip, $expected) : void {
         $box = new Box();
         $box->setHostname($hostname);
         $box->setIpAddress($ip);
         $args = new LifecycleEventArgs($box, $this->getDoctrine());
         $this->listener->preUpdate($args);
-        $this->assertEquals($expected, $box->getIpAddress());
+        $this->assertSame($expected, $box->getIpAddress());
     }
 
     public function preUpdateData() {
@@ -76,4 +79,8 @@ class BoxListenerTest extends BaseTestCase {
         ];
     }
 
+    protected function setup() : void {
+        parent::setUp();
+        $this->listener = $this->getContainer()->get(BoxListener::class);
+    }
 }

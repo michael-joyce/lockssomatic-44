@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Controller;
@@ -27,12 +28,8 @@ use Symfony\Component\HttpFoundation\Request;
  * @ParamConverter("pln", options={"id"="plnId"})
  */
 class PlnPropertyController extends Controller {
-
     /**
      * Lists all PLN properties.
-     *
-     * @param Request $request
-     * @param Pln $pln
      *
      * @return array
      *
@@ -41,16 +38,13 @@ class PlnPropertyController extends Controller {
      * @Template()
      */
     public function indexAction(Request $request, Pln $pln) {
-        return array(
+        return [
             'pln' => $pln,
-        );
+        ];
     }
 
     /**
      * Creates a new Pln property.
-     *
-     * @param Request $request
-     * @param Pln $pln
      *
      * @return array
      *
@@ -68,7 +62,7 @@ class PlnPropertyController extends Controller {
             $values = $data['values'];
             if (count($values) > 1) {
                 $pln->setProperty($name, $values);
-            } elseif (count($values) === 1) {
+            } elseif (1 === count($values)) {
                 $pln->setProperty($name, $values[0]);
             } else {
                 // count(values) === 0.
@@ -76,21 +70,21 @@ class PlnPropertyController extends Controller {
             }
             $this->getDoctrine()->getManager()->flush();
             $this->addFlash('success', 'The property has been added to the PLN.');
-            return $this->redirectToRoute('pln_property_index', array(
-                        'plnId' => $pln->getId(),
-            ));
+
+            return $this->redirectToRoute('pln_property_index', [
+                'plnId' => $pln->getId(),
+            ]);
         }
-        return array(
+
+        return [
             'pln' => $pln,
             'form' => $form->createView(),
-        );
+        ];
     }
 
     /**
      * Displays a form to edit an existing Pln property.
      *
-     * @param Request $request
-     * @param Pln $pln
      * @param string $propertyKey
      *
      * @return array
@@ -101,10 +95,10 @@ class PlnPropertyController extends Controller {
      * @Template()
      */
     public function editAction(Request $request, Pln $pln, $propertyKey) {
-        $form = $this->createForm(PlnPropertyType::class, null, array(
+        $form = $this->createForm(PlnPropertyType::class, null, [
             'name' => $propertyKey,
             'values' => $pln->getProperty($propertyKey),
-        ));
+        ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
@@ -112,7 +106,7 @@ class PlnPropertyController extends Controller {
             $values = $data['values'];
             if (count($values) > 1) {
                 $pln->setProperty($name, $values);
-            } elseif (count($values) === 1) {
+            } elseif (1 === count($values)) {
                 $pln->setProperty($name, $values[0]);
             } else {
                 // count(values) === 0.
@@ -120,21 +114,21 @@ class PlnPropertyController extends Controller {
             }
             $this->getDoctrine()->getManager()->flush();
             $this->addFlash('success', 'The property has been updated.');
-            return $this->redirectToRoute('pln_property_index', array(
-                        'plnId' => $pln->getId(),
-            ));
+
+            return $this->redirectToRoute('pln_property_index', [
+                'plnId' => $pln->getId(),
+            ]);
         }
-        return array(
+
+        return [
             'pln' => $pln,
             'form' => $form->createView(),
-        );
+        ];
     }
 
     /**
      * Deletes a Pln property.
      *
-     * @param Request $request
-     * @param Pln $pln
      * @param string $propertyKey
      *
      * @return RedirectResponse
@@ -147,9 +141,9 @@ class PlnPropertyController extends Controller {
         $pln->removeProperty($propertyKey);
         $this->getDoctrine()->getManager()->flush();
         $this->addFlash('success', 'The property has been removed.');
-        return $this->redirectToRoute('pln_property_index', array(
-                    'plnId' => $pln->getId(),
-        ));
-    }
 
+        return $this->redirectToRoute('pln_property_index', [
+            'plnId' => $pln->getId(),
+        ]);
+    }
 }

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Controller;
@@ -28,12 +29,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @ParamConverter("pln", options={"id"="plnId"})
  */
 class DepositController extends Controller {
-
     /**
      * Lists all Deposit entities.
-     *
-     * @param Request $request
-     * @param Pln $pln
      *
      * @return array
      *
@@ -48,17 +45,14 @@ class DepositController extends Controller {
         $paginator = $this->get('knp_paginator');
         $deposits = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        return [
             'deposits' => $deposits,
             'pln' => $pln,
-        );
+        ];
     }
 
     /**
      * Search for Deposit entities.
-     *
-     * @param Request $request
-     * @param Pln $pln
      *
      * @return array
      *
@@ -75,21 +69,18 @@ class DepositController extends Controller {
             $paginator = $this->get('knp_paginator');
             $deposits = $paginator->paginate($query, $request->query->getInt('page', 1), 25);
         } else {
-            $deposits = array();
+            $deposits = [];
         }
 
-        return array(
+        return [
             'deposits' => $deposits,
             'q' => $q,
             'pln' => $pln,
-        );
+        ];
     }
 
     /**
      * Finds and displays a Deposit entity.
-     *
-     * @param Deposit $deposit
-     * @param Pln $pln
      *
      * @return array
      *
@@ -98,13 +89,13 @@ class DepositController extends Controller {
      * @Template()
      */
     public function showAction(Deposit $deposit, Pln $pln) {
-        if($deposit->getAu()->getPln() !== $pln) {
+        if ($deposit->getAu()->getPln() !== $pln) {
             throw new NotFoundHttpException('No such deposit.');
         }
-        return array(
+
+        return [
             'deposit' => $deposit,
             'pln' => $pln,
-        );
+        ];
     }
-
 }

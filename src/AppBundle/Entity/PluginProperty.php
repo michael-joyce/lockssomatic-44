@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Entity;
@@ -22,7 +23,6 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PluginPropertyRepository")
  */
 class PluginProperty extends AbstractEntity {
-
     /**
      * Name of the property, as defined by the name attribute.
      *
@@ -76,7 +76,7 @@ class PluginProperty extends AbstractEntity {
     /**
      * The child properties of this property.
      *
-     * @var PluginProperty[]|Collection
+     * @var Collection|PluginProperty[]
      *
      * @ORM\OneToMany(targetEntity="PluginProperty", mappedBy="parent");
      */
@@ -103,7 +103,8 @@ class PluginProperty extends AbstractEntity {
         if ($this->propertyKey) {
             return $this->propertyKey;
         }
-        return "";
+
+        return '';
     }
 
     /**
@@ -131,8 +132,8 @@ class PluginProperty extends AbstractEntity {
     /**
      * Set propertyValue, which is either a string or an array of strings.
      *
-     * @param string|array $propertyValue
-     *   Value to set.
+     * @param array|string $propertyValue
+     *                                    Value to set.
      *
      * @return PlnProperty
      */
@@ -219,8 +220,6 @@ class PluginProperty extends AbstractEntity {
     /**
      * Add child.
      *
-     * @param PluginProperty $child
-     *
      * @return PluginProperty
      */
     public function addChild(PluginProperty $child) {
@@ -232,12 +231,11 @@ class PluginProperty extends AbstractEntity {
     /**
      * Remove child.
      *
-     * @param PluginProperty $child
-     *
      * @return PluginProperty
      */
     public function removeChild(PluginProperty $child) {
         $this->children->removeElement($child);
+
         return $this;
     }
 
@@ -249,14 +247,13 @@ class PluginProperty extends AbstractEntity {
     public function getChildren() {
         return $this->children;
     }
-    
+
     /**
      * Check if the plugin property has children.
      *
      * @return bool
      */
     public function hasChildren() {
-        return ($this->children && count($this->children));
+        return $this->children && count($this->children);
     }
-
 }

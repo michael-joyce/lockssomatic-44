@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Entity;
@@ -21,7 +22,6 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AuRepository")
  */
 class Au extends AbstractEntity {
-
     /**
      * True if this AU is managed by LOCKSSOMatic. Defaults to false.
      *
@@ -106,7 +106,7 @@ class Au extends AbstractEntity {
      *
      * This is a LOCKSSOMatic-specific field.
      *
-     * @var Deposits[]|Collection
+     * @var Collection|Deposits[]
      *
      * @ORM\OneToMany(targetEntity="Deposit", mappedBy="au")
      */
@@ -130,10 +130,10 @@ class Au extends AbstractEntity {
      */
     public function __toString() {
         if ($this->id) {
-            return "AU #" . $this->id;
-        } else {
-            return "new AU";
+            return 'AU #' . $this->id;
         }
+
+        return 'new AU';
     }
 
     /**
@@ -147,6 +147,7 @@ class Au extends AbstractEntity {
         if ($this->open) {
             $this->open = $open;
         }
+
         return $this;
     }
 
@@ -250,8 +251,6 @@ class Au extends AbstractEntity {
     /**
      * Add auProperty.
      *
-     * @param AuProperty $auProperty
-     *
      * @return Au
      */
     public function addAuProperty(AuProperty $auProperty) {
@@ -262,10 +261,8 @@ class Au extends AbstractEntity {
 
     /**
      * Remove auProperty.
-     *
-     * @param AuProperty $auProperty
      */
-    public function removeAuProperty(AuProperty $auProperty) {
+    public function removeAuProperty(AuProperty $auProperty) : void {
         $this->auProperties->removeElement($auProperty);
     }
 
@@ -284,17 +281,17 @@ class Au extends AbstractEntity {
      * @return bool
      */
     public function hasAuProperties() {
-        return !$this->auProperties->isEmpty();
+        return ! $this->auProperties->isEmpty();
     }
 
     /**
      * Get the top level AU properties.
      *
-     * @return Collection|AuProperty[]
+     * @return AuProperty[]|Collection
      */
     public function getRootAuProperties() {
         return $this->auProperties->filter(function (AuProperty $p) {
-                return $p->getParent() === null;
+            return null === $p->getParent();
         });
     }
 
@@ -302,7 +299,8 @@ class Au extends AbstractEntity {
      * Get the value of a property.
      *
      * @param string $name
-     * @return string|null
+     *
+     * @return null|string
      */
     public function getSimpleAuProperty($name) {
         foreach ($this->auProperties as $property) {
@@ -310,48 +308,49 @@ class Au extends AbstractEntity {
                 return $property->getPropertyValue();
             }
         }
-        return null;
     }
 
     /**
      * Get an AU Property based on the property key.
      *
-     * @return AuProperty|null
+     * @param mixed $name
+     *
+     * @return null|AuProperty
      */
     public function getAuProperty($name) {
         foreach ($this->auProperties as $property) {
-            if ($property->getPropertyKey() === 'key' && $property->getPropertyValue() === $name) {
+            if ('key' === $property->getPropertyKey() && $property->getPropertyValue() === $name) {
                 return $property->getParent();
             }
         }
-        return null;
     }
 
     /**
      * Get an AU property value based on the key.
      *
      * @param string $key
+     *
      * @return string
      */
     public function getAuPropertyValue($key) {
         $value = '';
         $property = $this->getAuProperty($key);
-        if ($property === null) {
+        if (null === $property) {
             return $value;
         }
         foreach ($property->getChildren() as $child) {
-            if ($child->getPropertyKey() === 'value') {
+            if ('value' === $child->getPropertyKey()) {
                 $value = $child->getPropertyValue();
+
                 break;
             }
         }
+
         return $value;
     }
 
     /**
      * Add auStatus.
-     *
-     * @param AuStatus $auStatus
      *
      * @return Au
      */
@@ -363,10 +362,8 @@ class Au extends AbstractEntity {
 
     /**
      * Remove auStatus.
-     *
-     * @param AuStatus $auStatus
      */
-    public function removeAuStatus(AuStatus $auStatus) {
+    public function removeAuStatus(AuStatus $auStatus) : void {
         $this->auStatus->removeElement($auStatus);
     }
 
@@ -382,8 +379,6 @@ class Au extends AbstractEntity {
     /**
      * Add deposit.
      *
-     * @param Deposit $deposit
-     *
      * @return Au
      */
     public function addDeposit(Deposit $deposit) {
@@ -394,10 +389,8 @@ class Au extends AbstractEntity {
 
     /**
      * Remove deposit.
-     *
-     * @param Deposit $deposit
      */
-    public function removeDeposit(Deposit $deposit) {
+    public function removeDeposit(Deposit $deposit) : void {
         $this->deposits->removeElement($deposit);
     }
 
@@ -431,5 +424,4 @@ class Au extends AbstractEntity {
     public function getAuid() {
         return $this->auid;
     }
-
 }

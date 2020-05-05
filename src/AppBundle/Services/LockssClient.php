@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Services;
@@ -23,7 +24,6 @@ use ReflectionClass;
  * Client to interact with the LOCKSS daemon.
  */
 class LockssClient {
-
     use LoggerAwareTrait;
 
     /**
@@ -31,13 +31,13 @@ class LockssClient {
      *
      * Not used for the SOAP calls, just the content fetch command.
      */
-    const GUZZLE_OPTS = array(
+    public const GUZZLE_OPTS = [
         'allow_redirects' => true,
-        'headers' => array(
+        'headers' => [
             'User-Agent' => 'LOCKSSOMatic 1.0; http://pkp.sfu.ca',
-        ),
+        ],
         'decode_content' => false,
-    );
+    ];
 
     /**
      * URL suffix for the status service.
@@ -45,19 +45,19 @@ class LockssClient {
      * Used for calls to getAuStatus, isDaemonReady, queryRepositories and
      * queryRepositorySpaces.
      */
-    const STATUS_SERVICE = 'ws/DaemonStatusService?wsdl';
+    public const STATUS_SERVICE = 'ws/DaemonStatusService?wsdl';
 
     /**
      * URL suffix for the hasher service.
      */
-    const HASHER_SERVICE = 'ws/HasherService?wsdl';
+    public const HASHER_SERVICE = 'ws/HasherService?wsdl';
 
     /**
      * URL suffix for the content service.
      *
      * Used for calls to isUrlCached.
      */
-    const CONTENT_SERVICE = 'ws/ContentService?wsdl';
+    public const CONTENT_SERVICE = 'ws/ContentService?wsdl';
 
     /**
      * Au manager service.
@@ -91,32 +91,25 @@ class LockssClient {
      * Construct the LOCKSS client.
      *
      * This client is reusable.
-     *
-     * @param AuManager $auManager
-     * @param SoapClientBuilder $builder
      */
     public function __construct(AuManager $auManager, SoapClientBuilder $builder) {
         $this->auManager = $auManager;
-        $this->errors = array();
+        $this->errors = [];
         $this->builder = $builder;
         $this->httpClient = new Client();
     }
 
     /**
      * Set or override the soap client builder service.
-     *
-     * @param SoapClientBuilder $builder
      */
-    public function setSoapClientBuilder(SoapClientBuilder $builder) {
+    public function setSoapClientBuilder(SoapClientBuilder $builder) : void {
         $this->builder = $builder;
     }
 
     /**
      * Set or override the http client.
-     *
-     * @param Client $client
      */
-    public function setHttpClient(Client $client) {
+    public function setHttpClient(Client $client) : void {
         $this->client = $client;
     }
 
@@ -128,21 +121,19 @@ class LockssClient {
      * @param string $errfile
      * @param string $errline
      */
-    public function errorHandler($errno, $errstr, $errfile, $errline) {
+    public function errorHandler($errno, $errstr, $errfile, $errline) : void {
         $this->errors[] = implode(':', ['Error', $errstr]);
     }
 
     /**
      * Exception handler for the SOAP calls.
-     *
-     * @param Exception $e
      */
-    public function exceptionHandler(Exception $e) {
+    public function exceptionHandler(Exception $e) : void {
         $reflection = new ReflectionClass($e);
         $this->errors[] = implode(':', [
             $reflection->getShortName(),
             $e->getCode(),
-            $e->getMessage()
+            $e->getMessage(),
         ]);
     }
 
@@ -158,8 +149,8 @@ class LockssClient {
     /**
      * Clear error list.
      */
-    public function clearErrors() {
-        $this->errors = array();
+    public function clearErrors() : void {
+        $this->errors = [];
     }
 
     /**
@@ -179,28 +170,26 @@ class LockssClient {
      * Calls out $method in $service with parameters $params and SOAP options
      * in $soapOptions.
      *
-     * @param Box $box
      * @param string $service
      * @param string $method
-     * @param array $params
-     * @param array $soapOptions
      *
      * @return mixed
      */
-    public function call(Box $box, $service, $method, array $params = array(), array $soapOptions = array()) {
-        set_error_handler(array($this, 'errorHandler'), E_ALL);
-        set_exception_handler(array($this, 'exceptionHandler'));
+    public function call(Box $box, $service, $method, array $params = [], array $soapOptions = []) {
+        set_error_handler([$this, 'errorHandler'], E_ALL);
+        set_exception_handler([$this, 'exceptionHandler']);
 
         $wsdl = "{$box->getWebServiceProtocol()}://{$box->getIpAddress()}:{$box->getWebServicePort()}/{$service}";
-        $auth = array(
+        $auth = [
             'login' => $box->getPln()->getUsername(),
             'password' => $box->getPln()->getPassword(),
-        );
+        ];
         // $response must be defined outside the try.
         $response = null;
+
         try {
             $client = $this->builder->build($wsdl, $auth, $soapOptions);
-            $response = $client->$method($params);
+            $response = $client->{$method}($params);
             unset($client); // memory leak in BeSimpleSoapClient or SoapClient.
         } catch (Exception $e) {
             $this->exceptionHandler($e);
@@ -214,13 +203,10 @@ class LockssClient {
         if ($response) {
             return $response->return;
         }
-        return null;
     }
 
     /**
      * Check if the box is up and running and ready to communicate.
-     *
-     * @param Box $box
      *
      * @return bool
      */
@@ -231,58 +217,53 @@ class LockssClient {
     /**
      * Check on the status of an AU.
      *
-     * @param Box $box
-     * @param Au $au
-     *
      * @return null|array
      */
     public function getAuStatus(Box $box, Au $au) {
-        if (!$this->isDaemonReady($box)) {
+        if ( ! $this->isDaemonReady($box)) {
             return;
         }
         $auid = $this->auManager->generateAuidFromAu($au);
-        $obj = $this->call($box, self::STATUS_SERVICE, 'getAuStatus', array(
+        $obj = $this->call($box, self::STATUS_SERVICE, 'getAuStatus', [
             'auId' => $auid,
-        ));
+        ]);
+
         return get_object_vars($obj);
     }
 
     /**
      * Fetch a list of the URLs preserved by $box in $au.
      *
-     * @param Box $box
-     * @param Au $au
-     *
      * @return null|array
      */
     public function getAuUrls(Box $box, Au $au) {
-        if (!$this->isDaemonReady($box)) {
+        if ( ! $this->isDaemonReady($box)) {
             return;
         }
         $auid = $this->auManager->generateAuidFromAu($au);
-        return $this->call($box, self::STATUS_SERVICE, 'getAuUrls', array(
-                'auId' => $auid,
-        ));
+
+        return $this->call($box, self::STATUS_SERVICE, 'getAuUrls', [
+            'auId' => $auid,
+        ]);
     }
 
     /**
      * Check the available space on $box.
      *
-     * @param Box $box
-     *
      * @return null|array
      */
     public function queryRepositorySpaces(Box $box) {
-        if (!$this->isDaemonReady($box)) {
+        if ( ! $this->isDaemonReady($box)) {
             return;
         }
-        $list = $this->call($box, self::STATUS_SERVICE, 'queryRepositorySpaces', array(
+        $list = $this->call($box, self::STATUS_SERVICE, 'queryRepositorySpaces', [
             'repositorySpaceQuery' => 'SELECT *',
-        ));
-        $response = array();
+        ]);
+        $response = [];
         foreach ($list as $obj) {
             $response[] = get_object_vars($obj);
         }
+
         return $response;
     }
 
@@ -292,34 +273,31 @@ class LockssClient {
      * May return null if the item hasn't been preserved or if the box isn't
      * responding.
      *
-     * @param Box $box
-     * @param Deposit $deposit
-     *
-     * @return string|null
+     * @return null|string
      */
     public function hash(Box $box, Deposit $deposit) {
-        if (!$this->isUrlCached($box, $deposit)) {
+        if ( ! $this->isUrlCached($box, $deposit)) {
             return;
         }
         $auid = $this->auManager->generateAuidFromAu($deposit->getAu(), true);
-        $response = $this->call($box, self::HASHER_SERVICE, 'hash', array(
-            'hasherParams' => array(
+        $response = $this->call($box, self::HASHER_SERVICE, 'hash', [
+            'hasherParams' => [
                 'recordFilterStream' => true,
                 'hashType' => 'V3File',
                 'algorithm' => $deposit->getChecksumType(),
                 'url' => $deposit->getUrl(),
                 'auId' => $auid,
-            ),
-        ));
+            ],
+        ]);
 
         $block = $response->blockFileDataHandler;
         $lines = array_values(array_filter(explode("\n", $block), function ($s) {
-                return strlen($s) > 0 && $s[0] !== '#';
-            }));
-        if (count($lines) !== 1) {
-            return null;
+            return strlen($s) > 0 && '#' !== $s[0];
+        }));
+        if (1 !== count($lines)) {
+            return;
         }
-        list($checksum, $url) = preg_split("/\s+/", $lines[0]);
+        list($checksum, $url) = preg_split('/\\s+/', $lines[0]);
 
         return strtoupper($checksum);
     }
@@ -327,22 +305,25 @@ class LockssClient {
     /**
      * Check if $box has cached $deposit yet.
      *
-     * @param Box $box
-     * @param Deposit $deposit
-     *
      * @return bool
      */
     public function isUrlCached(Box $box, Deposit $deposit) {
-        if (!$this->isDaemonReady($box)) {
+        if ( ! $this->isDaemonReady($box)) {
             return false;
         }
         $auid = $this->auManager->generateAuidFromAu($deposit->getAu());
-        return $this->call($box, self::CONTENT_SERVICE, 'isUrlCached', array(
+
+        return $this->call(
+            $box,
+            self::CONTENT_SERVICE,
+            'isUrlCached',
+            [
                 'url' => $deposit->getUrl(),
                 'auId' => $auid,
-            ), array(
+            ],
+            [
                 'attachment_type' => Helper::ATTACHMENTS_TYPE_MTOM,
-            )
+            ]
         );
     }
 
@@ -353,25 +334,22 @@ class LockssClient {
      * try to store the data in memory rather than streaming it to a temporary
      * file.
      *
-     * @param Box $box
-     * @param Deposit $deposit
-     *
      * @return null|array
      */
     public function fetchFile(Box $box, Deposit $deposit) {
-        if (!$this->isDaemonReady($box)) {
+        if ( ! $this->isDaemonReady($box)) {
             return;
         }
-        if (!$this->isUrlCached($box, $deposit)) {
+        if ( ! $this->isUrlCached($box, $deposit)) {
             return;
         }
         $baseUrl = "http://{$box->getHostname()}:{$box->getPln()->getContentPort()}/ServeContent";
         $fh = tmpfile();
-        $options = array_merge(self::GUZZLE_OPTS, array(
+        $options = array_merge(self::GUZZLE_OPTS, [
             'query' => [
                 'url' => $deposit->getUrl(),
             ],
-        ));
+        ]);
 
         try {
             $response = $this->client->get($baseUrl, $options);
@@ -380,14 +358,14 @@ class LockssClient {
                 fwrite($fh, $data);
             }
             rewind($fh);
+
             return $fh;
-        } catch(RequestException $e) {
-            if($e->hasResponse()) {
+        } catch (RequestException $e) {
+            if ($e->hasResponse()) {
                 $this->exceptionHandler(new Exception($e->getMessage() . "\n" . $e->getResponse()->getBody()));
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $this->exceptionHandler($e);
         }
     }
-
 }

@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Au;
@@ -30,7 +38,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @Method("GET")
  */
 class LockssController extends Controller {
-
     use LoggerAwareTrait;
 
     /**
@@ -42,8 +49,6 @@ class LockssController extends Controller {
 
     /**
      * Construct the controller.
-     *
-     * @param FilePaths $fp
      */
     public function __construct(FilePaths $fp) {
         $this->fp = $fp;
@@ -52,28 +57,23 @@ class LockssController extends Controller {
     /**
      * Check that a request came from a good IP address.
      *
-     * @param Request $request
-     * @param Pln $pln
-     *
      * @throws AccessDeniedHttpException
      */
-    private function checkIp(Request $request, Pln $pln) {
+    private function checkIp(Request $request, Pln $pln) : void {
         $boxIps = array_map(function (Box $box) {
             return $box->getIpAddress();
         }, $pln->getBoxes()->toArray());
         $allowed = array_merge($boxIps, $this->getParameter('lom.allowed_ips'));
         $ip = $request->getClientIp();
-        if (!IpUtils::checkIp($ip, $allowed)) {
+        if ( ! IpUtils::checkIp($ip, $allowed)) {
             $this->logger->critical("Client IP {$ip} is not authorized for {$pln->getName()}.");
+
             throw new AccessDeniedHttpException("Client IP {$ip} is not authorized for this PLN.");
         }
     }
 
     /**
      * Get a LOCKSS configuration xml file.
-     *
-     * @param Request $request
-     * @param Pln $pln
      *
      * @Route("/properties/lockss.xml", name="lockss_config")
      *
@@ -83,22 +83,18 @@ class LockssController extends Controller {
         $this->logger->notice("{$request->getClientIp()} - lockss.xml - {$pln->getName()}");
         $this->checkIp($request, $pln);
         $path = $this->fp->getLockssXmlFile($pln);
-        if (!file_exists($path)) {
+        if ( ! file_exists($path)) {
             throw new NotFoundHttpException('The requested file does not exist.');
         }
 
-        return new BinaryFileResponse($path, 200, array(
+        return new BinaryFileResponse($path, 200, [
             'Content-Type' => 'text/xml',
-        ));
+        ]);
     }
 
     /**
      * Fetch one title db file.
      *
-     * @param Request $request
-     * @param Pln $pln
-     * @param ContentOwner $owner
-     * @param ContentProvider $provider
      * @param string $id
      *
      * @Route("/titledbs/{ownerId}/{providerId}/titledb_{id}.xml", name="lockss_titledb")
@@ -109,23 +105,17 @@ class LockssController extends Controller {
         $this->logger->notice("{$request->getClientIp()} - titledb - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - titledb_{$id}.xml");
         $this->checkIp($request, $pln);
         $path = $this->fp->getTitleDbPath($provider, $id);
-        if (!file_exists($path)) {
-            throw new NotFoundHttpException("The requested file does not exist.");
+        if ( ! file_exists($path)) {
+            throw new NotFoundHttpException('The requested file does not exist.');
         }
 
-        return new BinaryFileResponse($path, 200, array(
+        return new BinaryFileResponse($path, 200, [
             'Content-Type' => 'text/xml',
-        ));
+        ]);
     }
 
     /**
      * Fetch the manifest file for one AU.
-     *
-     * @param Request $request
-     * @param Pln $pln
-     * @param ContentOwner $owner
-     * @param ContentProvider $provider
-     * @param Au $au
      *
      * @Route("/manifests/{ownerId}/{providerId}/manifest_{auId}.html", name="lockss_manifest")
      * @ParamConverter("owner", options={"id"="ownerId"})
@@ -136,19 +126,17 @@ class LockssController extends Controller {
         $this->logger->notice("{$request->getClientIp()} - manifest - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - Au #{$au->getId()}");
         $this->checkIp($request, $pln);
         $path = $this->fp->getManifestPath($au);
-        if (!file_exists($path)) {
-            throw new NotFoundHttpException("The requested AU manifest does not exist.");
+        if ( ! file_exists($path)) {
+            throw new NotFoundHttpException('The requested AU manifest does not exist.');
         }
-        return new BinaryFileResponse($path, 200, array(
+
+        return new BinaryFileResponse($path, 200, [
             'Content-Type' => 'text/html',
-        ));
+        ]);
     }
 
     /**
      * Get the java keystore file for the LOCKSS plugins.
-     *
-     * @param Request $request
-     * @param Pln $pln
      *
      * @Route("/plugins/lockssomatic.keystore", name="lockss_keystore")
      */
@@ -156,23 +144,21 @@ class LockssController extends Controller {
         $this->logger->notice("{$request->getClientIp()} - keystore - {$pln->getName()}");
         $this->checkIp($request, $pln);
         $keystore = $pln->getKeystorePath();
-        if (!$keystore) {
+        if ( ! $keystore) {
             throw new NotFoundHttpException('The requested keystore does not exist.');
         }
-        $path = $this->fp->getPluginsExportDir($pln) . "/lockss.keystore";
-        if (!file_exists($path)) {
+        $path = $this->fp->getPluginsExportDir($pln) . '/lockss.keystore';
+        if ( ! file_exists($path)) {
             throw new NotFoundHttpException('The requested keystore does not exist.');
         }
-        return new BinaryFileResponse($path, 200, array(
+
+        return new BinaryFileResponse($path, 200, [
             'Content-Type' => 'application/x-java-keystore',
-        ));
+        ]);
     }
 
     /**
      * Get the plugin manifest.
-     *
-     * @param Request $request
-     * @param Pln $pln
      *
      * @Route("/plugins/index.html", name="lockss_plugin_list")
      * @Route("/plugins/")
@@ -182,19 +168,18 @@ class LockssController extends Controller {
         $this->logger->notice("{$request->getClientIp()} - plugin list - {$pln->getName()}");
         $this->checkIp($request, $pln);
         $path = $this->fp->getPluginsManifestFile($pln);
-        if (!file_exists($path)) {
+        if ( ! file_exists($path)) {
             throw new NotFoundHttpException('The requested plugin manifest does not exist.');
         }
-        return new BinaryFileResponse($path, 200, array(
+
+        return new BinaryFileResponse($path, 200, [
             'Content-Type' => 'text/html',
-        ));
+        ]);
     }
 
     /**
      * Get one plugin.
      *
-     * @param Request $request
-     * @param Pln $pln
      * @param string $filename
      *
      * @Route("/plugins/{filename}", name="lockss_plugin")
@@ -205,12 +190,12 @@ class LockssController extends Controller {
 
         $dir = $this->fp->getPluginsExportDir($pln);
         $path = $dir . '/' . $filename;
-        if (!file_exists($path)) {
+        if ( ! file_exists($path)) {
             throw new NotFoundHttpException('The requested plugin does not exist at ' . $path);
         }
-        return new BinaryFileResponse($path, 200, array(
-            'Content-Type' => 'application/java-archive',
-        ));
-    }
 
+        return new BinaryFileResponse($path, 200, [
+            'Content-Type' => 'application/java-archive',
+        ]);
+    }
 }

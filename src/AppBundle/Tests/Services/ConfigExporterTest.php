@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Tests\Services;
@@ -23,12 +25,11 @@ use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 
 /**
- * Description of ConfigExporterTest
+ * Description of ConfigExporterTest.
  *
  * @author michael
  */
 class ConfigExporterTest extends BaseTestCase {
-
     /**
      * @var ConfigExporter
      */
@@ -39,52 +40,42 @@ class ConfigExporterTest extends BaseTestCase {
      */
     private $root;
 
-    protected function setup() : void {
-        parent::setUp();
-        $this->exporter = $this->container->get(ConfigExporter::class);
-
-        $this->fp = $this->container->get(FilePaths::class);
-        $this->root = vfsStream::setup('/confdir');
-        $this->fp->setRoot($this->root->url());
-        $this->exporter->setFilePaths($this->fp);
-    }
-
     protected function getFixtures() {
         return [
             LoadPln::class,
         ];
     }
 
-    public function testSanity() {
+    public function testSanity() : void {
         $this->assertInstanceOf(ConfigExporter::class, $this->exporter);
     }
 
-    public function testExportLockssXml() {
+    public function testExportLockssXml() : void {
         $this->exporter->exportLockssXml($this->getReference('pln.1'));
-        $this->assertTrue(file_exists("vfs://confdir/data/plnconfigs/1/properties/lockss.xml"));
+        $this->assertTrue(file_exists('vfs://confdir/data/plnconfigs/1/properties/lockss.xml'));
     }
 
-    public function testExportKeystore() {
+    public function testExportKeystore() : void {
         $pln = $this->getReference('pln.1');
         $url = vfsStream::url('confdir/foo.keystore');
-        file_put_contents($url, "some keystore stuff.");
+        file_put_contents($url, 'some keystore stuff.');
         $pln->setKeystore($url);
         $this->exporter->exportKeystore($pln);
-        $this->assertTrue(file_exists("vfs://confdir/data/plnconfigs/1/plugins/lockss.keystore"));
+        $this->assertTrue(file_exists('vfs://confdir/data/plnconfigs/1/plugins/lockss.keystore'));
     }
 
-    public function testExportNullKeystore() {
+    public function testExportNullKeystore() : void {
         $pln = $this->getReference('pln.1');
         $pln->setKeystore(null);
         $url = vfsStream::url('confdir/foo.keystore');
-        file_put_contents($url, "some keystore stuff.");
+        file_put_contents($url, 'some keystore stuff.');
         $this->exporter->exportKeystore($pln);
-        $this->assertFalse(file_exists("vfs://confdir/data/plnconfigs/1/plugins/lockss.keystore"));
+        $this->assertFalse(file_exists('vfs://confdir/data/plnconfigs/1/plugins/lockss.keystore'));
     }
 
-    public function testExportPlugins() {
+    public function testExportPlugins() : void {
         $url = vfsStream::url('confdir/plugin.jar');
-        file_put_contents($url, "jar data");
+        file_put_contents($url, 'jar data');
 
         $plugin = new Plugin();
         $plugin->setPath($url);
@@ -96,11 +87,11 @@ class ConfigExporterTest extends BaseTestCase {
         $pln->addContentProvider($provider);
 
         $this->exporter->exportPlugins($pln);
-        $this->assertTrue(file_exists("vfs://confdir/data/plnconfigs/1/plugins/plugin.jar"));
-        $this->assertTrue(file_exists("vfs://confdir/data/plnconfigs/1/plugins/index.html"));
+        $this->assertTrue(file_exists('vfs://confdir/data/plnconfigs/1/plugins/plugin.jar'));
+        $this->assertTrue(file_exists('vfs://confdir/data/plnconfigs/1/plugins/index.html'));
     }
 
-    public function testExportMissingPlugins() {
+    public function testExportMissingPlugins() : void {
         $this->expectException(Exception::class);
         $url = vfsStream::url('confdir/plugin.jar');
 
@@ -116,7 +107,7 @@ class ConfigExporterTest extends BaseTestCase {
         $this->exporter->exportPlugins($pln);
     }
 
-    public function testExportManifests() {
+    public function testExportManifests() : void {
         $deposit = new Deposit();
         $deposit->setUrl('http://example.com/path/to/content');
 
@@ -134,10 +125,10 @@ class ConfigExporterTest extends BaseTestCase {
         $au->setPln($pln);
         $this->exporter->exportManifests($pln);
 
-        $this->assertTrue(file_exists("vfs://confdir/manifest.html"));
+        $this->assertTrue(file_exists('vfs://confdir/manifest.html'));
     }
 
-    public function testExportTitleDbs() {
+    public function testExportTitleDbs() : void {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getTitleDbPath')->willReturn('vfs://confdir/titledb.xml');
         $this->exporter->setFilePaths($fp);
@@ -153,7 +144,16 @@ class ConfigExporterTest extends BaseTestCase {
         $pln->addContentProvider($provider);
 
         $this->exporter->exportTitleDbs($pln);
-        $this->assertTrue(file_exists("vfs://confdir/titledb.xml"));
+        $this->assertTrue(file_exists('vfs://confdir/titledb.xml'));
     }
 
+    protected function setup() : void {
+        parent::setUp();
+        $this->exporter = $this->container->get(ConfigExporter::class);
+
+        $this->fp = $this->container->get(FilePaths::class);
+        $this->root = vfsStream::setup('/confdir');
+        $this->fp->setRoot($this->root->url());
+        $this->exporter->setFilePaths($this->fp);
+    }
 }

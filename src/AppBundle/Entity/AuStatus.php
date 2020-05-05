@@ -1,15 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
@@ -20,7 +20,6 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AuStatusRepository")
  */
 class AuStatus extends AbstractEntity {
-
     /**
      * Status data as returned from LOCKSS.
      *
@@ -56,8 +55,6 @@ class AuStatus extends AbstractEntity {
     /**
      * Set status.
      *
-     * @param array $status
-     *
      * @return AuStatus
      */
     public function setStatus(array $status) {
@@ -77,8 +74,6 @@ class AuStatus extends AbstractEntity {
 
     /**
      * Set errors.
-     *
-     * @param array $errors
      *
      * @return AuStatus
      */
@@ -118,5 +113,4 @@ class AuStatus extends AbstractEntity {
     public function getAu() {
         return $this->au;
     }
-
 }

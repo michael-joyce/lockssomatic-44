@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Form;
@@ -18,35 +19,28 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Data entry form for file uploads.
  */
 class FileUploadType extends AbstractType {
-
     /**
      * Build the form by adding types to $builder.
-     *
-     * @param FormBuilderInterface $builder
-     * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('file', FileType::class, array(
+    public function buildForm(FormBuilderInterface $builder, array $options) : void {
+        $builder->add('file', FileType::class, [
             'label' => $options['label'],
             'required' => true,
-            'attr' => array(
+            'attr' => [
                 'help_block' => $options['help'],
                 'max_size' => ini_get('upload_max_filesize'),
-            ),
-        ));
+            ],
+        ]);
     }
 
     /**
      * Configure default options.
-     *
-     * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setDefaults(array(
+    public function configureOptions(OptionsResolver $resolver) : void {
+        $resolver->setDefaults([
             'data_class' => null,
             'label' => '',
             'help' => '',
-        ));
+        ]);
     }
-
 }

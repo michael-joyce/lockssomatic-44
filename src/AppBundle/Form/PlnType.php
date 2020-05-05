@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Form;
@@ -19,81 +20,74 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Data entry form for plns.
  */
 class PlnType extends AbstractType {
-
     /**
      * Build the form by adding types to $builder.
-     *
-     * @param FormBuilderInterface $builder
-     * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('name', null, array(
+    public function buildForm(FormBuilderInterface $builder, array $options) : void {
+        $builder->add('name', null, [
             'label' => 'Name',
             'required' => true,
-            'attr' => array(
+            'attr' => [
                 'help_block' => 'LOCKSSOMatic use only.',
-            ),
-        ));
-        $builder->add('description', null, array(
+            ],
+        ]);
+        $builder->add('description', null, [
             'label' => 'Description',
             'required' => false,
-            'attr' => array(
+            'attr' => [
                 'help_block' => 'LOCKSSOMatic use only.',
-            ),
-        ));
-        $builder->add('username', null, array(
+            ],
+        ]);
+        $builder->add('username', null, [
             'label' => 'Username',
             'required' => false,
-            'attr' => array(
+            'attr' => [
                 'help_block' => 'Username that LOCKSSOMatic should use to communicate with the boxes.',
-            ),
-        ));
-        $builder->add('password', PasswordType::class, array(
+            ],
+        ]);
+        $builder->add('password', PasswordType::class, [
             'label' => 'Password',
             'required' => false,
-            'attr' => array(
+            'attr' => [
                 'help_block' => 'Password that LOCKSSOMatic should use to communicate with the boxes.',
-            ),
-        ));
-        $builder->add('email', null, array(
+            ],
+        ]);
+        $builder->add('email', null, [
             'label' => 'Email',
             'required' => true,
-            'attr' => array(
-                'help_block' => 'Network email address to display in the LOCKSS UI.'
-            ),
-        ));
-        $builder->add('enableContentUi', ChoiceType::class, array(
+            'attr' => [
+                'help_block' => 'Network email address to display in the LOCKSS UI.',
+            ],
+        ]);
+        $builder->add('enableContentUi', ChoiceType::class, [
             'label' => 'Enable Content Ui',
             'expanded' => true,
             'multiple' => false,
-            'choices' => array(
+            'choices' => [
                 'Enabled' => true,
                 'Disabled' => false,
-            ),
+            ],
             'required' => true,
             'placeholder' => false,
-            'attr' => array(
+            'attr' => [
                 'help_block' => 'Should LOCKSSOMatic enable the ContentUI on all boxes in the PLN? If you enable this feature, you should also set the org.lockss.proxy.access.ip.include property on the PLN.',
-            ),
-        ));
-        $builder->add('contentPort', null, array(
+            ],
+        ]);
+        $builder->add('contentPort', null, [
             'label' => 'Content Port',
             'required' => true,
-            'attr' => array(
+            'attr' => [
                 'help_block' => 'Port for the ContentUI. Required, even if the ContentUI is not enabled.',
-            ),
-        ));
+            ],
+        ]);
     }
 
     /**
      * Configure default options.
-     *
-     * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setDefaults(array(
+    public function configureOptions(OptionsResolver $resolver) : void {
+        $resolver->setDefaults([
             'data_class' => 'AppBundle\Entity\Pln',
-        ));
+        ]);
     }
-
 }

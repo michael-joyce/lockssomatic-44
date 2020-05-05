@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace AppBundle\Command\Lockssomatic;
 
 use AppBundle\Entity\Pln;
@@ -30,24 +38,12 @@ class UpdateConfigCommand extends ContainerAwareCommand {
 
     /**
      * Build the updater command.
-     *
-     * @param EntityManagerInterface $em
-     * @param ConfigUpdater $updater
      */
     public function __construct(EntityManagerInterface $em, ConfigUpdater $updater) {
         $this->em = $em;
         $this->updater = $updater;
 
         parent::__construct();
-    }
-
-    /**
-     * Configure the command.
-     */
-    protected function configure() {
-        $this->setName('lom:update:config');
-        $this->setDescription('Update the configuration properties of one or more PLN.');
-        $this->addArgument('pln', InputArgument::IS_ARRAY, 'Optional list of database PLN IDs to update.');
     }
 
     /**
@@ -59,19 +55,26 @@ class UpdateConfigCommand extends ContainerAwareCommand {
      */
     private function getPlns(array $plnIds = null) {
         $repo = $this->em->getRepository(Pln::class);
-        if ($plnIds === null || count($plnIds) === 0) {
+        if (null === $plnIds || 0 === count($plnIds)) {
             return $repo->findAll();
         }
+
         return $repo->findById($plnIds);
     }
 
     /**
-     * Execute the command.
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * Configure the command.
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function configure() : void {
+        $this->setName('lom:update:config');
+        $this->setDescription('Update the configuration properties of one or more PLN.');
+        $this->addArgument('pln', InputArgument::IS_ARRAY, 'Optional list of database PLN IDs to update.');
+    }
+
+    /**
+     * Execute the command.
+     */
+    protected function execute(InputInterface $input, OutputInterface $output) : void {
         $ids = $input->getArgument('pln');
         foreach ($this->getPlns($ids) as $pln) {
             $output->writeln("updating {$pln->getName()}");
@@ -79,5 +82,4 @@ class UpdateConfigCommand extends ContainerAwareCommand {
             $this->em->flush();
         }
     }
-
 }

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\DataFixtures\ORM;
@@ -18,16 +19,13 @@ use Doctrine\Common\Persistence\ObjectManager;
  * Load some content providers.
  */
 class LoadContentProvider extends Fixture implements DependentFixtureInterface {
+    public const PROVIDER_UUID_1 = '29125DE2-E622-416C-93EB-E887B2A3126C';
+    public const PROVIDER_UUID_2 = 'E5DDD2AB-C971-4492-AD7C-7182111BD367';
 
-    const PROVIDER_UUID_1 = '29125DE2-E622-416C-93EB-E887B2A3126C';
-    const PROVIDER_UUID_2 = 'E5DDD2AB-C971-4492-AD7C-7182111BD367';
-    
     /**
      * Load the objects.
-     *
-     * @param ObjectManager $em
      */
-    public function load(ObjectManager $em) {
+    public function load(ObjectManager $em) : void {
         $provider1 = new ContentProvider();
         $provider1->setUuid(self::PROVIDER_UUID_1);
         $provider1->setPermissionUrl('http://example.com/path/to/permission');
@@ -39,7 +37,7 @@ class LoadContentProvider extends Fixture implements DependentFixtureInterface {
         $provider1->setContentOwner($this->getReference('owner.1'));
         $em->persist($provider1);
         $this->setReference('provider.1', $provider1);
-        
+
         $provider2 = new ContentProvider();
         $provider2->setUuid(self::PROVIDER_UUID_2);
         $provider2->setPermissionUrl('http://example.com/path/to/permission');
@@ -65,5 +63,4 @@ class LoadContentProvider extends Fixture implements DependentFixtureInterface {
             LoadPlugin::class,
         ];
     }
-
 }

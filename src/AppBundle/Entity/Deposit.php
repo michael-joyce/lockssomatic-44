@@ -1,19 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Entity;
 
-use Nines\UtilBundle\Entity\AbstractEntity;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UserBundle\Entity\User;
+use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -25,7 +26,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\DepositRepository")
  */
 class Deposit extends AbstractEntity {
-
     /**
      * The UUID for the deposit.
      *
@@ -128,7 +128,6 @@ class Deposit extends AbstractEntity {
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Nines\UserBundle\Entity\User")
-     *
      */
     private $user;
 
@@ -395,6 +394,7 @@ class Deposit extends AbstractEntity {
         if ($this->au && $this->au->getPlugin()) {
             return $this->au->getPlugin();
         }
+
         return $this->contentProvider->getPlugin();
     }
 
@@ -423,8 +423,6 @@ class Deposit extends AbstractEntity {
     /**
      * Add status.
      *
-     * @param DepositStatus $status
-     *
      * @return Deposit
      */
     public function addStatus(DepositStatus $status) {
@@ -435,10 +433,8 @@ class Deposit extends AbstractEntity {
 
     /**
      * Remove status.
-     *
-     * @param DepositStatus $status
      */
-    public function removeStatus(DepositStatus $status) {
+    public function removeStatus(DepositStatus $status) : void {
         $this->status->removeElement($status);
     }
 
@@ -467,6 +463,7 @@ class Deposit extends AbstractEntity {
 
     public function setProperties(array $properties) {
         $this->properties = $properties;
+
         return $this;
     }
 
@@ -485,11 +482,9 @@ class Deposit extends AbstractEntity {
         if ($this->hasProperty($key)) {
             return $this->properties[$key];
         }
-        return null;
     }
 
     public function hasProperty($key) {
         return isset($this->properties[$key]);
     }
-
 }

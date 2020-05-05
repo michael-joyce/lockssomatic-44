@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Controller;
@@ -25,11 +26,8 @@ use Symfony\Component\HttpFoundation\Request;
  * @Security("has_role('ROLE_USER')")
  */
 class ContentOwnerController extends Controller {
-
     /**
      * Lists all ContentOwner entities.
-     *
-     * @param Request $request
      *
      * @return array
      *
@@ -45,15 +43,13 @@ class ContentOwnerController extends Controller {
         $paginator = $this->get('knp_paginator');
         $contentOwners = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        return [
             'contentOwners' => $contentOwners,
-        );
+        ];
     }
 
     /**
      * Creates a new ContentOwner entity.
-     *
-     * @param Request $request
      *
      * @return array
      *
@@ -73,19 +69,18 @@ class ContentOwnerController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new contentOwner was created.');
-            return $this->redirectToRoute('content_owner_show', array('id' => $contentOwner->getId()));
+
+            return $this->redirectToRoute('content_owner_show', ['id' => $contentOwner->getId()]);
         }
 
-        return array(
+        return [
             'contentOwner' => $contentOwner,
             'form' => $form->createView(),
-        );
+        ];
     }
 
     /**
      * Finds and displays a ContentOwner entity.
-     *
-     * @param ContentOwner $contentOwner
      *
      * @return array
      *
@@ -94,17 +89,13 @@ class ContentOwnerController extends Controller {
      * @Template()
      */
     public function showAction(ContentOwner $contentOwner) {
-
-        return array(
+        return [
             'contentOwner' => $contentOwner,
-        );
+        ];
     }
 
     /**
      * Displays a form to edit an existing ContentOwner entity.
-     *
-     * @param Request $request
-     * @param ContentOwner $contentOwner
      *
      * @return array
      *
@@ -121,20 +112,18 @@ class ContentOwnerController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The contentOwner has been updated.');
-            return $this->redirectToRoute('content_owner_show', array('id' => $contentOwner->getId()));
+
+            return $this->redirectToRoute('content_owner_show', ['id' => $contentOwner->getId()]);
         }
 
-        return array(
+        return [
             'contentOwner' => $contentOwner,
             'edit_form' => $editForm->createView(),
-        );
+        ];
     }
 
     /**
      * Deletes a ContentOwner entity.
-     *
-     * @param Request $request
-     * @param ContentOwner $contentOwner
      *
      * @return array
      *
@@ -150,5 +139,4 @@ class ContentOwnerController extends Controller {
 
         return $this->redirectToRoute('content_owner_index');
     }
-
 }

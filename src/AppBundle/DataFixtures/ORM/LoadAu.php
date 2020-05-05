@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\DataFixtures\ORM;
@@ -18,13 +19,10 @@ use Doctrine\Common\Persistence\ObjectManager;
  * Load some archival units.
  */
 class LoadAu extends Fixture implements DependentFixtureInterface {
-
     /**
      * Load the objects.
-     *
-     * @param ObjectManager $em
      */
-    public function load(ObjectManager $em) {
+    public function load(ObjectManager $em) : void {
         $au1 = new Au();
         $au1->setAuid('p~a');
         $au1->setContentProvider($this->getReference('provider.1'));
@@ -54,5 +52,4 @@ class LoadAu extends Fixture implements DependentFixtureInterface {
             LoadPln::class,
         ];
     }
-
 }

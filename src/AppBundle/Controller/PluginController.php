@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Controller;
@@ -30,11 +31,8 @@ use ZipArchive;
  * @Route("/plugin")
  */
 class PluginController extends Controller {
-
     /**
      * Lists all Plugin entities.
-     *
-     * @param Request $request
      *
      * @return array
      *
@@ -50,17 +48,13 @@ class PluginController extends Controller {
         $paginator = $this->get('knp_paginator');
         $plugins = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        return [
             'plugins' => $plugins,
-        );
+        ];
     }
 
     /**
      * Creates a new Plugin entity.
-     *
-     * @param Request $request
-     * @param PluginImporter $pluginImporter
-     * @param FilePaths $filePaths
      *
      * @return array
      *
@@ -79,16 +73,16 @@ class PluginController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $file = $data['file'];
-            if (!in_array($file->getMimeType(), PluginImporter::MIMETYPES)) {
+            if ( ! in_array($file->getMimeType(), PluginImporter::MIMETYPES, true)) {
                 throw new Exception("Uploaded file has bad mimetype is {$file->getMimeType()}");
             }
-            if (!preg_match('/^[a-zA-Z0-9 .-]+\.jar$/', $file->getClientOriginalName())) {
-                throw new Exception("Uploaded file name name is strange.");
+            if ( ! preg_match('/^[a-zA-Z0-9 .-]+\.jar$/', $file->getClientOriginalName())) {
+                throw new Exception('Uploaded file name name is strange.');
             }
             $zipArchive = new ZipArchive();
             $result = $zipArchive->open($file->getPathName());
-            if ($result !== true) {
-                throw new Exception("Cannot read from uploaded file: " . $result);
+            if (true !== $result) {
+                throw new Exception('Cannot read from uploaded file: ' . $result);
             }
             $plugin = $pluginImporter->import($zipArchive, false);
             $filename = basename($file->getClientOriginalName(), '.jar') . '-v' . $plugin->getVersion() . '.jar';
@@ -98,18 +92,17 @@ class PluginController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new plugin was created.');
-            return $this->redirectToRoute('plugin_show', array('id' => $plugin->getId()));
+
+            return $this->redirectToRoute('plugin_show', ['id' => $plugin->getId()]);
         }
 
-        return array(
+        return [
             'form' => $form->createView(),
-        );
+        ];
     }
 
     /**
      * Finds and displays a Plugin entity.
-     *
-     * @param Plugin $plugin
      *
      * @return array
      *
@@ -118,10 +111,9 @@ class PluginController extends Controller {
      * @Template()
      */
     public function showAction(Plugin $plugin) {
-
-        return array(
+        return [
             'plugin' => $plugin,
-        );
+        ];
     }
 
     /**
@@ -131,30 +123,28 @@ class PluginController extends Controller {
      * LOCKSSOMatic. To add a new version of the plugin JAR file use the new
      * action.
      *
-     * @param Request $request
-     * @param Plugin $plugin
-     *
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="plugin_edit")
      * @Method({"GET","POST"})
      * @Template()
      */
     public function editAction(Request $request, Plugin $plugin) {
-        $editForm = $this->createForm(PluginType::class, $plugin, array(
+        $editForm = $this->createForm(PluginType::class, $plugin, [
             'plugin' => $plugin,
-        ));
+        ]);
         $editForm->handleRequest($request);
-        
+
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The plugin settings have been updated.');
-            return $this->redirectToRoute('plugin_show', array('id' => $plugin->getId()));
+
+            return $this->redirectToRoute('plugin_show', ['id' => $plugin->getId()]);
         }
-        return array(
+
+        return [
             'plugin' => $plugin,
             'edit_form' => $editForm->createView(),
-        );
+        ];
     }
-    
 }

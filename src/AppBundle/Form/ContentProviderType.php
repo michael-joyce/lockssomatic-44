@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Form;
@@ -19,72 +20,65 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Data entry form for content providers.
  */
 class ContentProviderType extends AbstractType {
-
     /**
      * Build the form by adding types to $builder.
-     *
-     * @param FormBuilderInterface $builder
-     * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('uuid', null, array(
+    public function buildForm(FormBuilderInterface $builder, array $options) : void {
+        $builder->add('uuid', null, [
             'label' => 'Uuid',
             'required' => true,
-            'attr' => array(
+            'attr' => [
                 'help_block' => 'Leave UUID blank to have one generated.',
-            ),
-        ));
-        $builder->add('permissionurl', UrlType::class, array(
+            ],
+        ]);
+        $builder->add('permissionurl', UrlType::class, [
             'label' => 'Permission Url',
             'required' => true,
-            'attr' => array(
+            'attr' => [
                 'help_block' => 'URL for the LOCKSS permission statement.',
-            ),
-        ));
-        $builder->add('name', null, array(
+            ],
+        ]);
+        $builder->add('name', null, [
             'label' => 'Name',
             'required' => true,
-            'attr' => array(
+            'attr' => [
                 'help_block' => 'Name of the content provider.',
-            ),
-        ));
-        $builder->add('maxFileSize', null, array(
+            ],
+        ]);
+        $builder->add('maxFileSize', null, [
             'label' => 'Max File Size',
             'required' => true,
-            'attr' => array(
+            'attr' => [
                 'help_block' => 'Mazimum file size allowed, in kb (1,000 bytes).',
-            ),
-        ));
-        $builder->add('maxAuSize', null, array(
+            ],
+        ]);
+        $builder->add('maxAuSize', null, [
             'label' => 'Max Au Size',
             'required' => true,
-            'attr' => array(
+            'attr' => [
                 'help_block' => 'Mazimum AU size allowed, in kb (1,000 bytes).',
-            ),
-        ));
-        $builder->add('contentOwner', null, array(
+            ],
+        ]);
+        $builder->add('contentOwner', null, [
             'required' => true,
-        ));
-        $builder->add('pln', null, array(
+        ]);
+        $builder->add('pln', null, [
             'required' => true,
-        ));
-        $builder->add('plugin', null, array(
+        ]);
+        $builder->add('plugin', null, [
             'required' => true,
             'choice_label' => function (Plugin $plugin) {
                 return $plugin->getName() . ' version ' . $plugin->getVersion();
             },
-        ));
+        ]);
     }
 
     /**
      * Configure default options.
-     *
-     * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setDefaults(array(
+    public function configureOptions(OptionsResolver $resolver) : void {
+        $resolver->setDefaults([
             'data_class' => 'AppBundle\Entity\ContentProvider',
-        ));
+        ]);
     }
-
 }

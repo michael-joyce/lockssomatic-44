@@ -1,17 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\DataFixtures\ORM;
 
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\DepositStatus;
-use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -20,13 +20,10 @@ use Doctrine\Common\Persistence\ObjectManager;
  * Load some deposit status entities.
  */
 class LoadDepositStatus extends Fixture implements DependentFixtureInterface {
-
     /**
      * Load the objects.
-     *
-     * @param ObjectManager $em
      */
-    public function load(ObjectManager $em) {
+    public function load(ObjectManager $em) : void {
         $status1 = new DepositStatus();
         $status1->setAgreement(0.5);
         $status1->setDeposit($this->getReference('deposit.1'));
@@ -37,7 +34,7 @@ class LoadDepositStatus extends Fixture implements DependentFixtureInterface {
         ]);
         $this->setReference('deposit.status.1', $status1);
         $em->persist($status1);
-        
+
         $status2 = new DepositStatus();
         $status2->setAgreement(1.0);
         $status2->setDeposit($this->getReference('deposit.1'));
@@ -48,7 +45,7 @@ class LoadDepositStatus extends Fixture implements DependentFixtureInterface {
         ]);
         $this->setReference('deposit.status.1', $status2);
         $em->persist($status2);
-                
+
         $em->flush();
     }
 
@@ -60,5 +57,4 @@ class LoadDepositStatus extends Fixture implements DependentFixtureInterface {
             LoadDeposit::class,
         ];
     }
-
 }

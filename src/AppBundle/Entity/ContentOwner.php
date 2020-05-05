@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Entity;
@@ -21,7 +22,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ContentOwnerRepository")
  */
 class ContentOwner extends AbstractEntity {
-
     /**
      * Name of the content owner.
      *
@@ -101,8 +101,6 @@ class ContentOwner extends AbstractEntity {
     /**
      * Add contentProvider.
      *
-     * @param ContentProvider $contentProvider
-     *
      * @return ContentOwner
      */
     public function addContentProvider(ContentProvider $contentProvider) {
@@ -113,10 +111,8 @@ class ContentOwner extends AbstractEntity {
 
     /**
      * Remove contentProvider.
-     *
-     * @param ContentProvider $contentProvider
      */
-    public function removeContentProvider(ContentProvider $contentProvider) {
+    public function removeContentProvider(ContentProvider $contentProvider) : void {
         $this->contentProviders->removeElement($contentProvider);
     }
 
@@ -128,5 +124,4 @@ class ContentOwner extends AbstractEntity {
     public function getContentProviders() {
         return $this->contentProviders;
     }
-
 }

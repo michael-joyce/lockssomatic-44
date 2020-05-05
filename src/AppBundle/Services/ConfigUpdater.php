@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Services;
@@ -16,7 +17,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * Update the configuration properties of a PLN.
  */
 class ConfigUpdater {
-
     /**
      * Number of AUs in a titledb XML file.
      *
@@ -42,8 +42,6 @@ class ConfigUpdater {
      * Construct the updater service.
      *
      * @param int $ausPerTitleDb
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param AuManager $auManager
      */
     public function __construct($ausPerTitleDb, UrlGeneratorInterface $urlGenerator, AuManager $auManager) {
         $this->ausPerTitleDb = $ausPerTitleDb;
@@ -53,12 +51,10 @@ class ConfigUpdater {
 
     /**
      * Update the list of peers in the PLN configuration properties.
-     *
-     * @param Pln $pln
      */
-    public function updatePeerList(Pln $pln) {
+    public function updatePeerList(Pln $pln) : void {
         $boxes = $pln->getBoxes();
-        $list = array();
+        $list = [];
         foreach ($boxes as $box) {
             $list[] = "{$box->getProtocol()}:[{$box->getIpAddress()}]:{$box->getPort()}";
         }
@@ -67,21 +63,19 @@ class ConfigUpdater {
 
     /**
      * Set the list of title db URLs in the PLN config properties.
-     *
-     * @param Pln $pln
      */
-    public function updateTitleDbs(Pln $pln) {
+    public function updateTitleDbs(Pln $pln) : void {
         $urls = [];
         foreach ($pln->getContentProviders() as $provider) {
             $owner = $provider->getContentOwner();
             $aus = $provider->getAus();
             for ($i = 1; $i <= ceil($aus->count() / $this->ausPerTitleDb); $i++) {
-                $url = $this->urlGenerator->generate('lockss_titledb', array(
+                $url = $this->urlGenerator->generate('lockss_titledb', [
                     'plnId' => $pln->getId(),
                     'ownerId' => $owner->getId(),
                     'providerId' => $provider->getId(),
                     'id' => $i,
-                ), UrlGeneratorInterface::ABSOLUTE_URL);
+                ], UrlGeneratorInterface::ABSOLUTE_URL);
                 $urls[] = $url;
             }
         }
@@ -90,10 +84,8 @@ class ConfigUpdater {
 
     /**
      * Update the AU configurations by generating the properties for them.
-     *
-     * @param Pln $pln
      */
-    public function updateAuConfigs(Pln $pln) {
+    public function updateAuConfigs(Pln $pln) : void {
         foreach ($pln->getAus() as $au) {
             if ($au->hasAuProperties()) {
                 continue;
@@ -104,70 +96,61 @@ class ConfigUpdater {
 
     /**
      * Set the location of the PLN keystore in the config properties.
-     *
-     * @param Pln $pln
      */
-    public function updateKeystoreLocation(Pln $pln) {
+    public function updateKeystoreLocation(Pln $pln) : void {
         $filename = $pln->getKeystoreFilename();
-        if (!$filename) {
+        if ( ! $filename) {
             $pln->removeProperty('org.lockss.plugin.keystore.location');
+
             return;
         }
-        $url = $this->urlGenerator->generate('lockss_keystore', array(
-        'plnId' => $pln->getId(),
-        ), UrlGeneratorInterface::ABSOLUTE_URL);
+        $url = $this->urlGenerator->generate('lockss_keystore', [
+            'plnId' => $pln->getId(),
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
         $pln->setProperty('org.lockss.plugin.keystore.location', $url);
     }
 
     /**
      * Update the PLN config properties to match the credentials stored in LOM.
-     *
-     * @param Pln $pln
      */
-    public function updateAuthentication(Pln $pln) {
+    public function updateAuthentication(Pln $pln) : void {
         $username = $pln->getUsername();
-        if (!$username) {
+        if ( ! $username) {
             return;
         }
         $prefix = 'org.lockss.ui.users.lomauth';
         $hash = hash('SHA256', $pln->getPassword());
         $pln->setProperty("{$prefix}.user", $username);
-        $pln->setProperty("{$prefix}.password", "SHA-256:$hash");
+        $pln->setProperty("{$prefix}.password", "SHA-256:{$hash}");
         $pln->setProperty("{$prefix}.roles", 'accessContentRole');
     }
 
     /**
      * Update the PLN config properties to match the content UI settings in LOM.
-     *
-     * @param Pln $pln
      */
-    public function updateContentUi(Pln $pln) {
+    public function updateContentUi(Pln $pln) : void {
         $prefix = 'org.lockss.contentui';
-        $pln->setProperty("{$prefix}.start", $pln->getEnableContentUi() ? "true" : "false");
+        $pln->setProperty("{$prefix}.start", $pln->getEnableContentUi() ? 'true' : 'false');
         $pln->setProperty("{$prefix}.port", $pln->getContentPort());
-        $pln->setProperty("org.lockss.ui.contactEmail", $pln->getEmail());
+        $pln->setProperty('org.lockss.ui.contactEmail', $pln->getEmail());
     }
 
     /**
      * Update the plugin registries for a PLN.
-     *
-     * @param Pln $pln
      */
-    public function updatePluginRegistries(Pln $pln) {
-        $url = $this->urlGenerator->generate('lockss_plugin_list', array(
+    public function updatePluginRegistries(Pln $pln) : void {
+        $url = $this->urlGenerator->generate('lockss_plugin_list', [
             'plnId' => $pln->getId(),
-        ), UrlGeneratorInterface::ABSOLUTE_URL);
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
         $pln->setProperty('org.lockss.plugin.registries', $url);
     }
 
     /**
      * Update all the PLN config properties.
      *
-     * @param Pln $pln
-     *
      * @codeCoverageIgnore
      */
-    public function update(Pln $pln) {
+    public function update(Pln $pln) : void {
         $this->updatePeerList($pln);
         $this->updateTitleDbs($pln);
         $this->updateAuConfigs($pln);
@@ -176,5 +159,4 @@ class ConfigUpdater {
         $this->updateContentUi($pln);
         $this->updatePluginRegistries($pln);
     }
-
 }

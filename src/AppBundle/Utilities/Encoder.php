@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Utilities;
@@ -17,7 +18,6 @@ namespace AppBundle\Utilities;
  * different.
  */
 class Encoder {
-
     /**
      * Encode a string.
      *
@@ -26,15 +26,17 @@ class Encoder {
      * @return string
      */
     public function encode($string) {
-        if ($string === null) {
-            return null;
+        if (null === $string) {
+            return;
         }
         $callback = function ($matches) {
             $char = ord($matches[0]);
+
             return '%' . strtoupper(sprintf('%02x', $char));
         };
 
         $encoded = preg_replace_callback('/[^a-zA-Z0-9_* -]/', $callback, $string);
+
         return str_replace(' ', '+', $encoded);
     }
 
@@ -47,7 +49,7 @@ class Encoder {
      */
     public function decode($string) {
         $decoded = str_replace('+', ' ', $string);
+
         return rawurldecode($decoded);
     }
-
 }

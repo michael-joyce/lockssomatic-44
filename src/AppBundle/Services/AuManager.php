@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- *  This file is licensed under the MIT License version 3 or
- *  later. See the LICENSE file for details.
- *
- *  Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\Services;
@@ -25,13 +26,12 @@ use Symfony\Component\Routing\RouterInterface;
  * Manage all AUs and queries on them.
  */
 class AuManager {
-
     use LoggerAwareTrait;
 
     /**
      * Batch size for iterating deposits in AUs.
      */
-    const BATCHSIZE = 25;
+    public const BATCHSIZE = 25;
 
     /**
      * Database mapper.
@@ -56,9 +56,6 @@ class AuManager {
 
     /**
      * Build the manager.
-     *
-     * @param EntityManagerInterface $em
-     * @param RouterInterface $router
      */
     public function __construct(EntityManagerInterface $em, RouterInterface $router) {
         $this->em = $em;
@@ -68,17 +65,13 @@ class AuManager {
 
     /**
      * Set or override the AU repository.
-     *
-     * @param AuRepository $repo
      */
-    public function setAuRepository(AuRepository $repo) {
+    public function setAuRepository(AuRepository $repo) : void {
         $this->auRepository = $repo;
     }
 
     /**
      * Calculate the size of an AU.
-     *
-     * @param Au $au
      *
      * @return int
      */
@@ -89,8 +82,6 @@ class AuManager {
     /**
      * Count the deposits in an AU.
      *
-     * @param Au $au
-     *
      * @return int
      */
     public function countDeposits(Au $au) {
@@ -100,10 +91,8 @@ class AuManager {
     /**
      * Get an iterator over the deposits in the AU.
      *
-     * @param Au $au
-     *
-     * @return Generator|Deposit[]
-     *   The resulting generator.
+     * @return Deposit[]|Generator
+     *                             The resulting generator.
      */
     public function auDeposits(Au $au) {
         return $this->auRepository->iterateDeposits($au);
@@ -114,7 +103,6 @@ class AuManager {
      *
      * Does not trigger a database flush.
      *
-     * @param Deposit $deposit
      * @param string $auid
      *
      * @return Au
@@ -127,6 +115,7 @@ class AuManager {
         $au->setAuid($auid);
         $au->setPlugin($provider->getPlugin());
         $this->em->persist($au);
+
         return $au;
     }
 
@@ -135,8 +124,6 @@ class AuManager {
      *
      * If an open Au cannot be found, one will be created. persists the new AU,
      * but does not flush it to the database. May close an existing AU.
-     *
-     * @param Deposit $deposit
      *
      * @return Au
      */
@@ -148,11 +135,12 @@ class AuManager {
             $au->setOpen(false);
             $au = null;
         }
-        if (!$au) {
+        if ( ! $au) {
             $au = $this->buildAu($deposit, $auid);
         }
         $au->addDeposit($deposit);
         $deposit->setAu($au);
+
         return $au;
     }
 
@@ -163,26 +151,25 @@ class AuManager {
      * of definitional configuration parameters, and returns the
      * number of errors.
      *
-     * @param Au $au
+     * @throws Exception
+     *                   If the AU is empty or is missing a plugin.
      *
      * @return int
-     *
-     * @throws Exception
-     *   If the AU is empty or is missing a plugin.
      */
     public function validate(Au $au) {
         $errors = 0;
         $plugin = $au->getPlugin();
-        if (!$plugin) {
-            throw new Exception("Cannot validate an AU without a plugin.");
+        if ( ! $plugin) {
+            throw new Exception('Cannot validate an AU without a plugin.');
         }
         $definitional = $plugin->getDefinitionalPropertyNames();
-        if (!$definitional || count($definitional) === 0) {
-            throw new Exception("Cannot validate AU for plugin without definitional properties.");
+        if ( ! $definitional || 0 === count($definitional)) {
+            throw new Exception('Cannot validate AU for plugin without definitional properties.');
         }
 
-        if ($this->countDeposits($au) === 0) {
+        if (0 === $this->countDeposits($au)) {
             $this->logger->warning("AU {$au->getId()} has no deposits and cannot be validated.");
+
             return 0;
         }
 
@@ -205,10 +192,11 @@ class AuManager {
             $iterator->next();
 
             $i++;
-            if ($i % self::BATCHSIZE === 0) {
+            if (0 === $i % self::BATCHSIZE) {
                 $this->em->clear();
             }
         }
+
         return $errors;
     }
 
@@ -217,7 +205,6 @@ class AuManager {
      *
      * The property is persisted, but not flushed, to the database.
      *
-     * @param Au $au
      * @param string $key
      * @param string $value
      * @param AuProperty $parent
@@ -250,16 +237,15 @@ class AuManager {
      * The format string is "Preserved content, part %d". The parameter list
      * is the single entry container_number, which is a property of the AU.
      *
-     * @param Au $au
      * @param string $value
      *
-     * @return string
-     *
      * @throws Exception
+     *
+     * @return string
      */
     public function generateString(Au $au, $value) {
-        $matches = array();
-        $formatStr = "";
+        $matches = [];
+        $formatStr = '';
         if (preg_match('/^"([^"]*)"/', $value, $matches)) {
             $formatStr = $matches[1];
         } else {
@@ -268,14 +254,15 @@ class AuManager {
         $parameterString = substr($value, strlen($formatStr) + 2);
         // substr/strlen skips the $formatstr part of the property.
         $parameters = preg_split('/, */', $parameterString);
-        $values = array();
+        $values = [];
         foreach (array_slice($parameters, 1) as $parameterName) {
             $values[] = $au->getAuPropertyValue($parameterName);
         }
         $paramCount = preg_match_all('/%[a-zA-Z]/', $formatStr);
-        if ($paramCount != count($values)) {
+        if ($paramCount !== count($values)) {
             throw new Exception("Wrong number of parameters for format string: {$formatStr}/{$paramCount}");
         }
+
         return vsprintf($formatStr, $values);
     }
 
@@ -284,27 +271,26 @@ class AuManager {
      *
      * LOCKSS plugin configuration symbols can be strings or lists. Ugh.
      *
-     * @param Au $au
      * @param string $name
      *
-     * @return string|array
-     *   The symbol as a string or a list of strings.
-     *
      * @throws Exception
+     *
+     * @return array|string
+     *                      The symbol as a string or a list of strings.
      */
     public function generateSymbol(Au $au, $name) {
         $plugin = $au->getPlugin();
-        if (!$plugin) {
-            throw new Exception("Au requires plugin to generate $name.");
+        if ( ! $plugin) {
+            throw new Exception("Au requires plugin to generate {$name}.");
         }
         $property = $plugin->getProperty($name);
-        if ($property === null) {
+        if (null === $property) {
             throw new Exception("{$plugin->getName()} is missing parameter {$name}.");
         }
-        if (!$property->isList()) {
+        if ( ! $property->isList()) {
             return $this->generateString($au, $property->getPropertyValue());
         }
-        $values = array();
+        $values = [];
         foreach ($property->getPropertyValue() as $v) {
             $values[] = $this->generateString($au, $v);
         }
@@ -314,12 +300,8 @@ class AuManager {
 
     /**
      * Generate the base properties, required for any AU.
-     *
-     * @param Au $au
-     * @param AuProperty $root
-     * @param Deposit $deposit
      */
-    public function baseProperties(Au $au, AuProperty $root, Deposit $deposit) {
+    public function baseProperties(Au $au, AuProperty $root, Deposit $deposit) : void {
         $this->buildProperty($au, 'journalTitle', $deposit->getProperty('journalTitle'), $root);
         $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $au->getId() . ' ' . $deposit->getTitle(), $root);
         $this->buildProperty($au, 'plugin', $au->getPlugin()->getIdentifier(), $root);
@@ -328,37 +310,33 @@ class AuManager {
 
     /**
      * Generate the configuration parameters for an AU.
-     *
-     * @param array $propertyNames
-     * @param Au $au
-     * @param AuProperty $root
-     * @param Deposit $deposit
      */
-    public function configProperties(array $propertyNames, Au $au, AuProperty $root, Deposit $deposit) {
-        $manifestUrl = $this->router->generate('lockss_manifest', array(
+    public function configProperties(array $propertyNames, Au $au, AuProperty $root, Deposit $deposit) : void {
+        $manifestUrl = $this->router->generate('lockss_manifest', [
             'plnId' => $au->getPln()->getId(),
             'ownerId' => $au->getContentProvider()->getContentOwner()->getId(),
             'providerId' => $au->getContentProvider()->getId(),
             'auId' => $au->getId(),
-        ), UrlGeneratorInterface::ABSOLUTE_URL);
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         foreach ($propertyNames as $index => $name) {
             switch ($name) {
                 case 'manifest_url':
                     $value = $manifestUrl;
-                    break;
 
+                    break;
                 case 'permission_url':
                     $value = $au->getContentProvider()->getPermissionUrl();
-                    break;
 
+                    break;
                 case 'base_url':
                     $p = parse_url($deposit->getUrl());
                     $value = "{$p['scheme']}://{$p['host']}" . (isset($p['port']) ? ":{$p['port']}" : '');
-                    break;
 
+                    break;
                 default:
                     $value = $deposit->getProperty($name);
+
                     break;
             }
             $grouping = $this->buildProperty($au, "param.{$index}", null, $root);
@@ -369,16 +347,13 @@ class AuManager {
 
     /**
      * Generate the content properties for the AU.
-     *
-     * @param Au $au
-     * @param AuProperty $root
-     * @param Deposit $deposit
      */
-    public function contentProperties(Au $au, AuProperty $root, Deposit $deposit) {
+    public function contentProperties(Au $au, AuProperty $root, Deposit $deposit) : void {
         foreach ($deposit->getProperties() as $name) {
             $value = $deposit->getProperty($name);
             if (is_array($value)) {
                 $this->logger->warning("AU {$au->getId()} has unsupported property value list {$name}");
+
                 continue;
             }
             $this->buildProperty($au, "attributes.pkppln.{$name}", $value, $root);
@@ -392,12 +367,11 @@ class AuManager {
      * use validate the AU to check that the content makes sense before
      * generating all properties.
      *
-     * @param Au $au
      * @param mixed $clear
      *
      * @see validate
      */
-    public function generateProperties(Au $au, $clear = false) {
+    public function generateProperties(Au $au, $clear = false) : void {
         if ($clear) {
             foreach ($au->getAuProperties() as $prop) {
                 $au->removeAuProperty($prop);
@@ -422,13 +396,12 @@ class AuManager {
     /**
      * Generate an AUID from a deposit.
      *
-     * @param Deposit $deposit
      * @param bool $lockssAuid
      *
-     * @return string
-     *
      * @throws Exception
-     *   If the deposit is missing a required property, an exception is thrown.
+     *                   If the deposit is missing a required property, an exception is thrown.
+     *
+     * @return string
      */
     public function generateAuidFromDeposit(Deposit $deposit, $lockssAuid = true) {
         $encoder = new Encoder();
@@ -439,7 +412,7 @@ class AuManager {
         $propNames = $plugin->getDefinitionalPropertyNames();
         sort($propNames);
         foreach ($propNames as $name) {
-            if (!$lockssAuid && in_array($name, $plugin->getGeneratedParams())) {
+            if ( ! $lockssAuid && in_array($name, $plugin->getGeneratedParams(), true)) {
                 continue;
             }
             $value = null;
@@ -448,13 +421,13 @@ class AuManager {
             } else {
                 $value = $encoder->encode($deposit->getProperty($name));
             }
-            if (!$value) {
+            if ( ! $value) {
                 throw new Exception("Cannot generate AUID without definitional property {$name}.");
             }
             $auKey .= "&{$name}~{$value}";
         }
-        $id = $pluginKey . $auKey;
-        return $id;
+
+        return $pluginKey . $auKey;
     }
 
     /**
@@ -462,24 +435,23 @@ class AuManager {
      *
      * Assumes that the AU properties are already generated.
      *
-     * @param Au $au
      * @param bool $lockssAuid
      *
-     * @return string|null
-     *   The generated AUID.
-     *
      * @throws Exception
-     *   If the AU is missing a required property.
+     *                   If the AU is missing a required property.
+     *
+     * @return null|string
+     *                     The generated AUID.
      */
     public function generateAuidFromAu(Au $au, $lockssAuid = true) {
-        if ($au->getDeposits()->count() === 0) {
-            return null;
+        if (0 === $au->getDeposits()->count()) {
+            return;
         }
         $plugin = $au->getPlugin();
-        if ($plugin === null) {
-            return null;
+        if (null === $plugin) {
+            return;
         }
+
         return $this->generateAuidFromDeposit($au->getDeposits()->first(), $lockssAuid);
     }
-
 }

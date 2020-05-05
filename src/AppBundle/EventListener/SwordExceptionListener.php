@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * This file is licensed under the MIT License version 3 or
- * later. See the LICENSE file for details.
- * 
- * Copyright 2018 Michael Joyce <ubermichael@gmail.com>.
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace AppBundle\EventListener;
@@ -21,7 +22,6 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
  * SWORD exception listener to return XML errors to the clients.
  */
 class SwordExceptionListener {
-
     /**
      * Controller that generated the error.
      *
@@ -42,42 +42,37 @@ class SwordExceptionListener {
      * @var string
      */
     private $env;
-    
+
     /**
      * Build the service.
      *
      * @param string $env
-     * @param EngineInterface $templating
      */
     public function __construct($env, EngineInterface $templating) {
         $this->templating = $templating;
         $this->env = $env;
     }
-    
+
     /**
      * Fired when a kernel event occurs.
      *
      * Once the controller has been initialized, this event is fired. Grab
      * a reference to the active controller.
-     *
-     * @param FilterControllerEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event) {
+    public function onKernelController(FilterControllerEvent $event) : void {
         $this->controller = $event->getController();
     }
-    
+
     /**
      * Fired on an exception in the SWORD controller.
      *
      * Sets the response inside the $event parameter.
-     *
-     * @param GetResponseForExceptionEvent $event
      */
-    public function onKernelException(GetResponseForExceptionEvent $event) {
-        if (!$this->controller[0] instanceof SwordController) {
+    public function onKernelException(GetResponseForExceptionEvent $event) : void {
+        if ( ! $this->controller[0] instanceof SwordController) {
             return;
         }
-        
+
         $exception = $event->getException();
         $response = new Response();
         if ($exception instanceof HttpExceptionInterface) {
@@ -87,11 +82,10 @@ class SwordExceptionListener {
             $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         $response->headers->set('Content-Type', 'text/xml');
-        $response->setContent($this->templating->render('AppBundle:sword:exception_document.xml.twig', array(
+        $response->setContent($this->templating->render('AppBundle:sword:exception_document.xml.twig', [
             'exception' => $exception,
             'env' => $this->env,
-        )));
+        ]));
         $event->setResponse($response);
     }
-
 }
