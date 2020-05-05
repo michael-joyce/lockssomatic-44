@@ -45,12 +45,6 @@ Sami
 
 `sami -vv update --force sami.php`
 
-PHP CS
+PHP CS Fixer
 
-`./vendor/bin/phpcs --report-xml=tmp.xml`
-
-`saxon -xsl:phpcs.xsl -s:tmp.xml -o:web/docs/phpcs/index.html`
-
-Sphinx
-
-TBD
+`php-cs-fixer fix`
