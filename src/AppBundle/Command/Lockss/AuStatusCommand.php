@@ -95,7 +95,7 @@ class AuStatusCommand extends ContainerAwareCommand {
     }
 
     protected function queryPln(Pln $pln, $dryRun) {
-        $boxes = $pln->getBoxes();
+        $boxes = $pln->getActiveBoxes();
 
         foreach ($pln->getAus() as $au) {
             $this->queryAu($au, $boxes);

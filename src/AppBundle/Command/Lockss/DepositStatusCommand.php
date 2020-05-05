@@ -168,7 +168,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
      * @param int $limit
      */
     protected function queryPln(Pln $pln, $all, $dryRun, $limit) {
-        $boxes = $pln->getBoxes();
+        $boxes = $pln->getActiveBoxes();
 
         foreach ($pln->getAus() as $au) {
             $deposits = $this->getDeposits($au, $all, $limit);

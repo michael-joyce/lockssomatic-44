@@ -433,6 +433,23 @@ class Pln extends AbstractEntity {
     }
 
     /**
+     * Get only the active boxes.
+     *
+     * If $shuffle is true, the boxes will be returned in a random order.
+     *
+     * @return Collection|Box[]
+     */
+    public function getActiveBoxes($shuffle = false) {
+        $boxes = $this->boxes;
+        if($shuffle) {
+            $array = $this->boxes->toArray();
+            shuffle($array);
+            $boxes = new ArrayCollection($array);
+        }
+        return $this->boxes->filter(function(Box $box) {return $box->getActive();});
+    }
+
+    /**
      * Set keystore.
      *
      * @param string $keystore

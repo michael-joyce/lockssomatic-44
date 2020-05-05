@@ -88,6 +88,7 @@ class BoxStatusCommand extends ContainerAwareCommand {
         if ($boxIds && count($boxIds)) {
             return $this->em->getRepository(Box::class)->findBy(array(
                         'id' => $boxIds,
+                'active' => true,
             ));
         }
         return $this->em->getRepository(Box::class)->findAll();

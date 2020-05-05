@@ -115,7 +115,7 @@ class FetchFileCommand extends ContainerAwareCommand {
 
         foreach ($deposits as $deposit) {
             $pln = $deposit->getContentProvider()->getPln();
-            $boxes = $pln->getBoxes(true);
+            $boxes = $pln->getActiveBoxes(true);
             foreach ($boxes as $box) {
                 // debugging crap.
                 if($box->getId() !== 1) { continue; }
