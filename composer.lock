@@ -5686,12 +5686,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubermichael/nines-bundles.git",
-                "reference": "45e7b0f3a7a3bc5ad08531a07025352a52c61d7e"
+                "reference": "6c24de093eddbff843d96f1c08a93162e2fc4e7d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ubermichael/nines-bundles/zipball/45e7b0f3a7a3bc5ad08531a07025352a52c61d7e",
-                "reference": "45e7b0f3a7a3bc5ad08531a07025352a52c61d7e",
+                "url": "https://api.github.com/repos/ubermichael/nines-bundles/zipball/6c24de093eddbff843d96f1c08a93162e2fc4e7d",
+                "reference": "6c24de093eddbff843d96f1c08a93162e2fc4e7d",
                 "shasum": ""
             },
             "require": {
@@ -5725,7 +5725,7 @@
                 "source": "https://github.com/ubermichael/nines-bundles/tree/2.x",
                 "issues": "https://github.com/ubermichael/nines-bundles/issues"
             },
-            "time": "2019-11-28T23:38:21+00:00"
+            "time": "2020-02-18T05:04:43+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -5826,6 +5826,7 @@
                 "code",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-code",
             "time": "2019-10-05T23:18:22+00:00"
         },
         {
@@ -5880,6 +5881,7 @@
                 "events",
                 "zf2"
             ],
+            "abandoned": "laminas/laminas-eventmanager",
             "time": "2018-04-25T15:33:34+00:00"
         },
         {
@@ -5930,6 +5932,7 @@
                 "mime",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-mime",
             "time": "2019-10-16T19:30:37+00:00"
         },
         {
@@ -5976,6 +5979,7 @@
                 "stdlib",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-stdlib",
             "time": "2018-08-28T21:34:05+00:00"
         }
     ],
@@ -6533,5 +6537,6 @@
     "platform": {
         "php": ">=7.2.0"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

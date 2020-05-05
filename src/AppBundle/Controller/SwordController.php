@@ -273,8 +273,8 @@ class SwordController extends Controller {
         $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);
         foreach ($atom->xpath('lom:content') as $node) {
-            $deposit->setChecksumType($node['checksumType']);
-            $deposit->setChecksumValue($node['checksumValue']);
+            $deposit->setChecksumType((string)$node['checksumType']);
+            $deposit->setChecksumValue((string)$node['checksumValue']);
         }
         $em->flush();
         $response = $this->renderDepositReceipt($provider, $deposit);
