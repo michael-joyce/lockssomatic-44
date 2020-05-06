@@ -155,7 +155,7 @@ ENDDATA;
 
         $box = $this->getReference('box.1');
         $response = $this->lockssClient->call($box, 'path/to/service', 'test');
-        $this->assertSame( ['a' => 'b'], $response);
+        $this->assertSame(['a' => 'b'], $response);
     }
 
     public function testCallException() : void {

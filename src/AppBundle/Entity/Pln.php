@@ -481,12 +481,11 @@ class Pln extends AbstractEntity {
      * @return string
      */
     public function getKeystoreFilename() {
-        if($this->keystore) {
+        if ($this->keystore) {
             $fileinfo = new SplFileInfo($this->keystore);
 
             return $fileinfo->getBasename();
         }
-        return null;
     }
 
     /**
