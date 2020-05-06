@@ -27,7 +27,7 @@ class Encoder {
      */
     public function encode($string) {
         if (null === $string) {
-            return;
+            return '';
         }
         $callback = function ($matches) {
             $char = ord($matches[0]);

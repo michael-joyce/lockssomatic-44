@@ -31,6 +31,7 @@
     ],
     "require": {
         "php": ">=7.2.0",
+        "ext-simplexml": "*",
         "beberlei/doctrineextensions": "^1.0",
         "besimple/soap": "dev-um",
         "doctrine/doctrine-bundle": "^1.8",

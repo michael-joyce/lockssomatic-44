@@ -49,7 +49,6 @@ class EncoderTest extends TestCase {
             ['abc%7E123', 'abc~123'],
             ['abc%26123', 'abc&123'],
             ['abc%7C123', 'abc|123'],
-            [null, null],
             ['', ''],
         ];
     }

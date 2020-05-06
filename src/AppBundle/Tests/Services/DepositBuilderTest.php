@@ -98,7 +98,7 @@ XML;
         $this->assertSame('771E96EC-5486-4E34-A1F6-AB113AFB642D', $deposit->getUuid());
         $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
         $this->assertSame('Test Deposit', $deposit->getTitle());
-        $this->assertSame('', $deposit->getSummary());
+        $this->assertNull($deposit->getSummary());
     }
 
     public function testFromXmlMultipleDeposits() : void {

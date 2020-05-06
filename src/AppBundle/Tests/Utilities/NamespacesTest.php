@@ -41,12 +41,12 @@ class NamespacesTest extends TestCase {
     public function testRegisterNamespaces() : void {
         $xml = simplexml_load_string($this->getXml());
         Namespaces::registerNamespaces($xml);
-        $this->assertSame(1, (string) $xml->xpath('//dcterms:a[1]/text()')[0]);
-        $this->assertSame(2, (string) $xml->xpath('//sword:b[1]/text()')[0]);
-        $this->assertSame(3, (string) $xml->xpath('//atom:c[1]/text()')[0]);
-        $this->assertSame(4, (string) $xml->xpath('//lom:d[1]/text()')[0]);
-        $this->assertSame(5, (string) $xml->xpath('//rdf:e[1]/text()')[0]);
-        $this->assertSame(6, (string) $xml->xpath('//app:f[1]/text()')[0]);
+        $this->assertSame('1', (string) $xml->xpath('//dcterms:a[1]/text()')[0]);
+        $this->assertSame('2', (string) $xml->xpath('//sword:b[1]/text()')[0]);
+        $this->assertSame('3', (string) $xml->xpath('//atom:c[1]/text()')[0]);
+        $this->assertSame('4', (string) $xml->xpath('//lom:d[1]/text()')[0]);
+        $this->assertSame('5', (string) $xml->xpath('//rdf:e[1]/text()')[0]);
+        $this->assertSame('6', (string) $xml->xpath('//app:f[1]/text()')[0]);
     }
 
     public function testGetNullNamespace() : void {

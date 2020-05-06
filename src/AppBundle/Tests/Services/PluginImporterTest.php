@@ -144,7 +144,7 @@ class PluginImporterTest extends BaseTestCase {
         $this->assertInstanceOf(PluginProperty::class, $property);
         $this->assertSame('plugin_version', $property->getPropertyKey());
         $this->assertSame($plugin, $property->getPlugin());
-        $this->assertSame(1, $property->getPropertyValue());
+        $this->assertSame('1', $property->getPropertyValue());
         $this->assertNull($property->getChildren());
         $this->assertFalse($property->isList());
     }

@@ -146,7 +146,7 @@ ENDDATA;
             ->getMock()
         ;
         $mockClient->method('test')->willReturn((object) [
-            'return' => (object) ['a' => 'b'],
+            'return' => ['a' => 'b'],
         ]);
 
         $builder = $this->createMock(SoapClientBuilder::class);
@@ -155,7 +155,7 @@ ENDDATA;
 
         $box = $this->getReference('box.1');
         $response = $this->lockssClient->call($box, 'path/to/service', 'test');
-        $this->assertSame((object) ['a' => 'b'], $response);
+        $this->assertSame( ['a' => 'b'], $response);
     }
 
     public function testCallException() : void {
@@ -193,7 +193,7 @@ ENDDATA;
 
         $box = $this->getReference('box.1');
         $response = $this->lockssClient->isDaemonReady($box);
-        $this->assertSame(true, $response);
+        $this->assertSame(1, $response);
     }
 
     public function testIsDaemonNotReady() : void {
@@ -212,7 +212,7 @@ ENDDATA;
 
         $box = $this->getReference('box.1');
         $response = $this->lockssClient->call($box, 'path/to/service', 'isDaemonReady');
-        $this->assertSame(false, $response);
+        $this->assertSame(0, $response);
     }
 
     public function testGetAuStatus() : void {
@@ -399,7 +399,7 @@ ENDDATA;
         $box = $this->getReference('box.1');
         $deposit = $this->getReference('deposit.1');
         $response = $this->lockssClient->isUrlCached($box, $deposit);
-        $this->assertSame(true, $response);
+        $this->assertSame(1, $response);
     }
 
     public function testIsUrlCachedBoxDown() : void {

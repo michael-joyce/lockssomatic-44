@@ -51,7 +51,7 @@ class PluginTest extends BaseTestCase {
         return [
             ['plugin_identifier', 'ca.example.lockss.plugin'],
             ['au_name', '"Dummy AU %d", container_number'],
-            ['plugin_version', 301],
+            ['plugin_version', '301'],
             ['au_permission_url', [
                 '"%s", manifest_url',
                 '"%s", permission_url',

@@ -49,11 +49,11 @@ class SwordController extends Controller {
      * If $required is true and the header is not present BadRequestException
      * will be thrown.
      *
+     * @param Request $request
      * @param string $key
-     * @param string $required
+     * @param bool $required
      *
-     * @throws BadRequestException
-     *                             If the header is required but cannot be found.
+     * @throws BadRequestHttpException
      *
      * @return null|string
      *                     The value of the header or null if that's OK.
@@ -342,7 +342,7 @@ class SwordController extends Controller {
      */
     public function statementAction(Request $request, ContentProvider $provider, Deposit $deposit) {
         $this->logger->notice("{$request->getClientIp()} - statement - {$provider->getName()} - {$deposit->getUuid()}");
-        if (1 === $deposit->getAgreement()) {
+        if (1.0 === $deposit->getAgreement()) {
             $state = 'agreement';
             $stateDescription = 'LOCKSS boxes have harvested the content and agree on the checksum.';
         } else {
