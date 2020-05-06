@@ -17,8 +17,12 @@ use AppBundle\Entity\DepositStatus;
 use AppBundle\Entity\Pln;
 use AppBundle\Services\AuManager;
 use AppBundle\Services\LockssClient;
+use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Exception;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -87,21 +91,58 @@ class DepositStatusCommand extends ContainerAwareCommand {
     }
 
     /**
+     * Count the deposits which will be checked.
+     *
+     * @param $all
+     * @param $plnId
+     *
+     * @return int
+     *
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    protected function countDeposits($all, $plnId) {
+        $qb = $this->em->createQueryBuilder();
+        $qb->select('COUNT(d) as ct')->from(Deposit::class, 'd');
+
+        if (!$all) {
+            $qb->where('d.agreement <> 1 OR d.agreement IS NULL');
+            $qb->andWhere('d.checked IS NULL OR DATE_DIFF(:now, d.checked) > 1');
+            $qb->setParameter('now', new DateTime());
+        }
+        if ($plnId !== null) {
+            $plns = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findOneBy(array('id' => $plnId));
+            $qb->innerJoin('d.contentProvider', 'p', 'WITH', 'p.pln = :pln');
+            $qb->setParameter('pln', $plns);
+        }
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
      * Get a list of deposits to check.
      *
      * @param bool $all
      * @param int $limit
+     * @param int $plnId
      *
      * @return Deposit[]|Generator
+     * @throws Exception
      */
-    protected function getDeposits(Au $au, $all, $limit = null) {
+    protected function getDeposits($all, $limit, $plnId) {
         $repo = $this->em->getRepository(Deposit::class);
         $qb = $repo->createQueryBuilder('d');
-        $qb->andWhere('d.au = :au');
-        $qb->setParameter('au', $au);
         if ( ! $all) {
-            $qb->andWhere('(d.agreement is null OR d.agreement <> 1)');
+            $qb->where('d.agreement <> 1 OR d.agreement IS NULL');
+            $qb->andWhere('d.checked IS NULL OR DATE_DIFF(:now, d.checked) > 1');
+            $qb->setParameter('now', new DateTime());
         }
+        if ($plnId !== null) {
+            $plns = $this->em->getRepository(Pln::class)->findOneBy(array('id' => $plnId));
+            $qb->innerJoin('d.contentProvider', 'p', 'WITH', 'p.pln = :pln');
+            $qb->setParameter('pln', $plns);
+        }
+        $qb->orderBy('d.checked');
+        $qb->addOrderBy('d.id', 'DESC');
         if ($limit) {
             $qb->setMaxResults($limit);
         }
@@ -114,6 +155,7 @@ class DepositStatusCommand extends ContainerAwareCommand {
     /**
      * Query one deposit across all the boxes in the deposit's network.
      *
+     * @param Deposit $deposit
      * @param Box[]|Collection $boxes
      *
      * @return DepositStatus
@@ -125,9 +167,6 @@ class DepositStatusCommand extends ContainerAwareCommand {
         $errors = [];
 
         foreach ($boxes as $box) {
-            if ( ! $box->getActive()) {
-                continue;
-            }
             $checksum = $this->client->hash($box, $deposit);
             if ($this->client->hasErrors()) {
                 $errors = array_merge($errors, $this->client->getErrors());
@@ -163,15 +202,13 @@ class DepositStatusCommand extends ContainerAwareCommand {
     protected function queryPln(Pln $pln, $all, $dryRun, $limit) : void {
         $boxes = $pln->getActiveBoxes();
 
-        foreach ($pln->getAus() as $au) {
-            $deposits = $this->getDeposits($au, $all, $limit);
-            foreach ($deposits as $deposit) {
-                $this->queryDeposit($deposit, $boxes);
-                if ( ! $dryRun) {
-                    $this->em->flush();
-                }
-                //$this->em->detach($deposit);
+        $deposits = $this->getDeposits($all, $limit);
+        foreach ($deposits as $deposit) {
+            $this->queryDeposit($deposit, $boxes);
+            if ( ! $dryRun) {
+                $this->em->flush();
             }
+            //$this->em->detach($deposit);
         }
     }
 

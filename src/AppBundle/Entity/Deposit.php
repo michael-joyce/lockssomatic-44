@@ -13,6 +13,7 @@ namespace AppBundle\Entity;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
 use Nines\UserBundle\Entity\User;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -76,6 +77,14 @@ class Deposit extends AbstractEntity {
      * @ORM\Column(name="agreement", type="float", nullable=true)
      */
     private $agreement;
+
+    /**
+     * The date the deposit's status was last checked.
+     *
+     * @var DateTime
+     * @ORM\Column(name="checked", type="datetime", nullable=true)
+     */
+    private $checked;
 
     /**
      * A summary/description of the deposit.
@@ -269,6 +278,25 @@ class Deposit extends AbstractEntity {
      */
     public function getAgreement() {
         return $this->agreement;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getChecked() {
+        return $this->checked;
+    }
+
+    /**
+     * @param $checked
+     *
+     * @throws Exception
+     */
+    public function setChecked(DateTime $checked = null) {
+        if( ! $checked) {
+            $checked = new DateTime();
+        }
+        $this->checked = $checked;
     }
 
     /**
