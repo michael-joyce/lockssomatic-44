@@ -105,7 +105,7 @@ doctrine:
                 port: '%old_database_port%'
                 dbname: '%old_database_name%'
                 user: '%old_database_user%'
-                password: '%database_password%'
+                password: '%old_database_password%'
                 charset: utf8mb4
                 logging: false
                 profiling: false

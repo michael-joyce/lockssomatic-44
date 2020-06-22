@@ -114,6 +114,7 @@ class UpgradeCommand extends ContainerAwareCommand {
 
     public function configure() : void {
         $this->setName('lom:upgrade');
+        $this->setDescription('Copy and upgrade data from an old database.');
         $this->addOption('force', null, InputOption::VALUE_NONE, 'Actually make the database changes.');
     }
 
@@ -158,6 +159,7 @@ class UpgradeCommand extends ContainerAwareCommand {
                 $this->em->flush($entity);
                 $this->setIdMap(get_class($entity), $row['id'], $entity->getId());
                 $this->em->detach($entity);
+                $this->em->clear();
             }
             $n++;
             echo "{$n}\r";
@@ -387,8 +389,8 @@ class UpgradeCommand extends ContainerAwareCommand {
             $status = new AuStatus();
             $status->setAu($this->findEntity(Au::class, $row['au_id']));
             $status->setCreated(new DateTime($row['query_date']));
-            $status->setStatus($row['status']);
-            $status->setErrors($row['errors']);
+            $status->setStatus(unserialize($row['status']));
+            $status->setErrors(unserialize($row['errors']));
 
             return $status;
         };
@@ -484,7 +486,7 @@ class UpgradeCommand extends ContainerAwareCommand {
             $status->setDeposit($this->findEntity(Deposit::class, $row['deposit_id']));
             $status->setAgreement($row['agreement']);
             $status->setCreated(new DateTime($row['query_date']));
-            $status->setStatus($row['status']);
+            $status->setStatus(unserialize($row['status']));
 
             return $status;
         };
@@ -499,6 +501,9 @@ class UpgradeCommand extends ContainerAwareCommand {
             $output->writeln('Will not run without --force.');
             exit;
         }
+        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
+        $this->source->getConfiguration()->setSQLLogger(null);
+
         $this->upgradeUsers();
         $this->upgradeContentOwners();
         $this->upgradePlns();
