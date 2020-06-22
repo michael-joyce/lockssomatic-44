@@ -332,7 +332,7 @@ class UpgradeCommand extends ContainerAwareCommand {
      * Requires the box status table upgraded first.
      */
     public function upgradeCacheStatus() : void {
-        $callback = function ($row) {
+        $callback = function ($row) : void {
             $status = $this->findEntity(BoxStatus::class, $row['boxstatus_id']);
             $status->setData(unserialize($row['response']));
             $this->em->flush();

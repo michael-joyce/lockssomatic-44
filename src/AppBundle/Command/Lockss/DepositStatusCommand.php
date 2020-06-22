@@ -96,25 +96,26 @@ class DepositStatusCommand extends ContainerAwareCommand {
      * @param $all
      * @param $plnId
      *
-     * @return int
-     *
      * @throws NoResultException
      * @throws NonUniqueResultException
+     *
+     * @return int
      */
     protected function countDeposits($all, $plnId) {
         $qb = $this->em->createQueryBuilder();
         $qb->select('COUNT(d) as ct')->from(Deposit::class, 'd');
 
-        if (!$all) {
+        if ( ! $all) {
             $qb->where('d.agreement <> 1 OR d.agreement IS NULL');
             $qb->andWhere('d.checked IS NULL OR DATE_DIFF(:now, d.checked) > 1');
             $qb->setParameter('now', new DateTime());
         }
-        if ($plnId !== null) {
-            $plns = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findOneBy(array('id' => $plnId));
+        if (null !== $plnId) {
+            $plns = $this->em->getRepository('LOCKSSOMaticCrudBundle:Pln')->findOneBy(['id' => $plnId]);
             $qb->innerJoin('d.contentProvider', 'p', 'WITH', 'p.pln = :pln');
             $qb->setParameter('pln', $plns);
         }
+
         return $qb->getQuery()->getSingleScalarResult();
     }
 
@@ -125,8 +126,9 @@ class DepositStatusCommand extends ContainerAwareCommand {
      * @param int $limit
      * @param int $plnId
      *
-     * @return Deposit[]|Generator
      * @throws Exception
+     *
+     * @return Deposit[]|Generator
      */
     protected function getDeposits($all, $limit, $plnId) {
         $repo = $this->em->getRepository(Deposit::class);
@@ -136,8 +138,8 @@ class DepositStatusCommand extends ContainerAwareCommand {
             $qb->andWhere('d.checked IS NULL OR DATE_DIFF(:now, d.checked) > 1');
             $qb->setParameter('now', new DateTime());
         }
-        if ($plnId !== null) {
-            $plns = $this->em->getRepository(Pln::class)->findOneBy(array('id' => $plnId));
+        if (null !== $plnId) {
+            $plns = $this->em->getRepository(Pln::class)->findOneBy(['id' => $plnId]);
             $qb->innerJoin('d.contentProvider', 'p', 'WITH', 'p.pln = :pln');
             $qb->setParameter('pln', $plns);
         }
@@ -155,7 +157,6 @@ class DepositStatusCommand extends ContainerAwareCommand {
     /**
      * Query one deposit across all the boxes in the deposit's network.
      *
-     * @param Deposit $deposit
      * @param Box[]|Collection $boxes
      *
      * @return DepositStatus

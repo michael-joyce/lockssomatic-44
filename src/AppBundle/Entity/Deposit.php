@@ -292,8 +292,8 @@ class Deposit extends AbstractEntity {
      *
      * @throws Exception
      */
-    public function setChecked(DateTime $checked = null) {
-        if( ! $checked) {
+    public function setChecked(DateTime $checked = null) : void {
+        if ( ! $checked) {
             $checked = new DateTime();
         }
         $this->checked = $checked;
