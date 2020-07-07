@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ContentProvider{% endblock %}
+
+{% block pageheader %}
+    <h1>ContentProvider</h1>
+{% endblock %}
+
+{% block body %}
+    <div class="btn-toolbar">
+        <div class="btn-group pull-right">
+            <a href="{{ path('content_provider_index') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-arrow-left"></span> Back
+            </a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('content_provider_edit', { 'id': contentProvider.id }) }}" class="btn btn-default">
+                    <span class='glyphicon glyphicon-edit'></span> Edit
+                </a>
+                <a href="{{ path('content_provider_delete', { 'id': contentProvider.id }) }}" class="btn btn-default" data-confirm="Are you sure you want to delete this ContentProvider?">
+                    <span class='glyphicon glyphicon-remove'></span> Delete
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <tbody>
+            <tr>
+                <th>Uuid</th>
+                <td>{{ contentProvider.uuid }}</td>
+            </tr>
+            <tr>
+                <th>Permission Url</th>
+                <td>
+                    <a href="{{ contentProvider.permissionUrl }}">
+                        {{ contentProvider.permissionUrl }}
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ contentProvider.name }}</td>
+            </tr>
+            <tr>
+                <th>Max File Size</th>
+                <td>{% embed 'partial/size.html.twig' with {bytes: contentProvider.maxFileSize} %}{% endembed %}</td>
+            </tr>
+            <tr>
+                <th>Max Au Size</th>
+                <td>{% embed 'partial/size.html.twig' with {bytes: contentProvider.maxAuSize} %}{% endembed %}</td>
+            </tr>
+            <tr>
+                <th>Created</th>
+                <td>{% if contentProvider.created %}{{ contentProvider.created|date }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{% if contentProvider.updated %}{{ contentProvider.updated|date }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Content Owner</th>
+                <td>
+                    <a href="{{ path('content_owner_show', { 'id': contentProvider.contentOwner.id}) }}">
+                        {{ contentProvider.contentOwner }}
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th>Pln</th>
+                <td>
+                    <a href="{{ path('pln_show', { 'id': contentProvider.pln.id}) }}">
+                        {{ contentProvider.pln }}
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th>Plugin</th>
+                <td>
+                    <a href="{{ path('plugin_show', { 'id': contentProvider.plugin.id}) }}">
+                        {{ contentProvider.plugin }}
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    {% if contentProvider.aus | length > 0 %}
+        <h2>AUs</h2>
+        <ul>
+            {% for au in contentProvider.aus %}
+                <li>
+                    <a href="{{ path("au_show", {"id":au.id, 'plnId': contentProvider.pln.id}) }}">
+                        {{ au }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if contentProvider.deposits | length > 0 %}
+        <h2>Deposits</h2>
+        <ul>
+            {% for deposit in contentProvider.deposits %}
+                <li>
+                    <a href="{{ path("deposit_show", {"id":deposit.id, 'plnId': contentProvider.pln.id}) }}">
+                        {{ deposit }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

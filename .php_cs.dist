@@ -8,6 +8,8 @@ HEADER;
 
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__ . '/src')
+    ->notPath('Kernel.php')
+    ->in(__DIR__ . '/tests')
 ;
 
 return PhpCsFixer\Config::create()
