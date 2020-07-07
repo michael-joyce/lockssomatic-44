@@ -8,19 +8,19 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Services;
+namespace App\Tests\Services;
 
-use AppBundle\DataFixtures\ORM\LoadPln;
-use AppBundle\Entity\Au;
-use AppBundle\Entity\ContentProvider;
-use AppBundle\Entity\Deposit;
-use AppBundle\Entity\Plugin;
-use AppBundle\Services\AuManager;
-use AppBundle\Services\ConfigExporter;
-use AppBundle\Services\FilePaths;
+use App\DataFixtures\PlnFixtures;
+use App\Entity\Au;
+use App\Entity\ContentProvider;
+use App\Entity\Deposit;
+use App\Entity\Plugin;
+use App\Services\AuManager;
+use App\Services\ConfigExporter;
+use App\Services\FilePaths;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 
@@ -29,7 +29,7 @@ use org\bovigo\vfs\vfsStreamDirectory;
  *
  * @author michael
  */
-class ConfigExporterTest extends BaseTestCase {
+class ConfigExporterTest extends ControllerBaseCase {
     /**
      * @var ConfigExporter
      */
@@ -40,9 +40,9 @@ class ConfigExporterTest extends BaseTestCase {
      */
     private $root;
 
-    protected function getFixtures() {
+    protected function fixtures() : array {
         return [
-            LoadPln::class,
+            PlnFixtures::class,
         ];
     }
 

@@ -8,9 +8,9 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
-// Mock the gethostbyname function in the AppBundle\EventListener namespace to
+// Mock the gethostbyname function in the App\EventListener namespace to
 // prevent actual DNS lookups and return known data for nonsense names.
 function gethostbyname($hostname) {
     switch ($hostname) {
@@ -21,14 +21,14 @@ function gethostbyname($hostname) {
     }
 }
 
-namespace AppBundle\Tests\EventListener;
+namespace App\Tests\EventListener;
 
-use AppBundle\Entity\Box;
-use AppBundle\EventListener\BoxListener;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use App\Entity\Box;
+use App\EventListener\BoxListener;
+use Doctrine\Event\LifecycleEventArgs;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class BoxListenerTest extends BaseTestCase {
+class BoxListenerTest extends ControllerBaseCase {
     private $listener;
 
     /**
@@ -42,7 +42,7 @@ class BoxListenerTest extends BaseTestCase {
         $box = new Box();
         $box->setHostname($hostname);
         $box->setIpAddress($ip);
-        $args = new LifecycleEventArgs($box, $this->getDoctrine());
+        $args = new LifecycleEventArgs($box, self::$container());
         $this->listener->prePersist($args);
         $this->assertSame($expected, $box->getIpAddress());
     }
@@ -66,7 +66,7 @@ class BoxListenerTest extends BaseTestCase {
         $box = new Box();
         $box->setHostname($hostname);
         $box->setIpAddress($ip);
-        $args = new LifecycleEventArgs($box, $this->getDoctrine());
+        $args = new LifecycleEventArgs($box, self::$container());
         $this->listener->preUpdate($args);
         $this->assertSame($expected, $box->getIpAddress());
     }

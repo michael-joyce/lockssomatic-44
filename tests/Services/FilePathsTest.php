@@ -8,17 +8,17 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Services;
+namespace App\Tests\Services;
 
-use AppBundle\DataFixtures\ORM\LoadAu;
-use AppBundle\DataFixtures\ORM\LoadContentProvider;
-use AppBundle\DataFixtures\ORM\LoadDeposit;
-use AppBundle\DataFixtures\ORM\LoadPln;
-use AppBundle\DataFixtures\ORM\LoadPlugin;
-use AppBundle\Services\FilePaths;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use App\DataFixtures\AuFixtures;
+use App\DataFixtures\ContentProviderFixtures;
+use App\DataFixtures\DepositFixtures;
+use App\DataFixtures\PlnFixtures;
+use App\DataFixtures\PluginFixtures;
+use App\Services\FilePaths;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class FilePathsTest extends BaseTestCase {
+class FilePathsTest extends ControllerBaseCase {
     /**
      * @var FilePaths
      */
@@ -29,13 +29,13 @@ class FilePathsTest extends BaseTestCase {
      */
     private $root;
 
-    protected function getFixtures() {
+    protected function fixtures() : array {
         return [
-            LoadDeposit::class,
-            LoadPln::class,
-            LoadPlugin::class,
-            LoadContentProvider::class,
-            LoadAu::class,
+            DepositFixtures::class,
+            PlnFixtures::class,
+            PluginFixtures::class,
+            ContentProviderFixtures::class,
+            AuFixtures::class,
         ];
     }
 
@@ -47,13 +47,13 @@ class FilePathsTest extends BaseTestCase {
         $this->assertSame($this->root, $this->filePaths->getRootPath());
     }
 
-    public function testGetCacheDownloadDir() : void {
-        $this->assertStringStartsWith($this->root, $this->filePaths->getCacheDownloadDir());
+    public function testGetCacheDownDirFixtures() : void {
+        $this->assertStringStartsWith($this->root, $this->filePaths->getCacheDownDirFixtures());
     }
 
-    public function testGetDownloadContentPath() : void {
+    public function testGetDownContentPathFixtures() : void {
         $deposit = $this->getReference('deposit.1');
-        $this->assertSame($this->root . '/data/download/3E40ACE2-7F1A-4AD5-8622-416EC740D9A1/1/first', $this->filePaths->getDownloadContentPath($deposit));
+        $this->assertSame($this->root . '/data/download/3E40ACE2-7F1A-4AD5-8622-416EC740D9A1/1/first', $this->filePaths->getDownContentPathFixtures($deposit));
     }
 
     public function testGetLockssDir() : void {

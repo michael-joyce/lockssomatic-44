@@ -8,9 +8,9 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Utilities;
+namespace App\Tests\Utilities;
 
-use AppBundle\Utilities\Encoder;
+use App\Utilities\Encoder;
 use PHPUnit\Framework\TestCase;
 
 class EncoderTest extends TestCase {

@@ -8,82 +8,79 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Controller;
+namespace App\Tests\Controller;
 
-use AppBundle\DataFixtures\ORM\LoadPln;
-use AppBundle\Entity\Pln;
-use Nines\UserBundle\DataFixtures\ORM\LoadUser;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use App\DataFixtures\PlnFixtures;
+use App\Entity\Pln;
+use Nines\UserBundle\DataFixtures\UserFixtures;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class PlnControllerTest extends BaseTestCase {
-    protected function getFixtures() {
+class PlnControllerTest extends ControllerBaseCase {
+    protected function fixtures() : array {
         return [
-            LoadUser::class,
-            LoadPln::class,
+            UserFixtures::class,
+            PlnFixtures::class,
         ];
     }
 
     public function testAnonIndex() : void {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/pln/');
-        $this->assertSame(302, $client->getResponse()->getStatusCode());
+        $crawler = $this->client->request('GET', '/pln/');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
         $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
     public function testUserIndex() : void {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/pln/');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/pln/');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
     public function testAdminIndex() : void {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $crawler = $client->request('GET', '/pln/');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/pln/');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         $this->assertSame(1, $crawler->selectLink('New')->count());
     }
 
     public function testAnonShow() : void {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/pln/1');
-        $this->assertSame(302, $client->getResponse()->getStatusCode());
+        $crawler = $this->client->request('GET', '/pln/1');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
         $this->assertSame(0, $crawler->selectLink('Edit')->count());
         $this->assertSame(0, $crawler->selectLink('Delete')->count());
     }
 
     public function testUserShow() : void {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/pln/1');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/pln/1');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         $this->assertSame(0, $crawler->selectLink('Edit')->count());
         $this->assertSame(0, $crawler->selectLink('Delete')->count());
     }
 
     public function testAdminShow() : void {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $crawler = $client->request('GET', '/pln/1');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/pln/1');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         $this->assertSame(1, $crawler->selectLink('Edit')->count());
         $this->assertSame(1, $crawler->selectLink('Delete')->count());
     }
 
     public function testAnonEdit() : void {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/pln/1/edit');
-        $this->assertSame(302, $client->getResponse()->getStatusCode());
+        $crawler = $this->client->request('GET', '/pln/1/edit');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
     }
 
     public function testUserEdit() : void {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/pln/1/edit');
-        $this->assertSame(403, $client->getResponse()->getStatusCode());
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/pln/1/edit');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminEdit() : void {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $formCrawler = $client->request('GET', '/pln/1/edit');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->login('user.admin');
+        $formCrawler = $this->client->request('GET', '/pln/1/edit');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Update')->form([
             'pln[name]' => 'fireball',
@@ -91,29 +88,28 @@ class PlnControllerTest extends BaseTestCase {
             'pln[contentPort]' => 8123,
         ]);
 
-        $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect('/pln/1'));
-        $responseCrawler = $client->followRedirect();
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirect('/pln/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         $this->assertSame(1, $responseCrawler->filter('td:contains("8123")')->count());
     }
 
     public function testAnonNew() : void {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/pln/new');
-        $this->assertSame(302, $client->getResponse()->getStatusCode());
+        $crawler = $this->client->request('GET', '/pln/new');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
     }
 
     public function testUserNew() : void {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/pln/new');
-        $this->assertSame(403, $client->getResponse()->getStatusCode());
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/pln/new');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminNew() : void {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $formCrawler = $client->request('GET', '/pln/new');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->login('user.admin');
+        $formCrawler = $this->client->request('GET', '/pln/new');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Create')->form([
             'pln[name]' => 'fireball',
@@ -122,93 +118,88 @@ class PlnControllerTest extends BaseTestCase {
             'pln[email]' => 'other@example.com',
         ]);
 
-        $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $responseCrawler = $client->followRedirect();
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         $this->assertSame(1, $responseCrawler->filter('td:contains("8123")')->count());
     }
 
     public function testAnonKeystore() : void {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/pln/1/keystore');
-        $this->assertSame(302, $client->getResponse()->getStatusCode());
+        $crawler = $this->client->request('GET', '/pln/1/keystore');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
     }
 
     public function testUserKeystore() : void {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/pln/1/keystore');
-        $this->assertSame(403, $client->getResponse()->getStatusCode());
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/pln/1/keystore');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminKeystore() : void {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $formCrawler = $client->request('GET', '/pln/1/keystore');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->login('user.admin');
+        $formCrawler = $this->client->request('GET', '/pln/1/keystore');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Create')->form();
-        $form['file_upload[file]']->upload('src/AppBundle/Tests/Data/dummy.keystore');
+        $form['file_upload[file]']->upload('src/App/Tests/Data/dummy.keystore');
 
-        $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $responseCrawler = $client->followRedirect();
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('dummy.keystore', $responseCrawler->text());
     }
 
     public function testAdminKeystoreBadFile() : void {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $formCrawler = $client->request('GET', '/pln/1/keystore');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->login('user.admin');
+        $formCrawler = $this->client->request('GET', '/pln/1/keystore');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Create')->form();
-        $form['file_upload[file]']->upload('src/AppBundle/Tests/Data/dummy.fakekeystore');
+        $form['file_upload[file]']->upload('src/App/Tests/Data/dummy.fakekeystore');
 
-        $client->submit($form);
-        $this->assertFalse($client->getResponse()->isRedirect());
-        $this->assertSame(400, $client->getResponse()->getStatusCode());
-        $this->assertStringContainsStringIgnoringCase('File name is strange.', $client->getResponse()->getContent());
+        $this->client->submit($form);
+        $this->assertFalse($this->client->getResponse()->isRedirect());
+        $this->assertSame(400, $this->client->getResponse()->getStatusCode());
+        $this->assertStringContainsStringIgnoringCase('File name is strange.', $this->client->getResponse()->getContent());
     }
 
     public function testAnonExport() : void {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/pln/1/export');
-        $this->assertSame(302, $client->getResponse()->getStatusCode());
+        $crawler = $this->client->request('GET', '/pln/1/export');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
         $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
     public function testUserExport() : void {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/pln/1/export');
-        $this->assertSame(403, $client->getResponse()->getStatusCode());
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/pln/1/export');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
         $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
     public function testAnonDelete() : void {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/pln/1/delete');
-        $this->assertSame(302, $client->getResponse()->getStatusCode());
+        $crawler = $this->client->request('GET', '/pln/1/delete');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
     }
 
     public function testUserDelete() : void {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/pln/1/delete');
-        $this->assertSame(403, $client->getResponse()->getStatusCode());
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/pln/1/delete');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminDelete() : void {
-        self::bootKernel();
-        $em = static::$kernel->getContainer()->get('doctrine')->getManager();
-        $preCount = count($em->getRepository(Pln::class)->findAll());
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $crawler = $client->request('GET', '/pln/1/delete');
-        $this->assertSame(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $responseCrawler = $client->followRedirect();
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+$preCount = count($this->entityManager->getRepository(Pln::class)->findAll());
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/pln/1/delete');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
-        $em->clear();
-        $postCount = count($em->getRepository(Pln::class)->findAll());
+        $this->entityManager->clear();
+        $postCount = count($this->entityManager->getRepository(Pln::class)->findAll());
         $this->assertSame($preCount - 1, $postCount);
     }
 }

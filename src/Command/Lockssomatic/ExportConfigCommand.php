@@ -15,6 +15,7 @@ use App\Services\ConfigExporter;
 use App\Services\ConfigUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,7 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * LomExportConfigCommand command.
  */
-class ExportConfigCommand extends ContainerAwareCommand {
+class ExportConfigCommand extends Command {
     /**
      * Exporter service instance.
      *

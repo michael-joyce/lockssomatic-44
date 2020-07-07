@@ -8,19 +8,19 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Entity;
+namespace App\Tests\Entity;
 
-use AppBundle\DataFixtures\ORM\LoadPluginProperty;
-use AppBundle\Services\PluginImporter;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use App\DataFixtures\PluginPropertyFixtures;
+use App\Services\PluginImporter;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 
 /**
  * Description of PluginPropertyTest.
  */
-class PluginTest extends BaseTestCase {
-    protected function getFixtures() {
+class PluginTest extends ControllerBaseCase {
+    protected function fixtures() : array {
         return [
-            LoadPluginProperty::class,
+            PluginPropertyFixtures::class,
         ];
     }
 
@@ -61,7 +61,7 @@ class PluginTest extends BaseTestCase {
 
     public function testGetPluginConfigParams() : void {
         $importer = $this->container->get(PluginImporter::class);
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
         $definitionals = $plugin->getPluginConfigParams();
         $this->assertSame(4, count($definitionals));
@@ -80,7 +80,7 @@ class PluginTest extends BaseTestCase {
 
     public function testGetDefinitionalParams() : void {
         $importer = $this->container->get(PluginImporter::class);
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
         $definitionals = $plugin->getDefinitionalPropertyNames();
         $this->assertSame(2, count($definitionals));
@@ -90,7 +90,7 @@ class PluginTest extends BaseTestCase {
 
     public function testGetNonDefinitionalParams() : void {
         $importer = $this->container->get(PluginImporter::class);
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
         $nonDefinitionals = $plugin->getNonDefinitionalProperties();
         $this->assertSame(2, count($nonDefinitionals));

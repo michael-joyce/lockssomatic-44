@@ -8,21 +8,21 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Controller;
+namespace App\Tests\Controller;
 
-use AppBundle\DataFixtures\ORM\LoadContentProvider;
-use AppBundle\DataFixtures\ORM\LoadDeposit;
-use AppBundle\DataFixtures\ORM\LoadPluginProperty;
-use AppBundle\Entity\Au;
-use AppBundle\Entity\Deposit;
-use AppBundle\Utilities\Namespaces;
+use App\DataFixtures\ContentProviderFixtures;
+use App\DataFixtures\DepositFixtures;
+use App\DataFixtures\PluginPropertyFixtures;
+use App\Entity\Au;
+use App\Entity\Deposit;
+use App\Utilities\Namespaces;
 use Exception;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 use SimpleXMLElement;
 
-class SwordControllerTest extends BaseTestCase {
+class SwordControllerTest extends ControllerBaseCase {
     private function getXml($string) {
-        $xml = simplexml_load_string($string);
+        $xml = simplexml__stringFixtures($string);
         Namespaces::registerNamespaces($xml);
 
         return $xml;
@@ -45,19 +45,19 @@ class SwordControllerTest extends BaseTestCase {
         return $data;
     }
 
-    protected function getFixtures() {
+    protected function fixtures() : array {
         return [
-            LoadContentProvider::class,
-            LoadPluginProperty::class,
-            LoadDeposit::class,
+            ContentProviderFixtures::class,
+            PluginPropertyFixtures::class,
+            DepositFixtures::class,
         ];
     }
 
     public function testServiceDocumentMissingOnBehalfOf() : void {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/api/sword/2.0/sd-iri');
-        $this->assertSame(400, $client->getResponse()->getStatusCode());
-        $xml = $this->getXml($client->getResponse()->getContent());
+        $crawler = $this->client->request('GET', '/api/sword/2.0/sd-iri');
+        $this->assertSame(400, $this->client->getResponse()->getStatusCode());
+        $xml = $this->getXml($this->client->getResponse()->getContent());
         $this->assertXpath(
             'HTTP header On-Behalf-Of is required.',
             $xml,
@@ -68,11 +68,11 @@ class SwordControllerTest extends BaseTestCase {
 
     public function testServiceDocumentProviderNotFound() : void {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/api/sword/2.0/sd-iri', [], [], [
+        $crawler = $this->client->request('GET', '/api/sword/2.0/sd-iri', [], [], [
             'HTTP_ON-Behalf-Of' => 'abc123',
         ]);
-        $this->assertSame(404, $client->getResponse()->getStatusCode());
-        $xml = $this->getXml($client->getResponse()->getContent());
+        $this->assertSame(404, $this->client->getResponse()->getStatusCode());
+        $xml = $this->getXml($this->client->getResponse()->getContent());
         $this->assertXpath(
             'Content provider not found.',
             $xml,
@@ -83,11 +83,11 @@ class SwordControllerTest extends BaseTestCase {
 
     public function testServiceDocument() : void {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/api/sword/2.0/sd-iri', [], [], [
-            'HTTP_On-Behalf-Of' => LoadContentProvider::PROVIDER_UUID_1,
+        $crawler = $this->client->request('GET', '/api/sword/2.0/sd-iri', [], [], [
+            'HTTP_On-Behalf-Of' => ContentProviderFixtures::PROVIDER_UUID_1,
         ]);
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $xml = $this->getXml($client->getResponse()->getContent());
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $xml = $this->getXml($this->client->getResponse()->getContent());
         $this->assertXpath(
             'com.example.text',
             $xml,
@@ -102,11 +102,11 @@ class SwordControllerTest extends BaseTestCase {
     }
 
     public function testCreateDepositSingle() : void {
-        $auCount = count($this->em->getRepository(Au::class)->findAll());
+        $auCount = count($this->entityManager->getRepository(Au::class)->findAll());
         $provider = $this->getReference('provider.1');
         $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             'POST',
             '/api/sword/2.0/col-iri/' . $provider->getUuid(),
             [],
@@ -114,18 +114,18 @@ class SwordControllerTest extends BaseTestCase {
             [],
             $data
         );
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertSame(201, $response->getStatusCode());
         $this->assertStringEndsWith('/edit', $response->headers->get('Location'));
-        $this->assertSame($auCount + 1, count($this->em->getRepository(Au::class)->findAll()));
+        $this->assertSame($auCount + 1, count($this->entityManager->getRepository(Au::class)->findAll()));
     }
 
     public function testCreateDepositMultiple() : void {
-        $auCount = count($this->em->getRepository(Au::class)->findAll());
+        $auCount = count($this->entityManager->getRepository(Au::class)->findAll());
         $provider = $this->getReference('provider.1');
         $client = static::createClient();
         $data = $this->getData('Sword/depositMultiple.xml');
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             'POST',
             '/api/sword/2.0/col-iri/' . $provider->getUuid(),
             [],
@@ -133,17 +133,17 @@ class SwordControllerTest extends BaseTestCase {
             [],
             $data
         );
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertSame(400, $response->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('multiple content elements are not allowed.', $response->getContent());
     }
 
     public function testCreateDeposits() : void {
-        $auCount = count($this->em->getRepository(Au::class)->findAll());
+        $auCount = count($this->entityManager->getRepository(Au::class)->findAll());
         $provider = $this->getReference('provider.1');
         $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             'POST',
             '/api/sword/2.0/col-iri/' . $provider->getUuid(),
             [],
@@ -151,8 +151,8 @@ class SwordControllerTest extends BaseTestCase {
             [],
             $data
         );
-        $this->assertSame($auCount + 1, count($this->em->getRepository(Au::class)->findAll()));
-        $crawler = $client->request(
+        $this->assertSame($auCount + 1, count($this->entityManager->getRepository(Au::class)->findAll()));
+        $crawler = $this->client->request(
             'POST',
             '/api/sword/2.0/col-iri/' . $provider->getUuid(),
             [],
@@ -161,19 +161,19 @@ class SwordControllerTest extends BaseTestCase {
             $data
         );
         // same AU.
-        $this->assertSame($auCount + 1, count($this->em->getRepository(Au::class)->findAll()));
+        $this->assertSame($auCount + 1, count($this->entityManager->getRepository(Au::class)->findAll()));
     }
 
     public function testCreateEmptyDeposit() : void {
         $provider = $this->getReference('provider.1');
         $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
-        $xml = simplexml_load_string($data);
+        $xml = simplexml__stringFixtures($data);
         Namespaces::registerNamespaces($xml);
         $node = $xml->xpath('//lom:content')[0];
         unset($node[0]);
 
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             'POST',
             '/api/sword/2.0/col-iri/' . $provider->getUuid(),
             [],
@@ -181,7 +181,7 @@ class SwordControllerTest extends BaseTestCase {
             [],
             $xml->asXML()
         );
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertSame(400, $response->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('Empty deposits are not allowed.', $response->getContent());
     }
@@ -192,7 +192,7 @@ class SwordControllerTest extends BaseTestCase {
         $data = $this->getData('Sword/depositSingle.xml');
         $data = preg_replace('/example/', 'otherdomain', $data);
 
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             'POST',
             '/api/sword/2.0/col-iri/' . $provider->getUuid(),
             [],
@@ -200,7 +200,7 @@ class SwordControllerTest extends BaseTestCase {
             [],
             $data
         );
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertSame(400, $response->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('Permission host for', $response->getContent());
     }
@@ -209,12 +209,12 @@ class SwordControllerTest extends BaseTestCase {
         $provider = $this->getReference('provider.1');
         $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
-        $xml = simplexml_load_string($data);
+        $xml = simplexml__stringFixtures($data);
         Namespaces::registerNamespaces($xml);
         $node = $xml->xpath('//lom:content')[0];
         $node['size'] = 1000000; // ONE MILLION K-BYTES!
 
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             'POST',
             '/api/sword/2.0/col-iri/' . $provider->getUuid(),
             [],
@@ -222,7 +222,7 @@ class SwordControllerTest extends BaseTestCase {
             [],
             $xml->asXML()
         );
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertSame(400, $response->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('Content size 1000000 exceeds provider&#039;s maximum: 10000', $response->getContent());
     }
@@ -232,7 +232,7 @@ class SwordControllerTest extends BaseTestCase {
         $provider = $this->getReference('provider.1');
         $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
-        $createCrawler = $client->request(
+        $createCrawler = $this->client->request(
             'POST',
             '/api/sword/2.0/col-iri/' . $provider->getUuid(),
             [],
@@ -240,14 +240,14 @@ class SwordControllerTest extends BaseTestCase {
             [],
             $data
         );
-        $createResponse = $client->getResponse();
+        $createResponse = $this->client->getResponse();
         $this->assertSame(201, $createResponse->getStatusCode());
         $location = $createResponse->headers->get('Location');
         $this->assertStringEndsWith('/edit', $location);
 
         // then edit the deposit.
         $update = $this->getData('Sword/depositEdit.xml');
-        $editCrawler = $client->request(
+        $editCrawler = $this->client->request(
             'PUT',
             preg_replace('~^./api/~', '/api/', $location),
             [],
@@ -255,12 +255,12 @@ class SwordControllerTest extends BaseTestCase {
             [],
             $update
         );
-        $editResponse = $client->getResponse();
+        $editResponse = $this->client->getResponse();
         $this->assertSame(200, $editResponse->getStatusCode());
         $this->assertStringEndsWith('/edit', $editResponse->headers->get('Location'));
 
         // check that the content checksum value changed.
-        $deposit = $this->em->getRepository(Deposit::class)->findOneBy([
+        $deposit = $this->entityManager->getRepository(Deposit::class)->findOneBy([
             'url' => 'http://example.com/3691/11186563486_8796f4f843_o_d.jpg',
         ]);
         $this->assertSame('D3B0738', $deposit->getChecksumValue());
@@ -271,11 +271,11 @@ class SwordControllerTest extends BaseTestCase {
         $provider = $this->getReference('provider.1');
         $deposit = $this->getReference('deposit.1');
         $client = static::createClient();
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             'GET',
             '/api/sword/2.0/cont-iri/' . $provider->getUuid() . '/' . $deposit->getUuid()
         );
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
     }
 
@@ -284,11 +284,11 @@ class SwordControllerTest extends BaseTestCase {
         $provider = $this->getReference('provider.1');
         $deposit = $this->getReference('deposit.1');
         $client = static::createClient();
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             'GET',
             '/api/sword/2.0/cont-iri/' . $provider->getUuid() . '/' . $deposit->getUuid() . '/state'
         );
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('LOCKSS boxes have not completed', $response->getContent());
     }
@@ -298,11 +298,11 @@ class SwordControllerTest extends BaseTestCase {
         $provider = $this->getReference('provider.1');
         $deposit = $this->getReference('deposit.2');
         $client = static::createClient();
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             'GET',
             '/api/sword/2.0/cont-iri/' . $provider->getUuid() . '/' . $deposit->getUuid() . '/state'
         );
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('LOCKSS boxes have harvested', $response->getContent());
     }
@@ -312,11 +312,11 @@ class SwordControllerTest extends BaseTestCase {
         $provider = $this->getReference('provider.1');
         $deposit = $this->getReference('deposit.1');
         $client = static::createClient();
-        $crawler = $client->request(
+        $crawler = $this->client->request(
             'GET',
             '/api/sword/2.0/cont-iri/' . $provider->getUuid() . '/' . $deposit->getUuid() . '/edit'
         );
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('Content URLs deposited', $response->getContent());
     }

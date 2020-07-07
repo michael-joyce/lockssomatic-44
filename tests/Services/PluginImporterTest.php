@@ -8,26 +8,26 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Services;
+namespace App\Tests\Services;
 
-use AppBundle\Entity\Plugin;
-use AppBundle\Entity\PluginProperty;
-use AppBundle\Services\PluginImporter;
+use App\Entity\Plugin;
+use App\Entity\PluginProperty;
+use App\Services\PluginImporter;
 use Exception;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 use SimpleXMLElement;
 use ZipArchive;
 
 /**
  * Description of PluginImporterTest.
  */
-class PluginImporterTest extends BaseTestCase {
+class PluginImporterTest extends ControllerBaseCase {
     /**
      * @var PluginImporter
      */
     private $importer;
 
-    protected function getFixtures() {
+    protected function fixtures() : array {
         return [];
     }
 
@@ -114,31 +114,31 @@ class PluginImporterTest extends BaseTestCase {
     }
 
     public function testFindXmlPropString() : void {
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $this->assertSame('COPPUL WestVault Plugin', $this->importer->findXmlPropString($xml, 'plugin_name'));
         $this->assertSame(null, $this->importer->findXmlPropString($xml, 'fancy_dan'));
     }
 
     public function testFindXmlPropStringException() : void {
         $this->expectException(Exception::class);
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $this->importer->findXmlPropString($xml, 'bad_entry');
     }
 
     public function testFindXmlPropElement() : void {
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $this->assertInstanceOf(SimpleXMLElement::class, $this->importer->findXmlPropElement($xml, 'au_permission_url'));
         $this->assertSame(null, $this->importer->findXmlPropElement($xml, 'fancy_dan'));
     }
 
     public function testFindXmlPropElementException() : void {
         $this->expectException(Exception::class);
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $this->importer->findXmlPropElement($xml, 'other_bad_entry');
     }
 
     public function testNewPluginPropertyString() : void {
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $plugin = new Plugin();
         $property = $this->importer->newPluginProperty($plugin, 'plugin_version', $xml->xpath('//entry[string[1]/text()="plugin_version"]/string[2]')[0]);
         $this->assertInstanceOf(PluginProperty::class, $property);
@@ -150,7 +150,7 @@ class PluginImporterTest extends BaseTestCase {
     }
 
     public function testNewPluginPropertyList() : void {
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $plugin = new Plugin();
         $property = $this->importer->newPluginProperty($plugin, 'au_permission_url', $xml->xpath('//entry[string[1]/text()="au_permission_url"]/list[1]')[0]);
         $this->assertInstanceOf(PluginProperty::class, $property);
@@ -162,7 +162,7 @@ class PluginImporterTest extends BaseTestCase {
     }
 
     public function testImportChildren() : void {
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $property = new PluginProperty();
 
         $plugin = new Plugin();
@@ -193,7 +193,7 @@ class PluginImporterTest extends BaseTestCase {
     }
 
     public function testNewPluginConfig() : void {
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $plugin = new Plugin();
         $property = $this->importer->newPluginConfig($plugin, 'plugin_config_props', $xml->xpath('//entry[string[1]/text()="plugin_config_props"]/list[1]')[0]);
         $this->assertInstanceOf(PluginProperty::class, $property);
@@ -201,30 +201,30 @@ class PluginImporterTest extends BaseTestCase {
     }
 
     public function testAddProperties() : void {
-        $em = $this->getDoctrine();
+        $this->entityManager = self::$container();
 
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $plugin = new Plugin();
         $plugin->setName('test plugin');
         $plugin->setVersion(2);
         $plugin->setIdentifier('com.example.lockss.plugin');
-        $em->persist($plugin);
+        $this->entityManager->persist($plugin);
         $this->importer->addProperties($plugin, $xml);
-        $em->flush();
+        $this->entityManager->flush();
         $this->assertSame(45, count($plugin->getPluginProperties()));
     }
 
     public function testBuildPlugin() : void {
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $plugin = $this->importer->buildPlugin($xml);
         $this->assertInstanceOf(Plugin::class, $plugin);
-        $this->getDoctrine()->flush(); // make sure it was flushed to the db.
+        self::$container()->flush(); // make sure it was flushed to the db.
         $this->assertNotNull($plugin->getId());
     }
 
     public function testBuildPluginMissingId() : void {
         $this->expectException(Exception::class);
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $node = $xml->xpath('//entry[string/text()="plugin_version"]')[0];
         unset($node[0]); // remove plugin_identifier.
         $this->importer->buildPlugin($xml);
@@ -232,9 +232,9 @@ class PluginImporterTest extends BaseTestCase {
 
     public function testBuildPluginDuplicate() : void {
         $this->expectException(Exception::class);
-        $xml = simplexml_load_string($this->xmlData());
+        $xml = simplexml__stringFixtures($this->xmlData());
         $this->importer->buildPlugin($xml);
-        $this->getDoctrine()->flush();
+        self::$container()->flush();
         $this->importer->buildPlugin($xml);
     }
 

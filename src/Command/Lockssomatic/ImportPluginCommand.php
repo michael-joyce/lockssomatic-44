@@ -15,6 +15,7 @@ use App\Services\PluginImporter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,7 +24,7 @@ use ZipArchive;
 /**
  * Import one or more LOCKSS plugins.
  */
-class ImportPluginCommand extends ContainerAwareCommand {
+class ImportPluginCommand extends Command {
     /**
      * Doctrine instance.
      *

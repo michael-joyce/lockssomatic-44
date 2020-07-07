@@ -8,17 +8,17 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Entity;
+namespace App\Tests\Entity;
 
-use AppBundle\Entity\ContentProvider;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use App\Entity\ContentProvider;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 
 /**
  * Description of PluginPropertyTest.
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class ProviderTest extends BaseTestCase {
+class ProviderTest extends ControllerBaseCase {
     /**
      * @var ContentProvider
      */

@@ -8,26 +8,26 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Repository;
+namespace App\Tests\Repository;
 
-use AppBundle\DataFixtures\ORM\LoadAu;
-use AppBundle\DataFixtures\ORM\LoadDeposit;
-use AppBundle\Entity\Au;
-use AppBundle\Entity\Deposit;
-use AppBundle\Repository\AuRepository;
+use App\DataFixtures\AuFixtures;
+use App\DataFixtures\DepositFixtures;
+use App\Entity\Au;
+use App\Entity\Deposit;
+use App\Repository\AuRepository;
 use Iterator;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class AuRepositoryTest extends BaseTestCase {
+class AuRepositoryTest extends ControllerBaseCase {
     /**
      * @var AuRepository
      */
     private $repo;
 
-    protected function getFixtures() {
+    protected function fixtures() : array {
         return [
-            LoadAu::class,
-            LoadDeposit::class,
+            AuFixtures::class,
+            DepositFixtures::class,
         ];
     }
 

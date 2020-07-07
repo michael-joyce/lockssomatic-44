@@ -8,41 +8,40 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Controller;
+namespace App\Tests\Controller;
 
-use Nines\UserBundle\DataFixtures\ORM\LoadUser;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UserBundle\DataFixtures\UserFixtures;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 
 /**
  * Description of DefaultControllerTest.
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class DefaultControllerTest extends BaseTestCase {
-    public function getFixtures() {
+class DefaultControllerTest extends ControllerBaseCase {
+    public function fixtures() : array {
         return [
-            LoadUser::class,
+            UserFixtures::class,
         ];
     }
 
     public function testAnonHomePage() : void {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $crawler = $this->client->request('GET', '/');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('LOCKSSOMatic', $crawler->filter('h1')->text());
     }
 
     public function testUserHomePage() : void {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('LOCKSSOMatic', $crawler->filter('p')->text());
     }
 
     public function testAdminHomePage() : void {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $crawler = $client->request('GET', '/');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         $this->assertStringContainsStringIgnoringCase('LOCKSSOMatic', $crawler->filter('p')->text());
     }
 }

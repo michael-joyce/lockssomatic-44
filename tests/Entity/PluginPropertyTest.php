@@ -8,10 +8,10 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Entity;
+namespace App\Tests\Entity;
 
-use AppBundle\Entity\PluginProperty;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use App\Entity\PluginProperty;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 use ReflectionObject;
 
 /**
@@ -19,7 +19,7 @@ use ReflectionObject;
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class PluginPropertyTest extends BaseTestCase {
+class PluginPropertyTest extends ControllerBaseCase {
     /**
      * @var PluginProperty
      */

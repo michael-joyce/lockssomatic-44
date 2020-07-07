@@ -8,9 +8,9 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Utilities;
+namespace App\Tests\Utilities;
 
-use AppBundle\Utilities\Namespaces;
+use App\Utilities\Namespaces;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -39,7 +39,7 @@ class NamespacesTest extends TestCase {
     }
 
     public function testRegisterNamespaces() : void {
-        $xml = simplexml_load_string($this->getXml());
+        $xml = simplexml__stringFixtures($this->getXml());
         Namespaces::registerNamespaces($xml);
         $this->assertSame('1', (string) $xml->xpath('//dcterms:a[1]/text()')[0]);
         $this->assertSame('2', (string) $xml->xpath('//sword:b[1]/text()')[0]);

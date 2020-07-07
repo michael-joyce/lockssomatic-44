@@ -8,30 +8,30 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Controller;
+namespace App\Tests\Controller;
 
-use AppBundle\DataFixtures\ORM\LoadAu;
-use AppBundle\DataFixtures\ORM\LoadBox;
-use AppBundle\DataFixtures\ORM\LoadContentOwner;
-use AppBundle\DataFixtures\ORM\LoadContentProvider;
-use AppBundle\DataFixtures\ORM\LoadPln;
-use AppBundle\DataFixtures\ORM\LoadPlugin;
-use AppBundle\Entity\Box;
-use AppBundle\Entity\Pln;
-use AppBundle\Services\FilePaths;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use App\DataFixtures\AuFixtures;
+use App\DataFixtures\BoxFixtures;
+use App\DataFixtures\ContentOwnerFixtures;
+use App\DataFixtures\ContentProviderFixtures;
+use App\DataFixtures\PlnFixtures;
+use App\DataFixtures\PluginFixtures;
+use App\Entity\Box;
+use App\Entity\Pln;
+use App\Services\FilePaths;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 use org\bovigo\vfs\vfsStream;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class LockssControllerTest extends BaseTestCase {
-    public function getFixtures() {
+class LockssControllerTest extends ControllerBaseCase {
+    public function fixtures() : array {
         return [
-            LoadPln::class,
-            LoadBox::class,
-            LoadPlugin::class,
-            LoadContentOwner::class,
-            LoadContentProvider::class,
-            LoadAu::class,
+            PlnFixtures::class,
+            BoxFixtures::class,
+            PluginFixtures::class,
+            ContentOwnerFixtures::class,
+            ContentProviderFixtures::class,
+            AuFixtures::class,
         ];
     }
 
@@ -45,10 +45,9 @@ class LockssControllerTest extends BaseTestCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getLockssXmlFile')->willReturn($url);
 
-        $client = $this->makeClient();
-        $client->getContainer()->set(FilePaths::class, $fp);
-        $client->request('GET', '/plnconfigs/1/properties/lockss.xml');
-        $response = $client->getResponse();
+        $this->client->getContainer()->set(FilePaths::class, $fp);
+        $this->client->request('GET', '/plnconfigs/1/properties/lockss.xml');
+        $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('text/xml', $response->headers->get('Content-Type', null, true));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
@@ -66,10 +65,9 @@ class LockssControllerTest extends BaseTestCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getLockssXmlFile')->willReturn($url);
 
-        $client = $this->makeClient();
-        $client->getContainer()->set(FilePaths::class, $fp);
-        $client->request('GET', '/plnconfigs/1/properties/lockss.xml');
-        $response = $client->getResponse();
+        $this->client->getContainer()->set(FilePaths::class, $fp);
+        $this->client->request('GET', '/plnconfigs/1/properties/lockss.xml');
+        $response = $this->client->getResponse();
         $this->assertSame(404, $response->getStatusCode());
     }
 
@@ -86,9 +84,9 @@ class LockssControllerTest extends BaseTestCase {
         $client = $this->makeClient([], [
             'REMOTE_ADDR' => '11.0.0.0',
         ]);
-        $client->getContainer()->set(FilePaths::class, $fp);
-        $client->request('GET', '/plnconfigs/1/properties/lockss.xml');
-        $response = $client->getResponse();
+        $this->client->getContainer()->set(FilePaths::class, $fp);
+        $this->client->request('GET', '/plnconfigs/1/properties/lockss.xml');
+        $response = $this->client->getResponse();
         $this->assertSame(403, $response->getStatusCode());
     }
 
@@ -101,9 +99,9 @@ class LockssControllerTest extends BaseTestCase {
         $box->setWebServicePort('11234');
         $box->setSendNotifications(false);
         $box->setActive(false);
-        $box->setPln($this->em->find(Pln::class, 1));
-        $this->em->persist($box);
-        $this->em->flush();
+        $box->setPln($this->entityManager->find(Pln::class, 1));
+        $this->entityManager->persist($box);
+        $this->entityManager->flush();
 
         $data = '<root/>';
 
@@ -118,10 +116,9 @@ class LockssControllerTest extends BaseTestCase {
             'REMOTE_ADDR' => '10.0.0.12',
         ]);
 
-        $client = $this->makeClient();
-        $client->getContainer()->set(FilePaths::class, $fp);
-        $client->request('GET', '/plnconfigs/1/properties/lockss.xml');
-        $response = $client->getResponse();
+        $this->client->getContainer()->set(FilePaths::class, $fp);
+        $this->client->request('GET', '/plnconfigs/1/properties/lockss.xml');
+        $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
     }
 
@@ -135,10 +132,9 @@ class LockssControllerTest extends BaseTestCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getTitleDbPath')->willReturn($url);
 
-        $client = $this->makeClient();
-        $client->getContainer()->set(FilePaths::class, $fp);
-        $client->request('GET', '/plnconfigs/1/titledbs/1/1/titledb_1.xml');
-        $response = $client->getResponse();
+        $this->client->getContainer()->set(FilePaths::class, $fp);
+        $this->client->request('GET', '/plnconfigs/1/titledbs/1/1/titledb_1.xml');
+        $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('text/xml', $response->headers->get('Content-Type', null, true));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
@@ -156,10 +152,9 @@ class LockssControllerTest extends BaseTestCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getTitleDbPath')->willReturn($url);
 
-        $client = $this->makeClient();
-        $client->getContainer()->set(FilePaths::class, $fp);
-        $client->request('GET', '/plnconfigs/1/titledbs/1/1/titledb_1.xml');
-        $response = $client->getResponse();
+        $this->client->getContainer()->set(FilePaths::class, $fp);
+        $this->client->request('GET', '/plnconfigs/1/titledbs/1/1/titledb_1.xml');
+        $response = $this->client->getResponse();
         $this->assertSame(404, $response->getStatusCode());
     }
 
@@ -173,10 +168,9 @@ class LockssControllerTest extends BaseTestCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getManifestPath')->willReturn($url);
 
-        $client = $this->makeClient();
-        $client->getContainer()->set(FilePaths::class, $fp);
-        $client->request('GET', '/plnconfigs/1/manifests/1/1/manifest_1.html');
-        $response = $client->getResponse();
+        $this->client->getContainer()->set(FilePaths::class, $fp);
+        $this->client->request('GET', '/plnconfigs/1/manifests/1/1/manifest_1.html');
+        $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('text/html', $response->headers->get('Content-Type', null, true));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
@@ -194,10 +188,9 @@ class LockssControllerTest extends BaseTestCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getManifestPath')->willReturn($url);
 
-        $client = $this->makeClient();
-        $client->getContainer()->set(FilePaths::class, $fp);
-        $client->request('GET', '/plnconfigs/1/manifests/1/1/manifest_1.html');
-        $response = $client->getResponse();
+        $this->client->getContainer()->set(FilePaths::class, $fp);
+        $this->client->request('GET', '/plnconfigs/1/manifests/1/1/manifest_1.html');
+        $response = $this->client->getResponse();
         $this->assertSame(404, $response->getStatusCode());
     }
 
@@ -208,18 +201,17 @@ class LockssControllerTest extends BaseTestCase {
         $url = vfsStream::url('root/lockss.keystore');
         file_put_contents($url, $data);
 
-        $pln = $this->em->find(Pln::class, 1);
+        $pln = $this->entityManager->find(Pln::class, 1);
         $pln->setKeystore($url); // anything works here.
-        $this->em->flush();
+        $this->entityManager->flush();
 
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getPluginsExportDir')->willReturn(dirname($url));
 
-        $client = $this->makeClient();
-        $client->getContainer()->set(FilePaths::class, $fp);
+        $this->client->getContainer()->set(FilePaths::class, $fp);
 
-        $client->request('GET', '/plnconfigs/1/plugins/lockssomatic.keystore');
-        $response = $client->getResponse();
+        $this->client->request('GET', '/plnconfigs/1/plugins/lockssomatic.keystore');
+        $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('application/x-java-keystore', $response->headers->get('Content-Type', null, true));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
@@ -228,13 +220,12 @@ class LockssControllerTest extends BaseTestCase {
     }
 
     public function testKeystore404Null() : void {
-        $pln = $this->em->find(Pln::class, 1);
+        $pln = $this->entityManager->find(Pln::class, 1);
         $pln->setKeystore(null);
-        $this->em->flush();
+        $this->entityManager->flush();
 
-        $client = $this->makeClient();
-        $client->request('GET', '/plnconfigs/1/plugins/lockssomatic.keystore');
-        $response = $client->getResponse();
+        $this->client->request('GET', '/plnconfigs/1/plugins/lockssomatic.keystore');
+        $response = $this->client->getResponse();
         $this->assertSame(404, $response->getStatusCode());
     }
 
@@ -248,11 +239,10 @@ class LockssControllerTest extends BaseTestCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getPluginsManifestFile')->willReturn($url);
 
-        $client = $this->makeClient();
-        $client->getContainer()->set(FilePaths::class, $fp);
+        $this->client->getContainer()->set(FilePaths::class, $fp);
 
-        $client->request('GET', '/plnconfigs/1/plugins/index.html');
-        $response = $client->getResponse();
+        $this->client->request('GET', '/plnconfigs/1/plugins/index.html');
+        $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('text/html', $response->headers->get('Content-Type', null, true));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
@@ -270,11 +260,10 @@ class LockssControllerTest extends BaseTestCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getPluginsManifestFile')->willReturn($url);
 
-        $client = $this->makeClient();
-        $client->getContainer()->set(FilePaths::class, $fp);
+        $this->client->getContainer()->set(FilePaths::class, $fp);
 
-        $client->request('GET', '/plnconfigs/1/plugins/index.html');
-        $response = $client->getResponse();
+        $this->client->request('GET', '/plnconfigs/1/plugins/index.html');
+        $response = $this->client->getResponse();
         $this->assertSame(404, $response->getStatusCode());
     }
 
@@ -288,11 +277,10 @@ class LockssControllerTest extends BaseTestCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getPluginsExportDir')->willReturn('vfs://root');
 
-        $client = $this->makeClient();
-        $client->getContainer()->set(FilePaths::class, $fp);
+        $this->client->getContainer()->set(FilePaths::class, $fp);
 
-        $client->request('GET', '/plnconfigs/1/plugins/dummy.jar');
-        $response = $client->getResponse();
+        $this->client->request('GET', '/plnconfigs/1/plugins/dummy.jar');
+        $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('application/java-archive', $response->headers->get('Content-Type', null, true));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
@@ -310,11 +298,10 @@ class LockssControllerTest extends BaseTestCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getPluginsExportDir')->willReturn('vfs://root');
 
-        $client = $this->makeClient();
-        $client->getContainer()->set(FilePaths::class, $fp);
+        $this->client->getContainer()->set(FilePaths::class, $fp);
 
-        $client->request('GET', '/plnconfigs/1/plugins/dummy.jar');
-        $response = $client->getResponse();
+        $this->client->request('GET', '/plnconfigs/1/plugins/dummy.jar');
+        $response = $this->client->getResponse();
         $this->assertSame(404, $response->getStatusCode());
     }
 

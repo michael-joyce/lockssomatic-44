@@ -8,21 +8,21 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Services;
+namespace App\Tests\Services;
 
-use AppBundle\DataFixtures\ORM\LoadContentProvider;
-use AppBundle\Entity\Deposit;
-use AppBundle\Services\DepositBuilder;
-use AppBundle\Utilities\Namespaces;
+use App\DataFixtures\ContentProviderFixtures;
+use App\Entity\Deposit;
+use App\Services\DepositBuilder;
+use App\Utilities\Namespaces;
 use DateTime;
 use Exception;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 use SimpleXMLElement;
 
 /**
  * Description of DepositBuilderTest.
  */
-class DepositBuilderTest extends BaseTestCase {
+class DepositBuilderTest extends ControllerBaseCase {
     /**
      * @var DepositBuilder
      */
@@ -81,9 +81,9 @@ XML;
         return $xml;
     }
 
-    protected function getFixtures() {
+    protected function fixtures() : array {
         return [
-            LoadContentProvider::class,
+            ContentProviderFixtures::class,
         ];
     }
 

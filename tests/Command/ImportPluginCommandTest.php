@@ -8,17 +8,17 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Command;
+namespace App\Tests\Command;
 
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class ImportPluginCommandTest extends BaseTestCase {
+class ImportPluginCommandTest extends ControllerBaseCase {
     public const NAME = 'lom:import:plugin';
 
     public const JARS = [
-        'src/AppBundle/Tests/Data/DummyPlugin.jar',
+        'tests/Data/DummyPlugin.jar',
     ];
 
     /**

@@ -8,12 +8,12 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Services;
+namespace App\Tests\Services;
 
-use AppBundle\Entity\Box;
-use AppBundle\Entity\BoxStatus;
-use AppBundle\Services\BoxNotifier;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use App\Entity\Box;
+use App\Entity\BoxStatus;
+use App\Services\BoxNotifier;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 use Swift_Message;
 use Swift_Plugins_MessageLogger;
 
@@ -22,7 +22,7 @@ use Swift_Plugins_MessageLogger;
  *
  * @author michael
  */
-class BoxNotifierTest extends BaseTestCase {
+class BoxNotifierTest extends ControllerBaseCase {
     /**
      * @var BoxNotifier
      */

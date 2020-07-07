@@ -8,23 +8,23 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Menu;
+namespace App\Tests\Menu;
 
-use AppBundle\Menu\Builder;
+use App\Menu\Builder;
 use Knp\Menu\MenuItem;
-use Nines\UserBundle\DataFixtures\ORM\LoadUser;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UserBundle\DataFixtures\UserFixtures;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class BuilderTest extends BaseTestCase {
-    protected function getFixtures() {
+class BuilderTest extends ControllerBaseCase {
+    protected function fixtures() : array {
         return [
-            LoadUser::class,
+            UserFixtures::class,
         ];
     }
 
     public function testAnonLockssMenu() : void {
-        $client = $this->makeClient();
-        $menu = $client->getContainer()->get(Builder::class)->mainMenu([]);
+        $this->client->
+        $menu = $this->client->getContainer()->get(Builder::class)->mainMenu([]);
         $this->assertInstanceOf(MenuItem::class, $menu);
         $this->assertSame(1, count($menu->getChildren()));
     }
@@ -35,8 +35,8 @@ class BuilderTest extends BaseTestCase {
             'password' => 'secret',
         ]);
         // must make a request to get the auth set up properly in the container.
-        $client->request('get', '/');
-        $menu = $client->getContainer()->get(Builder::class)->mainMenu([]);
+        $this->client->request('get', '/');
+        $menu = $this->client->getContainer()->get(Builder::class)->mainMenu([]);
         $this->assertInstanceOf(MenuItem::class, $menu);
         $this->assertSame(3, count($menu->getChildren()));
     }

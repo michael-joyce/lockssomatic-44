@@ -8,20 +8,20 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Services;
+namespace App\Tests\Services;
 
-use AppBundle\DataFixtures\ORM\LoadPln;
-use AppBundle\Entity\Au;
-use AppBundle\Entity\AuProperty;
-use AppBundle\Entity\Box;
-use AppBundle\Entity\ContentOwner;
-use AppBundle\Entity\ContentProvider;
-use AppBundle\Entity\Deposit;
-use AppBundle\Entity\Pln;
-use AppBundle\Entity\Plugin;
-use AppBundle\Services\ConfigUpdater;
+use App\DataFixtures\PlnFixtures;
+use App\Entity\Au;
+use App\Entity\AuProperty;
+use App\Entity\Box;
+use App\Entity\ContentOwner;
+use App\Entity\ContentProvider;
+use App\Entity\Deposit;
+use App\Entity\Pln;
+use App\Entity\Plugin;
+use App\Services\ConfigUpdater;
 use Doctrine\Common\Collections\ArrayCollection;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 use ReflectionProperty;
 
 /**
@@ -29,15 +29,15 @@ use ReflectionProperty;
  *
  * @author michael
  */
-class ConfigUpdaterTest extends BaseTestCase {
+class ConfigUpdaterTest extends ControllerBaseCase {
     /**
      * @var ConfigUpdater
      */
     private $updater;
 
-    protected function getFixtures() {
+    protected function fixtures() : array {
         return [
-            LoadPln::class,
+            PlnFixtures::class,
         ];
     }
 

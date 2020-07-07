@@ -14,6 +14,7 @@ use App\Entity\Pln;
 use App\Services\FilePaths;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Import a java keystore for use in a PLN.
  */
-class ImportKeystoreCommand extends ContainerAwareCommand {
+class ImportKeystoreCommand extends Command {
     /**
      * Doctrine instance.
      *

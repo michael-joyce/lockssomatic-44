@@ -8,23 +8,23 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Services;
+namespace App\Tests\Services;
 
-use AppBundle\DataFixtures\ORM\LoadDeposit;
-use AppBundle\Entity\Au;
-use AppBundle\Entity\AuProperty;
-use AppBundle\Entity\ContentOwner;
-use AppBundle\Entity\ContentProvider;
-use AppBundle\Entity\Deposit;
-use AppBundle\Entity\Pln;
-use AppBundle\Entity\Plugin;
-use AppBundle\Entity\PluginProperty;
-use AppBundle\Repository\AuRepository;
-use AppBundle\Services\AuManager;
+use App\DataFixtures\DepositFixtures;
+use App\Entity\Au;
+use App\Entity\AuProperty;
+use App\Entity\ContentOwner;
+use App\Entity\ContentProvider;
+use App\Entity\Deposit;
+use App\Entity\Pln;
+use App\Entity\Plugin;
+use App\Entity\PluginProperty;
+use App\Repository\AuRepository;
+use App\Services\AuManager;
 use ArrayObject;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 use ReflectionProperty;
 
 /**
@@ -32,15 +32,15 @@ use ReflectionProperty;
  *
  * @author michael
  */
-class AuManagerTest extends BaseTestCase {
+class AuManagerTest extends ControllerBaseCase {
     /**
      * @var AuManager
      */
     private $manager;
 
-    protected function getFixtures() {
+    protected function fixtures() : array {
         return [
-            LoadDeposit::class,
+            DepositFixtures::class,
         ];
     }
 

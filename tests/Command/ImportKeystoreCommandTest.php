@@ -8,27 +8,27 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace AppBundle\Tests\Command;
+namespace App\Tests\Command;
 
-use AppBundle\DataFixtures\ORM\LoadPln;
-use AppBundle\Entity\Pln;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use App\DataFixtures\PlnFixtures;
+use App\Entity\Pln;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class ImportKeystoreCommandTest extends BaseTestCase {
+class ImportKeystoreCommandTest extends ControllerBaseCase {
     public const NAME = 'lom:import:keystore';
 
-    public const KEYSTORE = 'src/AppBundle/Tests/Data/dummy.keystore';
+    public const KEYSTORE = 'tests/Data/dummy.keystore';
 
     /**
      * @var CommandTester
      */
     private $tester;
 
-    public function getFixtures() {
+    public function fixtures() : array {
         return [
-            LoadPln::class,
+            PlnFixtures::class,
         ];
     }
 
@@ -38,7 +38,7 @@ class ImportKeystoreCommandTest extends BaseTestCase {
             'plnId' => 1,
             'path' => self::KEYSTORE,
         ]);
-        $pln = $this->getDoctrine()->find(Pln::class, 1);
+        $pln = $this->entityManager->find(Pln::class, 1);
         $this->assertSame(basename(self::KEYSTORE), $pln->getKeystoreFilename());
     }
 

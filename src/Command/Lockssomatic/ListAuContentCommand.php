@@ -15,6 +15,7 @@ use App\Services\AuManager;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,7 +23,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * LomValidateAuCommand command.
  */
-class ListAuContentCommand extends ContainerAwareCommand {
+class ListAuContentCommand extends Command {
     /**
      * AU Manager.
      *
