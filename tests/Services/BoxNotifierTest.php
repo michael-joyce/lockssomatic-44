@@ -115,7 +115,7 @@ class BoxNotifierTest extends ControllerBaseCase {
 
     protected function setup() : void {
         parent::setUp();
-        $this->notifier = $this->container->get(BoxNotifier::class);
-        $this->messageLogger = $this->container->get('swiftmailer.mailer.default.plugin.messagelogger');
+        $this->notifier = self::$container->get(BoxNotifier::class);
+        $this->messageLogger = self::$container->get('swiftmailer.mailer.default.plugin.messagelogger');
     }
 }

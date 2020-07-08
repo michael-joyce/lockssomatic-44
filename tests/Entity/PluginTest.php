@@ -60,8 +60,8 @@ class PluginTest extends ControllerBaseCase {
     }
 
     public function testGetPluginConfigParams() : void {
-        $importer = $this->container->get(PluginImporter::class);
-        $xml = simplexml__stringFixtures($this->xmlData());
+        $importer = self::$container->get(PluginImporter::class);
+        $xml = simplexml_load_string($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
         $definitionals = $plugin->getPluginConfigParams();
         $this->assertSame(4, count($definitionals));
@@ -79,8 +79,8 @@ class PluginTest extends ControllerBaseCase {
     }
 
     public function testGetDefinitionalParams() : void {
-        $importer = $this->container->get(PluginImporter::class);
-        $xml = simplexml__stringFixtures($this->xmlData());
+        $importer = self::$container->get(PluginImporter::class);
+        $xml = simplexml_load_string($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
         $definitionals = $plugin->getDefinitionalPropertyNames();
         $this->assertSame(2, count($definitionals));
@@ -89,8 +89,8 @@ class PluginTest extends ControllerBaseCase {
     }
 
     public function testGetNonDefinitionalParams() : void {
-        $importer = $this->container->get(PluginImporter::class);
-        $xml = simplexml__stringFixtures($this->xmlData());
+        $importer = self::$container->get(PluginImporter::class);
+        $xml = simplexml_load_string($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
         $nonDefinitionals = $plugin->getNonDefinitionalProperties();
         $this->assertSame(2, count($nonDefinitionals));

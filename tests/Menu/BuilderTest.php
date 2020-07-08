@@ -23,20 +23,16 @@ class BuilderTest extends ControllerBaseCase {
     }
 
     public function testAnonLockssMenu() : void {
-        $this->client->
-        $menu = $this->client->getContainer()->get(Builder::class)->mainMenu([]);
+        $menu = self::$container->get(Builder::class)->mainMenu([]);
         $this->assertInstanceOf(MenuItem::class, $menu);
         $this->assertSame(1, count($menu->getChildren()));
     }
 
     public function testUserLockssMenu() : void {
-        $client = $this->makeClient([
-            'username' => 'user@example.com',
-            'password' => 'secret',
-        ]);
+        $this->login('user.user');
         // must make a request to get the auth set up properly in the container.
         $this->client->request('get', '/');
-        $menu = $this->client->getContainer()->get(Builder::class)->mainMenu([]);
+        $menu = self::$container->get(Builder::class)->mainMenu([]);
         $this->assertInstanceOf(MenuItem::class, $menu);
         $this->assertSame(3, count($menu->getChildren()));
     }

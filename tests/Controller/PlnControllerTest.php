@@ -142,7 +142,7 @@ class PlnControllerTest extends ControllerBaseCase {
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Create')->form();
-        $form['file_upload[file]']->upload('src/App/Tests/Data/dummy.keystore');
+        $form['file_upload[file]']->upload('tests/Data/dummy.keystore');
 
         $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirect());
@@ -157,7 +157,7 @@ class PlnControllerTest extends ControllerBaseCase {
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Create')->form();
-        $form['file_upload[file]']->upload('src/App/Tests/Data/dummy.fakekeystore');
+        $form['file_upload[file]']->upload('tests/Data/dummy.fakekeystore');
 
         $this->client->submit($form);
         $this->assertFalse($this->client->getResponse()->isRedirect());

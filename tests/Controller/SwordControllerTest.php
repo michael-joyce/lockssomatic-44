@@ -22,7 +22,7 @@ use SimpleXMLElement;
 
 class SwordControllerTest extends ControllerBaseCase {
     private function getXml($string) {
-        $xml = simplexml__stringFixtures($string);
+        $xml = simplexml_load_string($string);
         Namespaces::registerNamespaces($xml);
 
         return $xml;
@@ -168,7 +168,7 @@ class SwordControllerTest extends ControllerBaseCase {
         $provider = $this->getReference('provider.1');
         $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
-        $xml = simplexml__stringFixtures($data);
+        $xml = simplexml_load_string($data);
         Namespaces::registerNamespaces($xml);
         $node = $xml->xpath('//lom:content')[0];
         unset($node[0]);
@@ -209,7 +209,7 @@ class SwordControllerTest extends ControllerBaseCase {
         $provider = $this->getReference('provider.1');
         $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
-        $xml = simplexml__stringFixtures($data);
+        $xml = simplexml_load_string($data);
         Namespaces::registerNamespaces($xml);
         $node = $xml->xpath('//lom:content')[0];
         $node['size'] = 1000000; // ONE MILLION K-BYTES!

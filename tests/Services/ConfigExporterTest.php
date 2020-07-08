@@ -149,9 +149,9 @@ class ConfigExporterTest extends ControllerBaseCase {
 
     protected function setup() : void {
         parent::setUp();
-        $this->exporter = $this->container->get(ConfigExporter::class);
+        $this->exporter = self::$container->get(ConfigExporter::class);
 
-        $this->fp = $this->container->get(FilePaths::class);
+        $this->fp = self::$container->get(FilePaths::class);
         $this->root = vfsStream::setup('/confdir');
         $this->fp->setRoot($this->root->url());
         $this->exporter->setFilePaths($this->fp);

@@ -14,7 +14,9 @@ use App\Entity\Box;
 use App\Entity\BoxStatus;
 use Swift_Mailer;
 use Swift_Message;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 /**
  * Description of BoxNotifier.
@@ -28,7 +30,7 @@ class BoxNotifier {
 
     private $mailer;
 
-    public function __construct($sender, $contact, EngineInterface $templating, Swift_Mailer $mailer) {
+    public function __construct($sender, $contact, Environment $templating, MailerInterface $mailer) {
         $this->sender = $sender;
         $this->contact = $contact;
         $this->templating = $templating;

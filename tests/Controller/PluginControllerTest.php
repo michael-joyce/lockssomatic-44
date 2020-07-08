@@ -76,7 +76,7 @@ class PluginControllerTest extends ControllerBaseCase {
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Create')->form();
-        $form['file_upload[file]']->upload('src/App/Tests/Data/DummyPlugin.jar');
+        $form['file_upload[file]']->upload('tests/Data/DummyPlugin.jar');
 
         $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirect());

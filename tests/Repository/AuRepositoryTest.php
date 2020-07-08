@@ -86,6 +86,6 @@ class AuRepositoryTest extends ControllerBaseCase {
 
     protected function setup() : void {
         parent::setUp();
-        $this->repo = $this->em->getRepository(Au::class);
+        $this->repo = $this->entityManager->getRepository(Au::class);
     }
 }

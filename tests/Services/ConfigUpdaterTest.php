@@ -102,7 +102,7 @@ class ConfigUpdaterTest extends ControllerBaseCase {
     }
 
     public function buildContentItems(Au $au) : void {
-        $deposit = $this->em->find(Deposit::class, 1);
+        $deposit = $this->entityManager->find(Deposit::class, 1);
         for ($i = 0; $i < 10; $i++) {
             $deposit = new Deposit();
             $deposit->setUrl("http://example.com/path/{$i}");
@@ -120,7 +120,7 @@ class ConfigUpdaterTest extends ControllerBaseCase {
             // deposit
             $deposit->setAu($au);
             $au->addDeposit($deposit);
-            $this->em->persist($deposit);
+            $this->entityManager->persist($deposit);
         }
     }
 
@@ -249,6 +249,6 @@ class ConfigUpdaterTest extends ControllerBaseCase {
 
     protected function setup() : void {
         parent::setUp();
-        $this->updater = $this->container->get(ConfigUpdater::class);
+        $this->updater = self::$container->get(ConfigUpdater::class);
     }
 }

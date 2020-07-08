@@ -25,7 +25,7 @@ namespace App\Tests\EventListener;
 
 use App\Entity\Box;
 use App\EventListener\BoxListener;
-use Doctrine\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 
 class BoxListenerTest extends ControllerBaseCase {
@@ -42,7 +42,7 @@ class BoxListenerTest extends ControllerBaseCase {
         $box = new Box();
         $box->setHostname($hostname);
         $box->setIpAddress($ip);
-        $args = new LifecycleEventArgs($box, self::$container());
+        $args = new LifecycleEventArgs($box, $this->entityManager);
         $this->listener->prePersist($args);
         $this->assertSame($expected, $box->getIpAddress());
     }
@@ -66,7 +66,7 @@ class BoxListenerTest extends ControllerBaseCase {
         $box = new Box();
         $box->setHostname($hostname);
         $box->setIpAddress($ip);
-        $args = new LifecycleEventArgs($box, self::$container());
+        $args = new LifecycleEventArgs($box, $this->entityManager);
         $this->listener->preUpdate($args);
         $this->assertSame($expected, $box->getIpAddress());
     }
@@ -81,6 +81,6 @@ class BoxListenerTest extends ControllerBaseCase {
 
     protected function setup() : void {
         parent::setUp();
-        $this->listener = $this->getContainer()->get(BoxListener::class);
+        $this->listener = self::$container->get(BoxListener::class);
     }
 }

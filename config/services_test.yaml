@@ -1,0 +1,24 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    test.App\EventListener\BoxListener: '@App\EventListener\BoxListener'
+
+    test.App\EventListener\SwordExceptionListener: '@App\EventListener\SwordExceptionListener'
+
+    test.App\Menu\Builder: '@App\Menu\Builder'
+
+    test.App\Services\AuManager: '@App\Services\AuManager'
+
+    test.App\Services\BoxNotifier: '@App\Services\BoxNotifier'
+
+    test.App\Services\ConfigExporter: '@App\Services\ConfigExporter'
+
+    test.App\Services\ConfigUpdater: '@App\Services\ConfigUpdater'
+
+    test.App\Services\FilePaths: '@App\Services\FilePaths'
+
+    test.App\Command\UpgradeCommand: '@App\Command\UpgradeCommand'

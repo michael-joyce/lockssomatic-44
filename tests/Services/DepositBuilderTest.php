@@ -107,7 +107,6 @@ XML;
         $node = $xml->xpath('/atom:entry')[0];
         $node->addChild('content', null, Namespaces::NS['lom']);
         $deposit = $this->builder->fromXml($xml, $this->getReference('provider.1'));
-        dump($xml->asXML());
         $this->assertInstanceOf(Deposit::class, $deposit);
         $this->assertSame('771E96EC-5486-4E34-A1F6-AB113AFB642D', $deposit->getUuid());
         $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
@@ -138,6 +137,6 @@ XML;
 
     protected function setup() : void {
         parent::setUp();
-        $this->builder = $this->container->get(DepositBuilder::class);
+        $this->builder = self::$container->get(DepositBuilder::class);
     }
 }

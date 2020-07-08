@@ -543,7 +543,7 @@ class AuManagerTest extends ControllerBaseCase {
     }
 
     public function buildContentItems(Au $au) : void {
-        $deposit = $this->em->find(Deposit::class, 1);
+        $deposit = $this->entityManager->find(Deposit::class, 1);
         for ($i = 0; $i < 10; $i++) {
             $deposit = new Deposit();
             $deposit->setUrl("http://example.com/path/{$i}");
@@ -561,7 +561,7 @@ class AuManagerTest extends ControllerBaseCase {
             // deposit
             $deposit->setAu($au);
             $au->addDeposit($deposit);
-            $this->em->persist($deposit);
+            $this->entityManager->persist($deposit);
         }
     }
 
@@ -927,6 +927,6 @@ class AuManagerTest extends ControllerBaseCase {
 
     protected function setup() : void {
         parent::setUp();
-        $this->manager = $this->container->get(AuManager::class);
+        $this->manager = self::$container->get(AuManager::class);
     }
 }

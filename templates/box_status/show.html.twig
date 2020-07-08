@@ -51,7 +51,6 @@
         <h2>Cache Status</h2>
         <p>This box reported {{ boxStatus.data|length }} cache(s).</p>
         {% for data in boxStatus.data %}
-            {% dump(data) %}
             <div class="panel panel-default">
                 <div class="panel-body">
                     <dl class="dl-horizontal">
