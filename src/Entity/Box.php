@@ -96,9 +96,7 @@ class Box extends AbstractEntity {
      * @var string
      *
      * @ORM\Column(name="contact_email", type="string", length=64, nullable=true)
-     * @Assert\Email(
-     *  strict = true
-     * )
+     * @Assert\Email(mode="html5")
      */
     private $contactEmail;
 

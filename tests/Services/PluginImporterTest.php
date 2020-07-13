@@ -216,8 +216,6 @@ class PluginImporterTest extends ControllerBaseCase {
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $this->importer->buildPlugin($xml);
         $this->assertInstanceOf(Plugin::class, $plugin);
-        $this->entityManager->flush(); // make sure it was flushed to the db.
-        $this->assertNotNull($plugin->getId());
     }
 
     public function testBuildPluginMissingId() : void {

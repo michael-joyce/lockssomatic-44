@@ -54,7 +54,6 @@ class SwordControllerTest extends ControllerBaseCase {
     }
 
     public function testServiceDocumentMissingOnBehalfOf() : void {
-        $client = static::createClient();
         $crawler = $this->client->request('GET', '/api/sword/2.0/sd-iri');
         $this->assertSame(400, $this->client->getResponse()->getStatusCode());
         $xml = $this->getXml($this->client->getResponse()->getContent());
@@ -67,7 +66,6 @@ class SwordControllerTest extends ControllerBaseCase {
     }
 
     public function testServiceDocumentProviderNotFound() : void {
-        $client = static::createClient();
         $crawler = $this->client->request('GET', '/api/sword/2.0/sd-iri', [], [], [
             'HTTP_ON-Behalf-Of' => 'abc123',
         ]);
@@ -82,7 +80,6 @@ class SwordControllerTest extends ControllerBaseCase {
     }
 
     public function testServiceDocument() : void {
-        $client = static::createClient();
         $crawler = $this->client->request('GET', '/api/sword/2.0/sd-iri', [], [], [
             'HTTP_On-Behalf-Of' => ContentProviderFixtures::PROVIDER_UUID_1,
         ]);
@@ -104,7 +101,6 @@ class SwordControllerTest extends ControllerBaseCase {
     public function testCreateDepositSingle() : void {
         $auCount = count($this->entityManager->getRepository(Au::class)->findAll());
         $provider = $this->getReference('provider.1');
-        $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
         $crawler = $this->client->request(
             'POST',
@@ -123,7 +119,6 @@ class SwordControllerTest extends ControllerBaseCase {
     public function testCreateDepositMultiple() : void {
         $auCount = count($this->entityManager->getRepository(Au::class)->findAll());
         $provider = $this->getReference('provider.1');
-        $client = static::createClient();
         $data = $this->getData('Sword/depositMultiple.xml');
         $crawler = $this->client->request(
             'POST',
@@ -141,7 +136,6 @@ class SwordControllerTest extends ControllerBaseCase {
     public function testCreateDeposits() : void {
         $auCount = count($this->entityManager->getRepository(Au::class)->findAll());
         $provider = $this->getReference('provider.1');
-        $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
         $crawler = $this->client->request(
             'POST',
@@ -166,7 +160,6 @@ class SwordControllerTest extends ControllerBaseCase {
 
     public function testCreateEmptyDeposit() : void {
         $provider = $this->getReference('provider.1');
-        $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
         $xml = simplexml_load_string($data);
         Namespaces::registerNamespaces($xml);
@@ -188,7 +181,6 @@ class SwordControllerTest extends ControllerBaseCase {
 
     public function testCreateDepositWrongPermissionUrl() : void {
         $provider = $this->getReference('provider.1');
-        $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
         $data = preg_replace('/example/', 'otherdomain', $data);
 
@@ -207,7 +199,6 @@ class SwordControllerTest extends ControllerBaseCase {
 
     public function testCreateLargeDeposit() : void {
         $provider = $this->getReference('provider.1');
-        $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
         $xml = simplexml_load_string($data);
         Namespaces::registerNamespaces($xml);
@@ -230,7 +221,6 @@ class SwordControllerTest extends ControllerBaseCase {
     public function testEditDeposit() : void {
         // first create the deposit.
         $provider = $this->getReference('provider.1');
-        $client = static::createClient();
         $data = $this->getData('Sword/depositSingle.xml');
         $createCrawler = $this->client->request(
             'POST',
@@ -270,7 +260,6 @@ class SwordControllerTest extends ControllerBaseCase {
         // first create the deposit.
         $provider = $this->getReference('provider.1');
         $deposit = $this->getReference('deposit.1');
-        $client = static::createClient();
         $crawler = $this->client->request(
             'GET',
             '/api/sword/2.0/cont-iri/' . $provider->getUuid() . '/' . $deposit->getUuid()
@@ -283,7 +272,6 @@ class SwordControllerTest extends ControllerBaseCase {
         // first create the deposit.
         $provider = $this->getReference('provider.1');
         $deposit = $this->getReference('deposit.1');
-        $client = static::createClient();
         $crawler = $this->client->request(
             'GET',
             '/api/sword/2.0/cont-iri/' . $provider->getUuid() . '/' . $deposit->getUuid() . '/state'
@@ -297,7 +285,6 @@ class SwordControllerTest extends ControllerBaseCase {
         // first create the deposit.
         $provider = $this->getReference('provider.1');
         $deposit = $this->getReference('deposit.2');
-        $client = static::createClient();
         $crawler = $this->client->request(
             'GET',
             '/api/sword/2.0/cont-iri/' . $provider->getUuid() . '/' . $deposit->getUuid() . '/state'
@@ -310,8 +297,7 @@ class SwordControllerTest extends ControllerBaseCase {
     public function testReceipt() : void {
         // first create the deposit.
         $provider = $this->getReference('provider.1');
-        $deposit = $this->getReference('deposit.1');
-        $client = static::createClient();
+        $deposit = $this->getReference('deposit.2');
         $crawler = $this->client->request(
             'GET',
             '/api/sword/2.0/cont-iri/' . $provider->getUuid() . '/' . $deposit->getUuid() . '/edit'

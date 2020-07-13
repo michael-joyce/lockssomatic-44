@@ -50,7 +50,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $this->client->request('GET', '/plnconfigs/1/properties/lockss.xml');
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('text/xml', $response->headers->get('Content-Type', null, true));
+        $this->assertSame('text/xml', $response->headers->get('Content-Type', null));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
         $this->assertSame(strlen($data), $response->getFile()->getSize());
         $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
@@ -83,7 +83,8 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp->method('getLockssXmlFile')->willReturn($url);
 
         static::$container->set('test.'.FilePaths::class, $fp);
-        $this->client->request('GET', '/plnconfigs/1/properties/lockss.xml',[
+        $this->client->request('GET', '/plnconfigs/1/properties/lockss.xml',
+            [], [], [
                 'REMOTE_ADDR' => '11.0.0.0',
             ]
         );
@@ -135,7 +136,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $this->client->request('GET', '/plnconfigs/1/titledbs/1/1/titledb_1.xml');
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('text/xml', $response->headers->get('Content-Type', null, true));
+        $this->assertSame('text/xml', $response->headers->get('Content-Type', null));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
         $this->assertSame(strlen($data), $response->getFile()->getSize());
         $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
@@ -171,7 +172,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $this->client->request('GET', '/plnconfigs/1/manifests/1/1/manifest_1.html');
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('text/html', $response->headers->get('Content-Type', null, true));
+        $this->assertSame('text/html', $response->headers->get('Content-Type', null));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
         $this->assertSame(strlen($data), $response->getFile()->getSize());
         $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
@@ -212,7 +213,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $this->client->request('GET', '/plnconfigs/1/plugins/lockssomatic.keystore');
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('application/x-java-keystore', $response->headers->get('Content-Type', null, true));
+        $this->assertSame('application/x-java-keystore', $response->headers->get('Content-Type', null));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
         $this->assertSame(strlen($data), $response->getFile()->getSize());
         $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
@@ -243,7 +244,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $this->client->request('GET', '/plnconfigs/1/plugins/index.html');
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('text/html', $response->headers->get('Content-Type', null, true));
+        $this->assertSame('text/html', $response->headers->get('Content-Type', null));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
         $this->assertSame(strlen($data), $response->getFile()->getSize());
         $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
@@ -281,7 +282,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $this->client->request('GET', '/plnconfigs/1/plugins/dummy.jar');
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('application/java-archive', $response->headers->get('Content-Type', null, true));
+        $this->assertSame('application/java-archive', $response->headers->get('Content-Type', null));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
         $this->assertSame(strlen($data), $response->getFile()->getSize());
         $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));

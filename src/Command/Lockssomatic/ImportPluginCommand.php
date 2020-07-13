@@ -68,7 +68,7 @@ class ImportPluginCommand extends Command {
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output) : void {
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
         $files = $input->getArgument('files');
         foreach ($files as $file) {
             $output->writeln($file);
@@ -108,5 +108,6 @@ class ImportPluginCommand extends Command {
             $plugin->setPath($path);
             $this->em->flush();
         }
+        return 0;
     }
 }

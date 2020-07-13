@@ -74,12 +74,13 @@ class ValidateAuCommand extends Command {
     /**
      * Execute the command.
      */
-    protected function execute(InputInterface $input, OutputInterface $output) : void {
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
         foreach ($this->getAus($input->getArgument('ids')) as $au) {
             $errors = $this->manager->validate($au);
             if (0 !== $errors) {
                 $output->writeln("AU {$au->getId()} has {$errors} problems.");
             }
         }
+        return 0;
     }
 }

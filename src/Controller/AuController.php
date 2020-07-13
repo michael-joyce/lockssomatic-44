@@ -16,14 +16,14 @@ use App\Services\AuManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Au controller.
@@ -40,8 +40,7 @@ class AuController extends AbstractController implements PaginatorAwareInterface
      *
      * @return array
      *
-     * @Route("/", name="au_index")
-     * @Method("GET")
+     * @Route("/", name="au_index", methods={"GET"})
      * @Template()
      */
     public function indexAction(Request $request, Pln $pln, AuManager $manager) {
@@ -65,8 +64,7 @@ class AuController extends AbstractController implements PaginatorAwareInterface
      *
      * @return array
      *
-     * @Route("/{id}", name="au_show")
-     * @Method("GET")
+     * @Route("/{id}", name="au_show", methods={"GET"})
      * @Template()
      */
     public function showAction(Au $au, Pln $pln, AuManager $manager) {
@@ -86,8 +84,7 @@ class AuController extends AbstractController implements PaginatorAwareInterface
      *
      * @return array
      *
-     * @Route("/{id}/deposits", name="au_deposits")
-     * @Method("GET")
+     * @Route("/{id}/deposits", name="au_deposits", methods={"GET"})
      * @Template()
      */
     public function depositsAction(Request $request, Pln $pln, Au $au, EntityManagerInterface $em) {

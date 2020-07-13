@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
@@ -26,7 +26,7 @@ class DefaultController extends AbstractController implements PaginatorAwareInte
      *
      * @return Response
      *
-     * @Route("/", name="homepage")
+     * @Route("/", name="homepage", methods={"GET"})
      */
     public function indexAction() {
         $user = $this->getUser();

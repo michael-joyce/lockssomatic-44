@@ -25,7 +25,7 @@ class PlnPropertyControllerTest extends ControllerBaseCase {
 
     public function testAnonIndex() : void {
         $crawler = $this->client->request('GET', '/pln/1/property');
-        $this->assertSame(301, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
         $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 

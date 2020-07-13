@@ -75,12 +75,13 @@ class UpdateConfigCommand extends Command {
     /**
      * Execute the command.
      */
-    protected function execute(InputInterface $input, OutputInterface $output) : void {
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
         $ids = $input->getArgument('pln');
         foreach ($this->getPlns($ids) as $pln) {
             $output->writeln("updating {$pln->getName()}");
             $this->updater->update($pln);
             $this->em->flush();
         }
+        return 0;
     }
 }

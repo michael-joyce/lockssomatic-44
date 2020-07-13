@@ -85,7 +85,7 @@ class ExportConfigCommand extends Command {
     /**
      * Execute the command.
      */
-    protected function execute(InputInterface $input, OutputInterface $output) : void {
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
         $plnIds = $input->getArgument('pln');
         foreach ($this->getPlns($plnIds) as $pln) {
             if ($input->getOption('update')) {
@@ -96,5 +96,6 @@ class ExportConfigCommand extends Command {
             $output->writeln("exporting {$pln->getName()}");
             $this->exporter->export($pln);
         }
+        return 0;
     }
 }

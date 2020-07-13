@@ -59,13 +59,13 @@ class ImportKeystoreCommand extends Command {
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output) : void {
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
         $plnId = $input->getArgument('plnId');
         $pln = $this->em->find(Pln::class, $plnId);
         if ( ! $pln) {
             $output->writeln("Cannot find pln {$plnId}.");
 
-            return;
+            return 1;
         }
         $path = $input->getArgument('path');
         $type = mime_content_type($path);
@@ -84,5 +84,6 @@ class ImportKeystoreCommand extends Command {
         copy($path, $newPath);
         $pln->setKeystore($newPath);
         $this->em->flush();
+        return 0;
     }
 }

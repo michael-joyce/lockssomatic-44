@@ -15,9 +15,9 @@ use App\Entity\AuStatus;
 use App\Entity\Pln;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,8 +39,7 @@ class AuStatusController extends AbstractController implements PaginatorAwareInt
      *
      * @return array
      *
-     * @Route("/", name="au_status_index")
-     * @Method("GET")
+     * @Route("/", name="au_status_index", methods={"GET"})
      * @Template()
      */
     public function indexAction(Request $request, Pln $pln, Au $au) {
@@ -66,8 +65,7 @@ class AuStatusController extends AbstractController implements PaginatorAwareInt
      *
      * @return array
      *
-     * @Route("/{id}", name="au_status_show")
-     * @Method("GET")
+     * @Route("/{id}", name="au_status_show", methods={"GET"})
      * @Template()
      */
     public function showAction(AuStatus $auStatus, Pln $pln, Au $au) {

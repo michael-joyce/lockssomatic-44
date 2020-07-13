@@ -82,7 +82,7 @@ class PluginControllerTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
-        $this->assertStringContainsStringIgnoringCase('plugin.DummyPlugin', $responseCrawler->text());
+        $this->assertStringContainsStringIgnoringCase('plugin.DummyPlugin', $responseCrawler->text(null, true));
     }
 
     public function testAnonEdit() : void {
@@ -109,6 +109,6 @@ class PluginControllerTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
-        $this->assertStringContainsStringIgnoringCase('settings have been updated.', $responseCrawler->text());
+        $this->assertStringContainsStringIgnoringCase('settings have been updated.', $responseCrawler->text(null, true));
     }
 }

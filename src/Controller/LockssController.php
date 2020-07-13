@@ -17,11 +17,8 @@ use App\Entity\ContentProvider;
 use App\Entity\Pln;
 use App\Services\FilePaths;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\IpUtils;
@@ -29,6 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * LOCKSS Controller.
@@ -36,9 +34,8 @@ use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
  * All of the LOCKSS boxes should interact with LOCKSSOMatic with
  * this controller only.
  *
- * @Route("/plnconfigs/{plnId}")
+ * @Route("/plnconfigs/{plnId}", methods={"GET"})
  * @ParamConverter("pln", options={"id"="plnId"})
- * @Method("GET")
  */
 class LockssController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
@@ -96,8 +93,6 @@ class LockssController extends AbstractController implements PaginatorAwareInter
      * Get a LOCKSS configuration xml file.
      *
      * @Route("/properties/lockss.xml", name="lockss_config")
-     *
-     * @Method("GET")
      */
     public function lockssAction(Request $request, Pln $pln) {
         $this->logger->notice("{$request->getClientIp()} - lockss.xml - {$pln->getName()}");

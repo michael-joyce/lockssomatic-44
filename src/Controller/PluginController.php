@@ -17,8 +17,8 @@ use App\Services\FilePaths;
 use App\Services\PluginImporter;
 use Exception;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,8 +39,8 @@ class PluginController extends AbstractController implements PaginatorAwareInter
      *
      * @return array
      *
-     * @Route("/", name="plugin_index")
-     * @Method("GET")
+     * @Route("/", name="plugin_index", methods={"GET"})
+     *
      * @Template()
      */
     public function indexAction(Request $request) {
@@ -62,8 +62,8 @@ class PluginController extends AbstractController implements PaginatorAwareInter
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/new", name="plugin_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="plugin_new", methods={"GET", "POST"})
+     *
      * @Template()
      */
     public function newAction(Request $request, PluginImporter $pluginImporter, FilePaths $filePaths) {
@@ -109,8 +109,8 @@ class PluginController extends AbstractController implements PaginatorAwareInter
      *
      * @return array
      *
-     * @Route("/{id}", name="plugin_show")
-     * @Method("GET")
+     * @Route("/{id}", name="plugin_show", methods={"GET"})
+     *
      * @Template()
      */
     public function showAction(Plugin $plugin) {
@@ -127,8 +127,8 @@ class PluginController extends AbstractController implements PaginatorAwareInter
      * action.
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{id}/edit", name="plugin_edit")
-     * @Method({"GET","POST"})
+     * @Route("/{id}/edit", name="plugin_edit", methods={"GET", "POST"})
+     *
      * @Template()
      */
     public function editAction(Request $request, Plugin $plugin) {

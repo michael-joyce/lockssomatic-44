@@ -15,9 +15,9 @@ use App\Entity\Pln;
 use App\Form\BoxType;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -38,8 +38,7 @@ class BoxController extends AbstractController implements PaginatorAwareInterfac
      *
      * @return array
      *
-     * @Route("/", name="box_index")
-     * @Method("GET")
+     * @Route("/", name="box_index", methods={"GET"})
      * @Template()
      */
     public function indexAction(Request $request, Pln $pln) {
@@ -61,8 +60,7 @@ class BoxController extends AbstractController implements PaginatorAwareInterfac
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/new", name="box_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="box_new", methods={"GET","POST"})
      * @Template()
      */
     public function newAction(Request $request, Pln $pln) {
@@ -93,8 +91,7 @@ class BoxController extends AbstractController implements PaginatorAwareInterfac
      *
      * @return array
      *
-     * @Route("/{id}", name="box_show")
-     * @Method("GET")
+     * @Route("/{id}", name="box_show", methods={"GET"})
      * @Template()
      */
     public function showAction(Pln $pln, Box $box) {
@@ -114,8 +111,7 @@ class BoxController extends AbstractController implements PaginatorAwareInterfac
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{id}/edit", name="box_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="box_edit", methods={"GET","POST"})
      * @Template()
      */
     public function editAction(Request $request, Pln $pln, Box $box) {
@@ -146,8 +142,8 @@ class BoxController extends AbstractController implements PaginatorAwareInterfac
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{id}/delete", name="box_delete")
-     * @Method("GET")
+     * @Route("/{id}/delete", name="box_delete", methods={"GET"})
+     *
      */
     public function deleteAction(Request $request, Pln $pln, Box $box) {
         if ($box->getPln() !== $pln) {

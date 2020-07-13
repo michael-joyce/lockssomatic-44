@@ -37,7 +37,7 @@ class ContentOwner extends AbstractEntity {
      * @var string
      *
      * @ORM\Column(name="email_address", type="text", nullable=true)
-     * @Assert\Email(strict=true)
+     * @Assert\Email(mode="html5")
      */
     private $emailAddress;
 

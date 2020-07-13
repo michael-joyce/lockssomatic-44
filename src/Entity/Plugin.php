@@ -102,7 +102,7 @@ class Plugin extends AbstractEntity {
      * Properties for the plugin.
      *
      * @var Collection|PluginProperty[]
-     * @ORM\OneToMany(targetEntity="PluginProperty", mappedBy="plugin")
+     * @ORM\OneToMany(targetEntity="PluginProperty", mappedBy="plugin", cascade={"persist"})
      */
     private $pluginProperties;
 

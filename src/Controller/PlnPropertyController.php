@@ -13,12 +13,13 @@ namespace App\Controller;
 use App\Entity\Pln;
 use App\Form\PlnPropertyType;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 
@@ -36,8 +37,8 @@ class PlnPropertyController extends AbstractController implements PaginatorAware
      *
      * @return array
      *
-     * @Route("/", name="pln_property_index")
-     * @Method("GET")
+     * @Route("/", name="pln_property_index", methods={"GET"})
+     *
      * @Template()
      */
     public function indexAction(Request $request, Pln $pln) {
@@ -49,11 +50,11 @@ class PlnPropertyController extends AbstractController implements PaginatorAware
     /**
      * Creates a new Pln property.
      *
-     * @return array
+     * @return array|RedirectResponse
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/new", name="pln_property_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="pln_property_new", methods={"GET", "POST"})
+     *
      * @Template()
      */
     public function newAction(Request $request, Pln $pln) {
@@ -90,11 +91,11 @@ class PlnPropertyController extends AbstractController implements PaginatorAware
      *
      * @param string $propertyKey
      *
-     * @return array
+     * @return array|RedirectResponse
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{propertyKey}/edit", name="pln_property_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{propertyKey}/edit", name="pln_property_edit", methods={"GET", "POST"})
+     *
      * @Template()
      */
     public function editAction(Request $request, Pln $pln, $propertyKey) {
@@ -137,8 +138,8 @@ class PlnPropertyController extends AbstractController implements PaginatorAware
      * @return RedirectResponse
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{propertyKey}/delete", name="pln_property_delete")
-     * @Method("GET")
+     * @Route("/{propertyKey}/delete", name="pln_property_delete", methods={"GET"})
+     *
      */
     public function deleteAction(Request $request, Pln $pln, $propertyKey) {
         $pln->removeProperty($propertyKey);

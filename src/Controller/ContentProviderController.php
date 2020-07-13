@@ -13,8 +13,8 @@ namespace App\Controller;
 use App\Entity\ContentProvider;
 use App\Form\ContentProviderType;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,8 +34,7 @@ class ContentProviderController extends AbstractController implements PaginatorA
      *
      * @return array
      *
-     * @Route("/", name="content_provider_index")
-     * @Method("GET")
+     * @Route("/", name="content_provider_index", methods={"GET"})
      * @Template()
      */
     public function indexAction(Request $request) {
@@ -57,8 +56,7 @@ class ContentProviderController extends AbstractController implements PaginatorA
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/new", name="content_provider_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="content_provider_new", methods={"GET", "POST"})
      * @Template()
      */
     public function newAction(Request $request) {
@@ -87,8 +85,8 @@ class ContentProviderController extends AbstractController implements PaginatorA
      *
      * @return array
      *
-     * @Route("/{id}", name="content_provider_show")
-     * @Method("GET")
+     * @Route("/{id}", name="content_provider_show", methods={"GET"})
+     *
      * @Template()
      */
     public function showAction(ContentProvider $contentProvider) {
@@ -103,8 +101,8 @@ class ContentProviderController extends AbstractController implements PaginatorA
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{id}/edit", name="content_provider_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="content_provider_edit", methods={"GET", "POST"})
+     *
      * @Template()
      */
     public function editAction(Request $request, ContentProvider $contentProvider) {
@@ -131,8 +129,8 @@ class ContentProviderController extends AbstractController implements PaginatorA
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{id}/delete", name="content_provider_delete")
-     * @Method("GET")
+     * @Route("/{id}/delete", name="content_provider_delete", methods={"GET"})
+     *
      */
     public function deleteAction(Request $request, ContentProvider $contentProvider) {
         $em = $this->getDoctrine()->getManager();

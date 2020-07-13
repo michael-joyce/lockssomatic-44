@@ -21,9 +21,7 @@ use Exception;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use SimpleXMLElement;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,6 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 
@@ -217,6 +216,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @return array
      *
      * @Route("/sd-iri",
+     *  methods={"GET"},
      *  name="sword_service_document",
      *  defaults={"_format": "xml"},
      *  requirements={"_format": "xml"}
@@ -242,8 +242,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      *
      * @Route("/col-iri/{providerUuid}", name="sword_collection", requirements={
      *      "providerUuid": ".{36}"
-     * })
-     * @Method({"POST"})
+     * }, methods={"POST"})
      * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
      *
      * @return Response
@@ -278,8 +277,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_edit", requirements={
      *      "providerUuid": ".{36}",
      *      "depositUuid": ".{36}"
-     * })
-     * @Method({"PUT"})
+     * }, methods={"PUT"})
      * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
      * @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid"="uuid"}})
      *
@@ -320,8 +318,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      *      "providerUuid": ".{36}",
      *      "depositUuid": ".{36}",
      *      "_format": "xml"
-     *  })
-     * @Method({"GET"})
+     *  }, methods={"GET"})
      * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
      * @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid"="uuid"}})
      *
@@ -353,8 +350,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      *      "providerUuid": ".{36}",
      *      "depositUuid": ".{36}",
      *      "_format": "xml"
-     *  })
-     * @Method({"GET"})
+     *  }, methods={"GET"})
      * @Template()
      * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
      * @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid"="uuid"}})
@@ -389,9 +385,8 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      *      "providerUuid": ".{36}",
      *      "depositUuid": ".{36}",
      *      "_format": "xml"
-     *  })
+     *  }, methods={"GET"})
      *
-     * @Method({"GET"})
      * @Template()
      * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
      * @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid"="uuid"}})
@@ -416,7 +411,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/{filename}/original", name="original_deposit", requirements={
      *      "providerUuid": ".{36}",
      *      "depositUuid": ".{36}"
-     * })
+     * }, methods={"GET"})
      *
      * @ParamConverter("provider", options={"uuid"="providerUuid"})
      * @ParamConverter("deposit", options={"uuid"="depositUuid"})

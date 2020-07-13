@@ -13,8 +13,8 @@ namespace App\Controller;
 use App\Entity\ContentOwner;
 use App\Form\ContentOwnerType;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,8 +34,7 @@ class ContentOwnerController extends AbstractController implements PaginatorAwar
      *
      * @return array
      *
-     * @Route("/", name="content_owner_index")
-     * @Method("GET")
+     * @Route("/", name="content_owner_index", methods={"GET"})
      * @Template()
      */
     public function indexAction(Request $request) {
@@ -57,8 +56,7 @@ class ContentOwnerController extends AbstractController implements PaginatorAwar
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/new", name="content_owner_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="content_owner_new", methods={"GET","POST"})
      * @Template()
      */
     public function newAction(Request $request) {
@@ -87,8 +85,7 @@ class ContentOwnerController extends AbstractController implements PaginatorAwar
      *
      * @return array
      *
-     * @Route("/{id}", name="content_owner_show")
-     * @Method("GET")
+     * @Route("/{id}", name="content_owner_show", methods={"GET"})
      * @Template()
      */
     public function showAction(ContentOwner $contentOwner) {
@@ -103,8 +100,7 @@ class ContentOwnerController extends AbstractController implements PaginatorAwar
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{id}/edit", name="content_owner_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="content_owner_edit", methods={"GET","POST"})
      * @Template()
      */
     public function editAction(Request $request, ContentOwner $contentOwner) {
@@ -131,8 +127,7 @@ class ContentOwnerController extends AbstractController implements PaginatorAwar
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{id}/delete", name="content_owner_delete")
-     * @Method("GET")
+     * @Route("/{id}/delete", name="content_owner_delete", methods={"GET"})
      */
     public function deleteAction(Request $request, ContentOwner $contentOwner) {
         $em = $this->getDoctrine()->getManager();

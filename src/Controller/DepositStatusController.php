@@ -14,9 +14,9 @@ use App\Entity\Deposit;
 use App\Entity\DepositStatus;
 use App\Entity\Pln;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,8 +39,8 @@ class DepositStatusController extends AbstractController implements PaginatorAwa
      *
      * @return array
      *
-     * @Route("/", name="deposit_status_index")
-     * @Method("GET")
+     * @Route("/", name="deposit_status_index", methods={"GET"})
+     *
      * @Template()
      */
     public function indexAction(Request $request, Pln $pln, Deposit $deposit) {
@@ -67,8 +67,8 @@ class DepositStatusController extends AbstractController implements PaginatorAwa
      *
      * @return array
      *
-     * @Route("/{id}", name="deposit_status_show")
-     * @Method("GET")
+     * @Route("/{id}", name="deposit_status_show", methods={"GET"})
+     *
      * @Template()
      */
     public function showAction(DepositStatus $depositStatus, Pln $pln, Deposit $deposit) {

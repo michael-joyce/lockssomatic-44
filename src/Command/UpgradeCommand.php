@@ -497,7 +497,7 @@ class UpgradeCommand extends Command {
     /**
      * {@inheritdoc}
      */
-    public function execute(InputInterface $input, OutputInterface $output) : void {
+    public function execute(InputInterface $input, OutputInterface $output) : int {
         if ( ! $input->getOption('force')) {
             $output->writeln('Will not run without --force.');
             exit;
@@ -519,5 +519,7 @@ class UpgradeCommand extends Command {
         $this->upgradeAuStatus();
         $this->upgradeDeposits();
         $this->upgradeDepositStatus();
+
+        return 0;
     }
 }

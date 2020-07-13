@@ -148,7 +148,7 @@ class PlnControllerTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
-        $this->assertStringContainsStringIgnoringCase('dummy.keystore', $responseCrawler->text());
+        $this->assertStringContainsStringIgnoringCase('dummy.keystore', $responseCrawler->text(null, true));
     }
 
     public function testAdminKeystoreBadFile() : void {

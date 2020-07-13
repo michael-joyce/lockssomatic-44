@@ -17,8 +17,8 @@ use App\Services\ConfigExporter;
 use App\Services\ConfigUpdater;
 use App\Services\FilePaths;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,8 +40,8 @@ class PlnController extends AbstractController implements PaginatorAwareInterfac
      *
      * @return array
      *
-     * @Route("/", name="pln_index")
-     * @Method("GET")
+     * @Route("/", name="pln_index", methods={"GET"})
+     *
      * @Template()
      */
     public function indexAction(Request $request) {
@@ -63,8 +63,8 @@ class PlnController extends AbstractController implements PaginatorAwareInterfac
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/new", name="pln_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="pln_new", methods={"GET", "POST"})
+     *
      * @Template()
      */
     public function newAction(Request $request) {
@@ -96,8 +96,8 @@ class PlnController extends AbstractController implements PaginatorAwareInterfac
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{id}/keystore", name="pln_keystore")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/keystore", name="pln_keystore", methods={"GET", "POST"})
+     *
      * @Template()
      */
     public function keystoreAction(Request $request, Pln $pln, FilePaths $filePaths) {
@@ -141,8 +141,8 @@ class PlnController extends AbstractController implements PaginatorAwareInterfac
      *
      * @return array
      *
-     * @Route("/{id}", name="pln_show")
-     * @Method("GET")
+     * @Route("/{id}", name="pln_show", methods={"GET"})
+     *
      * @Template()
      */
     public function showAction(Pln $pln) {
@@ -157,8 +157,8 @@ class PlnController extends AbstractController implements PaginatorAwareInterfac
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{id}/edit", name="pln_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="pln_edit", methods={"GET", "POST"})
+     *
      * @Template()
      */
     public function editAction(Request $request, Pln $pln) {
@@ -191,8 +191,8 @@ class PlnController extends AbstractController implements PaginatorAwareInterfac
      * @return RedirectResponse
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{id}/export", name="pln_export")
-     * @Method({"GET"})
+     * @Route("/{id}/export", name="pln_export", methods={"GET"})
+     *
      * @Template()
      */
     public function exportAction(Request $request, Pln $pln, ConfigExporter $exporter, ConfigUpdater $updater) {
@@ -213,8 +213,8 @@ class PlnController extends AbstractController implements PaginatorAwareInterfac
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{id}/delete", name="pln_delete")
-     * @Method("GET")
+     * @Route("/{id}/delete", name="pln_delete", methods={"GET"})
+     *
      */
     public function deleteAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();

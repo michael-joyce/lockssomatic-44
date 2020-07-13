@@ -74,7 +74,7 @@ class ListAuContentCommand extends Command {
     /**
      * Execute the command.
      */
-    protected function execute(InputInterface $input, OutputInterface $output) : void {
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
         foreach ($this->getAus($input->getArgument('ids')) as $au) {
             $iterator = $this->em->getRepository(Au::class)->iterateDeposits($au);
             while (($deposit = $iterator->current())) {
@@ -82,5 +82,6 @@ class ListAuContentCommand extends Command {
                 $iterator->next();
             }
         }
+        return 0;
     }
 }

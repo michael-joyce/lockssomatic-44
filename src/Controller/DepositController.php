@@ -13,9 +13,9 @@ namespace App\Controller;
 use App\Entity\Deposit;
 use App\Entity\Pln;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,8 +37,8 @@ class DepositController extends AbstractController implements PaginatorAwareInte
      *
      * @return array
      *
-     * @Route("/", name="deposit_index")
-     * @Method("GET")
+     * @Route("/", name="deposit_index", methods={"GET"})
+     *
      * @Template()
      */
     public function indexAction(Request $request, Pln $pln) {
@@ -59,8 +59,8 @@ class DepositController extends AbstractController implements PaginatorAwareInte
      *
      * @return array
      *
-     * @Route("/search", name="deposit_search")
-     * @Method("GET")
+     * @Route("/search", name="deposit_search", methods={"GET"})
+     *
      * @Template()
      */
     public function searchAction(Request $request, Pln $pln) {
@@ -87,8 +87,8 @@ class DepositController extends AbstractController implements PaginatorAwareInte
      *
      * @return array
      *
-     * @Route("/{id}", name="deposit_show")
-     * @Method("GET")
+     * @Route("/{id}", name="deposit_show", methods={"GET"})
+     *
      * @Template()
      */
     public function showAction(Deposit $deposit, Pln $pln) {

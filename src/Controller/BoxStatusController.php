@@ -14,9 +14,9 @@ use App\Entity\Box;
 use App\Entity\BoxStatus;
 use App\Entity\Pln;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -38,8 +38,7 @@ class BoxStatusController extends AbstractController implements PaginatorAwareIn
      *
      * @return array
      *
-     * @Route("/", name="box_status_index")
-     * @Method("GET")
+     * @Route("/", name="box_status_index", methods={"GET"})
      * @Template()
      */
     public function indexAction(Request $request, Pln $pln, Box $box) {
@@ -66,8 +65,7 @@ class BoxStatusController extends AbstractController implements PaginatorAwareIn
      *
      * @return array
      *
-     * @Route("/{id}", name="box_status_show")
-     * @Method("GET")
+     * @Route("/{id}", name="box_status_show", methods={"GET"})
      * @Template()
      */
     public function showAction(BoxStatus $boxStatus, Pln $pln, Box $box) {

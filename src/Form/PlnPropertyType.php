@@ -24,6 +24,7 @@ class PlnPropertyType extends AbstractType {
      * Build the form by adding types to $builder.
      */
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
+        $values = is_array($options['values']) ? $options['values'] : [$options['values']];
         $builder->add('name', TextType::class, [
             'label' => 'Name',
             'required' => true,
@@ -32,7 +33,7 @@ class PlnPropertyType extends AbstractType {
         $builder->add('values', CollectionType::class, [
             'label' => 'Values',
             'required' => true,
-            'data' => $options['values'],
+            'data' => $values,
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
