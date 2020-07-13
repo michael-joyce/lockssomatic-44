@@ -47,13 +47,13 @@ class FilePathsTest extends ControllerBaseCase {
         $this->assertSame($this->root, $this->filePaths->getRootPath());
     }
 
-    public function testGetCacheDownDirFixtures() : void {
-        $this->assertStringStartsWith($this->root, $this->filePaths->getCacheDownDirFixtures());
+    public function testGetCacheDownloadDir() : void {
+        $this->assertStringStartsWith($this->root, $this->filePaths->getCacheDownloadDir());
     }
 
-    public function testGetDownContentPathFixtures() : void {
+    public function testGetDownloadContentPath() : void {
         $deposit = $this->getReference('deposit.1');
-        $this->assertSame($this->root . '/data/download/3E40ACE2-7F1A-4AD5-8622-416EC740D9A1/1/first', $this->filePaths->getDownContentPathFixtures($deposit));
+        $this->assertSame($this->root . '/data/download/3E40ACE2-7F1A-4AD5-8622-416EC740D9A1/1/first', $this->filePaths->getDownloadContentPath($deposit));
     }
 
     public function testGetLockssDir() : void {

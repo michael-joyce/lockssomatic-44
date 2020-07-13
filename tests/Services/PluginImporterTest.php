@@ -201,8 +201,6 @@ class PluginImporterTest extends ControllerBaseCase {
     }
 
     public function testAddProperties() : void {
-        $this->entityManager = self::$container();
-
         $xml = simplexml_load_string($this->xmlData());
         $plugin = new Plugin();
         $plugin->setName('test plugin');
@@ -218,7 +216,7 @@ class PluginImporterTest extends ControllerBaseCase {
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $this->importer->buildPlugin($xml);
         $this->assertInstanceOf(Plugin::class, $plugin);
-        self::$container()->flush(); // make sure it was flushed to the db.
+        $this->entityManager->flush(); // make sure it was flushed to the db.
         $this->assertNotNull($plugin->getId());
     }
 
@@ -234,7 +232,7 @@ class PluginImporterTest extends ControllerBaseCase {
         $this->expectException(Exception::class);
         $xml = simplexml_load_string($this->xmlData());
         $this->importer->buildPlugin($xml);
-        self::$container()->flush();
+        $this->entityManager->flush();
         $this->importer->buildPlugin($xml);
     }
 

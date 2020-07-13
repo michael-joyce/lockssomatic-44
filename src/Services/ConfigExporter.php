@@ -94,7 +94,7 @@ class ConfigExporter {
      * Export the lockss.xml configuration file.
      */
     public function exportLockssXml(Pln $pln) : void {
-        $xml = $this->templating->render('App:lockss:lockss.xml.twig', [
+        $xml = $this->templating->render('lockss/lockss.xml.twig', [
             'pln' => $pln,
         ]);
         $path = $this->fp->getLockssXmlFile($pln);
@@ -124,7 +124,7 @@ class ConfigExporter {
             $path = $this->fp->getPluginsExportFile($pln, $plugin);
             $this->fs->copy($plugin->getPath(), $path);
         }
-        $html = $this->templating->render('App:lockss:plugin_list.html.twig', [
+        $html = $this->templating->render('lockss/plugin_list.html.twig', [
             'pln' => $pln,
         ]);
         $this->fs->dumpFile($this->fp->getPluginsManifestFile($pln), $html);
@@ -137,7 +137,7 @@ class ConfigExporter {
         foreach ($pln->getAus() as $au) {
             $manifestPath = $this->fp->getManifestPath($au);
             $iterator = $this->manager->auDeposits($au);
-            $html = $this->templating->render('App:lockss:manifest.html.twig', [
+            $html = $this->templating->render('lockss/manifest.html.twig', [
                 'pln' => $pln,
                 'content' => $iterator,
             ]);
@@ -154,7 +154,7 @@ class ConfigExporter {
             for ($i = 0; $i < ceil($aus->count() / $this->ausPerTitleDb); $i++) {
                 $slice = $aus->slice($i * $this->ausPerTitleDb, $this->ausPerTitleDb);
                 $titleDbPath = $this->fp->getTitleDbPath($provider, $i + 1);
-                $xml = $this->templating->render('App:lockss:titledb.xml.twig', [
+                $xml = $this->templating->render('lockss/titledb.xml.twig', [
                     'aus' => $slice,
                 ]);
                 $this->fs->dumpFile($titleDbPath, $xml);

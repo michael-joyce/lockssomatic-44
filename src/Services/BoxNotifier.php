@@ -12,10 +12,8 @@ namespace App\Services;
 
 use App\Entity\Box;
 use App\Entity\BoxStatus;
-use Swift_Mailer;
-use Swift_Message;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Templating\EngineInterface;
+use Symfony\Component\Mime\Email;
 use Twig\Environment;
 
 /**
@@ -41,11 +39,12 @@ class BoxNotifier {
         if ( ! $box->getSendNotifications() || ! $box->getContactEmail()) {
             return;
         }
-        $message = new Swift_Message('LOCKSSOMatic Notification: Box Unreachable', null, 'text/plain', '7bit');
-        $message->setTo($box->getContactEmail());
-        $message->setCc($this->contact);
-        $message->setFrom($this->sender);
-        $message->setBody($this->templating->render('App:box:unreachable.txt.twig', [
+        $message = new Email(); //'LOCKSSOMatic Notification: Box Unreachable', null, 'text/plain', '7bit');
+        $message->subject('LOCKSSOMatic Notification: Box Unreachable');
+        $message->to($box->getContactEmail());
+        $message->cc($this->contact);
+        $message->from($this->sender);
+        $message->text($this->templating->render('box/unreachable.txt.twig', [
             'box' => $box,
             'boxStatus' => $boxStatus,
             'contact' => $this->contact,
@@ -58,11 +57,12 @@ class BoxNotifier {
             return;
         }
 
-        $message = new Swift_Message('LOCKSSOMatic Notification: Disk Space Warning', null, 'text/plain', '7bit');
-        $message->setTo($box->getContactEmail());
-        $message->setCc($this->contact);
-        $message->setFrom($this->sender);
-        $message->setBody($this->templating->render('App:box:diskspace.txt.twig', [
+        $message = new Email(); //
+        $message->subject('LOCKSSOMatic Notification: Disk Space Warning');
+        $message->to($box->getContactEmail());
+        $message->cc($this->contact);
+        $message->from($this->sender);
+        $message->text($this->templating->render('box/diskspace.txt.twig', [
             'box' => $box,
             'boxStatus' => $boxStatus,
             'contact' => $this->contact,

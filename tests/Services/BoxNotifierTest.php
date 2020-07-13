@@ -14,8 +14,7 @@ use App\Entity\Box;
 use App\Entity\BoxStatus;
 use App\Services\BoxNotifier;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
-use Swift_Message;
-use Swift_Plugins_MessageLogger;
+use Symfony\Component\Mime\Email;
 
 /**
  * Description of BoxNotifierTest.
@@ -28,11 +27,6 @@ class BoxNotifierTest extends ControllerBaseCase {
      */
     private $notifier;
 
-    /**
-     * @var Swift_Plugins_MessageLogger
-     */
-    private $messageLogger;
-
     public function testSanity() : void {
         $this->assertInstanceOf(BoxNotifier::class, $this->notifier);
     }
@@ -43,15 +37,19 @@ class BoxNotifierTest extends ControllerBaseCase {
         $box->setContactEmail('box@example.com');
         $boxStatus = new BoxStatus();
         $boxStatus->setErrors('This is a test.');
-
         $this->notifier->unreachable($box, $boxStatus);
-        $this->assertSame(1, $this->messageLogger->countMessages());
-        $message = $this->messageLogger->getMessages()[0];
-        $this->assertInstanceOf(Swift_Message::class, $message);
+
+        # sigh. Symfony cannot test that an email was sent without an HTTP request.
+        $this->client->request('GET', '/');
+
+        $this->assertEmailCount(1);
+        $message = $this->getMailerMessage();
+        $this->assertInstanceOf(Email::class, $message);
+
         $this->assertSame('LOCKSSOMatic Notification: Box Unreachable', $message->getSubject());
-        $this->assertSame('noreply@example.com', key($message->getFrom()));
-        $this->assertSame('box@example.com', key($message->getTo()));
-        $this->assertStringContainsStringIgnoringCase('This is a test.', $message->getBody());
+        $this->assertSame('noreply@example.com', $message->getFrom()[0]->getAddress());
+        $this->assertSame('box@example.com', $message->getTo()[0]->getAddress());
+        $this->assertStringContainsStringIgnoringCase('This is a test.', $message->getTextBody());
     }
 
     public function testUnreachableDisabled() : void {
@@ -62,7 +60,11 @@ class BoxNotifierTest extends ControllerBaseCase {
         $boxStatus->setErrors('This is a test.');
 
         $this->notifier->unreachable($box, $boxStatus);
-        $this->assertSame(0, $this->messageLogger->countMessages());
+
+        # sigh. Symfony cannot test that an email was sent without an HTTP request.
+        $this->client->request('GET', '/');
+
+        $this->assertEmailCount(0);
     }
 
     public function testUnreachableNoEmail() : void {
@@ -72,7 +74,11 @@ class BoxNotifierTest extends ControllerBaseCase {
         $boxStatus->setErrors('This is a test.');
 
         $this->notifier->unreachable($box, $boxStatus);
-        $this->assertSame(0, $this->messageLogger->countMessages());
+
+        # sigh. Symfony cannot test that an email was sent without an HTTP request.
+        $this->client->request('GET', '/');
+
+        $this->assertEmailCount(0);
     }
 
     public function testFreeSpaceWarning() : void {
@@ -83,13 +89,19 @@ class BoxNotifierTest extends ControllerBaseCase {
         $boxStatus->setErrors('This is a test.');
 
         $this->notifier->freeSpaceWarning($box, $boxStatus);
-        $this->assertSame(1, $this->messageLogger->countMessages());
-        $message = $this->messageLogger->getMessages()[0];
-        $this->assertInstanceOf(Swift_Message::class, $message);
+
+        # sigh. Symfony cannot test that an email was sent without an HTTP request.
+        $this->client->request('GET', '/');
+
+        $this->assertEmailCount(1);
+        $message = $this->getMailerMessage();
+        $this->assertInstanceOf(Email::class, $message);
+
+
         $this->assertSame('LOCKSSOMatic Notification: Disk Space Warning', $message->getSubject());
-        $this->assertSame('noreply@example.com', key($message->getFrom()));
-        $this->assertSame('box@example.com', key($message->getTo()));
-        $this->assertStringContainsStringIgnoringCase('running low', $message->getBody());
+        $this->assertSame('noreply@example.com', $message->getFrom()[0]->getAddress());
+        $this->assertSame('box@example.com', $message->getTo()[0]->getAddress());
+        $this->assertStringContainsStringIgnoringCase('running low', $message->getTextBody());
     }
 
     public function testFreeSpaceWarningDisabled() : void {
@@ -100,7 +112,12 @@ class BoxNotifierTest extends ControllerBaseCase {
         $boxStatus->setErrors('This is a test.');
 
         $this->notifier->freeSpaceWarning($box, $boxStatus);
-        $this->assertSame(0, $this->messageLogger->countMessages());
+        $this->notifier->freeSpaceWarning($box, $boxStatus);
+
+        # sigh. Symfony cannot test that an email was sent without an HTTP request.
+        $this->client->request('GET', '/');
+
+        $this->assertEmailCount(0);
     }
 
     public function testFreeSpaceWarningNoEmail() : void {
@@ -110,12 +127,16 @@ class BoxNotifierTest extends ControllerBaseCase {
         $boxStatus->setErrors('This is a test.');
 
         $this->notifier->freeSpaceWarning($box, $boxStatus);
-        $this->assertSame(0, $this->messageLogger->countMessages());
+        $this->notifier->freeSpaceWarning($box, $boxStatus);
+
+        # sigh. Symfony cannot test that an email was sent without an HTTP request.
+        $this->client->request('GET', '/');
+
+        $this->assertEmailCount(0);
     }
 
     protected function setup() : void {
         parent::setUp();
         $this->notifier = self::$container->get(BoxNotifier::class);
-        $this->messageLogger = self::$container->get('swiftmailer.mailer.default.plugin.messagelogger');
     }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1e73ba1ce1ac36084ced2b5dcecb570e",
+    "content-hash": "d595220161969d78767f6ad90bdc4a99",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -7937,12 +7937,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubermichael/nines-bundles.git",
-                "reference": "e571f0bed64eb5e2cd16c8a3b08c5c246879ea1a"
+                "reference": "261d91d7a9267db465fea79bd344c36043f681c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ubermichael/nines-bundles/zipball/e571f0bed64eb5e2cd16c8a3b08c5c246879ea1a",
-                "reference": "e571f0bed64eb5e2cd16c8a3b08c5c246879ea1a",
+                "url": "https://api.github.com/repos/ubermichael/nines-bundles/zipball/261d91d7a9267db465fea79bd344c36043f681c2",
+                "reference": "261d91d7a9267db465fea79bd344c36043f681c2",
                 "shasum": ""
             },
             "require": {
@@ -7988,7 +7988,7 @@
                 "source": "https://github.com/ubermichael/nines-bundles/tree/4.x",
                 "issues": "https://github.com/ubermichael/nines-bundles/issues"
             },
-            "time": "2020-06-25T18:31:51+00:00"
+            "time": "2020-07-13T17:55:48+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -9130,7 +9130,8 @@
         "php": "^7.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "ext-simplexml": "*"
+        "ext-simplexml": "*",
+        "ext-zip": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "1.1.0"
