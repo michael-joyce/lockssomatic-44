@@ -1,5 +1,5 @@
 monolog:
-    channels: [ 'sword', 'lockss' ]
+    channels: [ 'sword', 'lockss', 'soap' ]
     handlers:
         main:
             type: rotating_file
@@ -12,6 +12,12 @@ monolog:
             type: rotating_file
             path: '%kernel.logs_dir%/lockss-%kernel.environment%.log'
             channels: [ 'lockss' ]
+            max_files: 30
+        soap:
+            level: notice
+            type: rotating_file
+            path: '%kernel.logs_dir%/soap-%kernel.environment%.log'
+            channels: [ 'soap' ]
             max_files: 30
         sword:
             level: notice

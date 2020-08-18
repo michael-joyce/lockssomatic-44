@@ -62,6 +62,7 @@ class LockssClient {
         if (isset($this->options[$name])) {
             return $name;
         }
+        return null;
     }
 
     public function setOption($name, $value) : void {

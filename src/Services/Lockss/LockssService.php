@@ -10,10 +10,11 @@ declare(strict_types=1);
 
 namespace App\Services\Lockss;
 
+use App\Entity\Box;
 use App\Utilities\LockssClient;
 use Exception;
 
-class AbstractLockssService {
+class LockssService {
     /**
      * @var LockssClient
      */
@@ -45,5 +46,11 @@ class AbstractLockssService {
 
     public function setClient(LockssClient $client) : void {
         $this->client = $client;
+    }
+
+    public function boxStatus(Box $box) {
+        return $this->call('queryRepositorySpaces', [
+            'repositorySpaceQuery' => 'SELECT *',
+        ]);
     }
 }

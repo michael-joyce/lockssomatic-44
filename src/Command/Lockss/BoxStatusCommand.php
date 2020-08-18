@@ -10,32 +10,140 @@ declare(strict_types=1);
 
 namespace App\Command\Lockss;
 
+use App\Repository\BoxRepository;
+use App\Repository\PlnRepository;
+use App\Services\BoxNotifier;
+use Exception;
 use App\Entity\Box;
+use App\Entity\BoxStatus;
 use App\Services\Lockss\BoxStatusService;
+use App\Services\Lockss\LockssService;
 use App\Utilities\LockssClient;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use stdClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Twig\Environment;
 
 class BoxStatusCommand extends Command {
     /**
      * @var EntityManagerInterface
      */
     private $em;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var BoxRepository
+     */
+    private $boxRepository;
+
+    /**
+     * @var PlnRepository
+     */
+    private $plnRepository;
+
+    /**
+     * @var BoxNotifier
+     */
+    private $notifier;
+
+    /**
+     * @var ParameterBagInterface
+     */
+    private $params;
+
     protected static $defaultName = 'lockss:box:status';
 
+    public function __construct(ParameterBagInterface $params, string $name = null) {
+        parent::__construct($name);
+        $this->params = $params;
+    }
+
     protected function configure() : void {
+        $this->addOption('pln', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Optional list of PLNs to check.');
+        $this->addOption('dry-run', '-d', InputOption::VALUE_NONE, 'Do not update box status, just report results to console.');
         $this->setDescription('Check the status of one or more boxes in a PLN.');
     }
 
+    protected function getBoxes($plnIds) {
+        if ($plnIds) {
+            $plns = $this->plnRepository->findBy(['id' => $plnIds]);
+            return $this->boxRepository->findBy([
+                'pln' => $plns,
+                'active' => true,
+            ]);
+        }
+        return $this->boxRepository->findBy(['active' => true]);
+    }
+
+    protected function toArray(stdClass $object) {
+        $array = [];
+        foreach ($object as $key => $value) {
+            if ($value instanceof stdClass) {
+                $array[$key] = $this->toArray($value);
+            }
+            else {
+                $array[$key] = $value;
+            }
+        }
+        return $array;
+    }
+
+    protected function getStatus(Box $box) {
+        $client = LockssClient::create($box);
+        $service = new LockssService();
+        $service->setClient($client);
+
+        $status = new BoxStatus();
+        $status->setBox($box);
+        $status->setSuccess(true);
+
+        $result = [];
+        try {
+            $result = $service->boxStatus($box);
+        }
+        catch (Exception $e) {
+            $this->logger->error("{$box->getIpAddress()} - {$e->getMessage()}");
+            $status->setSuccess(false);
+            $status->setErrors($e->getMessage());
+        }
+        if ( ! is_array($result)) {
+            $status->setData([$this->toArray($result)]);
+        }
+        else {
+            $status->setData($this->toArray($result));
+        }
+        return $status;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output) : int {
-        foreach ($this->em->getRepository(Box::class)->findAll() as $box) {
-            $client = LockssClient::create($box);
-            $service = new BoxStatusService();
-            $service->setClient($client);
-            $result = $service->check($box);
-            dump($result);
+        $dryRun = $input->getOption('dry-run');
+        $plnIds = $input->getOption('pln');
+
+        foreach ($this->getBoxes($plnIds) as $box) {
+            $this->logger->notice("Checking status on {$box->getHostname()}");
+            $status = $this->getStatus($box);
+
+            if ( ! $dryRun) {
+                foreach ($status->getData() as $cache) {
+                    if ($cache['percentageFull'] > $this->params->get('lom.boxstatus.sizewarning')) {
+                        $percent = $cache['percentageFull'] * 100;
+                        $this->logger->warning("{$box->getHostname()} is {$percent}% full");
+                        $this->notifier->freeSpaceWarning($box, $status);
+                    }
+                }
+
+                $this->em->persist($status);
+                $this->em->flush();
+            }
         }
 
         return 0;
@@ -47,4 +155,33 @@ class BoxStatusCommand extends Command {
     public function setEntityManager(EntityManagerInterface $em) : void {
         $this->em = $em;
     }
+
+    /**
+     * @required
+     */
+    public function setLogger(LoggerInterface $soapLogger) : void {
+        $this->logger = $soapLogger;
+    }
+
+    /**
+     * @required
+     */
+    public function setBoxRepository(BoxRepository $repo) {
+        $this->boxRepository = $repo;
+    }
+
+    /**
+     * @required
+     */
+    public function setPlnRepository(PlnRepository $repo) {
+        $this->plnRepository = $repo;
+    }
+
+    /**
+     * @required
+     */
+    public function setNotifier(BoxNotifier $notifier) {
+        $this->notifier = $notifier;
+    }
+
 }
