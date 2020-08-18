@@ -57,7 +57,7 @@ class BoxNotifier {
             return;
         }
 
-        $message = new Email(); //
+        $message = new Email();
         $message->subject('LOCKSSOMatic Notification: Disk Space Warning');
         $message->to($box->getContactEmail());
         $message->cc($this->contact);

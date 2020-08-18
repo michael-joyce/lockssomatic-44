@@ -39,7 +39,7 @@ class BoxNotifierTest extends ControllerBaseCase {
         $boxStatus->setErrors('This is a test.');
         $this->notifier->unreachable($box, $boxStatus);
 
-        # sigh. Symfony cannot test that an email was sent without an HTTP request.
+        // sigh. Symfony cannot test that an email was sent without an HTTP request.
         $this->client->request('GET', '/');
 
         $this->assertEmailCount(1);
@@ -61,7 +61,7 @@ class BoxNotifierTest extends ControllerBaseCase {
 
         $this->notifier->unreachable($box, $boxStatus);
 
-        # sigh. Symfony cannot test that an email was sent without an HTTP request.
+        // sigh. Symfony cannot test that an email was sent without an HTTP request.
         $this->client->request('GET', '/');
 
         $this->assertEmailCount(0);
@@ -75,7 +75,7 @@ class BoxNotifierTest extends ControllerBaseCase {
 
         $this->notifier->unreachable($box, $boxStatus);
 
-        # sigh. Symfony cannot test that an email was sent without an HTTP request.
+        // sigh. Symfony cannot test that an email was sent without an HTTP request.
         $this->client->request('GET', '/');
 
         $this->assertEmailCount(0);
@@ -90,13 +90,12 @@ class BoxNotifierTest extends ControllerBaseCase {
 
         $this->notifier->freeSpaceWarning($box, $boxStatus);
 
-        # sigh. Symfony cannot test that an email was sent without an HTTP request.
+        // sigh. Symfony cannot test that an email was sent without an HTTP request.
         $this->client->request('GET', '/');
 
         $this->assertEmailCount(1);
         $message = $this->getMailerMessage();
         $this->assertInstanceOf(Email::class, $message);
-
 
         $this->assertSame('LOCKSSOMatic Notification: Disk Space Warning', $message->getSubject());
         $this->assertSame('noreply@example.com', $message->getFrom()[0]->getAddress());
@@ -114,7 +113,7 @@ class BoxNotifierTest extends ControllerBaseCase {
         $this->notifier->freeSpaceWarning($box, $boxStatus);
         $this->notifier->freeSpaceWarning($box, $boxStatus);
 
-        # sigh. Symfony cannot test that an email was sent without an HTTP request.
+        // sigh. Symfony cannot test that an email was sent without an HTTP request.
         $this->client->request('GET', '/');
 
         $this->assertEmailCount(0);
@@ -129,7 +128,7 @@ class BoxNotifierTest extends ControllerBaseCase {
         $this->notifier->freeSpaceWarning($box, $boxStatus);
         $this->notifier->freeSpaceWarning($box, $boxStatus);
 
-        # sigh. Symfony cannot test that an email was sent without an HTTP request.
+        // sigh. Symfony cannot test that an email was sent without an HTTP request.
         $this->client->request('GET', '/');
 
         $this->assertEmailCount(0);

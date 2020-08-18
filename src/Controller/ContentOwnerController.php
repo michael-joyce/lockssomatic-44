@@ -12,14 +12,13 @@ namespace App\Controller;
 
 use App\Entity\ContentOwner;
 use App\Form\ContentOwnerType;
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-
-use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * ContentOwner controller.
@@ -29,6 +28,7 @@ use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
  */
 class ContentOwnerController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
+
     /**
      * Lists all ContentOwner entities.
      *

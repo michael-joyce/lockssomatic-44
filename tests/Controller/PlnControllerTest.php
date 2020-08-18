@@ -190,7 +190,7 @@ class PlnControllerTest extends ControllerBaseCase {
     }
 
     public function testAdminDelete() : void {
-$preCount = count($this->entityManager->getRepository(Pln::class)->findAll());
+        $preCount = count($this->entityManager->getRepository(Pln::class)->findAll());
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/pln/1/delete');
         $this->assertSame(302, $this->client->getResponse()->getStatusCode());

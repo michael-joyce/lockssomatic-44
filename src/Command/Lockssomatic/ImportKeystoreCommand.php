@@ -13,7 +13,6 @@ namespace App\Command\Lockssomatic;
 use App\Entity\Pln;
 use App\Services\FilePaths;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -84,6 +83,7 @@ class ImportKeystoreCommand extends Command {
         copy($path, $newPath);
         $pln->setKeystore($newPath);
         $this->em->flush();
+
         return 0;
     }
 }

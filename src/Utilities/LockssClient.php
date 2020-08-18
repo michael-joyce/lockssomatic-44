@@ -1,5 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace App\Utilities;
 
@@ -8,12 +15,11 @@ use Exception;
 use Laminas\Soap\Client;
 
 /**
- * Class LockssClient
+ * Class LockssClient.
  *
  * @see https://docs.laminas.dev/laminas-soap/client/
  */
 class LockssClient {
-
     /**
      * @var string
      */
@@ -29,8 +35,10 @@ class LockssClient {
      */
     private $box;
 
+    private function __construct() {
+    }
+
     /**
-     * @param Box $box
      * @param string $service
      *
      * @return LockssClient
@@ -46,30 +54,27 @@ class LockssClient {
             'encoding' => 'utf-8',
             'soap_version' => SOAP_1_1,
         ];
+
         return $lockssClient;
-
-    }
-
-    private function __construct() {
     }
 
     public function getOption($name) {
-        if(isset($this->options[$name])) {
+        if (isset($this->options[$name])) {
             return $name;
         }
-        return null;
     }
 
-    public function setOption($name, $value) {
+    public function setOption($name, $value) : void {
         $this->options[$name] = $value;
     }
 
     public function call($method, $params = []) {
         $client = new Client($this->wsdl, $this->options);
         $readyResponse = $client->isDaemonReady();
-        if($readyResponse->return !== true) {
+        if (true !== $readyResponse->return) {
             throw new Exception("Daemon on {$this->box->getHostname()} reports not ready.");
         }
-        return $client->$method($params);
+
+        return $client->{$method}($params);
     }
 }

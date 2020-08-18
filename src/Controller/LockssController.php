@@ -16,6 +16,7 @@ use App\Entity\ContentOwner;
 use App\Entity\ContentProvider;
 use App\Entity\Pln;
 use App\Services\FilePaths;
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -25,7 +26,6 @@ use Symfony\Component\HttpFoundation\IpUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -41,13 +41,6 @@ class LockssController extends AbstractController implements PaginatorAwareInter
     use PaginatorTrait;
 
     /**
-     * File path service.
-     *
-     * @var FilePaths
-     */
-    private $fp;
-
-    /**
      * The logger instance.
      *
      * @var LoggerInterface
@@ -55,14 +48,11 @@ class LockssController extends AbstractController implements PaginatorAwareInter
     protected $logger;
 
     /**
-     * Sets a logger.
+     * File path service.
      *
-     * @param LoggerInterface $lockssLogger
+     * @var FilePaths
      */
-    public function setLogger(LoggerInterface $lockssLogger)
-    {
-        $this->logger = $lockssLogger;
-    }
+    private $fp;
 
     /**
      * Construct the controller.
@@ -87,6 +77,13 @@ class LockssController extends AbstractController implements PaginatorAwareInter
 
             throw new AccessDeniedHttpException("Client IP {$ip} is not authorized for this PLN.");
         }
+    }
+
+    /**
+     * Sets a logger.
+     */
+    public function setLogger(LoggerInterface $lockssLogger) : void {
+        $this->logger = $lockssLogger;
     }
 
     /**

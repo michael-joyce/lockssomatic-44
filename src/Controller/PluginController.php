@@ -16,15 +16,14 @@ use App\Form\PluginType;
 use App\Services\FilePaths;
 use App\Services\PluginImporter;
 use Exception;
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-
-use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use ZipArchive;
-use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 
 /**
  * Plugin controller.
@@ -34,6 +33,7 @@ use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
  */
 class PluginController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
+
     /**
      * Lists all Plugin entities.
      *

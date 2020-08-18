@@ -13,7 +13,6 @@ namespace App\Command\Lockssomatic;
 use App\Entity\Pln;
 use App\Services\ConfigUpdater;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -82,6 +81,7 @@ class UpdateConfigCommand extends Command {
             $this->updater->update($pln);
             $this->em->flush();
         }
+
         return 0;
     }
 }

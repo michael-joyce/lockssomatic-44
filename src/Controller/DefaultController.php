@@ -10,17 +10,18 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Default controller for LOCKSSOMatic. Totally open to the public.
  */
 class DefaultController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
+
     /**
      * LOCKSSOMatic home page.
      *

@@ -146,7 +146,7 @@ class ContentProviderControllerTest extends ControllerBaseCase {
     }
 
     public function testAdminDelete() : void {
-$preCount = count($this->entityManager->getRepository(ContentProvider::class)->findAll());
+        $preCount = count($this->entityManager->getRepository(ContentProvider::class)->findAll());
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/content_provider/1/delete');
         $this->assertSame(302, $this->client->getResponse()->getStatusCode());

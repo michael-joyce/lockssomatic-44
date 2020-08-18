@@ -13,15 +13,14 @@ namespace App\Controller;
 use App\Entity\Box;
 use App\Entity\BoxStatus;
 use App\Entity\Pln;
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * BoxStatus controller.
@@ -33,6 +32,7 @@ use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
  */
 class BoxStatusController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
+
     /**
      * Lists all BoxStatus entities.
      *

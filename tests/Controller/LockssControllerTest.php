@@ -45,7 +45,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getLockssXmlFile')->willReturn($url);
 
-        static::$container->set('test.'.FilePaths::class, $fp);
+        static::$container->set('test.' . FilePaths::class, $fp);
 
         $this->client->request('GET', '/plnconfigs/1/properties/lockss.xml');
         $response = $this->client->getResponse();
@@ -66,7 +66,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getLockssXmlFile')->willReturn($url);
 
-        static::$container->set('test.'.FilePaths::class, $fp);
+        static::$container->set('test.' . FilePaths::class, $fp);
         $this->client->request('GET', '/plnconfigs/1/properties/lockss.xml');
         $response = $this->client->getResponse();
         $this->assertSame(404, $response->getStatusCode());
@@ -82,9 +82,13 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getLockssXmlFile')->willReturn($url);
 
-        static::$container->set('test.'.FilePaths::class, $fp);
-        $this->client->request('GET', '/plnconfigs/1/properties/lockss.xml',
-            [], [], [
+        static::$container->set('test.' . FilePaths::class, $fp);
+        $this->client->request(
+            'GET',
+            '/plnconfigs/1/properties/lockss.xml',
+            [],
+            [],
+            [
                 'REMOTE_ADDR' => '11.0.0.0',
             ]
         );
@@ -114,8 +118,8 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getLockssXmlFile')->willReturn($url);
 
-        static::$container->set('test.'.FilePaths::class, $fp);
-        $this->client->request('GET', '/plnconfigs/1/properties/lockss.xml',[
+        static::$container->set('test.' . FilePaths::class, $fp);
+        $this->client->request('GET', '/plnconfigs/1/properties/lockss.xml', [
             'REMOTE_ADDR' => '10.0.0.12',
         ]);
         $response = $this->client->getResponse();
@@ -132,7 +136,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getTitleDbPath')->willReturn($url);
 
-        static::$container->set('test.'.FilePaths::class, $fp);
+        static::$container->set('test.' . FilePaths::class, $fp);
         $this->client->request('GET', '/plnconfigs/1/titledbs/1/1/titledb_1.xml');
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
@@ -152,7 +156,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getTitleDbPath')->willReturn($url);
 
-        static::$container->set('test.'.FilePaths::class, $fp);
+        static::$container->set('test.' . FilePaths::class, $fp);
         $this->client->request('GET', '/plnconfigs/1/titledbs/1/1/titledb_1.xml');
         $response = $this->client->getResponse();
         $this->assertSame(404, $response->getStatusCode());
@@ -168,7 +172,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getManifestPath')->willReturn($url);
 
-        static::$container->set('test.'.FilePaths::class, $fp);
+        static::$container->set('test.' . FilePaths::class, $fp);
         $this->client->request('GET', '/plnconfigs/1/manifests/1/1/manifest_1.html');
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
@@ -188,7 +192,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getManifestPath')->willReturn($url);
 
-        static::$container->set('test.'.FilePaths::class, $fp);
+        static::$container->set('test.' . FilePaths::class, $fp);
         $this->client->request('GET', '/plnconfigs/1/manifests/1/1/manifest_1.html');
         $response = $this->client->getResponse();
         $this->assertSame(404, $response->getStatusCode());
@@ -208,7 +212,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getPluginsExportDir')->willReturn(dirname($url));
 
-        static::$container->set('test.'.FilePaths::class, $fp);
+        static::$container->set('test.' . FilePaths::class, $fp);
 
         $this->client->request('GET', '/plnconfigs/1/plugins/lockssomatic.keystore');
         $response = $this->client->getResponse();
@@ -239,7 +243,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getPluginsManifestFile')->willReturn($url);
 
-        static::$container->set('test.'.FilePaths::class, $fp);
+        static::$container->set('test.' . FilePaths::class, $fp);
 
         $this->client->request('GET', '/plnconfigs/1/plugins/index.html');
         $response = $this->client->getResponse();
@@ -260,7 +264,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getPluginsManifestFile')->willReturn($url);
 
-        static::$container->set('test.'.FilePaths::class, $fp);
+        static::$container->set('test.' . FilePaths::class, $fp);
 
         $this->client->request('GET', '/plnconfigs/1/plugins/index.html');
         $response = $this->client->getResponse();
@@ -277,7 +281,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getPluginsExportDir')->willReturn('vfs://root');
 
-        static::$container->set('test.'.FilePaths::class, $fp);
+        static::$container->set('test.' . FilePaths::class, $fp);
 
         $this->client->request('GET', '/plnconfigs/1/plugins/dummy.jar');
         $response = $this->client->getResponse();
@@ -298,7 +302,7 @@ class LockssControllerTest extends ControllerBaseCase {
         $fp = $this->createMock(FilePaths::class);
         $fp->method('getPluginsExportDir')->willReturn('vfs://root');
 
-        static::$container->set('test.'.FilePaths::class, $fp);
+        static::$container->set('test.' . FilePaths::class, $fp);
 
         $this->client->request('GET', '/plnconfigs/1/plugins/dummy.jar');
         $response = $this->client->getResponse();

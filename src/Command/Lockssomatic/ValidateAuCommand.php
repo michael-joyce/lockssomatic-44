@@ -14,7 +14,6 @@ use App\Entity\Au;
 use App\Services\AuManager;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -81,6 +80,7 @@ class ValidateAuCommand extends Command {
                 $output->writeln("AU {$au->getId()} has {$errors} problems.");
             }
         }
+
         return 0;
     }
 }

@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Pln;
-use App\Entity\Plugin;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

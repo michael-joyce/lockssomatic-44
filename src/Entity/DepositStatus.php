@@ -66,8 +66,6 @@ class DepositStatus extends AbstractEntity {
 
     /**
      * Return the deposit identifier and date of this status check.
-     *
-     * @return string
      */
     public function __toString() : string {
         return $this->deposit . ' ' . $this->created->format('c');

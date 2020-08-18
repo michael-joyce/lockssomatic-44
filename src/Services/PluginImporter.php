@@ -234,6 +234,7 @@ class PluginImporter {
             $leaf->setPropertyValue((string) $value);
             $this->em->persist($leaf);
         }
+
         return $childProperty;
     }
 

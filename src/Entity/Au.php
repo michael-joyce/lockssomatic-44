@@ -125,8 +125,6 @@ class Au extends AbstractEntity {
 
     /**
      * Build a string representation of the AU.
-     *
-     * @return string
      */
     public function __toString() : string {
         if ($this->id) {

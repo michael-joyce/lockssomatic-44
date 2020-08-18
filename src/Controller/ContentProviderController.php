@@ -12,14 +12,13 @@ namespace App\Controller;
 
 use App\Entity\ContentProvider;
 use App\Form\ContentProviderType;
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-
-use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * ContentProvider controller.
@@ -29,6 +28,7 @@ use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
  */
 class ContentProviderController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
+
     /**
      * Lists all ContentProvider entities.
      *
@@ -130,7 +130,6 @@ class ContentProviderController extends AbstractController implements PaginatorA
      *
      * @Security("is_granted('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="content_provider_delete", methods={"GET"})
-     *
      */
     public function deleteAction(Request $request, ContentProvider $contentProvider) {
         $em = $this->getDoctrine()->getManager();

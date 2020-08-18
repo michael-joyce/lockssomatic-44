@@ -14,7 +14,6 @@ use App\Entity\Pln;
 use App\Services\ConfigExporter;
 use App\Services\ConfigUpdater;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -96,6 +95,7 @@ class ExportConfigCommand extends Command {
             $output->writeln("exporting {$pln->getName()}");
             $this->exporter->export($pln);
         }
+
         return 0;
     }
 }

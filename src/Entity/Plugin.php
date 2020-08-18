@@ -120,8 +120,6 @@ class Plugin extends AbstractEntity {
 
     /**
      * Get the name of the plugin or the empty string if it does not have one.
-     *
-     * @return string
      */
     public function __toString() : string {
         if ($this->name) {

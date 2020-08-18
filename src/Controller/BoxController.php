@@ -13,16 +13,15 @@ namespace App\Controller;
 use App\Entity\Box;
 use App\Entity\Pln;
 use App\Form\BoxType;
-use Nines\UtilBundle\Controller\PaginatorTrait;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
-
+use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Box controller.
@@ -33,6 +32,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class BoxController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
+
     /**
      * Lists all Box entities.
      *
@@ -143,7 +143,6 @@ class BoxController extends AbstractController implements PaginatorAwareInterfac
      *
      * @Security("is_granted('ROLE_ADMIN')")
      * @Route("/{id}/delete", name="box_delete", methods={"GET"})
-     *
      */
     public function deleteAction(Request $request, Pln $pln, Box $box) {
         if ($box->getPln() !== $pln) {

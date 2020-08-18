@@ -96,8 +96,6 @@ class PluginProperty extends AbstractEntity {
      * Return a string representation of the property.
      *
      * The representation is the property key or the empty string.
-     *
-     * @return string
      */
     public function __toString() : string {
         if ($this->propertyKey) {

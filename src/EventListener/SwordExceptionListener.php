@@ -15,8 +15,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -52,7 +50,6 @@ class SwordExceptionListener {
      * Construct the listener.
      *
      * @param string $env
-     * @param Environment $templating
      */
     public function __construct($env, Environment $templating) {
         $this->templating = $templating;
@@ -63,8 +60,6 @@ class SwordExceptionListener {
      * Once the controller has been initialized, this event is fired.
      *
      * Grab a reference to the active controller.
-     *
-     * @param ControllerEvent $event
      */
     public function onKernelController(ControllerEvent $event) : void {
         $this->controller = $event->getController();
@@ -72,8 +67,6 @@ class SwordExceptionListener {
 
     /**
      * Exception handler for all controller events.
-     *
-     * @param ExceptionEvent $event
      *
      * @throws LoaderError
      * @throws RuntimeError

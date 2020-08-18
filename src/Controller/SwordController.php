@@ -18,8 +18,8 @@ use App\Services\DepositBuilder;
 use App\Utilities\Namespaces;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -31,7 +31,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 
 /**
  * Sword controller.
@@ -49,15 +48,6 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
     protected $logger;
 
     /**
-     * Sets a logger.
-     *
-     * @param LoggerInterface $swordLogger
-     */
-    public function setLogger(LoggerInterface $swordLogger) {
-        $this->logger = $swordLogger;
-    }
-
-    /**
      * Fetch an HTTP header.
      *
      * Checks the HTTP headers for $key and X-$key variant. If the app
@@ -70,10 +60,10 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @param string $key
      * @param bool $required
      *
-     * @return null|string
-     *                     The value of the header or null if that's OK.
      * @throws BadRequestHttpException
      *
+     * @return null|string
+     *                     The value of the header or null if that's OK.
      */
     private function fetchHeader(Request $request, $key, $required = false) {
         if ($request->headers->has($key)) {
@@ -92,10 +82,10 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      *
      * @param string $uuid
      *
-     * @return ContentProvider
      * @throws NotFoundHttpException
      *                               Throws if the provider is missing.
      *
+     * @return ContentProvider
      */
     private function getProvider($uuid) {
         $em = $this->getDoctrine()->getManager();
@@ -189,9 +179,9 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
     /**
      * Get the XML from an HTTP request.
      *
-     * @return SimpleXMLElement
      * @throws BadRequestHttpException
      *
+     * @return SimpleXMLElement
      */
     private function getXml(Request $request) {
         $content = $request->getContent();
@@ -204,10 +194,16 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
             Namespaces::registerNamespaces($xml);
 
             return $xml;
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             throw new BadRequestHttpException('Cannot parse request XML.', $e, Response::HTTP_BAD_REQUEST);
         }
+    }
+
+    /**
+     * Sets a logger.
+     */
+    public function setLogger(LoggerInterface $swordLogger) : void {
+        $this->logger = $swordLogger;
     }
 
     /**
@@ -245,11 +241,11 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * }, methods={"POST"})
      * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
      *
-     * @return Response
      * @throws HostMismatchException
      * @throws MaxUploadSizeExceededException
-     *
      * @throws BadRequestException
+     *
+     * @return Response
      */
     public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, AuManager $auManager) {
         $this->logger->notice("{$request->getClientIp()} - create deposit - {$provider->getName()}");
@@ -282,8 +278,8 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid"="uuid"}})
      *
      * @return Response
-     * @todo what does the recrawl attribute do?
      *
+     * @todo what does the recrawl attribute do?
      */
     public function editDepositAction(Request $request, ContentProvider $provider, Deposit $deposit, EntityManagerInterface $em) {
         $this->logger->notice("{$request->getClientIp()} - edit deposit - {$provider->getName()} - {$deposit->getUuid()}");
@@ -360,8 +356,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
         if (1.0 === $deposit->getAgreement()) {
             $state = 'agreement';
             $stateDescription = 'LOCKSS boxes have harvested the content and agree on the checksum.';
-        }
-        else {
+        } else {
             $state = 'inProgress';
             $stateDescription = 'LOCKSS boxes have not completed harvesting the content.';
         }

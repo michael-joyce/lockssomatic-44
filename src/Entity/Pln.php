@@ -162,8 +162,6 @@ class Pln extends AbstractEntity {
 
     /**
      * Return the name of the PLN.
-     *
-     * @return string
      */
     public function __toString() : string {
         return $this->name;

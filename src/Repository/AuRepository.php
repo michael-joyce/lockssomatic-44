@@ -12,7 +12,6 @@ namespace App\Repository;
 
 use App\Entity\Au;
 use App\Entity\Deposit;
-use App\Entity\Plugin;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
@@ -25,6 +24,7 @@ class AuRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Au::class);
     }
+
     /**
      * Find an open AU and return it.
      *

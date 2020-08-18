@@ -168,10 +168,10 @@ class AuManager {
         }
 
         if (0 === $this->countDeposits($au)) {
-            if($this->em->contains($au)) {
+            if ($this->em->contains($au)) {
                 $this->logger->warning("AU {$au->getId()} has no deposits and cannot be validated.");
             } else {
-                $this->logger->warning("Non-persisted AU has no deposits and cannot be validated.");
+                $this->logger->warning('Non-persisted AU has no deposits and cannot be validated.');
             }
 
             return 0;
@@ -307,7 +307,7 @@ class AuManager {
      */
     public function baseProperties(Au $au, AuProperty $root, Deposit $deposit) : void {
         $this->buildProperty($au, 'journalTitle', $deposit->getProperty('journalTitle'), $root);
-        if($this->em->contains($au)) {
+        if ($this->em->contains($au)) {
             $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . $au->getId() . ' ' . $deposit->getTitle(), $root);
         } else {
             $this->buildProperty($au, 'title', 'LOCKSSOMatic AU ' . ' ' . $deposit->getTitle(), $root);
@@ -360,11 +360,12 @@ class AuManager {
         foreach ($deposit->getProperties() as $name) {
             $value = $deposit->getProperty($name);
             if (is_array($value)) {
-                if($this->em->contains($au)) {
+                if ($this->em->contains($au)) {
                     $this->logger->warning("AU {$au->getId()} has unsupported property value list {$name}");
                 } else {
                     $this->logger->warning("Non-persisted AU has unsupported property value list {$name}");
                 }
+
                 continue;
             }
             $this->buildProperty($au, "attributes.pkppln.{$name}", $value, $root);

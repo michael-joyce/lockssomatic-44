@@ -13,16 +13,15 @@ namespace App\Controller;
 use App\Entity\Deposit;
 use App\Entity\DepositStatus;
 use App\Entity\Pln;
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * DepositStatus controller.
@@ -34,6 +33,7 @@ use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
  */
 class DepositStatusController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
+
     /**
      * Lists all DepositStatus entities.
      *
