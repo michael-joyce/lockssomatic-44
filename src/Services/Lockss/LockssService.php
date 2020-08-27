@@ -10,7 +10,8 @@ declare(strict_types=1);
 
 namespace App\Services\Lockss;
 
-use App\Entity\Box;
+use App\Entity\Au;
+use App\Services\AuManager;
 use App\Utilities\LockssClient;
 use Exception;
 
@@ -20,8 +21,28 @@ class LockssService {
      */
     private $client;
 
+    /**
+     * @var AuManager
+     */
+    private $auManager;
+
     public function __construct() {
         $this->client = null;
+    }
+
+    /**
+     * @param AuManager $auManager
+     * @required
+     */
+    public function setAuManager(AuManager $auManager) {
+        $this->auManager = $auManager;
+    }
+
+    /**
+     * @param LockssClient $client
+     */
+    public function setClient(LockssClient $client) : void {
+        $this->client = $client;
     }
 
     /**
@@ -32,7 +53,7 @@ class LockssService {
      *
      * @return mixed
      */
-    protected function call($method, $parameters) {
+    protected function call($method, $parameters = []) {
         if ( ! $this->client) {
             throw new Exception('A LockssClient is required.');
         }
@@ -44,13 +65,19 @@ class LockssService {
         return $response;
     }
 
-    public function setClient(LockssClient $client) : void {
-        $this->client = $client;
-    }
-
-    public function boxStatus(Box $box) {
+    public function boxStatus() {
         return $this->call('queryRepositorySpaces', [
             'repositorySpaceQuery' => 'SELECT *',
+        ]);
+    }
+
+    public function listAus() {
+        return $this->call('getAuIds');
+    }
+
+    public function auStatus(Au $au) {
+        return $this->call('getAuStatus', [
+            'auId' => $this->auManager->generateAuidFromAu($au, true),
         ]);
     }
 }

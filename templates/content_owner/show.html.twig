@@ -2,9 +2,9 @@
 
 {% block title %}ContentOwner{% endblock %}
 
-{% block pageheader %} 
+{% block pageheader %}
     <h1>ContentOwner</h1>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
     <div class="btn-toolbar">
@@ -39,19 +39,19 @@
             <tr>
                 <th>Updated</th>
                 <td>{% if contentOwner.updated %}{{ contentOwner.updated|date }}{% endif %}</td>
-            </tr>        
+            </tr>
         </tbody>
     </table>
-    {% if contentOwner.contentProviders | length > 0 %}    
+    {% if contentOwner.contentProviders | length > 0 %}
         <h2>Contentproviders</h2>
         <ul>
             {% for contentProviders in contentOwner.contentProviders %}
                 <li>
-                    <a href="{{ path("contentProviders_show", {"id":contentProviders.id}) }}">
+                    <a href="{{ path("content_provider_show", {"id":contentProviders.id}) }}">
                         {{ contentProviders }}
                     </a>
                 </li>
-            {% endfor %} 
+            {% endfor %}
         </ul>
     {% endif %}
 {% endblock %}

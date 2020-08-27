@@ -338,8 +338,7 @@ class AuManager {
 
                     break;
                 case 'base_url':
-                    $p = parse_url($deposit->getUrl());
-                    $value = "{$p['scheme']}://{$p['host']}" . (isset($p['port']) ? ":{$p['port']}" : '');
+                    $value = $deposit->getProperty('base_url');
 
                     break;
                 default:

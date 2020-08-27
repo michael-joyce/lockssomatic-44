@@ -23,7 +23,7 @@ class AuStatus extends AbstractEntity {
     /**
      * Status data as returned from LOCKSS.
      *
-     * @var string
+     * @var array
      *
      * @ORM\Column(name="status", type="array")
      */
@@ -52,6 +52,12 @@ class AuStatus extends AbstractEntity {
         return $this->created->format('c') . ' - Errors: ' . count($this->errors);
     }
 
+    public function __construct() {
+        parent::__construct();
+        $this->status = [];
+        $this->errors = [];
+    }
+
     /**
      * Set status.
      *
@@ -60,6 +66,11 @@ class AuStatus extends AbstractEntity {
     public function setStatus(array $status) {
         $this->status = $status;
 
+        return $this;
+    }
+
+    public function addStatus(Box $box, $status) {
+        $this->status[$box->getHostname()] = $status;
         return $this;
     }
 
@@ -80,6 +91,11 @@ class AuStatus extends AbstractEntity {
     public function setErrors(array $errors) {
         $this->errors = $errors;
 
+        return $this;
+    }
+
+    public function addError(Box $box, $error) {
+        $this->errors[$box->getHostname()] = $error;
         return $this;
     }
 

@@ -7,7 +7,7 @@
     <p class="count">
         Displaying {{ plns|length }} plns of {{ plns.getTotalItemCount }} total.
     </p>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
 
@@ -26,10 +26,6 @@
             <tr>
                 <th>Name</th>
                 <th>Description</th>
-                <th>Username</th>
-                <th>Password</th>
-                <th>Enable Content Ui</th>
-                <th>Content Port</th>
             </tr>
         </thead>
         <tbody>
@@ -41,10 +37,6 @@
                         </a>
                     </td>
                     <td>{{ pln.description }}</td>
-                    <td>{{ pln.username }}</td>
-                    <td>{{ pln.password }}</td>
-                    <td>{% if pln.enableContentUi %}Yes{% else %}No{% endif %}</td>
-                    <td>{{ pln.contentPort }}</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}ContentProvider{% endblock %}
+{% block title %}Content Provider{% endblock %}
 
 {% block pageheader %}
-    <h1>ContentProvider</h1>
+    <h1>Content Provider</h1>
 {% endblock %}
 
 {% block body %}
@@ -49,14 +49,6 @@
                 <td>{% embed 'partial/size.html.twig' with {bytes: contentProvider.maxAuSize} %}{% endembed %}</td>
             </tr>
             <tr>
-                <th>Created</th>
-                <td>{% if contentProvider.created %}{{ contentProvider.created|date }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Updated</th>
-                <td>{% if contentProvider.updated %}{{ contentProvider.updated|date }}{% endif %}</td>
-            </tr>
-            <tr>
                 <th>Content Owner</th>
                 <td>
                     <a href="{{ path('content_owner_show', { 'id': contentProvider.contentOwner.id}) }}">
@@ -79,6 +71,14 @@
                         {{ contentProvider.plugin }}
                     </a>
                 </td>
+            </tr>
+            <tr>
+                <th>Created</th>
+                <td>{% if contentProvider.created %}{{ contentProvider.created|date }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{% if contentProvider.updated %}{{ contentProvider.updated|date }}{% endif %}</td>
             </tr>
         </tbody>
     </table>
