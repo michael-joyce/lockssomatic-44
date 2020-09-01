@@ -20,10 +20,6 @@ use Laminas\Soap\Client;
  * @see https://docs.laminas.dev/laminas-soap/client/
  */
 class LockssClient {
-    /**
-     * @var string
-     */
-    private $wsdl;
 
     /**
      * @var array
@@ -43,11 +39,9 @@ class LockssClient {
      *
      * @return LockssClient
      */
-    public static function create(Box $box, $service = 'DaemonStatusService') {
-        $wsdl = "http://{$box->getHostname()}:{$box->getWebservicePort()}/ws/{$service}?wsdl";
+    public static function create(Box $box) {
         $lockssClient = new LockssClient();
         $lockssClient->box = $box;
-        $lockssClient->wsdl = $wsdl;
         $lockssClient->options = [
             'login' => $box->getPln()->getUsername(),
             'password' => $box->getPln()->getPassword(),
@@ -56,6 +50,10 @@ class LockssClient {
         ];
 
         return $lockssClient;
+    }
+
+    public function generateWsdl($name) {
+        return "http://{$this->box->getHostname()}:{$this->box->getWebservicePort()}/ws/{$name}?wsdl";
     }
 
     public function getOption($name) {
@@ -69,13 +67,24 @@ class LockssClient {
         $this->options[$name] = $value;
     }
 
-    public function call($method, $params = []) {
-        $client = new Client($this->wsdl, $this->options);
-        $readyResponse = $client->isDaemonReady();
+    public function isDaemonReady() {
+        $wsdl = $this->generateWsdl('DaemonStatusService');
+        $client = new Client($wsdl, $this->options);
+        return $client->isDaemonReady();
+    }
+
+    public function call($method, $params = [], $serviceName = 'DaemonStatusService') {
+        $readyResponse = $this->isDaemonReady();
         if (true !== $readyResponse->return) {
             throw new Exception("Daemon on {$this->box->getHostname()} reports not ready.");
         }
 
-        return $client->{$method}($params);
+        $wsdl = $this->generateWsdl($serviceName);
+        $client = new Client($wsdl, $this->options);
+        try {
+            return $client->{$method}($params);
+        } catch(Exception $e) {
+            throw new Exception("Calling $method in $wsdl threw error: {$e->getMessage()}");
+        }
     }
 }

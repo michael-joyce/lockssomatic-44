@@ -37,7 +37,7 @@
                         </a><br/>
                     </td>
                     <td>{{ deposit.title }}</td>
-                    <td>{{ deposit.agreement * 100 }}%</td>
+                    <td>{{ deposit.agreement|format_number(style='percent') }}</td>
                     <td>{{ deposit.dateDeposited|date }}</td>
                 </tr>
             {% endfor %}

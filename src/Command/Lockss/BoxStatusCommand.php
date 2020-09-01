@@ -10,66 +10,27 @@ declare(strict_types=1);
 
 namespace App\Command\Lockss;
 
+use App\Entity\Box;
+use App\Entity\BoxStatus;
 use App\Repository\BoxRepository;
 use App\Repository\PlnRepository;
 use App\Services\BoxNotifier;
-use Exception;
-use App\Entity\Box;
-use App\Entity\BoxStatus;
 use App\Services\Lockss\LockssService;
 use App\Utilities\LockssClient;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
 use stdClass;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Twig\Environment;
 
-class BoxStatusCommand extends Command {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var BoxRepository
-     */
-    private $boxRepository;
-
-    /**
-     * @var PlnRepository
-     */
-    private $plnRepository;
-
-    /**
-     * @var BoxNotifier
-     */
-    private $notifier;
-
-    /**
-     * @var ParameterBagInterface
-     */
-    private $params;
-
-    /**
-     * @var LockssService
-     */
-    private $lockssService;
-
+class BoxStatusCommand extends AbstractLockssCommand {
     protected static $defaultName = 'lockss:box:status';
 
     public function __construct(LockssService $lockssService, ParameterBagInterface $params, string $name = null) {
-        parent::__construct($name);
-        $this->params = $params;
-        $this->lockssService = $lockssService;
+        parent::__construct($lockssService, $params, $name);
     }
 
     protected function configure() : void {
@@ -81,11 +42,13 @@ class BoxStatusCommand extends Command {
     protected function getBoxes($plnIds) {
         if ($plnIds) {
             $plns = $this->plnRepository->findBy(['id' => $plnIds]);
+
             return $this->boxRepository->findBy([
                 'pln' => $plns,
                 'active' => true,
             ]);
         }
+
         return $this->boxRepository->findBy(['active' => true]);
     }
 
@@ -94,11 +57,11 @@ class BoxStatusCommand extends Command {
         foreach ($object as $key => $value) {
             if ($value instanceof stdClass) {
                 $array[$key] = $this->toArray($value);
-            }
-            else {
+            } else {
                 $array[$key] = $value;
             }
         }
+
         return $array;
     }
 
@@ -111,20 +74,20 @@ class BoxStatusCommand extends Command {
         $status->setSuccess(true);
 
         $result = [];
+
         try {
             $result = $this->lockssService->boxStatus();
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error("{$box->getIpAddress()} - {$e->getMessage()}");
             $status->setSuccess(false);
             $status->setErrors($e->getMessage());
         }
         if ( ! is_array($result)) {
             $status->setData([$this->toArray($result)]);
+        } else {
+            $status->setData($result);
         }
-        else {
-            $status->setData($this->toArray($result));
-        }
+
         return $status;
     }
 
@@ -170,22 +133,21 @@ class BoxStatusCommand extends Command {
     /**
      * @required
      */
-    public function setBoxRepository(BoxRepository $repo) {
+    public function setBoxRepository(BoxRepository $repo) : void {
         $this->boxRepository = $repo;
     }
 
     /**
      * @required
      */
-    public function setPlnRepository(PlnRepository $repo) {
+    public function setPlnRepository(PlnRepository $repo) : void {
         $this->plnRepository = $repo;
     }
 
     /**
      * @required
      */
-    public function setNotifier(BoxNotifier $notifier) {
+    public function setNotifier(BoxNotifier $notifier) : void {
         $this->notifier = $notifier;
     }
-
 }

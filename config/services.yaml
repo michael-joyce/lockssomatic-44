@@ -21,6 +21,8 @@ parameters:
     lom.boxstatus.sender: '%env(LOM_STATUS_SENDER)%'
     lom.boxstatus.contact: '%env(LOM_STATUS_CONTACT)%'
 
+    lockss.deposit.limit: 150
+
 services:
     # default configuration for services in *this* file
     _defaults:

@@ -6,8 +6,8 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-simplexml": "*",
-        "ext-zip": "*",
         "ext-soap": "*",
+        "ext-zip": "*",
         "egulias/email-validator": "^2.1",
         "guzzlehttp/guzzle": "^6.5",
         "laminas/laminas-soap": "^2.8",
@@ -35,6 +35,7 @@
         "symfony/web-link": "4.4.*",
         "symfony/yaml": "4.4.*",
         "tetranz/select2entity-bundle": "^2.9",
+        "twig/intl-extra": "^3.0",
         "twig/string-extra": "^3.0",
         "ubermichael/nines": "4.x-dev"
     },

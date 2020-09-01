@@ -146,6 +146,7 @@ class Deposit extends AbstractEntity {
      * @var DepositStatus
      *
      * @ORM\OneToMany(targetEntity="DepositStatus", mappedBy="deposit")
+     * @ORM\OrderBy({"created" = "DESC"})
      */
     private $status;
 

@@ -12,7 +12,9 @@ namespace App\Repository;
 
 use App\Entity\Deposit;
 use App\Entity\Pln;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -47,4 +49,39 @@ class DepositRepository extends ServiceEntityRepository {
 
         return $qb->getQuery();
     }
+
+    /**
+     * Fetch a list of deposits to check.
+     *
+     * @param $plns
+     * @param $uuids
+     * @param $all
+     *
+     * @return Query
+     */
+    public function checkQuery($plns, $uuids, $all, $count = false) {
+        $yesterday = new DateTime();
+        $yesterday->modify('-1 day');
+
+        $qb = $this->createQueryBuilder('d');
+        if($count) {
+            $qb->select($qb->expr()->count('d.id'));
+        }
+        if( ! $all) {
+            $qb->andWhere('d.agreement IS NULL or d.agreement < 1.0');
+            $qb->andWhere('d.checked IS NULL OR d.checked < :yesterday');
+            $qb->setParameter('yesterday', $yesterday);
+        }
+        if($plns) {
+            $qb->andWhere('d.pln in :plns');
+            $qb->setParameter('plns', $plns);
+        }
+        if($uuids) {
+            $qb->andWhere('d.uuid in :uuids');
+            $qb->setParameter('uuids', $uuids);
+        }
+        $qb->orderBy('d.checked', 'DESC');
+        return $qb->getQuery();
+    }
+
 }

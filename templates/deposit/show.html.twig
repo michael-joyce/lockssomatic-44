@@ -38,7 +38,7 @@
             </tr>
             <tr>
                 <th>Agreement</th>
-                <td>{{ deposit.agreement*100 }}%</td>
+                <td>{{ deposit.agreement|format_number(style='percent') }}</td>
             </tr>
             <tr>
                 <th>Summary</th>
@@ -108,7 +108,7 @@
             {% for status in deposit.status %}
                 <li>
                     <a href="{{ path("deposit_status_show", {"id":status.id, 'plnId': pln.id, 'depositId': deposit.id}) }}">
-                        {{ status }}
+                        {{ status }} - {{ status.agreement|format_number(style='percent') }}
                     </a>
                 </li>
             {% endfor %}
