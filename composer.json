@@ -2,12 +2,13 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": "^7.2",
+        "php": "^7.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-simplexml": "*",
         "ext-soap": "*",
         "ext-zip": "*",
+        "doctrine/common": "^2.13",
         "egulias/email-validator": "^2.1",
         "guzzlehttp/guzzle": "^6.5",
         "laminas/laminas-soap": "^2.8",
@@ -37,7 +38,8 @@
         "tetranz/select2entity-bundle": "^2.9",
         "twig/intl-extra": "^3.0",
         "twig/string-extra": "^3.0",
-        "ubermichael/nines": "4.x-dev"
+        "ubermichael/nines": "4.x-dev",
+      "ext-dom": "*"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
