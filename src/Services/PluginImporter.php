@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -103,6 +103,7 @@ class PluginImporter {
      */
     public function findPluginEntries(array $manifest) {
         $entries = [];
+
         foreach ($manifest as $section) {
             if (isset($section[self::PLUGIN_KEY]) && 'true' === $section[self::PLUGIN_KEY]) {
                 // The comparison above must be string, not boolean.
@@ -144,6 +145,7 @@ class PluginImporter {
         $sections = [];
 
         $blocks = preg_split('/\n\s*\n/s', $manifest);
+
         foreach ($blocks as $block) {
             if (ctype_space($block)) {
                 continue;
@@ -151,6 +153,7 @@ class PluginImporter {
             $block = preg_replace("/\n\\s(\\S)/", '\1', $block);
             $keys = [];
             $lines = preg_split('/\n/', $block);
+
             foreach ($lines as $line) {
                 if ( ! $line) {
                     continue;
@@ -254,6 +257,7 @@ class PluginImporter {
         $plugin->addPluginProperty($property);
         $property->setPropertyKey($name);
         $this->em->persist($property);
+
         foreach ($value->children() as $child) {
             $this->importChildren($property, $child);
         }
@@ -294,6 +298,7 @@ class PluginImporter {
                 break;
             case 'list':
                 $values = [];
+
                 foreach ($value->children() as $child) {
                     $values[] = (string) $child;
                 }

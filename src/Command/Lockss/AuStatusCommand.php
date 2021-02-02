@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class AuStatusCommand extends AbstractLockssCommand {
     protected static $defaultName = 'lockss:au:status';
 
-    public function __construct(LockssService $lockssService, ParameterBagInterface $params, string $name = null) {
+    public function __construct(LockssService $lockssService, ParameterBagInterface $params, ?string $name = null) {
         parent::__construct($lockssService, $params, $name);
     }
 
@@ -47,9 +47,11 @@ class AuStatusCommand extends AbstractLockssCommand {
 
         foreach ($this->getPlns($plnIds) as $pln) {
             $boxes = $pln->getActiveBoxes();
+
             foreach ($pln->getAus() as $au) {
                 $auStatus = new AuStatus();
                 $auStatus->setAu($au);
+
                 foreach ($boxes as $box) {
                     try {
                         $status = $this->getStatus($au, $box);

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -35,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * this controller only.
  *
  * @Route("/plnconfigs/{plnId}", methods={"GET"})
- * @ParamConverter("pln", options={"id"="plnId"})
+ * @ParamConverter("pln", options={"id": "plnId"})
  */
 class LockssController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
@@ -110,8 +110,8 @@ class LockssController extends AbstractController implements PaginatorAwareInter
      * @param string $id
      *
      * @Route("/titledbs/{ownerId}/{providerId}/titledb_{id}.xml", name="lockss_titledb")
-     * @ParamConverter("owner", options={"id"="ownerId"})
-     * @ParamConverter("provider", options={"id"="providerId"})
+     * @ParamConverter("owner", options={"id": "ownerId"})
+     * @ParamConverter("provider", options={"id": "providerId"})
      */
     public function titleDbAction(Request $request, Pln $pln, ContentOwner $owner, ContentProvider $provider, $id) {
         $this->logger->notice("{$request->getClientIp()} - titledb - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - titledb_{$id}.xml");
@@ -130,9 +130,9 @@ class LockssController extends AbstractController implements PaginatorAwareInter
      * Fetch the manifest file for one AU.
      *
      * @Route("/manifests/{ownerId}/{providerId}/manifest_{auId}.html", name="lockss_manifest")
-     * @ParamConverter("owner", options={"id"="ownerId"})
-     * @ParamConverter("provider", options={"id"="providerId"})
-     * @ParamConverter("au", options={"id"="auId"})
+     * @ParamConverter("owner", options={"id": "ownerId"})
+     * @ParamConverter("provider", options={"id": "providerId"})
+     * @ParamConverter("au", options={"id": "auId"})
      */
     public function manifestAction(Request $request, Pln $pln, ContentOwner $owner, ContentProvider $provider, Au $au) {
         $this->logger->notice("{$request->getClientIp()} - manifest - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - Au #{$au->getId()}");

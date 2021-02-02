@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -28,8 +28,8 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Security("is_granted('ROLE_USER')")
  * @Route("/pln/{plnId}/au/{auId}/status")
- * @ParamConverter("pln", options={"id"="plnId"})
- * @ParamConverter("au", options={"id"="auId"})
+ * @ParamConverter("pln", options={"id": "plnId"})
+ * @ParamConverter("au", options={"id": "auId"})
  */
 class AuStatusController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
@@ -40,7 +40,7 @@ class AuStatusController extends AbstractController implements PaginatorAwareInt
      * @return array
      *
      * @Route("/", name="au_status_index", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request, Pln $pln, Au $au) {
         if ($au->getPln() !== $pln) {
@@ -66,7 +66,7 @@ class AuStatusController extends AbstractController implements PaginatorAwareInt
      * @return array
      *
      * @Route("/{id}", name="au_status_show", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function showAction(AuStatus $auStatus, Pln $pln, Au $au) {
         if ($au->getPln() !== $pln) {

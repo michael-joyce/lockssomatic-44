@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -33,7 +33,7 @@ class AuTest extends ControllerBaseCase {
         $this->au->addAuProperty($parent);
         $this->au->addAuProperty($child);
         $roots = $this->au->getRootAuProperties();
-        $this->assertSame(1, count($roots));
+        $this->assertCount(1, $roots);
         $this->assertSame($parent, $roots[0]);
     }
 

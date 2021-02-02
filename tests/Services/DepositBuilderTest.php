@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -14,7 +14,7 @@ use App\DataFixtures\ContentProviderFixtures;
 use App\Entity\Deposit;
 use App\Services\DepositBuilder;
 use App\Utilities\Namespaces;
-use DateTime;
+use DateTimeImmutable;
 use Exception;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 use SimpleXMLElement;
@@ -96,7 +96,7 @@ XML;
         $deposit = $this->builder->fromXml($xml, $this->getReference('provider.1'));
         $this->assertInstanceOf(Deposit::class, $deposit);
         $this->assertSame('771E96EC-5486-4E34-A1F6-AB113AFB642D', $deposit->getUuid());
-        $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
+        $this->assertInstanceOf(DateTimeImmutable::class, $deposit->getDateDeposited());
         $this->assertSame('Test Deposit', $deposit->getTitle());
         $this->assertNull($deposit->getSummary());
     }
@@ -109,7 +109,7 @@ XML;
         $deposit = $this->builder->fromXml($xml, $this->getReference('provider.1'));
         $this->assertInstanceOf(Deposit::class, $deposit);
         $this->assertSame('771E96EC-5486-4E34-A1F6-AB113AFB642D', $deposit->getUuid());
-        $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
+        $this->assertInstanceOf(DateTimeImmutable::class, $deposit->getDateDeposited());
         $this->assertSame('Test Deposit', $deposit->getTitle());
         $this->assertSame('', $deposit->getSummary());
     }
@@ -119,7 +119,7 @@ XML;
         $deposit = $this->builder->fromArray($data, $this->getReference('provider.1'));
         $this->assertInstanceOf(Deposit::class, $deposit);
         $this->assertSame('771E96EC-5486-4E34-A1F6-AB113AFB642D', $deposit->getUuid());
-        $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
+        $this->assertInstanceOf(DateTimeImmutable::class, $deposit->getDateDeposited());
         $this->assertSame('Deposit 1', $deposit->getTitle());
         $this->assertSame('Judgement', $deposit->getSummary());
     }
@@ -129,8 +129,8 @@ XML;
         unset($data['uuid']);
         $deposit = $this->builder->fromArray($data, $this->getReference('provider.1'));
         $this->assertInstanceOf(Deposit::class, $deposit);
-        $this->assertSame(36, strlen($deposit->getUuid()));
-        $this->assertInstanceOf(DateTime::class, $deposit->getDateDeposited());
+        $this->assertSame(36, mb_strlen($deposit->getUuid()));
+        $this->assertInstanceOf(DateTimeImmutable::class, $deposit->getDateDeposited());
         $this->assertSame('Deposit 1', $deposit->getTitle());
         $this->assertSame('Judgement', $deposit->getSummary());
     }

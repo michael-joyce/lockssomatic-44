@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -55,6 +55,7 @@ class ConfigUpdater {
     public function updatePeerList(Pln $pln) : void {
         $boxes = $pln->getBoxes();
         $list = [];
+
         foreach ($boxes as $box) {
             $list[] = "{$box->getProtocol()}:[{$box->getIpAddress()}]:{$box->getPort()}";
         }
@@ -66,9 +67,11 @@ class ConfigUpdater {
      */
     public function updateTitleDbs(Pln $pln) : void {
         $urls = [];
+
         foreach ($pln->getContentProviders() as $provider) {
             $owner = $provider->getContentOwner();
             $aus = $provider->getAus();
+
             for ($i = 1; $i <= ceil($aus->count() / $this->ausPerTitleDb); $i++) {
                 $url = $this->urlGenerator->generate('lockss_titledb', [
                     'plnId' => $pln->getId(),

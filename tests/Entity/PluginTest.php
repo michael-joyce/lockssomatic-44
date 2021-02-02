@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -64,7 +64,7 @@ class PluginTest extends ControllerBaseCase {
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
         $definitionals = $plugin->getPluginConfigParams();
-        $this->assertSame(4, count($definitionals));
+        $this->assertCount(4, $definitionals);
         $this->assertSame('org.lockss.daemon.ConfigParamDescr', $definitionals[0]->getPropertyKey());
         $this->assertSame('base_url', $definitionals[0]->getChildren()[0]->getPropertyValue());
 
@@ -83,7 +83,7 @@ class PluginTest extends ControllerBaseCase {
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
         $definitionals = $plugin->getDefinitionalPropertyNames();
-        $this->assertSame(2, count($definitionals));
+        $this->assertCount(2, $definitionals);
         $this->assertSame('base_url', $definitionals[0]);
         $this->assertSame('container_number', $definitionals[1]);
     }
@@ -93,7 +93,7 @@ class PluginTest extends ControllerBaseCase {
         $xml = simplexml_load_string($this->xmlData());
         $plugin = $importer->buildPlugin($xml);
         $nonDefinitionals = $plugin->getNonDefinitionalProperties();
-        $this->assertSame(2, count($nonDefinitionals));
+        $this->assertCount(2, $nonDefinitionals);
         $this->assertSame('manifest_url', $nonDefinitionals[0]);
         $this->assertSame('permission_url', $nonDefinitionals[1]);
     }

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -40,11 +40,11 @@ class PluginImporterTest extends ControllerBaseCase {
         ];
         // This should really be returnMap(), but the default arguments to
         // ZipArchive->getFromName() are too weird to map properly. Meh.
-        $stub->method('getFromName')->will($this->returnCallback(function ($name) use ($entries) {
+        $stub->method('getFromName')->willReturnCallback(function ($name) use ($entries) {
             if (isset($entries[$name])) {
                 return $entries[$name];
             }
-        }));
+        });
 
         return $stub;
     }
@@ -65,13 +65,13 @@ class PluginImporterTest extends ControllerBaseCase {
         // But it also caused a lot of problems in parsing so test it.
         $data .= "\n\n ";
         $manifest = $this->importer->parseManifest($data);
-        $this->assertSame(2, count($manifest));
+        $this->assertCount(2, $manifest);
     }
 
     public function testManifestSectionCount() : void {
         $data = $this->manifestData();
         $manifest = $this->importer->parseManifest($data);
-        $this->assertSame(2, count($manifest));
+        $this->assertCount(2, $manifest);
     }
 
     public function testManifestFirstSection() : void {
@@ -97,7 +97,7 @@ class PluginImporterTest extends ControllerBaseCase {
     public function testManifestBlankLines() : void {
         $data = $this->manifestData() . "\n\n\n";
         $manifest = $this->importer->parseManifest($data);
-        $this->assertSame(2, count($manifest));
+        $this->assertCount(2, $manifest);
     }
 
     public function testFindPluginEntries() : void {
@@ -116,7 +116,7 @@ class PluginImporterTest extends ControllerBaseCase {
     public function testFindXmlPropString() : void {
         $xml = simplexml_load_string($this->xmlData());
         $this->assertSame('COPPUL WestVault Plugin', $this->importer->findXmlPropString($xml, 'plugin_name'));
-        $this->assertSame(null, $this->importer->findXmlPropString($xml, 'fancy_dan'));
+        $this->assertNull($this->importer->findXmlPropString($xml, 'fancy_dan'));
     }
 
     public function testFindXmlPropStringException() : void {
@@ -128,7 +128,7 @@ class PluginImporterTest extends ControllerBaseCase {
     public function testFindXmlPropElement() : void {
         $xml = simplexml_load_string($this->xmlData());
         $this->assertInstanceOf(SimpleXMLElement::class, $this->importer->findXmlPropElement($xml, 'au_permission_url'));
-        $this->assertSame(null, $this->importer->findXmlPropElement($xml, 'fancy_dan'));
+        $this->assertNull($this->importer->findXmlPropElement($xml, 'fancy_dan'));
     }
 
     public function testFindXmlPropElementException() : void {
@@ -175,7 +175,7 @@ class PluginImporterTest extends ControllerBaseCase {
         $this->assertSame($property, $childProp->getParent());
 
         $children = $childProp->getChildren();
-        $this->assertSame(7, count($children));
+        $this->assertCount(7, $children);
         $this->assertSame('key', $children[0]->getPropertyKey());
         $this->assertSame('base_url', $children[0]->getPropertyValue());
         $this->assertSame('displayName', $children[1]->getPropertyKey());
@@ -197,7 +197,7 @@ class PluginImporterTest extends ControllerBaseCase {
         $plugin = new Plugin();
         $property = $this->importer->newPluginConfig($plugin, 'plugin_config_props', $xml->xpath('//entry[string[1]/text()="plugin_config_props"]/list[1]')[0]);
         $this->assertInstanceOf(PluginProperty::class, $property);
-        $this->assertSame(4, count($property->getChildren()));
+        $this->assertCount(4, $property->getChildren());
     }
 
     public function testAddProperties() : void {
@@ -209,7 +209,7 @@ class PluginImporterTest extends ControllerBaseCase {
         $this->entityManager->persist($plugin);
         $this->importer->addProperties($plugin, $xml);
         $this->entityManager->flush();
-        $this->assertSame(45, count($plugin->getPluginProperties()));
+        $this->assertCount(45, $plugin->getPluginProperties());
     }
 
     public function testBuildPlugin() : void {

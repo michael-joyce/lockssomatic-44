@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -42,7 +42,7 @@ class PlnController extends AbstractController implements PaginatorAwareInterfac
      *
      * @Route("/", name="pln_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -65,7 +65,7 @@ class PlnController extends AbstractController implements PaginatorAwareInterfac
      * @Security("is_granted('ROLE_ADMIN')")
      * @Route("/new", name="pln_new", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function newAction(Request $request) {
         $pln = new Pln();
@@ -98,7 +98,7 @@ class PlnController extends AbstractController implements PaginatorAwareInterfac
      * @Security("is_granted('ROLE_ADMIN')")
      * @Route("/{id}/keystore", name="pln_keystore", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function keystoreAction(Request $request, Pln $pln, FilePaths $filePaths) {
         $form = $this->createForm(FileUploadType::class, null, [
@@ -143,7 +143,7 @@ class PlnController extends AbstractController implements PaginatorAwareInterfac
      *
      * @Route("/{id}", name="pln_show", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function showAction(Pln $pln) {
         return [
@@ -159,7 +159,7 @@ class PlnController extends AbstractController implements PaginatorAwareInterfac
      * @Security("is_granted('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="pln_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function editAction(Request $request, Pln $pln) {
         $editForm = $this->createForm(PlnType::class, $pln);
@@ -193,7 +193,7 @@ class PlnController extends AbstractController implements PaginatorAwareInterfac
      * @Security("is_granted('ROLE_ADMIN')")
      * @Route("/{id}/export", name="pln_export", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function exportAction(Request $request, Pln $pln, ConfigExporter $exporter, ConfigUpdater $updater) {
         $em = $this->getDoctrine()->getManager();

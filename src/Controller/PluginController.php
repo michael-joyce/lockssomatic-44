@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -41,7 +41,7 @@ class PluginController extends AbstractController implements PaginatorAwareInter
      *
      * @Route("/", name="plugin_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -64,7 +64,7 @@ class PluginController extends AbstractController implements PaginatorAwareInter
      * @Security("is_granted('ROLE_ADMIN')")
      * @Route("/new", name="plugin_new", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function newAction(Request $request, PluginImporter $pluginImporter, FilePaths $filePaths) {
         $form = $this->createForm(FileUploadType::class, null, [
@@ -111,7 +111,7 @@ class PluginController extends AbstractController implements PaginatorAwareInter
      *
      * @Route("/{id}", name="plugin_show", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function showAction(Plugin $plugin) {
         return [
@@ -129,7 +129,7 @@ class PluginController extends AbstractController implements PaginatorAwareInter
      * @Security("is_granted('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="plugin_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function editAction(Request $request, Plugin $plugin) {
         $editForm = $this->createForm(PluginType::class, $plugin, [

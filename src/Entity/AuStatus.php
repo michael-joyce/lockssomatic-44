@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -48,14 +48,14 @@ class AuStatus extends AbstractEntity {
      */
     private $au;
 
-    public function __toString() : string {
-        return $this->created->format('c') . ' - Errors: ' . count($this->errors);
-    }
-
     public function __construct() {
         parent::__construct();
         $this->status = [];
         $this->errors = [];
+    }
+
+    public function __toString() : string {
+        return $this->created->format('c') . ' - Errors: ' . count($this->errors);
     }
 
     /**
@@ -71,6 +71,7 @@ class AuStatus extends AbstractEntity {
 
     public function addStatus(Box $box, $status) {
         $this->status[$box->getHostname()] = $status;
+
         return $this;
     }
 
@@ -96,6 +97,7 @@ class AuStatus extends AbstractEntity {
 
     public function addError(Box $box, $error) {
         $this->errors[$box->getHostname()] = $error;
+
         return $this;
     }
 
@@ -115,7 +117,7 @@ class AuStatus extends AbstractEntity {
      *
      * @return AuStatus
      */
-    public function setAu(Au $au = null) {
+    public function setAu(?Au $au = null) {
         $this->au = $au;
 
         return $this;

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -181,6 +181,7 @@ class AuManager {
         $first = $iterator->current()[0];
 
         $base = [];
+
         foreach ($definitional as $name) {
             $base[$name] = $first->getProperty($name);
         }
@@ -188,6 +189,7 @@ class AuManager {
         $i = 0;
         while ($iterator->valid()) {
             $deposit = $iterator->current()[0];
+
             foreach ($definitional as $name) {
                 if ($deposit->getProperty($name) !== $base[$name]) {
                     $errors++;
@@ -215,7 +217,7 @@ class AuManager {
      *
      * @return AuProperty
      */
-    public function buildProperty(Au $au, $key, $value = null, AuProperty $parent = null) {
+    public function buildProperty(Au $au, $key, $value = null, ?AuProperty $parent = null) {
         $property = new AuProperty();
         $property->setAu($au);
         $property->setPropertyKey($key);
@@ -255,10 +257,11 @@ class AuManager {
         } else {
             throw new Exception("Property cannot be parsed: {$value}");
         }
-        $parameterString = substr($value, strlen($formatStr) + 2);
+        $parameterString = mb_substr($value, mb_strlen($formatStr) + 2);
         // substr/strlen skips the $formatstr part of the property.
         $parameters = preg_split('/, */', $parameterString);
         $values = [];
+
         foreach (array_slice($parameters, 1) as $parameterName) {
             $values[] = $au->getAuPropertyValue($parameterName);
         }
@@ -295,6 +298,7 @@ class AuManager {
             return $this->generateString($au, $property->getPropertyValue());
         }
         $values = [];
+
         foreach ($property->getPropertyValue() as $v) {
             $values[] = $this->generateString($au, $v);
         }
@@ -422,6 +426,7 @@ class AuManager {
         $auKey = '';
         $propNames = $plugin->getDefinitionalPropertyNames();
         sort($propNames);
+
         foreach ($propNames as $name) {
             if ( ! $lockssAuid && in_array($name, $plugin->getGeneratedParams(), true)) {
                 continue;

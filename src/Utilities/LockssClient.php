@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -20,7 +20,6 @@ use Laminas\Soap\Client;
  * @see https://docs.laminas.dev/laminas-soap/client/
  */
 class LockssClient {
-
     /**
      * @var array
      */
@@ -40,7 +39,7 @@ class LockssClient {
      * @return LockssClient
      */
     public static function create(Box $box) {
-        $lockssClient = new LockssClient();
+        $lockssClient = new self();
         $lockssClient->box = $box;
         $lockssClient->options = [
             'login' => $box->getPln()->getUsername(),
@@ -60,7 +59,6 @@ class LockssClient {
         if (isset($this->options[$name])) {
             return $name;
         }
-        return null;
     }
 
     public function setOption($name, $value) : void {
@@ -70,6 +68,7 @@ class LockssClient {
     public function isDaemonReady() {
         $wsdl = $this->generateWsdl('DaemonStatusService');
         $client = new Client($wsdl, $this->options);
+
         return $client->isDaemonReady();
     }
 
@@ -81,10 +80,11 @@ class LockssClient {
 
         $wsdl = $this->generateWsdl($serviceName);
         $client = new Client($wsdl, $this->options);
+
         try {
             return $client->{$method}($params);
-        } catch(Exception $e) {
-            throw new Exception("Calling $method in $wsdl threw error: {$e->getMessage()}");
+        } catch (Exception $e) {
+            throw new Exception("Calling {$method} in {$wsdl} threw error: {$e->getMessage()}");
         }
     }
 }

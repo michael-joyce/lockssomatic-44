@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
@@ -22,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Deposit.
  *
  * @ORM\Table(name="deposit", indexes={
- *   @ORM\Index(columns={"uuid", "url", "title"}, flags={"fulltext"})
+ *     @ORM\Index(columns={"uuid", "url", "title"}, flags={"fulltext"})
  * })
  * @ORM\Entity(repositoryClass="App\Repository\DepositRepository")
  */
@@ -34,7 +35,7 @@ class Deposit extends AbstractEntity {
      *
      * @var string
      *
-     * @Assert\Uuid(versions = {"Uuid:V4_RANDOM"}, strict=false)
+     * @Assert\Uuid(versions={"Uuid:V4_RANDOM"}, strict=false)
      * @ORM\Column(name="uuid", type="string", length=36, nullable=false)
      */
     private $uuid;
@@ -46,7 +47,7 @@ class Deposit extends AbstractEntity {
      *
      * @todo is 255 long enough?
      *
-     * @Assert\Url()
+     * @Assert\Url
      * @ORM\Column(name="url", type="string", length=255, nullable=false)
      */
     private $url;
@@ -146,7 +147,7 @@ class Deposit extends AbstractEntity {
      * @var DepositStatus
      *
      * @ORM\OneToMany(targetEntity="DepositStatus", mappedBy="deposit")
-     * @ORM\OrderBy({"created" = "DESC"})
+     * @ORM\OrderBy({"created": "DESC"})
      */
     private $status;
 
@@ -175,7 +176,7 @@ class Deposit extends AbstractEntity {
      * @return Deposit
      */
     public function setUuid($uuid) {
-        $this->uuid = strtoupper($uuid);
+        $this->uuid = mb_strtoupper($uuid);
 
         return $this;
     }
@@ -293,9 +294,9 @@ class Deposit extends AbstractEntity {
      *
      * @throws Exception
      */
-    public function setChecked(DateTime $checked = null) : void {
+    public function setChecked(?DateTimeImmutable $checked = null) : void {
         if ( ! $checked) {
-            $checked = new DateTime();
+            $checked = new DateTimeImmutable();
         }
         $this->checked = $checked;
     }
@@ -352,7 +353,7 @@ class Deposit extends AbstractEntity {
      * @return Deposit
      */
     public function setChecksumValue($checksumValue) {
-        $this->checksumValue = strtoupper($checksumValue);
+        $this->checksumValue = mb_strtoupper($checksumValue);
 
         return $this;
     }
@@ -382,7 +383,7 @@ class Deposit extends AbstractEntity {
      *
      * @return Deposit
      */
-    public function setContentProvider(ContentProvider $contentProvider = null) {
+    public function setContentProvider(?ContentProvider $contentProvider = null) {
         $this->contentProvider = $contentProvider;
 
         return $this;
@@ -404,7 +405,7 @@ class Deposit extends AbstractEntity {
      *
      * @return Deposit
      */
-    public function setAu(Au $au = null) {
+    public function setAu(?Au $au = null) {
         $this->au = $au;
 
         return $this;
@@ -434,7 +435,7 @@ class Deposit extends AbstractEntity {
      *
      * @return Deposit
      */
-    public function setUser(User $user = null) {
+    public function setUser(?User $user = null) {
         $this->user = $user;
 
         return $this;

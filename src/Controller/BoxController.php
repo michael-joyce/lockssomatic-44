@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -28,7 +28,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Security("is_granted('ROLE_USER')")
  * @Route("/pln/{plnId}/box")
- * @ParamConverter("pln", options={"id"="plnId"})
+ * @ParamConverter("pln", options={"id": "plnId"})
  */
 class BoxController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
@@ -39,7 +39,7 @@ class BoxController extends AbstractController implements PaginatorAwareInterfac
      * @return array
      *
      * @Route("/", name="box_index", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
@@ -60,8 +60,8 @@ class BoxController extends AbstractController implements PaginatorAwareInterfac
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/new", name="box_new", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new", name="box_new", methods={"GET", "POST"})
+     * @Template
      */
     public function newAction(Request $request, Pln $pln) {
         $box = new Box();
@@ -92,7 +92,7 @@ class BoxController extends AbstractController implements PaginatorAwareInterfac
      * @return array
      *
      * @Route("/{id}", name="box_show", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function showAction(Pln $pln, Box $box) {
         if ($box->getPln() !== $pln) {
@@ -111,8 +111,8 @@ class BoxController extends AbstractController implements PaginatorAwareInterfac
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{id}/edit", name="box_edit", methods={"GET","POST"})
-     * @Template()
+     * @Route("/{id}/edit", name="box_edit", methods={"GET", "POST"})
+     * @Template
      */
     public function editAction(Request $request, Pln $pln, Box $box) {
         if ($box->getPln() !== $pln) {

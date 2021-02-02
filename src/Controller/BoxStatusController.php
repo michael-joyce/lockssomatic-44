@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -27,8 +27,8 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Security("is_granted('ROLE_USER')")
  * @Route("/pln/{plnId}/box/{boxId}/status")
- * @ParamConverter("pln", options={"id"="plnId"})
- * @ParamConverter("box", options={"id"="boxId"})
+ * @ParamConverter("pln", options={"id": "plnId"})
+ * @ParamConverter("box", options={"id": "boxId"})
  */
 class BoxStatusController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
@@ -39,7 +39,7 @@ class BoxStatusController extends AbstractController implements PaginatorAwareIn
      * @return array
      *
      * @Route("/", name="box_status_index", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request, Pln $pln, Box $box) {
         if ($box->getPln() !== $pln) {
@@ -66,7 +66,7 @@ class BoxStatusController extends AbstractController implements PaginatorAwareIn
      * @return array
      *
      * @Route("/{id}", name="box_status_show", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function showAction(BoxStatus $boxStatus, Pln $pln, Box $box) {
         if ($box->getPln() !== $pln) {

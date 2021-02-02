@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -52,7 +52,7 @@ class ConfigExporterTest extends ControllerBaseCase {
 
     public function testExportLockssXml() : void {
         $this->exporter->exportLockssXml($this->getReference('pln.1'));
-        $this->assertTrue(file_exists('vfs://confdir/data/plnconfigs/1/properties/lockss.xml'));
+        $this->assertFileExists('vfs://confdir/data/plnconfigs/1/properties/lockss.xml');
     }
 
     public function testExportKeystore() : void {
@@ -61,7 +61,7 @@ class ConfigExporterTest extends ControllerBaseCase {
         file_put_contents($url, 'some keystore stuff.');
         $pln->setKeystore($url);
         $this->exporter->exportKeystore($pln);
-        $this->assertTrue(file_exists('vfs://confdir/data/plnconfigs/1/plugins/lockss.keystore'));
+        $this->assertFileExists('vfs://confdir/data/plnconfigs/1/plugins/lockss.keystore');
     }
 
     public function testExportNullKeystore() : void {
@@ -70,7 +70,7 @@ class ConfigExporterTest extends ControllerBaseCase {
         $url = vfsStream::url('confdir/foo.keystore');
         file_put_contents($url, 'some keystore stuff.');
         $this->exporter->exportKeystore($pln);
-        $this->assertFalse(file_exists('vfs://confdir/data/plnconfigs/1/plugins/lockss.keystore'));
+        $this->assertFileNotExists('vfs://confdir/data/plnconfigs/1/plugins/lockss.keystore');
     }
 
     public function testExportPlugins() : void {
@@ -87,8 +87,8 @@ class ConfigExporterTest extends ControllerBaseCase {
         $pln->addContentProvider($provider);
 
         $this->exporter->exportPlugins($pln);
-        $this->assertTrue(file_exists('vfs://confdir/data/plnconfigs/1/plugins/plugin.jar'));
-        $this->assertTrue(file_exists('vfs://confdir/data/plnconfigs/1/plugins/index.html'));
+        $this->assertFileExists('vfs://confdir/data/plnconfigs/1/plugins/plugin.jar');
+        $this->assertFileExists('vfs://confdir/data/plnconfigs/1/plugins/index.html');
     }
 
     public function testExportMissingPlugins() : void {
@@ -125,7 +125,7 @@ class ConfigExporterTest extends ControllerBaseCase {
         $au->setPln($pln);
         $this->exporter->exportManifests($pln);
 
-        $this->assertTrue(file_exists('vfs://confdir/manifest.html'));
+        $this->assertFileExists('vfs://confdir/manifest.html');
     }
 
     public function testExportTitleDbs() : void {
@@ -144,7 +144,7 @@ class ConfigExporterTest extends ControllerBaseCase {
         $pln->addContentProvider($provider);
 
         $this->exporter->exportTitleDbs($pln);
-        $this->assertTrue(file_exists('vfs://confdir/titledb.xml'));
+        $this->assertFileExists('vfs://confdir/titledb.xml');
     }
 
     protected function setup() : void {

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Security("is_granted('ROLE_USER')")
  * @Route("/pln/{plnId}/property")
- * @ParamConverter("pln", options={"id"="plnId"})
+ * @ParamConverter("pln", options={"id": "plnId"})
  */
 class PlnPropertyController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
@@ -39,7 +39,7 @@ class PlnPropertyController extends AbstractController implements PaginatorAware
      *
      * @Route("/", name="pln_property_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request, Pln $pln) {
         return [
@@ -55,7 +55,7 @@ class PlnPropertyController extends AbstractController implements PaginatorAware
      * @Security("is_granted('ROLE_ADMIN')")
      * @Route("/new", name="pln_property_new", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function newAction(Request $request, Pln $pln) {
         $form = $this->createForm(PlnPropertyType::class, null);
@@ -96,7 +96,7 @@ class PlnPropertyController extends AbstractController implements PaginatorAware
      * @Security("is_granted('ROLE_ADMIN')")
      * @Route("/{propertyKey}/edit", name="pln_property_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function editAction(Request $request, Pln $pln, $propertyKey) {
         $form = $this->createForm(PlnPropertyType::class, null, [

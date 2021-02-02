@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -20,6 +20,7 @@ use Doctrine\Persistence\ObjectManager;
  */
 class ContentProviderFixtures extends Fixture implements DependentFixtureInterface {
     public const PROVIDER_UUID_1 = '29125DE2-E622-416C-93EB-E887B2A3126C';
+
     public const PROVIDER_UUID_2 = 'E5DDD2AB-C971-4492-AD7C-7182111BD367';
 
     /**

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -12,7 +12,7 @@ namespace App\Repository;
 
 use App\Entity\Deposit;
 use App\Entity\Pln;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
@@ -35,7 +35,7 @@ class DepositRepository extends ServiceEntityRepository {
         return $qb->getQuery();
     }
 
-    public function searchQuery($q, Pln $pln = null) {
+    public function searchQuery($q, ?Pln $pln = null) {
         $qb = $this->createQueryBuilder('e');
         $qb->addSelect('MATCH(e.uuid, e.url, e.title) AGAINST(:q BOOLEAN) AS HIDDEN score');
         $qb->setParameter('q', $q);
@@ -56,32 +56,33 @@ class DepositRepository extends ServiceEntityRepository {
      * @param $plns
      * @param $uuids
      * @param $all
+     * @param mixed $count
      *
      * @return Query
      */
     public function checkQuery($plns, $uuids, $all, $count = false) {
-        $yesterday = new DateTime();
+        $yesterday = new DateTimeImmutable();
         $yesterday->modify('-1 day');
 
         $qb = $this->createQueryBuilder('d');
-        if($count) {
+        if ($count) {
             $qb->select($qb->expr()->count('d.id'));
         }
-        if( ! $all) {
+        if ( ! $all) {
             $qb->andWhere('d.agreement IS NULL or d.agreement < 1.0');
             $qb->andWhere('d.checked IS NULL OR d.checked < :yesterday');
             $qb->setParameter('yesterday', $yesterday);
         }
-        if($plns) {
+        if ($plns) {
             $qb->andWhere('d.pln in :plns');
             $qb->setParameter('plns', $plns);
         }
-        if($uuids) {
+        if ($uuids) {
             $qb->andWhere('d.uuid in :uuids');
             $qb->setParameter('uuids', $uuids);
         }
         $qb->orderBy('d.checked', 'DESC');
+
         return $qb->getQuery();
     }
-
 }

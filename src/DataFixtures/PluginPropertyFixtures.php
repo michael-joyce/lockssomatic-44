@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -28,7 +28,7 @@ class PluginPropertyFixtures extends Fixture implements DependentFixtureInterfac
      *
      * @return PluginProperty
      */
-    private function generate(ObjectManager $em, $key, $value = null, PluginProperty $parent = null) {
+    private function generate(ObjectManager $em, $key, $value = null, ?PluginProperty $parent = null) {
         $property = new PluginProperty();
         $property->setPlugin($this->getReference('plugin.1'));
         $property->setParent($parent);

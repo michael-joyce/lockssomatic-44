@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -52,8 +52,8 @@ class LockssControllerTest extends ControllerBaseCase {
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('text/xml', $response->headers->get('Content-Type', null));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertSame(strlen($data), $response->getFile()->getSize());
-        $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
+        $this->assertSame(mb_strlen($data), $response->getFile()->getSize());
+        $this->assertSame($data, $response->getFile()->openFile()->fread(mb_strlen($data)));
     }
 
     public function testLockss404() : void {
@@ -142,8 +142,8 @@ class LockssControllerTest extends ControllerBaseCase {
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('text/xml', $response->headers->get('Content-Type', null));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertSame(strlen($data), $response->getFile()->getSize());
-        $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
+        $this->assertSame(mb_strlen($data), $response->getFile()->getSize());
+        $this->assertSame($data, $response->getFile()->openFile()->fread(mb_strlen($data)));
     }
 
     public function testTitleDb404() : void {
@@ -178,8 +178,8 @@ class LockssControllerTest extends ControllerBaseCase {
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('text/html', $response->headers->get('Content-Type', null));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertSame(strlen($data), $response->getFile()->getSize());
-        $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
+        $this->assertSame(mb_strlen($data), $response->getFile()->getSize());
+        $this->assertSame($data, $response->getFile()->openFile()->fread(mb_strlen($data)));
     }
 
     public function testManifest404() : void {
@@ -219,8 +219,8 @@ class LockssControllerTest extends ControllerBaseCase {
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('application/x-java-keystore', $response->headers->get('Content-Type', null));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertSame(strlen($data), $response->getFile()->getSize());
-        $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
+        $this->assertSame(mb_strlen($data), $response->getFile()->getSize());
+        $this->assertSame($data, $response->getFile()->openFile()->fread(mb_strlen($data)));
     }
 
     public function testKeystore404Null() : void {
@@ -250,8 +250,8 @@ class LockssControllerTest extends ControllerBaseCase {
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('text/html', $response->headers->get('Content-Type', null));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertSame(strlen($data), $response->getFile()->getSize());
-        $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
+        $this->assertSame(mb_strlen($data), $response->getFile()->getSize());
+        $this->assertSame($data, $response->getFile()->openFile()->fread(mb_strlen($data)));
     }
 
     public function testPluginList404() : void {
@@ -288,8 +288,8 @@ class LockssControllerTest extends ControllerBaseCase {
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('application/java-archive', $response->headers->get('Content-Type', null));
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
-        $this->assertSame(strlen($data), $response->getFile()->getSize());
-        $this->assertSame($data, $response->getFile()->openFile()->fread(strlen($data)));
+        $this->assertSame(mb_strlen($data), $response->getFile()->getSize());
+        $this->assertSame($data, $response->getFile()->openFile()->fread(mb_strlen($data)));
     }
 
     public function testPlugin404() : void {

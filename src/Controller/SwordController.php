@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -143,6 +143,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
         $plugin = $provider->getPlugin();
 
         $permissionHost = $provider->getPermissionHost();
+
         foreach ($atom->xpath('//lom:content') as $content) {
             $url = trim((string) $content);
             $host = parse_url($url, PHP_URL_HOST);
@@ -212,17 +213,17 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @return array
      *
      * @Route("/sd-iri",
-     *  methods={"GET"},
-     *  name="sword_service_document",
-     *  defaults={"_format": "xml"},
-     *  requirements={"_format": "xml"}
+     *     methods={"GET"},
+     *     name="sword_service_document",
+     *     defaults={"_format": "xml"},
+     *     requirements={"_format": "xml"}
      * )
-     * @Template()
+     * @Template
      */
     public function serviceDocumentAction(Request $request) {
         $this->logger->notice("{$request->getClientIp()} - service document");
         $uuid = $this->fetchHeader($request, 'On-Behalf-Of', true);
-        $provider = $this->getProvider(strtoupper($uuid));
+        $provider = $this->getProvider(mb_strtoupper($uuid));
         $plugin = $provider->getPlugin();
         $hashMethods = $this->getParameter('lom.hash_methods');
 
@@ -237,9 +238,9 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * Create a deposit by posting XML to this URL, aka col-iri.
      *
      * @Route("/col-iri/{providerUuid}", name="sword_collection", requirements={
-     *      "providerUuid": ".{36}"
+     *     "providerUuid": ".{36}"
      * }, methods={"POST"})
-     * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
+     * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid": "uuid"}})
      *
      * @throws HostMismatchException
      * @throws MaxUploadSizeExceededException
@@ -271,11 +272,11 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * edit-iri) but requires an HTTP PUT.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_edit", requirements={
-     *      "providerUuid": ".{36}",
-     *      "depositUuid": ".{36}"
+     *     "providerUuid": ".{36}",
+     *     "depositUuid": ".{36}"
      * }, methods={"PUT"})
-     * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
-     * @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid"="uuid"}})
+     * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid": "uuid"}})
+     * @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid": "uuid"}})
      *
      * @return Response
      *
@@ -285,6 +286,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
         $this->logger->notice("{$request->getClientIp()} - edit deposit - {$provider->getName()} - {$deposit->getUuid()}");
         $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);
+
         foreach ($atom->xpath('lom:content') as $node) {
             $deposit->setChecksumType((string) $node['checksumType']);
             $deposit->setChecksumValue((string) $node['checksumValue']);
@@ -308,17 +310,17 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @todo needs testing.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}",
-     *  name="sword_view",
-     *  defaults={"_format": "xml"},
-     *  requirements={
-     *      "providerUuid": ".{36}",
-     *      "depositUuid": ".{36}",
-     *      "_format": "xml"
-     *  }, methods={"GET"})
-     * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
-     * @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid"="uuid"}})
+     *     name="sword_view",
+     *     defaults={"_format": "xml"},
+     *     requirements={
+     *         "providerUuid": ".{36}",
+     *         "depositUuid": ".{36}",
+     *         "_format": "xml"
+     *     }, methods={"GET"})
+     *     @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid": "uuid"}})
+     *     @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid": "uuid"}})
      *
-     * @Template
+     *     @Template
      */
     public function viewDepositAction(Request $request, ContentProvider $provider, Deposit $deposit) {
         $this->logger->notice("{$request->getClientIp()} - view deposit - {$provider->getName()} - {$deposit->getUuid()}");
@@ -341,15 +343,15 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @todo finish this action.
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/state", name="sword_statement",
-     *  defaults={"_format": "xml"},
-     *  requirements={
-     *      "providerUuid": ".{36}",
-     *      "depositUuid": ".{36}",
-     *      "_format": "xml"
-     *  }, methods={"GET"})
-     * @Template()
-     * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
-     * @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid"="uuid"}})
+     *     defaults={"_format": "xml"},
+     *     requirements={
+     *         "providerUuid": ".{36}",
+     *         "depositUuid": ".{36}",
+     *         "_format": "xml"
+     *     }, methods={"GET"})
+     *     @Template
+     *     @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid": "uuid"}})
+     *     @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid": "uuid"}})
      */
     public function statementAction(Request $request, ContentProvider $provider, Deposit $deposit) {
         $this->logger->notice("{$request->getClientIp()} - statement - {$provider->getName()} - {$deposit->getUuid()}");
@@ -375,16 +377,16 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @return Response
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/edit", name="sword_reciept",
-     *  defaults={"_format": "xml"},
-     *  requirements={
-     *      "providerUuid": ".{36}",
-     *      "depositUuid": ".{36}",
-     *      "_format": "xml"
-     *  }, methods={"GET"})
+     *     defaults={"_format": "xml"},
+     *     requirements={
+     *         "providerUuid": ".{36}",
+     *         "depositUuid": ".{36}",
+     *         "_format": "xml"
+     *     }, methods={"GET"})
      *
-     * @Template()
-     * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid"="uuid"}})
-     * @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid"="uuid"}})
+     *     @Template
+     *     @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid": "uuid"}})
+     *     @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid": "uuid"}})
      */
     public function receiptAction(Request $request, ContentProvider $provider, Deposit $deposit) {
         $this->logger->notice("{$request->getClientIp()} - receipt - {$provider->getName()} - {$deposit->getUuid()}");
@@ -404,12 +406,12 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @param string $filename
      *
      * @Route("/cont-iri/{providerUuid}/{depositUuid}/{filename}/original", name="original_deposit", requirements={
-     *      "providerUuid": ".{36}",
-     *      "depositUuid": ".{36}"
+     *     "providerUuid": ".{36}",
+     *     "depositUuid": ".{36}"
      * }, methods={"GET"})
      *
-     * @ParamConverter("provider", options={"uuid"="providerUuid"})
-     * @ParamConverter("deposit", options={"uuid"="depositUuid"})
+     * @ParamConverter("provider", options={"uuid": "providerUuid"})
+     * @ParamConverter("deposit", options={"uuid": "depositUuid"})
      */
     public function originalDepositAction(ContentProvider $provider, Deposit $deposit, $filename) : void {
         $this->logger->notice("{$request->getClientIp()} - original deposit - {$provider->getName()} - {$deposit->getUuid()} - {$filename}");

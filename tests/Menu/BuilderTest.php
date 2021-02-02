@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -25,7 +25,7 @@ class BuilderTest extends ControllerBaseCase {
     public function testAnonLockssMenu() : void {
         $menu = self::$container->get(Builder::class)->mainMenu([]);
         $this->assertInstanceOf(MenuItem::class, $menu);
-        $this->assertSame(1, count($menu->getChildren()));
+        $this->assertCount(1, $menu->getChildren());
     }
 
     public function testUserLockssMenu() : void {
@@ -34,6 +34,6 @@ class BuilderTest extends ControllerBaseCase {
         $this->client->request('get', '/');
         $menu = self::$container->get(Builder::class)->mainMenu([]);
         $this->assertInstanceOf(MenuItem::class, $menu);
-        $this->assertSame(3, count($menu->getChildren()));
+        $this->assertCount(3, $menu->getChildren());
     }
 }

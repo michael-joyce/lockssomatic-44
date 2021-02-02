@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -35,7 +35,7 @@ class ContentProviderController extends AbstractController implements PaginatorA
      * @return array
      *
      * @Route("/", name="content_provider_index", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -57,7 +57,7 @@ class ContentProviderController extends AbstractController implements PaginatorA
      *
      * @Security("is_granted('ROLE_ADMIN')")
      * @Route("/new", name="content_provider_new", methods={"GET", "POST"})
-     * @Template()
+     * @Template
      */
     public function newAction(Request $request) {
         $contentProvider = new ContentProvider();
@@ -87,7 +87,7 @@ class ContentProviderController extends AbstractController implements PaginatorA
      *
      * @Route("/{id}", name="content_provider_show", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function showAction(ContentProvider $contentProvider) {
         return [
@@ -103,7 +103,7 @@ class ContentProviderController extends AbstractController implements PaginatorA
      * @Security("is_granted('ROLE_ADMIN')")
      * @Route("/{id}/edit", name="content_provider_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function editAction(Request $request, ContentProvider $contentProvider) {
         $editForm = $this->createForm(ContentProviderType::class, $contentProvider);

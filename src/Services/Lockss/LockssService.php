@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -32,28 +32,13 @@ class LockssService {
     }
 
     /**
-     * @param AuManager $auManager
-     *
-     * @required
-     */
-    public function setAuManager(AuManager $auManager) {
-        $this->auManager = $auManager;
-    }
-
-    /**
-     * @param LockssClient $client
-     */
-    public function setClient(LockssClient $client) : void {
-        $this->client = $client;
-    }
-
-    /**
      * @param $method
      * @param $parameters
+     * @param mixed $serviceName
      *
-     * @return mixed
      * @throws Exception
      *
+     * @return mixed
      */
     protected function call($method, $parameters = [], $serviceName = 'DaemonStatusService') {
         if ( ! $this->client) {
@@ -67,8 +52,20 @@ class LockssService {
         return $response;
     }
 
+    /**
+     * @required
+     */
+    public function setAuManager(AuManager $auManager) : void {
+        $this->auManager = $auManager;
+    }
+
+    public function setClient(LockssClient $client) : void {
+        $this->client = $client;
+    }
+
     public function isDaemonReady() {
         $ready = $this->client->isDaemonReady();
+
         return $ready->return;
     }
 
@@ -95,11 +92,10 @@ class LockssService {
     }
 
     public function isUrlCached($deposit) {
-        $response = $this->call('isUrlCached', [
+        return $this->call('isUrlCached', [
             'url' => $deposit->getUrl(),
             'auId' => $this->auManager->generateAuidFromDeposit($deposit, true),
         ], 'ContentService');
-        return $response;
     }
 
     public function hash(Deposit $deposit) {
@@ -110,15 +106,16 @@ class LockssService {
                 'algorithm' => $deposit->getChecksumType(),
                 'url' => $deposit->getUrl(),
                 'auId' => $this->auManager->generateAuidFromDeposit($deposit, true),
-            ]
+            ],
         ];
         $response = $this->call('hash', $params, 'HasherService');
-        if( ! isset($response->blockFileDataHandler)) {
+        if ( ! isset($response->blockFileDataHandler)) {
             throw new Exception($response->errorMessage);
         }
         $data = $response->blockFileDataHandler;
         $matches = [];
-        preg_match("/^([[:xdigit:]]+)\s+http:/m", $data, $matches);
+        preg_match('/^([[:xdigit:]]+)\\s+http:/m', $data, $matches);
+
         return $matches[1];
     }
 }

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Security("is_granted('ROLE_USER')")
  * @Route("/pln/{plnId}/au")
- * @ParamConverter("pln", options={"id"="plnId"})
+ * @ParamConverter("pln", options={"id": "plnId"})
  */
 class AuController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
@@ -40,7 +40,7 @@ class AuController extends AbstractController implements PaginatorAwareInterface
      * @return array
      *
      * @Route("/", name="au_index", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request, Pln $pln, AuManager $manager) {
         $em = $this->getDoctrine()->getManager();
@@ -64,7 +64,7 @@ class AuController extends AbstractController implements PaginatorAwareInterface
      * @return array
      *
      * @Route("/{id}", name="au_show", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function showAction(Au $au, Pln $pln, AuManager $manager) {
         if ($au->getPln() !== $pln) {
@@ -84,7 +84,7 @@ class AuController extends AbstractController implements PaginatorAwareInterface
      * @return array
      *
      * @Route("/{id}/deposits", name="au_deposits", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function depositsAction(Request $request, Pln $pln, Au $au, EntityManagerInterface $em) {
         if ($au->getPln() !== $pln) {

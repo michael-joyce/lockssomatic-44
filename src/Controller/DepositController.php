@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Security("is_granted('ROLE_USER')")
  * @Route("/pln/{plnId}/deposit")
- * @ParamConverter("pln", options={"id"="plnId"})
+ * @ParamConverter("pln", options={"id": "plnId"})
  */
 class DepositController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
@@ -39,7 +39,7 @@ class DepositController extends AbstractController implements PaginatorAwareInte
      *
      * @Route("/", name="deposit_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
@@ -61,7 +61,7 @@ class DepositController extends AbstractController implements PaginatorAwareInte
      *
      * @Route("/search", name="deposit_search", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function searchAction(Request $request, Pln $pln) {
         $em = $this->getDoctrine()->getManager();
@@ -89,7 +89,7 @@ class DepositController extends AbstractController implements PaginatorAwareInte
      *
      * @Route("/{id}", name="deposit_show", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function showAction(Deposit $deposit, Pln $pln) {
         if ($deposit->getAu()->getPln() !== $pln) {

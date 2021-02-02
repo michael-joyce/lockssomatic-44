@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -35,7 +35,7 @@ class ContentOwnerController extends AbstractController implements PaginatorAwar
      * @return array
      *
      * @Route("/", name="content_owner_index", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -56,8 +56,8 @@ class ContentOwnerController extends AbstractController implements PaginatorAwar
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/new", name="content_owner_new", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new", name="content_owner_new", methods={"GET", "POST"})
+     * @Template
      */
     public function newAction(Request $request) {
         $contentOwner = new ContentOwner();
@@ -86,7 +86,7 @@ class ContentOwnerController extends AbstractController implements PaginatorAwar
      * @return array
      *
      * @Route("/{id}", name="content_owner_show", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function showAction(ContentOwner $contentOwner) {
         return [
@@ -100,8 +100,8 @@ class ContentOwnerController extends AbstractController implements PaginatorAwar
      * @return array
      *
      * @Security("is_granted('ROLE_ADMIN')")
-     * @Route("/{id}/edit", name="content_owner_edit", methods={"GET","POST"})
-     * @Template()
+     * @Route("/{id}/edit", name="content_owner_edit", methods={"GET", "POST"})
+     * @Template
      */
     public function editAction(Request $request, ContentOwner $contentOwner) {
         $editForm = $this->createForm(ContentOwnerType::class, $contentOwner);

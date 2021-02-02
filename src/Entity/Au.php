@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -187,7 +187,7 @@ class Au extends AbstractEntity {
      *
      * @return Au
      */
-    public function setPln(Pln $pln = null) {
+    public function setPln(?Pln $pln = null) {
         $this->pln = $pln;
 
         return $this;
@@ -209,7 +209,7 @@ class Au extends AbstractEntity {
      *
      * @return Au
      */
-    public function setContentProvider(ContentProvider $contentProvider = null) {
+    public function setContentProvider(?ContentProvider $contentProvider = null) {
         $this->contentProvider = $contentProvider;
 
         return $this;
@@ -231,7 +231,7 @@ class Au extends AbstractEntity {
      *
      * @return Au
      */
-    public function setPlugin(Plugin $plugin = null) {
+    public function setPlugin(?Plugin $plugin = null) {
         $this->plugin = $plugin;
 
         return $this;
@@ -336,6 +336,7 @@ class Au extends AbstractEntity {
         if (null === $property) {
             return $value;
         }
+
         foreach ($property->getChildren() as $child) {
             if ('value' === $child->getPropertyKey()) {
                 $value = $child->getPropertyValue();

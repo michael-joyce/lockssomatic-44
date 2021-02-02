@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -103,6 +103,7 @@ class ConfigUpdaterTest extends ControllerBaseCase {
 
     public function buildContentItems(Au $au) : void {
         $deposit = $this->entityManager->find(Deposit::class, 1);
+
         for ($i = 0; $i < 10; $i++) {
             $deposit = new Deposit();
             $deposit->setUrl("http://example.com/path/{$i}");
@@ -126,11 +127,11 @@ class ConfigUpdaterTest extends ControllerBaseCase {
 
     public function testUpdateAuConfigs() : void {
         $plugin = $this->createMock(Plugin::class);
-        $plugin->method('getIdentifier')->will($this->returnValue('ca.example.plugin'));
-        $plugin->method('getDefinitionalPropertyNames')->will($this->returnValue([
+        $plugin->method('getIdentifier')->willReturn('ca.example.plugin');
+        $plugin->method('getDefinitionalPropertyNames')->willReturn([
             'base_url', 'container_number', 'manifest_url', 'permission_url',
-        ]));
-        $plugin->method('getNonDefinitionalProperties')->will($this->returnValue([]));
+        ]);
+        $plugin->method('getNonDefinitionalProperties')->willReturn([]);
 
         $pln = new Pln();
         $plnRef = new ReflectionProperty(Pln::class, 'id');
@@ -162,7 +163,7 @@ class ConfigUpdaterTest extends ControllerBaseCase {
         $this->buildContentItems($au);
 
         $this->updater->updateAuConfigs($pln);
-        $this->assertSame(23, count($au->getAuProperties()));
+        $this->assertCount(23, $au->getAuProperties());
         $this->assertSame('http://example.com', $au->getAuPropertyValue('base_url'));
         $this->assertSame(1, $au->getAuPropertyValue('container_number'));
         $this->assertSame('http://example.com/permission', $au->getAuPropertyValue('permission_url'));

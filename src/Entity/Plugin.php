@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -341,11 +341,13 @@ class Plugin extends AbstractEntity {
      */
     public function getPluginConfigParams() {
         $properties = [];
+
         foreach ($this->getPluginProperties()->toArray() as $prop) {
             /** @var PluginProperties $prop */
             if (self::CONFIG_PROPS !== $prop->getPropertyKey()) {
                 continue;
             }
+
             foreach ($prop->getChildren() as $child) {
                 if (self::DESCR_NAME !== $child->getPropertyKey()) {
                     continue;
@@ -367,6 +369,7 @@ class Plugin extends AbstractEntity {
 
         foreach ($this->getPluginConfigParams() as $prop) {
             $key = '';
+
             foreach ($prop->getChildren() as $child) {
                 if ('key' === $child->getPropertyKey()) {
                     $key = $child->getPropertyValue();
@@ -391,6 +394,7 @@ class Plugin extends AbstractEntity {
         foreach ($this->getPluginConfigParams() as $prop) {
             $key = '';
             $definitional = false;
+
             foreach ($prop->getChildren() as $child) {
                 if ('key' === $child->getPropertyKey()) {
                     $key = $child->getPropertyValue();
@@ -421,6 +425,7 @@ class Plugin extends AbstractEntity {
         foreach ($this->getPluginConfigParams() as $prop) {
             $key = '';
             $nonDefinitional = false;
+
             foreach ($prop->getChildren() as $child) {
                 if ('key' === $child->getPropertyKey()) {
                     $key = $child->getPropertyValue();

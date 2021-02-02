@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+/*
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
@@ -24,7 +30,8 @@ final class Version20200707203010 extends AbstractMigration {
         $this->addSql('DROP INDEX uniq_5ba994a1a0d96fbf ON nines_user');
         $this->addSql('DROP INDEX uniq_5ba994a1c05fb297 ON nines_user');
 
-        $this->addSql(<<<'ENDSQL'
+        $this->addSql(
+            <<<'ENDSQL'
 ALTER TABLE nines_user
 DROP username_canonical,
 DROP email_canonical,

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -12,22 +12,18 @@ namespace App\Command\Lockss;
 
 use App\Entity\Au;
 use App\Entity\Box;
-use App\Repository\AuRepository;
-use App\Repository\PlnRepository;
 use App\Services\Lockss\LockssService;
 use App\Utilities\LockssClient;
 use Exception;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ListAuContentCommand extends AbstractLockssCommand {
-
     protected static $defaultName = 'lockss:au:content';
 
-    public function __construct(LockssService $lockssService, ParameterBagInterface $params, string $name = null) {
+    public function __construct(LockssService $lockssService, ParameterBagInterface $params, ?string $name = null) {
         parent::__construct($lockssService, $params, $name);
     }
 
@@ -58,9 +54,11 @@ class ListAuContentCommand extends AbstractLockssCommand {
         foreach ($this->getAus($auIds) as $au) {
             $output->writeln($au->getSimpleAuProperty('title'));
             $boxes = $au->getPln()->getActiveBoxes();
+
             foreach ($boxes as $box) {
                 $output->writeln('  ' . $box->getHostname());
                 $this->listAuContent($au, $box);
+
                 foreach ($this->listAuContent($au, $box) as $result) {
                     $output->writeln('    ' . $result);
                 }

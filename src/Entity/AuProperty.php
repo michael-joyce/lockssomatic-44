@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -49,7 +49,7 @@ class AuProperty extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="AuProperty", inversedBy="children")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
+     *     @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $parent;
@@ -61,7 +61,7 @@ class AuProperty extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="Au", inversedBy="auProperties")
      * @ORM\JoinColumns({
-     * @ORM\JoinColumn(name="au_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     *     @ORM\JoinColumn(name="au_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * })
      */
     private $au;
@@ -135,7 +135,7 @@ class AuProperty extends AbstractEntity {
      *
      * @return AuProperty
      */
-    public function setParent(AuProperty $parent = null) {
+    public function setParent(?self $parent = null) {
         $this->parent = $parent;
 
         return $this;
@@ -175,7 +175,7 @@ class AuProperty extends AbstractEntity {
      *
      * @return AuProperty
      */
-    public function addChild(AuProperty $child) {
+    public function addChild(self $child) {
         $this->children[] = $child;
 
         return $this;
@@ -184,7 +184,7 @@ class AuProperty extends AbstractEntity {
     /**
      * Remove child.
      */
-    public function removeChild(AuProperty $child) : void {
+    public function removeChild(self $child) : void {
         $this->children->removeElement($child);
     }
 

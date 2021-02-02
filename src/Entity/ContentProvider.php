@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -31,7 +31,7 @@ class ContentProvider extends AbstractEntity {
      * @var string
      *
      * @ORM\Column(name="uuid", type="string", length=36, nullable=false)
-     * @Assert\Uuid(versions = {"Uuid:V4_RANDOM"}, strict=false)
+     * @Assert\Uuid(versions={"Uuid:V4_RANDOM"}, strict=false)
      */
     private $uuid;
 
@@ -42,7 +42,7 @@ class ContentProvider extends AbstractEntity {
      *
      * @var string
      *
-     * @Assert\Url()
+     * @Assert\Url
      * @ORM\Column(name="permissionUrl", type="string", length=255, nullable=false)
      */
     private $permissionurl;
@@ -83,7 +83,7 @@ class ContentProvider extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="ContentOwner", inversedBy="contentProviders")
      * @ORM\JoinColumns({
-     * @ORM\JoinColumn(name="content_owner_id", referencedColumnName="id", nullable=false)
+     *     @ORM\JoinColumn(name="content_owner_id", referencedColumnName="id", nullable=false)
      * })
      */
     private $contentOwner;
@@ -95,7 +95,7 @@ class ContentProvider extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="Pln", inversedBy="contentProviders")
      * @ORM\JoinColumns({
-     * @ORM\JoinColumn(name="pln_id", referencedColumnName="id", nullable=false)
+     *     @ORM\JoinColumn(name="pln_id", referencedColumnName="id", nullable=false)
      * })
      */
     private $pln;
@@ -107,7 +107,7 @@ class ContentProvider extends AbstractEntity {
      *
      * @ORM\ManyToOne(targetEntity="Plugin", inversedBy="contentProviders")
      * @ORM\JoinColumns({
-     * @ORM\JoinColumn(name="plugin_id", referencedColumnName="id", nullable=false)
+     *     @ORM\JoinColumn(name="plugin_id", referencedColumnName="id", nullable=false)
      * })
      */
     private $plugin;
@@ -142,7 +142,7 @@ class ContentProvider extends AbstractEntity {
      * @return ContentProvider
      */
     public function setUuid($uuid) {
-        $this->uuid = strtoupper($uuid);
+        $this->uuid = mb_strtoupper($uuid);
 
         return $this;
     }
@@ -255,7 +255,7 @@ class ContentProvider extends AbstractEntity {
      *
      * @return ContentProvider
      */
-    public function setContentOwner(ContentOwner $contentOwner = null) {
+    public function setContentOwner(?ContentOwner $contentOwner = null) {
         $this->contentOwner = $contentOwner;
 
         return $this;
@@ -277,7 +277,7 @@ class ContentProvider extends AbstractEntity {
      *
      * @return ContentProvider
      */
-    public function setPln(Pln $pln = null) {
+    public function setPln(?Pln $pln = null) {
         $this->pln = $pln;
 
         return $this;
@@ -299,7 +299,7 @@ class ContentProvider extends AbstractEntity {
      *
      * @return ContentProvider
      */
-    public function setPlugin(Plugin $plugin = null) {
+    public function setPlugin(?Plugin $plugin = null) {
         $this->plugin = $plugin;
 
         return $this;

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -151,6 +151,7 @@ class ConfigExporter {
     public function exportTitleDbs(Pln $pln) : void {
         foreach ($pln->getContentProviders() as $provider) {
             $aus = $provider->getAus();
+
             for ($i = 0; $i < ceil($aus->count() / $this->ausPerTitleDb); $i++) {
                 $slice = $aus->slice($i * $this->ausPerTitleDb, $this->ausPerTitleDb);
                 $titleDbPath = $this->fp->getTitleDbPath($provider, $i + 1);

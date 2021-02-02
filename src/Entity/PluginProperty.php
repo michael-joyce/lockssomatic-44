@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -178,7 +178,7 @@ class PluginProperty extends AbstractEntity {
      *
      * @return PluginProperty
      */
-    public function setPlugin(Plugin $plugin = null) {
+    public function setPlugin(?Plugin $plugin = null) {
         $this->plugin = $plugin;
 
         return $this;
@@ -200,7 +200,7 @@ class PluginProperty extends AbstractEntity {
      *
      * @return PluginProperty
      */
-    public function setParent(PluginProperty $parent = null) {
+    public function setParent(?self $parent = null) {
         $this->parent = $parent;
 
         return $this;
@@ -220,7 +220,7 @@ class PluginProperty extends AbstractEntity {
      *
      * @return PluginProperty
      */
-    public function addChild(PluginProperty $child) {
+    public function addChild(self $child) {
         $this->children[] = $child;
 
         return $this;
@@ -231,7 +231,7 @@ class PluginProperty extends AbstractEntity {
      *
      * @return PluginProperty
      */
-    public function removeChild(PluginProperty $child) {
+    public function removeChild(self $child) {
         $this->children->removeElement($child);
 
         return $this;

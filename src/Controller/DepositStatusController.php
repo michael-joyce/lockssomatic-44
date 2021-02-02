@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -28,8 +28,8 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Security("is_granted('ROLE_USER')")
  * @Route("/pln/{plnId}/deposit/{depositId}/status")
- * @ParamConverter("pln", options={"id"="plnId"})
- * @ParamConverter("deposit", options={"id"="depositId"})
+ * @ParamConverter("pln", options={"id": "plnId"})
+ * @ParamConverter("deposit", options={"id": "depositId"})
  */
 class DepositStatusController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
@@ -41,7 +41,7 @@ class DepositStatusController extends AbstractController implements PaginatorAwa
      *
      * @Route("/", name="deposit_status_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request, Pln $pln, Deposit $deposit) {
         if ($deposit->getAu()->getPln() !== $pln) {
@@ -69,7 +69,7 @@ class DepositStatusController extends AbstractController implements PaginatorAwa
      *
      * @Route("/{id}", name="deposit_status_show", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function showAction(DepositStatus $depositStatus, Pln $pln, Deposit $deposit) {
         if ($deposit->getAu()->getPln() !== $pln) {

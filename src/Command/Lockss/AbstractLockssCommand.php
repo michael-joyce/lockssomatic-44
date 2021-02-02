@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -70,7 +70,7 @@ abstract class AbstractLockssCommand extends Command {
      */
     protected $params;
 
-    public function __construct(LockssService $lockssService, ParameterBagInterface $params, string $name = null) {
+    public function __construct(LockssService $lockssService, ParameterBagInterface $params, ?string $name = null) {
         parent::__construct($name);
         $this->lockssService = $lockssService;
         $this->params = $params;
@@ -117,6 +117,7 @@ abstract class AbstractLockssCommand extends Command {
 
     protected function toArray(stdClass $object) {
         $array = [];
+
         foreach ($object as $key => $value) {
             if ($value instanceof stdClass) {
                 $array[$key] = $this->toArray($value);

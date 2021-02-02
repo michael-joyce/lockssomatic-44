@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -32,7 +32,7 @@ class Encoder {
         $callback = function ($matches) {
             $char = ord($matches[0]);
 
-            return '%' . strtoupper(sprintf('%02x', $char));
+            return '%' . mb_strtoupper(sprintf('%02x', $char));
         };
 
         $encoded = preg_replace_callback('/[^a-zA-Z0-9_* -]/', $callback, $string);

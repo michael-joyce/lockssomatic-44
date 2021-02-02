@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,19 +11,11 @@ declare(strict_types=1);
 namespace App\Command\Lockss;
 
 use App\Entity\Box;
-use App\Entity\BoxStatus;
 use App\Entity\Deposit;
 use App\Entity\DepositStatus;
-use App\Repository\BoxRepository;
-use App\Repository\PlnRepository;
-use App\Services\BoxNotifier;
 use App\Services\Lockss\LockssService;
 use App\Utilities\LockssClient;
-use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Psr\Log\LoggerInterface;
-use stdClass;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,7 +24,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class DepositStatusCommand extends AbstractLockssCommand {
     protected static $defaultName = 'lockss:deposit:status';
 
-    public function __construct(LockssService $lockssService, ParameterBagInterface $params, string $name = null) {
+    public function __construct(LockssService $lockssService, ParameterBagInterface $params, ?string $name = null) {
         parent::__construct($lockssService, $params, $name);
     }
 
@@ -47,35 +39,37 @@ class DepositStatusCommand extends AbstractLockssCommand {
         $client = LockssClient::create($box);
         $this->lockssService->setClient($client);
 
-        if( ! $this->lockssService->isUrlCached($deposit)) {
+        if ( ! $this->lockssService->isUrlCached($deposit)) {
             return '*';
         }
 
-        $status = $this->lockssService->hash($deposit);
-        return $status;
+        return $this->lockssService->hash($deposit);
     }
 
     /**
      * @param $plnIds
      * @param $uuids
+     * @param mixed $all
      *
      * @return Deposit[]
      */
     protected function getDeposits($plnIds, $uuids, $all = false) {
         $plns = [];
-        if($plnIds) {
+        if ($plnIds) {
             $plns = $this->getPlns($plnIds);
         }
         $query = $this->depositRepository->checkQuery($plns, $uuids, $all);
         $query->setMaxResults($this->params->get('lockss.deposit.limit'));
+
         return $query->execute();
     }
 
     protected function countDeposits($plnIds, $uuids, $all = false) {
         $plns = [];
-        if($plnIds) {
+        if ($plnIds) {
             $plns = $this->getPlns($plnIds);
         }
+
         return $this->depositRepository->checkQuery($plns, $uuids, $all, true)->getSingleScalarResult();
     }
 
@@ -87,7 +81,7 @@ class DepositStatusCommand extends AbstractLockssCommand {
         $count = $this->countDeposits($plnIds, $uuids, $all);
         $output->writeln("Checkking deposits for {$count} deposits.", OutputInterface::VERBOSITY_VERBOSE);
 
-        foreach($this->getDeposits($plnIds, $uuids, $all) as $deposit) {
+        foreach ($this->getDeposits($plnIds, $uuids, $all) as $deposit) {
             $status = new DepositStatus();
             $status->setDeposit($deposit);
 
@@ -100,20 +94,20 @@ class DepositStatusCommand extends AbstractLockssCommand {
 
             $output->writeln("Checking {$deposit->getUuid()}", OutputInterface::VERBOSITY_VERBOSE);
 
-            foreach($deposit->getContentProvider()->getPln()->getActiveBoxes() as $box) {
+            foreach ($deposit->getContentProvider()->getPln()->getActiveBoxes() as $box) {
                 try {
-                    $hash = strtoupper($this->getStatus($deposit, $box));
+                    $hash = mb_strtoupper($this->getStatus($deposit, $box));
                 } catch (Exception $e) {
                     $hash = '*';
                     $errors[$box->getHostname()] = $e->getMessage();
                     $output->writeln("{$box->getHostname()}: {$e->getMessage()}");
                 }
-                if($hash === strtoupper($deposit->getChecksumValue())) {
+                if ($hash === mb_strtoupper($deposit->getChecksumValue())) {
                     $matches++;
                 }
                 $result[$box->getHostname()] = $hash;
             }
-            if($matches === $boxCount) {
+            if ($matches === $boxCount) {
                 $agreement = 1;
             } else {
                 $agreement = $matches / count($boxes);
@@ -132,5 +126,4 @@ class DepositStatusCommand extends AbstractLockssCommand {
 
         return 0;
     }
-
 }

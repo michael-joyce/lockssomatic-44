@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -22,7 +22,7 @@ use App\Entity\DepositStatus;
 use App\Entity\Pln;
 use App\Entity\Plugin;
 use App\Entity\PluginProperty;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Nines\UserBundle\Entity\User;
@@ -181,7 +181,7 @@ class UpgradeCommand extends Command {
             $entry->setEnabled(true);
             $entry->setSalt($row['salt']);
             $entry->setPassword($row['password']);
-            $entry->setLastLogin(new DateTime($row['last_login']));
+            $entry->setLastLogin(new DateTimeImmutable($row['last_login']));
             $entry->setRoles(unserialize($row['roles']));
             $entry->setFullname($row['fullname']);
             $entry->setInstitution($row['institution']);
@@ -317,7 +317,7 @@ class UpgradeCommand extends Command {
         $callback = function ($row) {
             $status = new BoxStatus();
             $status->setBox($this->findEntity(Box::class, $row['box_id']));
-            $status->setCreated(new DateTime($row['query_date']));
+            $status->setCreated(new DateTimeImmutable($row['query_date']));
             $status->setSuccess(1 === $row['success']);
             $status->setErrors($row['errors']);
 
@@ -388,7 +388,7 @@ class UpgradeCommand extends Command {
         $callback = function ($row) {
             $status = new AuStatus();
             $status->setAu($this->findEntity(Au::class, $row['au_id']));
-            $status->setCreated(new DateTime($row['query_date']));
+            $status->setCreated(new DateTimeImmutable($row['query_date']));
             $status->setStatus(unserialize($row['status']));
             $status->setErrors(unserialize($row['errors']));
 
@@ -458,7 +458,7 @@ class UpgradeCommand extends Command {
             $deposit->setUser($this->findEntity(User::class, $row['user_id']));
             $deposit->setUuid($row['uuid']);
             $deposit->setTitle($row['title']);
-            $deposit->setCreated(new DateTime($row['date_deposited']));
+            $deposit->setCreated(new DateTimeImmutable($row['date_deposited']));
             $deposit->setAgreement($row['agreement']);
 
             $contentRow = $this->findContent($row['id']);
@@ -485,7 +485,7 @@ class UpgradeCommand extends Command {
             $status = new DepositStatus();
             $status->setDeposit($this->findEntity(Deposit::class, $row['deposit_id']));
             $status->setAgreement($row['agreement']);
-            $status->setCreated(new DateTime($row['query_date']));
+            $status->setCreated(new DateTimeImmutable($row['query_date']));
             $status->setStatus(unserialize($row['status']));
 
             return $status;
@@ -499,6 +499,7 @@ class UpgradeCommand extends Command {
     public function execute(InputInterface $input, OutputInterface $output) : int {
         if ( ! $input->getOption('force')) {
             $output->writeln('Will not run without --force.');
+
             exit;
         }
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
