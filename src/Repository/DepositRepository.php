@@ -67,6 +67,7 @@ class DepositRepository extends ServiceEntityRepository {
         $qb = $this->createQueryBuilder('d');
         if ($count) {
             $qb->select($qb->expr()->count('d.id'));
+            $qb->groupBy('d.id');
         }
         if ( ! $all) {
             $qb->andWhere('d.agreement IS NULL or d.agreement < 1.0');

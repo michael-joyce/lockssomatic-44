@@ -79,6 +79,10 @@ services:
             $sender: '%lom.boxstatus.sender%'
             $contact: '%lom.boxstatus.contact%'
 
+    App\Services\Lockss\ContentFetcher:
+        calls:
+            - { method: setLogger, arguments: [ '@monolog.logger.soap' ] }
+
     App\Services\ConfigExporter:
         arguments:
             $ausPerTitleDb: '%lom.aus_per_titledb%'

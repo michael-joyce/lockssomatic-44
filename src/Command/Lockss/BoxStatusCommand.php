@@ -72,12 +72,11 @@ class BoxStatusCommand extends AbstractLockssCommand {
 
         $status = new BoxStatus();
         $status->setBox($box);
-        $status->setSuccess(true);
 
         $result = [];
-
         try {
             $result = $this->lockssService->boxStatus();
+            $status->setSuccess(true);
         } catch (Exception $e) {
             $this->logger->error("{$box->getIpAddress()} - {$e->getMessage()}");
             $status->setSuccess(false);
@@ -97,7 +96,7 @@ class BoxStatusCommand extends AbstractLockssCommand {
         $plnIds = $input->getOption('pln');
 
         foreach ($this->getBoxes($plnIds) as $box) {
-            $this->logger->notice("Checking status on {$box->getHostname()}");
+            $this->logger->notice("Checking status on {$box->getHostname()}:{$box->getPort()}");
             $status = $this->getStatus($box);
 
             if ( ! $dryRun) {
