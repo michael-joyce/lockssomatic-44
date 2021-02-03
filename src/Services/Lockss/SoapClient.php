@@ -14,9 +14,6 @@ class SoapClient extends BaseSoapClient {
 
     const SOAP = "http://schemas.xmlsoap.org/soap/envelope/";
     const LOCKSS = "http://content.ws.lockss.org/";
-    const XOP="http://www.w3.org/2004/08/xop/include";
-    const XSI="http://www.w3.org/2001/XMLSchema-instance";
-    const XS="http://www.w3.org/2001/XMLSchema";
 
     /**
      * @var LoggerInterface
@@ -50,8 +47,6 @@ class SoapClient extends BaseSoapClient {
         $contentType = $httpMessage->getHeader('content-type');
         if ( str_starts_with($contentType[0], 'text/xml;')) {
             $this->isMultipart = false;
-//            dump([$request, $location, $action]);
-//            dump(['raw result is ', $rawResult]);
             return $rawResult;
         }
         $this->isMultipart = true;

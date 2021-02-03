@@ -66,8 +66,9 @@ class DepositRepository extends ServiceEntityRepository {
 
         $qb = $this->createQueryBuilder('d');
         if ($count) {
-            $qb->select($qb->expr()->count('d.id'));
-            $qb->groupBy('d.id');
+            $qb->select("count(1)");
+        } else {
+            $qb->orderBy('d.checked', 'DESC');
         }
         if ( ! $all) {
             $qb->andWhere('d.agreement IS NULL or d.agreement < 1.0');
@@ -82,7 +83,6 @@ class DepositRepository extends ServiceEntityRepository {
             $qb->andWhere('d.uuid in :uuids');
             $qb->setParameter('uuids', $uuids);
         }
-        $qb->orderBy('d.checked', 'DESC');
 
         return $qb->getQuery();
     }
