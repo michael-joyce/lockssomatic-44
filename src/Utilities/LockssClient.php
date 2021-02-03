@@ -12,7 +12,7 @@ namespace App\Utilities;
 
 use App\Entity\Box;
 use Exception;
-use Laminas\Soap\Client;
+use App\Services\Lockss\SoapClient;
 
 /**
  * Class LockssClient.
@@ -67,7 +67,7 @@ class LockssClient {
 
     public function isDaemonReady() {
         $wsdl = $this->generateWsdl('DaemonStatusService');
-        $client = new Client($wsdl, $this->options);
+        $client = new SoapClient($wsdl, $this->options);
 
         return $client->isDaemonReady();
     }
@@ -79,7 +79,7 @@ class LockssClient {
         }
 
         $wsdl = $this->generateWsdl($serviceName);
-        $client = new Client($wsdl, $this->options);
+        $client = new SoapClient($wsdl, $this->options);
 
         try {
             return $client->{$method}($params);

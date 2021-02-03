@@ -114,8 +114,10 @@ class LockssService {
         }
         $data = $response->blockFileDataHandler;
         $matches = [];
-        preg_match('/^([[:xdigit:]]+)\\s+http:/m', $data, $matches);
+        if(preg_match('/^([[:xdigit:]]+)\\s+http:/m', $data, $matches)) {
+            return $matches[1];
+        }
 
-        return $matches[1];
+        return '-';
     }
 }

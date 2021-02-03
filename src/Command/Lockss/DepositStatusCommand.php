@@ -105,7 +105,7 @@ class DepositStatusCommand extends AbstractLockssCommand {
                 if ($hash === mb_strtoupper($deposit->getChecksumValue())) {
                     $matches++;
                 }
-                $result[$box->getHostname()] = $hash;
+                $result[$box->getHostname() . ':' . $box->getPort()] = $hash;
             }
             if ($matches === $boxCount) {
                 $agreement = 1;

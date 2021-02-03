@@ -46,10 +46,12 @@ class SoapClient extends BaseSoapClient {
         $rawResult = parent::__doRequest($request, $location, $action, $version, $one_way);
         $rawHeaders = $this->__getLastResponseHeaders();
 
-        $httpMessage = parse_response($rawHeaders . $rawResult);
+        $httpMessage = parse_response($rawHeaders . "\n" . $rawResult);
         $contentType = $httpMessage->getHeader('content-type');
-        if ( ! str_starts_with($contentType[0], 'multipart/related')) {
+        if ( str_starts_with($contentType[0], 'text/xml;')) {
             $this->isMultipart = false;
+//            dump([$request, $location, $action]);
+//            dump(['raw result is ', $rawResult]);
             return $rawResult;
         }
         $this->isMultipart = true;
@@ -84,11 +86,11 @@ class SoapClient extends BaseSoapClient {
                     $parent = $element->parentNode;
                     $parent->removeChild($element);
                 }
-
-                print($dom->saveXML());
                 return $dom->saveXML();
             }
         }
+        $this->logger->error("Found no usable XML in response to $request, $location, $action.");
+        return null;
     }
 
 }
