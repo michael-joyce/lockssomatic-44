@@ -83,6 +83,10 @@ services:
         calls:
             - { method: setLogger, arguments: [ '@monolog.logger.soap' ] }
 
+    App\Services\Lockss\LockssService:
+        calls:
+            - { method: setLogger, arguments: [ '@monolog.logger.soap' ] }
+
     App\Services\ConfigExporter:
         arguments:
             $ausPerTitleDb: '%lom.aus_per_titledb%'

@@ -39,7 +39,7 @@ class FilePathsTest extends ControllerBaseCase {
         ];
     }
 
-    public function testSanity() : void {
+    public function testContainer() : void {
         $this->assertInstanceOf(FilePaths::class, $this->filePaths);
     }
 

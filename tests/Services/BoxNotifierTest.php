@@ -27,7 +27,7 @@ class BoxNotifierTest extends ControllerBaseCase {
      */
     private $notifier;
 
-    public function testSanity() : void {
+    public function testContainer() : void {
         $this->assertInstanceOf(BoxNotifier::class, $this->notifier);
     }
 

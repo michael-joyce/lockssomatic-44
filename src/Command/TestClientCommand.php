@@ -40,9 +40,8 @@ class TestClientCommand extends Command {
 
     protected function execute(InputInterface $input, OutputInterface $output) : int {
         $deposit = $this->em->find(Deposit::class, 1);
-        $client = LockssClient::create($deposit->getAu()->getPln()->getActiveBoxes()->first());
-        $this->lockssService->setClient($client);
-        dump($this->lockssService->isUrlCached($deposit));
+        $box = $this->em->find(Box::class, 1);
+        dump($this->lockssService->hash($box,$deposit));
         return 0;
     }
 

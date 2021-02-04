@@ -67,15 +67,12 @@ class BoxStatusCommand extends AbstractLockssCommand {
     }
 
     protected function getStatus(Box $box) {
-        $client = LockssClient::create($box);
-        $this->lockssService->setClient($client);
-
         $status = new BoxStatus();
         $status->setBox($box);
 
         $result = [];
         try {
-            $result = $this->lockssService->boxStatus();
+            $result = $this->lockssService->boxStatus($box);
             $status->setSuccess(true);
         } catch (Exception $e) {
             $this->logger->error("{$box->getIpAddress()} - {$e->getMessage()}");

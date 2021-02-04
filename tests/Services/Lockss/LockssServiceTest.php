@@ -1,0 +1,206 @@
+<?php
+
+
+namespace App\Tests\Services\Lockss;
+
+use App\DataFixtures\AuFixtures;
+use App\DataFixtures\BoxFixtures;
+use App\DataFixtures\DepositFixtures;
+use App\Entity\Box;
+use App\Services\AuManager;
+use App\Services\Lockss\LockssService;
+use App\Services\Lockss\SoapClient;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
+use ReflectionClass;
+use stdClass;
+
+class LockssServiceTest extends ControllerBaseCase {
+
+    /**
+     * @var LockssService;
+     */
+    private $lockssService;
+
+    protected function fixtures() : array {
+        return [
+            DepositFixtures::class,
+            BoxFixtures::class,
+            AuFixtures::class,
+        ];
+    }
+
+    public function testContainer() : void {
+        $this->assertInstanceOf(LockssService::class, $this->lockssService);
+    }
+
+    protected function setup() : void {
+        parent::setUp();
+        $this->lockssService = self::$container->get(LockssService::class);
+    }
+
+    public function testIsDaemonReady() {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock();
+        $mock->method('getClient')->willReturn($this->mockClient('isDaemonReady', true));
+        $this->assertTrue($mock->isDaemonReady($this->getReference('box.1')));
+    }
+
+    public function testBoxStatus() {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock();
+        $response = [
+            'activeCount' => 2,
+            'deletedCount' => 0,
+        ];
+        $mock->method('getClient')->willReturn($this->mockClient('queryRepositorySpaces', $response));
+        $result = $mock->boxStatus($this->getReference('box.1'));
+        $this->assertEquals(2, $result['activeCount']);
+    }
+
+    public function testAuStatus() {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock();
+        $response = [
+            'accessType' => 'Subscription',
+        ];
+        $mock->method('getClient')->willReturn($this->mockClient('getAuStatus', $response));
+        $auManager = $this->getMockBuilder(AuManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['generateAuidFromAu'])
+            ->getMock();
+        $auManager->method('generateAuidFromAu')->willReturn('abc123');
+
+        $mock->setAuManager($auManager);
+        $result = $mock->auStatus($this->getReference('box.1'), $this->getReference('au.1'));
+        $this->assertEquals('Subscription', $result['accessType']);
+    }
+
+    public function testListAus() {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock();
+        $response = [
+            (object)['id' => 'abc123', 'name' => 'Test 1'],
+            (object)['id' => 'pdq456', 'name' => 'Test 2'],
+        ];
+        $mock->method('getClient')->willReturn($this->mockClient('getAuIds', $response));
+        $result = $mock->listAus($this->getReference('box.1'));
+        $this->assertCount(2, $result);
+        $this->assertEquals('pdq456', $response[1]->id);
+    }
+
+    public function testListAuUrls() {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock();
+        $response = [
+            'http://example.com',
+            'http://example.org',
+        ];
+        $mock->method('getClient')->willReturn($this->mockClient('getAuUrls', $response));
+        $auManager = $this->getMockBuilder(AuManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['generateAuidFromAu'])
+            ->getMock();
+        $auManager->method('generateAuidFromAu')->willReturn('abc123');
+
+        $mock->setAuManager($auManager);
+        $result = $mock->listAuUrls($this->getReference('box.1'), $this->getReference('au.1'));
+        $this->assertCount(2, $result);
+        $this->assertEquals('http://example.com', $result[0]);
+    }
+
+    public function testIsUrlCached() {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock();
+        $response = true;
+        $mock->method('getClient')->willReturn($this->mockClient('isUrlCached', $response));
+
+        $auManager = $this->getMockBuilder(AuManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['generateAuidFromDeposit'])
+            ->getMock();
+        $auManager->method('generateAuidFromDeposit')->willReturn('abc123');
+        $mock->setAuManager($auManager);
+
+        $result = $mock->isUrlCached($this->getReference('box.1'), $this->getReference('deposit.1'));
+        $this->assertTrue($result);
+    }
+
+    public function testHash() {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock();
+        $response = (object)[
+            'blockFileDataHandler' => <<< ENDBFDH
+                # Block hashes from hilbert.local, 13:12:43 02/04/21
+                # AU: LOCKSSOMatic AU 1 Deposit from OJS part 1
+                # Hash algorithm: sha1
+                # Encoding: Hex
+                
+                B9097EE74942D34E0F659159F46DEC10E43E81C3   http://localhost/A973E0D2EDED.zip
+                # end
+                ENDBFDH,
+            'filesHashed' => 1,
+        ];
+        $mock->method('getClient')->willReturn($this->mockClient('hash', $response));
+
+        $auManager = $this->getMockBuilder(AuManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['generateAuidFromDeposit'])
+            ->getMock();
+        $auManager->method('generateAuidFromDeposit')->willReturn('abc123');
+        $mock->setAuManager($auManager);
+
+        $result = $mock->hash($this->getReference('box.1'), $this->getReference('deposit.1'));
+        $this->assertEquals('B9097EE74942D34E0F659159F46DEC10E43E81C3', $result);
+    }
+
+    public function testHashError() {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock();
+        $response = (object)[
+            'errorMessage' => 'an error',
+            'filesHashed' => 1,
+        ];
+        $mock->method('getClient')->willReturn($this->mockClient('hash', $response));
+
+        $auManager = $this->getMockBuilder(AuManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['generateAuidFromDeposit'])
+            ->getMock();
+        $auManager->method('generateAuidFromDeposit')->willReturn('abc123');
+        $mock->setAuManager($auManager);
+
+        try {
+            $result = $mock->hash($this->getReference('box.1'), $this->getReference('deposit.1'));
+        } catch (\Exception $e) {
+            $this->assertEquals('an error', $e->getMessage());
+        }
+    }
+
+    protected function mockClient($method, $data) {
+        $return = new stdClass();
+        $return->return = $data;
+        $client = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods([$method])
+            ->getMock();
+        $client->method($method)->willReturn($return);
+        return $client;
+    }
+
+}

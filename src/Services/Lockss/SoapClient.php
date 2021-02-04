@@ -20,6 +20,9 @@ class SoapClient extends BaseSoapClient {
      */
     private $logger;
 
+    /**
+     * @var bool
+     */
     private $isMultipart;
 
     /**
@@ -29,6 +32,9 @@ class SoapClient extends BaseSoapClient {
 
     public function __construct($wsdl, $options) {
         $options['trace'] = true;
+        $options['encoding'] = 'utf-8';
+        $options['soap_version'] = SOAP_1_1;
+
         parent::__construct($wsdl, $options);
     }
 
@@ -45,7 +51,7 @@ class SoapClient extends BaseSoapClient {
 
         $httpMessage = parse_response($rawHeaders . "\n" . $rawResult);
         $contentType = $httpMessage->getHeader('content-type');
-        if ( str_starts_with($contentType[0], 'text/xml;')) {
+        if (str_starts_with($contentType[0], 'text/xml;')) {
             $this->isMultipart = false;
             return $rawResult;
         }
@@ -61,22 +67,21 @@ class SoapClient extends BaseSoapClient {
 
         foreach ($filtered as $m) {
             $response = parse_response("HTTP/1.1 200 OK\r\n" . $m);
-            if($response->hasHeader('Content-ID')) {
+            if ($response->hasHeader('Content-ID')) {
                 $id = preg_replace("/^<|>$/", '', $response->getHeader('Content-ID')[0]);
                 $this->parts[$id] = $response;
             }
         }
-        foreach($this->parts as $part) {
-            if($part->hasHeader('Content-Type') &&
-                str_starts_with($part->getHeader('Content-Type')[0], 'application/xop+xml')) {
+        foreach ($this->parts as $part) {
+            if ($part->hasHeader('Content-Type') && str_starts_with($part->getHeader('Content-Type')[0], 'application/xop+xml')) {
                 $body = $part->getBody()->getContents();
                 $dom = new DOMDocument();
                 $dom->preserveWhiteSpace = false;
-                $dom->formatOutput=true;
+                $dom->formatOutput = true;
                 $dom->loadXML($body);
 
                 $nodeList = $dom->getElementsByTagName('dataHandler');
-                if($nodeList->length) {
+                if ($nodeList->length) {
                     $element = $nodeList->item(0);
                     $parent = $element->parentNode;
                     $parent->removeChild($element);

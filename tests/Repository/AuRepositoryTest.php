@@ -31,7 +31,7 @@ class AuRepositoryTest extends ControllerBaseCase {
         ];
     }
 
-    public function testSanity() : void {
+    public function testContainer() : void {
         $this->assertInstanceOf(AuRepository::class, $this->repo);
     }
 

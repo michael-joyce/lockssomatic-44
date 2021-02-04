@@ -1,5 +1,5 @@
 monolog:
-    channels: [ 'sword', 'lockss' ]
+    channels: [ 'sword', 'lockss', 'soap' ]
     handlers:
         main:
             type: rotating_file

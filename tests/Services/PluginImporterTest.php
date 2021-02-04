@@ -49,7 +49,7 @@ class PluginImporterTest extends ControllerBaseCase {
         return $stub;
     }
 
-    public function testSanity() : void {
+    public function testContainer() : void {
         $this->assertInstanceOf(PluginImporter::class, $this->importer);
     }
 

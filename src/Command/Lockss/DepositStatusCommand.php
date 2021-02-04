@@ -36,14 +36,11 @@ class DepositStatusCommand extends AbstractLockssCommand {
     }
 
     protected function getStatus(Deposit $deposit, Box $box) {
-        $client = LockssClient::create($box);
-        $this->lockssService->setClient($client);
-
-        if ( ! $this->lockssService->isUrlCached($deposit)) {
+        if ( ! $this->lockssService->isUrlCached($box, $deposit)) {
             return '*';
         }
 
-        return $this->lockssService->hash($deposit);
+        return $this->lockssService->hash($box, $deposit);
     }
 
     /**

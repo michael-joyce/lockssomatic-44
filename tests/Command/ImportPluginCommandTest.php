@@ -26,7 +26,7 @@ class ImportPluginCommandTest extends ControllerBaseCase {
      */
     private $tester;
 
-    public function testSanity() : void {
+    public function testContainer() : void {
         $this->tester->execute([
             'command' => self::NAME,
             'files' => [],

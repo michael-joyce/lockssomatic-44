@@ -41,7 +41,7 @@ class ConfigUpdaterTest extends ControllerBaseCase {
         ];
     }
 
-    public function testSanity() : void {
+    public function testContainer() : void {
         $this->assertInstanceOf(ConfigUpdater::class, $this->updater);
     }
 

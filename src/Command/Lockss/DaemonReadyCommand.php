@@ -12,7 +12,6 @@ namespace App\Command\Lockss;
 
 use App\Entity\Box;
 use App\Services\Lockss\LockssService;
-use App\Utilities\LockssClient;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,13 +29,6 @@ class DaemonReadyCommand extends AbstractLockssCommand {
         $this->setDescription('Check the status of one or more boxes in a PLN.');
     }
 
-    protected function getStatus(Box $box) {
-        $client = LockssClient::create($box);
-        $this->lockssService->setClient($client);
-
-        return $this->lockssService->isDaemonReady();
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output) : int {
         $plnIds = $input->getOption('pln');
         $boxes = $this->getBoxes($plnIds);
@@ -45,7 +37,7 @@ class DaemonReadyCommand extends AbstractLockssCommand {
 
         foreach ($this->getBoxes($plnIds) as $box) {
             $output->write("Checking ready status on {$box->getHostname()}. ");
-            $status = $this->getStatus($box);
+            $status = $this->lockssService->isDaemonReady($box);
             if ($status) {
                 $output->writeln('Daemon reports ready.');
             } else {

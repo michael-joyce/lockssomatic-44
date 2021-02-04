@@ -32,14 +32,10 @@ class AuListCommand extends AbstractLockssCommand {
     }
 
     protected function listAus(Box $box) {
-        $client = LockssClient::create($box);
-        $service = new LockssService();
-        $service->setClient($client);
-
         $result = [];
 
         try {
-            $result = $service->listAus();
+            $result = $this->lockssService->listAus($box);
         } catch (Exception $e) {
             $this->logger->error("{$box->getIpAddress()} - {$e->getMessage()}");
         }

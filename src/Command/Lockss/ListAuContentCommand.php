@@ -33,13 +33,10 @@ class ListAuContentCommand extends AbstractLockssCommand {
     }
 
     protected function listAuContent(Au $au, Box $box) {
-        $client = LockssClient::create($box);
-        $this->lockssService->setClient($client);
-
         $result = [];
 
         try {
-            $result = $this->lockssService->listAuUrls($au);
+            $result = $this->lockssService->listAuUrls($box, $au);
         } catch (Exception $e) {
             $this->logger->error("{$box->getIpAddress()} - {$e->getMessage()}");
         }

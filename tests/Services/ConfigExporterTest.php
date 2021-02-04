@@ -46,7 +46,7 @@ class ConfigExporterTest extends ControllerBaseCase {
         ];
     }
 
-    public function testSanity() : void {
+    public function testContainer() : void {
         $this->assertInstanceOf(ConfigExporter::class, $this->exporter);
     }
 

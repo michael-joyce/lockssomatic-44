@@ -19,7 +19,7 @@ class EncoderTest extends TestCase {
      */
     private $encoder;
 
-    public function testSanity() : void {
+    public function testContainer() : void {
         $this->assertInstanceOf(Encoder::class, $this->encoder);
     }
 

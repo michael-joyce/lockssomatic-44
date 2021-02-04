@@ -44,7 +44,7 @@ class AuManagerTest extends ControllerBaseCase {
         ];
     }
 
-    public function testSanity() : void {
+    public function testContainer() : void {
         $this->assertInstanceOf(AuManager::class, $this->manager);
     }
 

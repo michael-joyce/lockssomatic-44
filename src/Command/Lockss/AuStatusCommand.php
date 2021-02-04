@@ -35,10 +35,7 @@ class AuStatusCommand extends AbstractLockssCommand {
     }
 
     protected function getStatus(Au $au, Box $box) {
-        $client = LockssClient::create($box);
-        $this->lockssService->setClient($client);
-
-        return $this->lockssService->auStatus($au);
+        return $this->lockssService->auStatus($box, $au);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int {
