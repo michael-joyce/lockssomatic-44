@@ -18,7 +18,8 @@ use Nines\UtilBundle\Tests\ControllerBaseCase;
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class DefaultControllerTest extends ControllerBaseCase {
+class DefaultControllerTest extends ControllerBaseCase
+{
     public function fixtures() : array {
         return [
             UserFixtures::class,

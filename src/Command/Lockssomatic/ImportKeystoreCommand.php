@@ -21,7 +21,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Import a java keystore for use in a PLN.
  */
-class ImportKeystoreCommand extends Command {
+class ImportKeystoreCommand extends Command
+{
     /**
      * Doctrine instance.
      *

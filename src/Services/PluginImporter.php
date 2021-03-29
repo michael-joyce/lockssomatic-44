@@ -20,7 +20,8 @@ use ZipArchive;
 /**
  * Import plugin configuration from a Java .jar file.
  */
-class PluginImporter {
+class PluginImporter
+{
     /**
      * Allowed plugin file mime types.
      */

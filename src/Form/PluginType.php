@@ -18,7 +18,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Data entry form for LOCKSS plugins.
  */
-class PluginType extends AbstractType {
+class PluginType extends AbstractType
+{
     /**
      * Build the form by adding types to $builder.
      */

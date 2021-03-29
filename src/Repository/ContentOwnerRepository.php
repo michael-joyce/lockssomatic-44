@@ -17,7 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * Doctrine stub.
  */
-class ContentOwnerRepository extends ServiceEntityRepository {
+class ContentOwnerRepository extends ServiceEntityRepository
+{
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, ContentOwner::class);
     }

@@ -25,7 +25,8 @@ use Symfony\Component\Routing\RouterInterface;
 /**
  * Manage all AUs and queries on them.
  */
-class AuManager {
+class AuManager
+{
     use LoggerAwareTrait;
 
     /**

@@ -12,14 +12,14 @@ namespace App\Command\Lockss;
 
 use App\Entity\Box;
 use App\Services\Lockss\LockssService;
-use App\Utilities\LockssClient;
 use Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class AuListCommand extends AbstractLockssCommand {
+class AuListCommand extends AbstractLockssCommand
+{
     protected static $defaultName = 'lockss:aus:list';
 
     public function __construct(LockssService $lockssService, ParameterBagInterface $params, ?string $name = null) {

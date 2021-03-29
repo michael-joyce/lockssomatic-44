@@ -20,7 +20,8 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * Doctrine stub.
  */
-class DepositRepository extends ServiceEntityRepository {
+class DepositRepository extends ServiceEntityRepository
+{
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Deposit::class);
     }
@@ -66,7 +67,7 @@ class DepositRepository extends ServiceEntityRepository {
 
         $qb = $this->createQueryBuilder('d');
         if ($count) {
-            $qb->select("count(1)");
+            $qb->select('count(1)');
         } else {
             $qb->orderBy('d.checked', 'DESC');
         }

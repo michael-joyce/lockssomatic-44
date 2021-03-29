@@ -31,7 +31,8 @@ use Symfony\Component\Routing\Annotation\Route;
  * @ParamConverter("pln", options={"id": "plnId"})
  * @ParamConverter("au", options={"id": "auId"})
  */
-class AuStatusController extends AbstractController implements PaginatorAwareInterface {
+class AuStatusController extends AbstractController implements PaginatorAwareInterface
+{
     use PaginatorTrait;
 
     /**

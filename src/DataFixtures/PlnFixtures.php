@@ -17,7 +17,8 @@ use Doctrine\Persistence\ObjectManager;
 /**
  * Load some PLNs.
  */
-class PlnFixtures extends Fixture {
+class PlnFixtures extends Fixture
+{
     /**
      * Load the objects.
      */

@@ -19,7 +19,8 @@ use Doctrine\Persistence\ObjectManager;
 /**
  * Load some deposit status entities.
  */
-class DepositStatusFixtures extends Fixture implements DependentFixtureInterface {
+class DepositStatusFixtures extends Fixture implements DependentFixtureInterface
+{
     /**
      * Load the objects.
      */

@@ -37,7 +37,8 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/plnconfigs/{plnId}", methods={"GET"})
  * @ParamConverter("pln", options={"id": "plnId"})
  */
-class LockssController extends AbstractController implements PaginatorAwareInterface {
+class LockssController extends AbstractController implements PaginatorAwareInterface
+{
     use PaginatorTrait;
 
     /**

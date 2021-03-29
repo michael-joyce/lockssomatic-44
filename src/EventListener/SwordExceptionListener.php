@@ -24,7 +24,8 @@ use Twig\Error\SyntaxError;
 /**
  * Description of SwordExceptionListener.
  */
-class SwordExceptionListener {
+class SwordExceptionListener
+{
     /**
      * Controller that threw the exception.
      *

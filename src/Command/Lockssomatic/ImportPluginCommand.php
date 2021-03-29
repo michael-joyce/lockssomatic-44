@@ -23,7 +23,8 @@ use ZipArchive;
 /**
  * Import one or more LOCKSS plugins.
  */
-class ImportPluginCommand extends Command {
+class ImportPluginCommand extends Command
+{
     /**
      * Doctrine instance.
      *

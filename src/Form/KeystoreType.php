@@ -17,7 +17,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Data entry form for java keystore files.
  */
-class KeystoreType extends AbstractType {
+class KeystoreType extends AbstractType
+{
     /**
      * Build the form by adding types to $builder.
      */

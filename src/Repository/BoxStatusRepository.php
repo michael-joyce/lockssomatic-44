@@ -17,7 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * Doctrine stub.
  */
-class BoxStatusRepository extends ServiceEntityRepository {
+class BoxStatusRepository extends ServiceEntityRepository
+{
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, BoxStatus::class);
     }

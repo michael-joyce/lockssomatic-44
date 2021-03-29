@@ -19,7 +19,8 @@ use Psr\Log\LoggerAwareTrait;
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class BoxListener {
+class BoxListener
+{
     use LoggerAwareTrait;
 
     /**

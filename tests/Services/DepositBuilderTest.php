@@ -22,7 +22,8 @@ use SimpleXMLElement;
 /**
  * Description of DepositBuilderTest.
  */
-class DepositBuilderTest extends ControllerBaseCase {
+class DepositBuilderTest extends ControllerBaseCase
+{
     /**
      * @var DepositBuilder
      */

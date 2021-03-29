@@ -23,7 +23,8 @@ use Nines\UtilBundle\Tests\ControllerBaseCase;
 use org\bovigo\vfs\vfsStream;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class LockssControllerTest extends ControllerBaseCase {
+class LockssControllerTest extends ControllerBaseCase
+{
     public function fixtures() : array {
         return [
             PlnFixtures::class,

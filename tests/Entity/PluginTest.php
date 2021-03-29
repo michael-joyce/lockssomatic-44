@@ -17,7 +17,8 @@ use Nines\UtilBundle\Tests\ControllerBaseCase;
 /**
  * Description of PluginPropertyTest.
  */
-class PluginTest extends ControllerBaseCase {
+class PluginTest extends ControllerBaseCase
+{
     protected function fixtures() : array {
         return [
             PluginPropertyFixtures::class,

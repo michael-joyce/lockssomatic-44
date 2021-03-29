@@ -29,7 +29,8 @@ use ReflectionProperty;
  *
  * @author michael
  */
-class ConfigUpdaterTest extends ControllerBaseCase {
+class ConfigUpdaterTest extends ControllerBaseCase
+{
     /**
      * @var ConfigUpdater
      */

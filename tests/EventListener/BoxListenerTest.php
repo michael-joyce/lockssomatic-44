@@ -28,7 +28,8 @@ use App\EventListener\BoxListener;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class BoxListenerTest extends ControllerBaseCase {
+class BoxListenerTest extends ControllerBaseCase
+{
     private $listener;
 
     /**

@@ -21,7 +21,8 @@ use Symfony\Component\Mime\Email;
  *
  * @author michael
  */
-class BoxNotifierTest extends ControllerBaseCase {
+class BoxNotifierTest extends ControllerBaseCase
+{
     /**
      * @var BoxNotifier
      */

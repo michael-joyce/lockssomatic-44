@@ -18,7 +18,8 @@ use Doctrine\Persistence\ObjectManager;
 /**
  * Load some plugin properties.
  */
-class PluginPropertyFixtures extends Fixture implements DependentFixtureInterface {
+class PluginPropertyFixtures extends Fixture implements DependentFixtureInterface
+{
     /**
      * Generate a plugin.
      *

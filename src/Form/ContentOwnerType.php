@@ -17,7 +17,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Data entry form for content owners.
  */
-class ContentOwnerType extends AbstractType {
+class ContentOwnerType extends AbstractType
+{
     /**
      * Build the form by adding types to $builder.
      */

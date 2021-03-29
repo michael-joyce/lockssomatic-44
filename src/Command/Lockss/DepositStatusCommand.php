@@ -14,14 +14,14 @@ use App\Entity\Box;
 use App\Entity\Deposit;
 use App\Entity\DepositStatus;
 use App\Services\Lockss\LockssService;
-use App\Utilities\LockssClient;
 use Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class DepositStatusCommand extends AbstractLockssCommand {
+class DepositStatusCommand extends AbstractLockssCommand
+{
     protected static $defaultName = 'lockss:deposit:status';
 
     public function __construct(LockssService $lockssService, ParameterBagInterface $params, ?string $name = null) {

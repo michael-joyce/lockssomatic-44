@@ -19,7 +19,8 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Table(name="au_status")
  * @ORM\Entity(repositoryClass="App\Repository\AuStatusRepository")
  */
-class AuStatus extends AbstractEntity {
+class AuStatus extends AbstractEntity
+{
     /**
      * Status data as returned from LOCKSS.
      *

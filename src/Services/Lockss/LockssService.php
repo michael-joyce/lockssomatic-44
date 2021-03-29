@@ -14,12 +14,11 @@ use App\Entity\Au;
 use App\Entity\Box;
 use App\Entity\Deposit;
 use App\Services\AuManager;
-use App\Utilities\LockssClient;
 use Exception;
 use Psr\Log\LoggerInterface;
 
-class LockssService {
-
+class LockssService
+{
     /**
      * @var LoggerInterface
      */
@@ -36,11 +35,11 @@ class LockssService {
             'login' => $box->getPln()->getUsername(),
             'password' => $box->getPln()->getPassword(),
         ];
+
         return new SoapClient($wsdl, $options);
     }
 
     /**
-     * @param Box $box
      * @param string $method
      * @param array $parameters
      * @param mixed $serviceName
@@ -49,7 +48,7 @@ class LockssService {
      */
     protected function call(Box $box, $method, $parameters = [], $serviceName = 'DaemonStatusService') {
         $client = $this->getClient($box, $serviceName);
-        $response = $client->$method($parameters, $serviceName);
+        $response = $client->{$method}($parameters, $serviceName);
 
 //        print_r($response);
 
@@ -126,8 +125,7 @@ class LockssService {
     /**
      * @required
      */
-    public function setLogger(LoggerInterface $logger) {
+    public function setLogger(LoggerInterface $logger) : void {
         $this->logger = $logger;
     }
-
 }

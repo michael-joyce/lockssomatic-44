@@ -19,7 +19,8 @@ use ReflectionObject;
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class PluginPropertyTest extends ControllerBaseCase {
+class PluginPropertyTest extends ControllerBaseCase
+{
     /**
      * @var PluginProperty
      */

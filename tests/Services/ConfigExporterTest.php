@@ -29,7 +29,8 @@ use org\bovigo\vfs\vfsStreamDirectory;
  *
  * @author michael
  */
-class ConfigExporterTest extends ControllerBaseCase {
+class ConfigExporterTest extends ControllerBaseCase
+{
     /**
      * @var ConfigExporter
      */

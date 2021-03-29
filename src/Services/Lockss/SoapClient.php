@@ -1,19 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace App\Services\Lockss;
 
 use DOMDocument;
+use function GuzzleHttp\Psr7\parse_header;
+use function GuzzleHttp\Psr7\parse_response;
 use GuzzleHttp\Psr7\Response;
 use Psr\Log\LoggerInterface;
 use SoapClient as BaseSoapClient;
-use function GuzzleHttp\Psr7\parse_header;
-use function GuzzleHttp\Psr7\parse_response;
 
-class SoapClient extends BaseSoapClient {
+class SoapClient extends BaseSoapClient
+{
+    public const SOAP = 'http://schemas.xmlsoap.org/soap/envelope/';
 
-    const SOAP = "http://schemas.xmlsoap.org/soap/envelope/";
-    const LOCKSS = "http://content.ws.lockss.org/";
+    public const LOCKSS = 'http://content.ws.lockss.org/';
 
     /**
      * @var LoggerInterface
@@ -38,13 +46,6 @@ class SoapClient extends BaseSoapClient {
         parent::__construct($wsdl, $options);
     }
 
-    /**
-     * @required
-     */
-    public function setLogger(LoggerInterface $logger) {
-        $this->logger = $logger;
-    }
-
     public function __doRequest($request, $location, $action, $version, $one_way = 0) {
         $rawResult = parent::__doRequest($request, $location, $action, $version, $one_way);
         $rawHeaders = $this->__getLastResponseHeaders();
@@ -53,6 +54,7 @@ class SoapClient extends BaseSoapClient {
         $contentType = $httpMessage->getHeader('content-type');
         if (str_starts_with($contentType[0], 'text/xml;')) {
             $this->isMultipart = false;
+
             return $rawResult;
         }
         $this->isMultipart = true;
@@ -62,16 +64,17 @@ class SoapClient extends BaseSoapClient {
 
         $messageParts = array_map(function ($a) { return trim($a); }, explode("--{$boundary}", $rawResult));
         $filtered = array_filter($messageParts, function ($a) {
-            return $a && $a !== '--';
+            return $a && '--' !== $a;
         });
 
         foreach ($filtered as $m) {
             $response = parse_response("HTTP/1.1 200 OK\r\n" . $m);
             if ($response->hasHeader('Content-ID')) {
-                $id = preg_replace("/^<|>$/", '', $response->getHeader('Content-ID')[0]);
+                $id = preg_replace('/^<|>$/', '', $response->getHeader('Content-ID')[0]);
                 $this->parts[$id] = $response;
             }
         }
+
         foreach ($this->parts as $part) {
             if ($part->hasHeader('Content-Type') && str_starts_with($part->getHeader('Content-Type')[0], 'application/xop+xml')) {
                 $body = $part->getBody()->getContents();
@@ -86,11 +89,17 @@ class SoapClient extends BaseSoapClient {
                     $parent = $element->parentNode;
                     $parent->removeChild($element);
                 }
+
                 return $dom->saveXML();
             }
         }
-        $this->logger->error("Found no usable XML in response to $request, $location, $action.");
-        return null;
+        $this->logger->error("Found no usable XML in response to {$request}, {$location}, {$action}.");
     }
 
+    /**
+     * @required
+     */
+    public function setLogger(LoggerInterface $logger) : void {
+        $this->logger = $logger;
+    }
 }

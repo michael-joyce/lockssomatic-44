@@ -18,7 +18,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Box data entry form.
  */
-class BoxType extends AbstractType {
+class BoxType extends AbstractType
+{
     /**
      * Build the form.
      */

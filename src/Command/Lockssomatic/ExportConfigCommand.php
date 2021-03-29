@@ -23,7 +23,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * LomExportConfigCommand command.
  */
-class ExportConfigCommand extends Command {
+class ExportConfigCommand extends Command
+{
     /**
      * Exporter service instance.
      *

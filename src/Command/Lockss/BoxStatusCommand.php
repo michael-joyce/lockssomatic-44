@@ -16,7 +16,6 @@ use App\Repository\BoxRepository;
 use App\Repository\PlnRepository;
 use App\Services\BoxNotifier;
 use App\Services\Lockss\LockssService;
-use App\Utilities\LockssClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -26,7 +25,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class BoxStatusCommand extends AbstractLockssCommand {
+class BoxStatusCommand extends AbstractLockssCommand
+{
     protected static $defaultName = 'lockss:box:status';
 
     public function __construct(LockssService $lockssService, ParameterBagInterface $params, ?string $name = null) {
@@ -71,6 +71,7 @@ class BoxStatusCommand extends AbstractLockssCommand {
         $status->setBox($box);
 
         $result = [];
+
         try {
             $result = $this->lockssService->boxStatus($box);
             $status->setSuccess(true);

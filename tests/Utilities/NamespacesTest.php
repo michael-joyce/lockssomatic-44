@@ -16,7 +16,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * Simplify handling namespaces for SWORD XML documents.
  */
-class NamespacesTest extends TestCase {
+class NamespacesTest extends TestCase
+{
     /**
      * @dataProvider getNamespaceData
      *

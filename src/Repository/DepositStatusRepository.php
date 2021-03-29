@@ -17,7 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * Doctrine stub.
  */
-class DepositStatusRepository extends ServiceEntityRepository {
+class DepositStatusRepository extends ServiceEntityRepository
+{
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, DepositStatus::class);
     }

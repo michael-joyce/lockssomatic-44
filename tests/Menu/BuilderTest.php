@@ -15,7 +15,8 @@ use Knp\Menu\MenuItem;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class BuilderTest extends ControllerBaseCase {
+class BuilderTest extends ControllerBaseCase
+{
     protected function fixtures() : array {
         return [
             UserFixtures::class,

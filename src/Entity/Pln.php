@@ -22,7 +22,8 @@ use SplFileInfo;
  * @ORM\Table(name="pln")
  * @ORM\Entity(repositoryClass="App\Repository\PlnRepository")
  */
-class Pln extends AbstractEntity {
+class Pln extends AbstractEntity
+{
     /**
      * Mime types acceptable for java keystores.
      */

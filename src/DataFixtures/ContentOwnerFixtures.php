@@ -17,7 +17,8 @@ use Doctrine\Persistence\ObjectManager;
 /**
  * Load some content owners.
  */
-class ContentOwnerFixtures extends Fixture {
+class ContentOwnerFixtures extends Fixture
+{
     /**
      * Load the objects.
      */

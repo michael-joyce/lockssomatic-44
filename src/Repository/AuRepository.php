@@ -20,7 +20,8 @@ use Generator;
 /**
  * AU queries in Doctrine.
  */
-class AuRepository extends ServiceEntityRepository {
+class AuRepository extends ServiceEntityRepository
+{
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Au::class);
     }

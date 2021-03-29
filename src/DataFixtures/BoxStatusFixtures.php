@@ -18,7 +18,8 @@ use Doctrine\Persistence\ObjectManager;
 /**
  * Load some box statuses.
  */
-class BoxStatusFixtures extends Fixture implements DependentFixtureInterface {
+class BoxStatusFixtures extends Fixture implements DependentFixtureInterface
+{
     /**
      * Load the objects.
      */

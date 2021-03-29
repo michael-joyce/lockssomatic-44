@@ -1,21 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace App\Tests\Services\Lockss;
 
 use App\DataFixtures\AuFixtures;
 use App\DataFixtures\BoxFixtures;
 use App\DataFixtures\DepositFixtures;
-use App\Entity\Box;
 use App\Services\AuManager;
 use App\Services\Lockss\LockssService;
 use App\Services\Lockss\SoapClient;
+use Exception;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
-use ReflectionClass;
 use stdClass;
 
-class LockssServiceTest extends ControllerBaseCase {
-
+class LockssServiceTest extends ControllerBaseCase
+{
     /**
      * @var LockssService;
      */
@@ -29,43 +35,54 @@ class LockssServiceTest extends ControllerBaseCase {
         ];
     }
 
+    protected function mockClient($method, $data) {
+        $return = new stdClass();
+        $return->return = $data;
+        $client = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods([$method])
+            ->getMock()
+        ;
+        $client->method($method)->willReturn($return);
+
+        return $client;
+    }
+
     public function testContainer() : void {
         $this->assertInstanceOf(LockssService::class, $this->lockssService);
     }
 
-    protected function setup() : void {
-        parent::setUp();
-        $this->lockssService = self::$container->get(LockssService::class);
-    }
-
-    public function testIsDaemonReady() {
+    public function testIsDaemonReady() : void {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()
             ->setMethods(['getClient'])
-            ->getMock();
+            ->getMock()
+        ;
         $mock->method('getClient')->willReturn($this->mockClient('isDaemonReady', true));
         $this->assertTrue($mock->isDaemonReady($this->getReference('box.1')));
     }
 
-    public function testBoxStatus() {
+    public function testBoxStatus() : void {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()
             ->setMethods(['getClient'])
-            ->getMock();
+            ->getMock()
+        ;
         $response = [
             'activeCount' => 2,
             'deletedCount' => 0,
         ];
         $mock->method('getClient')->willReturn($this->mockClient('queryRepositorySpaces', $response));
         $result = $mock->boxStatus($this->getReference('box.1'));
-        $this->assertEquals(2, $result['activeCount']);
+        $this->assertSame(2, $result['activeCount']);
     }
 
-    public function testAuStatus() {
+    public function testAuStatus() : void {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()
             ->setMethods(['getClient'])
-            ->getMock();
+            ->getMock()
+        ;
         $response = [
             'accessType' => 'Subscription',
         ];
@@ -73,34 +90,37 @@ class LockssServiceTest extends ControllerBaseCase {
         $auManager = $this->getMockBuilder(AuManager::class)
             ->disableOriginalConstructor()
             ->setMethods(['generateAuidFromAu'])
-            ->getMock();
+            ->getMock()
+        ;
         $auManager->method('generateAuidFromAu')->willReturn('abc123');
 
         $mock->setAuManager($auManager);
         $result = $mock->auStatus($this->getReference('box.1'), $this->getReference('au.1'));
-        $this->assertEquals('Subscription', $result['accessType']);
+        $this->assertSame('Subscription', $result['accessType']);
     }
 
-    public function testListAus() {
+    public function testListAus() : void {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()
             ->setMethods(['getClient'])
-            ->getMock();
+            ->getMock()
+        ;
         $response = [
-            (object)['id' => 'abc123', 'name' => 'Test 1'],
-            (object)['id' => 'pdq456', 'name' => 'Test 2'],
+            (object) ['id' => 'abc123', 'name' => 'Test 1'],
+            (object) ['id' => 'pdq456', 'name' => 'Test 2'],
         ];
         $mock->method('getClient')->willReturn($this->mockClient('getAuIds', $response));
         $result = $mock->listAus($this->getReference('box.1'));
         $this->assertCount(2, $result);
-        $this->assertEquals('pdq456', $response[1]->id);
+        $this->assertSame('pdq456', $response[1]->id);
     }
 
-    public function testListAuUrls() {
+    public function testListAuUrls() : void {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()
             ->setMethods(['getClient'])
-            ->getMock();
+            ->getMock()
+        ;
         $response = [
             'http://example.com',
             'http://example.org',
@@ -109,27 +129,30 @@ class LockssServiceTest extends ControllerBaseCase {
         $auManager = $this->getMockBuilder(AuManager::class)
             ->disableOriginalConstructor()
             ->setMethods(['generateAuidFromAu'])
-            ->getMock();
+            ->getMock()
+        ;
         $auManager->method('generateAuidFromAu')->willReturn('abc123');
 
         $mock->setAuManager($auManager);
         $result = $mock->listAuUrls($this->getReference('box.1'), $this->getReference('au.1'));
         $this->assertCount(2, $result);
-        $this->assertEquals('http://example.com', $result[0]);
+        $this->assertSame('http://example.com', $result[0]);
     }
 
-    public function testIsUrlCached() {
+    public function testIsUrlCached() : void {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()
             ->setMethods(['getClient'])
-            ->getMock();
+            ->getMock()
+        ;
         $response = true;
         $mock->method('getClient')->willReturn($this->mockClient('isUrlCached', $response));
 
         $auManager = $this->getMockBuilder(AuManager::class)
             ->disableOriginalConstructor()
             ->setMethods(['generateAuidFromDeposit'])
-            ->getMock();
+            ->getMock()
+        ;
         $auManager->method('generateAuidFromDeposit')->willReturn('abc123');
         $mock->setAuManager($auManager);
 
@@ -137,13 +160,14 @@ class LockssServiceTest extends ControllerBaseCase {
         $this->assertTrue($result);
     }
 
-    public function testHash() {
+    public function testHash() : void {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()
             ->setMethods(['getClient'])
-            ->getMock();
-        $response = (object)[
-            'blockFileDataHandler' => <<< ENDBFDH
+            ->getMock()
+        ;
+        $response = (object) [
+            'blockFileDataHandler' => <<< 'ENDBFDH'
                 # Block hashes from hilbert.local, 13:12:43 02/04/21
                 # AU: LOCKSSOMatic AU 1 Deposit from OJS part 1
                 # Hash algorithm: sha1
@@ -159,20 +183,22 @@ class LockssServiceTest extends ControllerBaseCase {
         $auManager = $this->getMockBuilder(AuManager::class)
             ->disableOriginalConstructor()
             ->setMethods(['generateAuidFromDeposit'])
-            ->getMock();
+            ->getMock()
+        ;
         $auManager->method('generateAuidFromDeposit')->willReturn('abc123');
         $mock->setAuManager($auManager);
 
         $result = $mock->hash($this->getReference('box.1'), $this->getReference('deposit.1'));
-        $this->assertEquals('B9097EE74942D34E0F659159F46DEC10E43E81C3', $result);
+        $this->assertSame('B9097EE74942D34E0F659159F46DEC10E43E81C3', $result);
     }
 
-    public function testHashError() {
+    public function testHashError() : void {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()
             ->setMethods(['getClient'])
-            ->getMock();
-        $response = (object)[
+            ->getMock()
+        ;
+        $response = (object) [
             'errorMessage' => 'an error',
             'filesHashed' => 1,
         ];
@@ -181,26 +207,20 @@ class LockssServiceTest extends ControllerBaseCase {
         $auManager = $this->getMockBuilder(AuManager::class)
             ->disableOriginalConstructor()
             ->setMethods(['generateAuidFromDeposit'])
-            ->getMock();
+            ->getMock()
+        ;
         $auManager->method('generateAuidFromDeposit')->willReturn('abc123');
         $mock->setAuManager($auManager);
 
         try {
             $result = $mock->hash($this->getReference('box.1'), $this->getReference('deposit.1'));
-        } catch (\Exception $e) {
-            $this->assertEquals('an error', $e->getMessage());
+        } catch (Exception $e) {
+            $this->assertSame('an error', $e->getMessage());
         }
     }
 
-    protected function mockClient($method, $data) {
-        $return = new stdClass();
-        $return->return = $data;
-        $client = $this->getMockBuilder(SoapClient::class)
-            ->disableOriginalConstructor()
-            ->setMethods([$method])
-            ->getMock();
-        $client->method($method)->willReturn($return);
-        return $client;
+    protected function setup() : void {
+        parent::setUp();
+        $this->lockssService = self::$container->get(LockssService::class);
     }
-
 }

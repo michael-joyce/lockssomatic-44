@@ -31,7 +31,8 @@ use Symfony\Component\Routing\Annotation\Route;
  * @ParamConverter("pln", options={"id": "plnId"})
  * @ParamConverter("deposit", options={"id": "depositId"})
  */
-class DepositStatusController extends AbstractController implements PaginatorAwareInterface {
+class DepositStatusController extends AbstractController implements PaginatorAwareInterface
+{
     use PaginatorTrait;
 
     /**

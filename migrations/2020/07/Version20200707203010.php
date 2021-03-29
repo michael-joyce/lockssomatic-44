@@ -17,7 +17,8 @@ use Doctrine\Migrations\Exception\IrreversibleMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200707203010 extends AbstractMigration {
+final class Version20200707203010 extends AbstractMigration
+{
     public function getDescription() : string {
         return 'FOSUser to NinesUser';
     }

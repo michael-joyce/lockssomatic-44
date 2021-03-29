@@ -27,7 +27,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * })
  * @ORM\Entity(repositoryClass="App\Repository\DepositRepository")
  */
-class Deposit extends AbstractEntity {
+class Deposit extends AbstractEntity
+{
     /**
      * The UUID for the deposit.
      *

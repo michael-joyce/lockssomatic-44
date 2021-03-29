@@ -21,7 +21,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Update the PLN configuration.
  */
-class UpdateConfigCommand extends Command {
+class UpdateConfigCommand extends Command
+{
     /**
      * Doctrine instance.
      *

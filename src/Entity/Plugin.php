@@ -22,7 +22,8 @@ use SplFileInfo;
  * @ORM\Table(name="plugin")
  * @ORM\Entity(repositoryClass="App\Repository\PluginRepository")
  */
-class Plugin extends AbstractEntity {
+class Plugin extends AbstractEntity
+{
     /**
      * Name of the XML element that defines the plugin properties.
      */

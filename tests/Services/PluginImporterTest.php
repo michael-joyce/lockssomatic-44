@@ -21,7 +21,8 @@ use ZipArchive;
 /**
  * Description of PluginImporterTest.
  */
-class PluginImporterTest extends ControllerBaseCase {
+class PluginImporterTest extends ControllerBaseCase
+{
     /**
      * @var PluginImporter
      */

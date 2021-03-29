@@ -24,7 +24,8 @@ use SimpleXMLElement;
  * This service doesn't also construct the associated content
  * items.
  */
-class DepositBuilder {
+class DepositBuilder
+{
     /**
      * Database manager.
      *

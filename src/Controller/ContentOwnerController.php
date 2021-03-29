@@ -26,7 +26,8 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/content_owner")
  * @Security("is_granted('ROLE_USER')")
  */
-class ContentOwnerController extends AbstractController implements PaginatorAwareInterface {
+class ContentOwnerController extends AbstractController implements PaginatorAwareInterface
+{
     use PaginatorTrait;
 
     /**

@@ -21,7 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="content_owner")
  * @ORM\Entity(repositoryClass="App\Repository\ContentOwnerRepository")
  */
-class ContentOwner extends AbstractEntity {
+class ContentOwner extends AbstractEntity
+{
     /**
      * Name of the content owner.
      *

@@ -13,14 +13,14 @@ namespace App\Command\Lockss;
 use App\Entity\Au;
 use App\Entity\Box;
 use App\Services\Lockss\LockssService;
-use App\Utilities\LockssClient;
 use Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class ListAuContentCommand extends AbstractLockssCommand {
+class ListAuContentCommand extends AbstractLockssCommand
+{
     protected static $defaultName = 'lockss:au:content';
 
     public function __construct(LockssService $lockssService, ParameterBagInterface $params, ?string $name = null) {

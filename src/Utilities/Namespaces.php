@@ -15,7 +15,8 @@ use SimpleXMLElement;
 /**
  * Simplify handling namespaces for SWORD XML documents.
  */
-class Namespaces {
+class Namespaces
+{
     public const NS = [
         'dcterms' => 'http://purl.org/dc/terms/',
         'sword' => 'http://purl.org/net/sword/',

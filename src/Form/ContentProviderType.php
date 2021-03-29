@@ -19,7 +19,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Data entry form for content providers.
  */
-class ContentProviderType extends AbstractType {
+class ContentProviderType extends AbstractType
+{
     /**
      * Build the form by adding types to $builder.
      */

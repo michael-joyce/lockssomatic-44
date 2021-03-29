@@ -18,7 +18,8 @@ use Doctrine\Persistence\ObjectManager;
 /**
  * Load some archival units.
  */
-class AuFixtures extends Fixture implements DependentFixtureInterface {
+class AuFixtures extends Fixture implements DependentFixtureInterface
+{
     /**
      * Load the objects.
      */

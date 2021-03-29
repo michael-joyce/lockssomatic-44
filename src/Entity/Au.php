@@ -21,7 +21,8 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Table(name="au")
  * @ORM\Entity(repositoryClass="App\Repository\AuRepository")
  */
-class Au extends AbstractEntity {
+class Au extends AbstractEntity
+{
     /**
      * True if this AU is managed by LOCKSSOMatic. Defaults to false.
      *

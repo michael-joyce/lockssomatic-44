@@ -10,14 +10,14 @@ declare(strict_types=1);
 
 namespace App\Command\Lockss;
 
-use App\Entity\Box;
 use App\Services\Lockss\LockssService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class DaemonReadyCommand extends AbstractLockssCommand {
+class DaemonReadyCommand extends AbstractLockssCommand
+{
     protected static $defaultName = 'lockss:daemon:ready';
 
     public function __construct(LockssService $lockssService, ParameterBagInterface $params, ?string $name = null) {
