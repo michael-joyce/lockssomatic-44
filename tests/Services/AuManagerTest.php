@@ -617,6 +617,7 @@ class AuManagerTest extends ControllerBaseCase {
         $deposit = new Deposit();
         $deposit->setUrl('http://example.com/path/item');
         $deposit->setTitle('Item');
+        $deposit->setProperty('base_url', 'http://example.com');
 
         // definitional
         $deposit->setProperty('container_number', 1);
@@ -703,7 +704,7 @@ class AuManagerTest extends ControllerBaseCase {
 
         $this->manager->generateProperties($au);
         $this->assertCount(23, $au->getAuProperties());
-        $this->assertSame('http://example.com', $au->getAuPropertyValue('base_url'));
+        $this->assertSame('http://example.com/path', $au->getAuPropertyValue('base_url'));
         $this->assertSame(1, $au->getAuPropertyValue('container_number'));
         $this->assertSame('http://example.com/permission', $au->getAuPropertyValue('permission_url'));
         $this->assertStringEndsWith('plnconfigs/1/manifests/3/5/manifest_7.html', $au->getAuPropertyValue('manifest_url'));
@@ -754,7 +755,7 @@ class AuManagerTest extends ControllerBaseCase {
         $this->manager->generateProperties($au, true);
         $this->assertSame('', $au->getAuPropertyValue('dummy'));
         $this->assertCount(23, $au->getAuProperties());
-        $this->assertSame('http://example.com', $au->getAuPropertyValue('base_url'));
+        $this->assertSame('http://example.com/path', $au->getAuPropertyValue('base_url'));
         $this->assertSame(1, $au->getAuPropertyValue('container_number'));
         $this->assertSame('http://example.com/permission', $au->getAuPropertyValue('permission_url'));
         $this->assertStringEndsWith('plnconfigs/1/manifests/3/5/manifest_7.html', $au->getAuPropertyValue('manifest_url'));

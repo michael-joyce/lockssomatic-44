@@ -229,8 +229,9 @@ class PluginImporterTest extends ControllerBaseCase {
     public function testBuildPluginDuplicate() : void {
         $this->expectException(Exception::class);
         $xml = simplexml_load_string($this->xmlData());
-        $this->importer->buildPlugin($xml);
+        $plugin = $this->importer->buildPlugin($xml);
         $this->entityManager->flush();
+        $this->entityManager->refresh($plugin);
         $this->importer->buildPlugin($xml);
     }
 

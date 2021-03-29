@@ -164,7 +164,7 @@ class ConfigUpdaterTest extends ControllerBaseCase {
 
         $this->updater->updateAuConfigs($pln);
         $this->assertCount(23, $au->getAuProperties());
-        $this->assertSame('http://example.com', $au->getAuPropertyValue('base_url'));
+        $this->assertSame('http://example.com/path', $au->getAuPropertyValue('base_url'));
         $this->assertSame(1, $au->getAuPropertyValue('container_number'));
         $this->assertSame('http://example.com/permission', $au->getAuPropertyValue('permission_url'));
         $this->assertStringEndsWith('plnconfigs/1/manifests/3/5/manifest_7.html', $au->getAuPropertyValue('manifest_url'));

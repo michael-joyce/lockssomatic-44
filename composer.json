@@ -1,5 +1,7 @@
 {
     "type": "project",
+    "name": "sfu-lib/lockssomatic",
+    "description": "Web application for controlling LOCKSS boxes",
     "license": "MIT",
     "require": {
         "php": "^7.4",
@@ -29,9 +31,9 @@
         "symfony/orm-pack": "*",
         "symfony/process": "4.4.*",
         "symfony/security-bundle": "4.4.*",
-        "symfony/serializer-pack": "*",
+        "symfony/serializer-pack": "1.0.*",
         "symfony/translation": "4.4.*",
-        "symfony/twig-pack": "*",
+        "symfony/twig-pack": "1.0.*",
         "symfony/validator": "4.4.*",
         "symfony/web-link": "4.4.*",
         "symfony/yaml": "4.4.*",
@@ -46,7 +48,7 @@
         "liip/test-fixtures-bundle": "^1.6",
         "mikey179/vfsstream": "^1.6",
         "symfony/debug-pack": "*",
-        "symfony/maker-bundle": "^1.0",
+        "symfony/maker-bundle": "^1.30",
         "symfony/profiler-pack": "*",
         "symfony/test-pack": "*"
     },
