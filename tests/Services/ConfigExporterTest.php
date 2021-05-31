@@ -71,7 +71,7 @@ class ConfigExporterTest extends ControllerBaseCase
         $url = vfsStream::url('confdir/foo.keystore');
         file_put_contents($url, 'some keystore stuff.');
         $this->exporter->exportKeystore($pln);
-        $this->assertFileNotExists('vfs://confdir/data/plnconfigs/1/plugins/lockss.keystore');
+        $this->assertFileDoesNotExist('vfs://confdir/data/plnconfigs/1/plugins/lockss.keystore');
     }
 
     public function testExportPlugins() : void {

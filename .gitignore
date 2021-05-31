@@ -34,3 +34,6 @@ etc
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+# No need to version the code coverage etc.
+public/dev

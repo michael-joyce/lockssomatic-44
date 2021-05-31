@@ -26,7 +26,9 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Nines\UserBundle\Entity\User;
+use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -144,23 +146,26 @@ class UpgradeCommand extends Command
      * object it is persisted and flushed, and the old ID is mapped to the new one.
      *
      * @param string $table
+     *
+     * @throws \Doctrine\DBAL\Exception|\Doctrine\DBAL\Driver\Exception
      */
     public function upgradeTable($table, callable $callback) : void {
-        $countQuery = $this->source->query("SELECT count(*) c FROM {$table}");
-        $countRow = $countQuery->fetch();
+        $countQuery = $this->source->executeQuery("SELECT count(*) c FROM {$table}");
+        $countRow = $countQuery->fetchAssociative();
         echo "upgrading {$countRow['c']} entities in {$table}.\n";
 
-        $query = $this->source->query("SELECT * FROM {$table}");
+        $query = $this->source->executeQuery("SELECT * FROM {$table}");
         $n = 0;
         echo "{$n}\r";
-        while ($row = $query->fetch()) {
+        while ($row = $query->fetchAssociative()) {
+            /** @var AbstractEntity $entity */
             $entity = $callback($row);
             if ($entity) {
                 $this->em->persist($entity);
-                $this->em->flush($entity);
+                $this->em->flush();
+                $this->em->clear();
                 $this->setIdMap(get_class($entity), $row['id'], $entity->getId());
                 $this->em->detach($entity);
-                $this->em->clear();
             }
             $n++;
             echo "{$n}\r";
@@ -173,19 +178,14 @@ class UpgradeCommand extends Command
      */
     public function upgradeUsers() : void {
         $callback = function ($row) {
-            if ('admin@example.com' === $row['username']) {
-                return;
-            }
             $entry = new User();
-            $entry->setUsername($row['username']);
             $entry->setEmail($row['username']);
-            $entry->setEnabled(true);
-            $entry->setSalt($row['salt']);
+            $entry->setActive((bool)$row['enabled']);
             $entry->setPassword($row['password']);
-            $entry->setLastLogin(new DateTimeImmutable($row['last_login']));
             $entry->setRoles(unserialize($row['roles']));
             $entry->setFullname($row['fullname']);
-            $entry->setInstitution($row['institution']);
+            $entry->setAffiliation($row['institution']);
+            $entry->setLogin($row['last_login'] ? new DateTimeImmutable($row['last_login']) : null);
 
             return $entry;
         };
