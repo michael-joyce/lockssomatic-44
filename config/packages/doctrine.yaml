@@ -3,6 +3,7 @@ doctrine:
         connections:
             default:
                 url: '%env(resolve:DATABASE_URL)%'
+                override_url: true
                 charset: utf8mb4
                 logging: false
                 profiling: false
@@ -12,6 +13,7 @@ doctrine:
 
             oldversion:
                 url: '%env(resolve:OLD_DATABASE_URL)%'
+                override_url: true
                 charset: utf8mb4
                 logging: false
                 profiling: false

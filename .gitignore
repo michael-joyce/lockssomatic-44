@@ -29,3 +29,8 @@
 /public/docs
 /data
 etc
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
