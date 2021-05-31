@@ -21,8 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="content_provider")
  * @ORM\Entity(repositoryClass="App\Repository\ContentProviderRepository")
  */
-class ContentProvider extends AbstractEntity
-{
+class ContentProvider extends AbstractEntity {
     /**
      * The UUID for the provider.
      *

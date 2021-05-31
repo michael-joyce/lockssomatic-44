@@ -20,8 +20,7 @@ use ZipArchive;
 /**
  * Import plugin configuration from a Java .jar file.
  */
-class PluginImporter
-{
+class PluginImporter {
     /**
      * Allowed plugin file mime types.
      */
@@ -291,12 +290,14 @@ class PluginImporter
 
             return $property;
         }
+
         switch ($value->getName()) {
             // This is the name of the XML element defining the property.
             case 'string':
                 $property->setPropertyValue((string) $value);
 
                 break;
+
             case 'list':
                 $values = [];
 
@@ -306,6 +307,7 @@ class PluginImporter
                 $property->setPropertyValue($values);
 
                 break;
+
             default:
                 throw new Exception("Cannot import simple property {$name}.");
         }

@@ -22,8 +22,7 @@ use SplFileInfo;
  * @ORM\Table(name="pln")
  * @ORM\Entity(repositoryClass="App\Repository\PlnRepository")
  */
-class Pln extends AbstractEntity
-{
+class Pln extends AbstractEntity {
     /**
      * Mime types acceptable for java keystores.
      */
@@ -449,7 +448,7 @@ class Pln extends AbstractEntity
             $boxes = new ArrayCollection($array);
         }
 
-        return $this->boxes->filter(function (Box $box) {return $box->getActive(); });
+        return $this->boxes->filter(fn (Box $box) => $box->getActive());
     }
 
     /**

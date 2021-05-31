@@ -18,8 +18,7 @@ use Nines\UtilBundle\Tests\ControllerBaseCase;
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class PlnTest extends ControllerBaseCase
-{
+class PlnTest extends ControllerBaseCase {
     /**
      * @var Pln
      */

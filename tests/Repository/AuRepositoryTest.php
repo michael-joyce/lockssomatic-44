@@ -18,8 +18,7 @@ use App\Repository\AuRepository;
 use Iterator;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class AuRepositoryTest extends ControllerBaseCase
-{
+class AuRepositoryTest extends ControllerBaseCase {
     /**
      * @var AuRepository
      */

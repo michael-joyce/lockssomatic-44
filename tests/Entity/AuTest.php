@@ -19,8 +19,7 @@ use Nines\UtilBundle\Tests\ControllerBaseCase;
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class AuTest extends ControllerBaseCase
-{
+class AuTest extends ControllerBaseCase {
     /**
      * @var Au
      */

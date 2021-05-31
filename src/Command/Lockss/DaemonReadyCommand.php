@@ -16,8 +16,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class DaemonReadyCommand extends AbstractLockssCommand
-{
+class DaemonReadyCommand extends AbstractLockssCommand {
     protected static $defaultName = 'lockss:daemon:ready';
 
     public function __construct(LockssService $lockssService, ParameterBagInterface $params, ?string $name = null) {

@@ -14,8 +14,7 @@ use App\DataFixtures\DepositStatusFixtures;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class DepositStatusControllerTest extends ControllerBaseCase
-{
+class DepositStatusControllerTest extends ControllerBaseCase {
     protected function fixtures() : array {
         return [
             UserFixtures::class,

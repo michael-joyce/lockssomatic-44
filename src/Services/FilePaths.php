@@ -21,8 +21,7 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * Construct file paths for different elements of the application.
  */
-class FilePaths
-{
+class FilePaths {
     /**
      * PSR/Log compatible logger.
      *

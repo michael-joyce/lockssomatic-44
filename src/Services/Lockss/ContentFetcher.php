@@ -24,8 +24,7 @@ use Psr\Log\LoggerInterface;
  * to get the content from the LOCKSS Content Service, which must be enabled
  * in the lockss.xml file. The default configuration enables the service.
  */
-class ContentFetcher
-{
+class ContentFetcher {
     /**
      * @var HttpClient;
      */

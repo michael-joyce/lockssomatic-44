@@ -22,8 +22,7 @@ use SplFileInfo;
  * @ORM\Table(name="plugin")
  * @ORM\Entity(repositoryClass="App\Repository\PluginRepository")
  */
-class Plugin extends AbstractEntity
-{
+class Plugin extends AbstractEntity {
     /**
      * Name of the XML element that defines the plugin properties.
      */
@@ -315,9 +314,7 @@ class Plugin extends AbstractEntity
     }
 
     public function getRootPluginProperties() {
-        return $this->pluginProperties->filter(function (PluginProperty $p) {
-            return null === $p->getParent();
-        });
+        return $this->pluginProperties->filter(fn (PluginProperty $p) => null === $p->getParent());
     }
 
     /**

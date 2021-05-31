@@ -22,8 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="box")
  * @ORM\Entity(repositoryClass="App\Repository\BoxRepository")
  */
-class Box extends AbstractEntity
-{
+class Box extends AbstractEntity {
     /**
      * The DNS name.
      *

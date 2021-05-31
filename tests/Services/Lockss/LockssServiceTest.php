@@ -20,8 +20,7 @@ use Exception;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 use stdClass;
 
-class LockssServiceTest extends ControllerBaseCase
-{
+class LockssServiceTest extends ControllerBaseCase {
     /**
      * @var LockssService;
      */

@@ -19,8 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Default controller for LOCKSSOMatic. Totally open to the public.
  */
-class DefaultController extends AbstractController implements PaginatorAwareInterface
-{
+class DefaultController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

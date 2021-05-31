@@ -20,8 +20,7 @@ use Doctrine\Persistence\ObjectManager;
  *
  * They're totally unrealistic.
  */
-class AuPropertyFixtures extends Fixture implements DependentFixtureInterface
-{
+class AuPropertyFixtures extends Fixture implements DependentFixtureInterface {
     /**
      * Load the objects.
      */

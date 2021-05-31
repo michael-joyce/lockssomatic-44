@@ -19,8 +19,7 @@ use Twig\Environment;
 /**
  * Description of BoxNotifier.
  */
-class BoxNotifier
-{
+class BoxNotifier {
     private $sender;
 
     private $contact;

@@ -10,8 +10,7 @@ declare(strict_types=1);
 
 namespace App\Utilities;
 
-class Hasher
-{
+class Hasher {
     /**
      * Read files in 64kb chunks.
      */

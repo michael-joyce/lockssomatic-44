@@ -32,8 +32,7 @@ use ReflectionProperty;
  *
  * @author michael
  */
-class AuManagerTest extends ControllerBaseCase
-{
+class AuManagerTest extends ControllerBaseCase {
     /**
      * @var AuManager
      */

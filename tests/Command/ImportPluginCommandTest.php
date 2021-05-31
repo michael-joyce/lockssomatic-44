@@ -14,8 +14,7 @@ use Nines\UtilBundle\Tests\ControllerBaseCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class ImportPluginCommandTest extends ControllerBaseCase
-{
+class ImportPluginCommandTest extends ControllerBaseCase {
     public const NAME = 'lom:import:plugin';
 
     public const JARS = [

@@ -21,8 +21,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Table(name="au")
  * @ORM\Entity(repositoryClass="App\Repository\AuRepository")
  */
-class Au extends AbstractEntity
-{
+class Au extends AbstractEntity {
     /**
      * True if this AU is managed by LOCKSSOMatic. Defaults to false.
      *
@@ -289,9 +288,7 @@ class Au extends AbstractEntity
      * @return AuProperty[]|Collection
      */
     public function getRootAuProperties() {
-        return $this->auProperties->filter(function (AuProperty $p) {
-            return null === $p->getParent();
-        });
+        return $this->auProperties->filter(fn (AuProperty $p) => null === $p->getParent());
     }
 
     /**

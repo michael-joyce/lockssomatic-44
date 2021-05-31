@@ -18,8 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Data entry form for file uploads.
  */
-class FileUploadType extends AbstractType
-{
+class FileUploadType extends AbstractType {
     /**
      * Build the form by adding types to $builder.
      */

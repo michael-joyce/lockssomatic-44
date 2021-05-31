@@ -25,8 +25,7 @@ use Symfony\Component\Routing\RouterInterface;
 /**
  * Manage all AUs and queries on them.
  */
-class AuManager
-{
+class AuManager {
     use LoggerAwareTrait;
 
     /**
@@ -338,14 +337,17 @@ class AuManager
                     $value = $manifestUrl;
 
                     break;
+
                 case 'permission_url':
                     $value = $au->getContentProvider()->getPermissionUrl();
 
                     break;
+
                 case 'base_url':
                     $value = $deposit->getProperty('base_url');
 
                     break;
+
                 default:
                     $value = $deposit->getProperty($name);
 

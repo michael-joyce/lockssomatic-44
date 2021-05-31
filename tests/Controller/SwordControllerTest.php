@@ -20,8 +20,7 @@ use Exception;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 use SimpleXMLElement;
 
-class SwordControllerTest extends ControllerBaseCase
-{
+class SwordControllerTest extends ControllerBaseCase {
     private function getXml($string) {
         $xml = simplexml_load_string($string);
         Namespaces::registerNamespaces($xml);

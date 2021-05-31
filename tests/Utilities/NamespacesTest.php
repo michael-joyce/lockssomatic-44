@@ -16,8 +16,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Simplify handling namespaces for SWORD XML documents.
  */
-class NamespacesTest extends TestCase
-{
+class NamespacesTest extends TestCase {
     /**
      * @dataProvider getNamespaceData
      *
@@ -56,14 +55,14 @@ class NamespacesTest extends TestCase
 
     public function getXml() {
         return <<<'ENDXML'
-        <root>
-          <a xmlns="http://purl.org/dc/terms/">1</a>
-          <b xmlns="http://purl.org/net/sword/">2</b>
-          <c xmlns="http://www.w3.org/2005/Atom">3</c>
-          <d xmlns="http://lockssomatic.info/SWORD2">4</d>
-          <e xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#">5</e>
-          <f xmlns="http://www.w3.org/2007/app">6</f>
-        </root>
-ENDXML;
+                    <root>
+                      <a xmlns="http://purl.org/dc/terms/">1</a>
+                      <b xmlns="http://purl.org/net/sword/">2</b>
+                      <c xmlns="http://www.w3.org/2005/Atom">3</c>
+                      <d xmlns="http://lockssomatic.info/SWORD2">4</d>
+                      <e xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#">5</e>
+                      <f xmlns="http://www.w3.org/2007/app">6</f>
+                    </root>
+            ENDXML;
     }
 }

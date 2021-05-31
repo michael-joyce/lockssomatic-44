@@ -17,8 +17,7 @@ use GuzzleHttp\Psr7\Response;
 use Psr\Log\LoggerInterface;
 use SoapClient as BaseSoapClient;
 
-class SoapClient extends BaseSoapClient
-{
+class SoapClient extends BaseSoapClient {
     public const SOAP = 'http://schemas.xmlsoap.org/soap/envelope/';
 
     public const LOCKSS = 'http://content.ws.lockss.org/';
@@ -62,10 +61,8 @@ class SoapClient extends BaseSoapClient
         $parsedType = parse_header($contentType[0]);
         $boundary = $parsedType[0]['boundary'];
 
-        $messageParts = array_map(function ($a) { return trim($a); }, explode("--{$boundary}", $rawResult));
-        $filtered = array_filter($messageParts, function ($a) {
-            return $a && '--' !== $a;
-        });
+        $messageParts = array_map(fn ($a) => trim($a), explode("--{$boundary}", $rawResult));
+        $filtered = array_filter($messageParts, fn ($a) => $a && '--' !== $a);
 
         foreach ($filtered as $m) {
             $response = parse_response("HTTP/1.1 200 OK\r\n" . $m);

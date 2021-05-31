@@ -28,13 +28,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Nines\UserBundle\Entity\User;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class UpgradeCommand extends Command
-{
+class UpgradeCommand extends Command {
     /**
      * Doctrine database connection for the old database.
      *
@@ -147,7 +145,7 @@ class UpgradeCommand extends Command
      *
      * @param string $table
      *
-     * @throws \Doctrine\DBAL\Exception|\Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Driver\Exception|\Doctrine\DBAL\Exception
      */
     public function upgradeTable($table, callable $callback) : void {
         $countQuery = $this->source->executeQuery("SELECT count(*) c FROM {$table}");
@@ -180,7 +178,7 @@ class UpgradeCommand extends Command
         $callback = function ($row) {
             $entry = new User();
             $entry->setEmail($row['username']);
-            $entry->setActive((bool)$row['enabled']);
+            $entry->setActive((bool) $row['enabled']);
             $entry->setPassword($row['password']);
             $entry->setRoles(unserialize($row['roles']));
             $entry->setFullname($row['fullname']);

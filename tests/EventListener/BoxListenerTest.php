@@ -16,6 +16,7 @@ function gethostbyname($hostname) {
     switch ($hostname) {
         case 'frobinicate.com':
             return '1.2.3.4';
+
         default:
             return $hostname;
     }
@@ -28,8 +29,7 @@ use App\EventListener\BoxListener;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class BoxListenerTest extends ControllerBaseCase
-{
+class BoxListenerTest extends ControllerBaseCase {
     private $listener;
 
     /**

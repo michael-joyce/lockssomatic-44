@@ -14,8 +14,7 @@ use App\DataFixtures\AuStatusFixtures;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class AuStatusControllerTest extends ControllerBaseCase
-{
+class AuStatusControllerTest extends ControllerBaseCase {
     protected function fixtures() : array {
         return [
             UserFixtures::class,

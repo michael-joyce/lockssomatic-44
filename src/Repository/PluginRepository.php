@@ -17,8 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * Doctrine stub.
  */
-class PluginRepository extends ServiceEntityRepository
-{
+class PluginRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Plugin::class);
     }

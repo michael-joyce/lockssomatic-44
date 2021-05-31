@@ -19,8 +19,7 @@ use Twig\Environment;
 /**
  * Export all the configuration for a PLN.
  */
-class ConfigExporter
-{
+class ConfigExporter {
     /**
      * Dependency-injected number of AUs in a title db file.
      *

@@ -37,8 +37,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  *
  * @Route("/api/sword/2.0")
  */
-class SwordController extends AbstractController implements PaginatorAwareInterface
-{
+class SwordController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

@@ -19,8 +19,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Table(name="box_status")
  * @ORM\Entity(repositoryClass="App\Repository\BoxStatusRepository")
  */
-class BoxStatus extends AbstractEntity
-{
+class BoxStatus extends AbstractEntity {
     /**
      * Box that owns the status.
      *

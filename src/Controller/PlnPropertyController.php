@@ -29,8 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/pln/{plnId}/property")
  * @ParamConverter("pln", options={"id": "plnId"})
  */
-class PlnPropertyController extends AbstractController implements PaginatorAwareInterface
-{
+class PlnPropertyController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

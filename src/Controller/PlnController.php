@@ -32,8 +32,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Security("is_granted('ROLE_USER')")
  * @Route("/pln")
  */
-class PlnController extends AbstractController implements PaginatorAwareInterface
-{
+class PlnController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

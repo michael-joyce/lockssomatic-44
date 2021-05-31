@@ -17,8 +17,7 @@ use App\Services\AuManager;
 use Exception;
 use Psr\Log\LoggerInterface;
 
-class LockssService
-{
+class LockssService {
     /**
      * @var LoggerInterface
      */

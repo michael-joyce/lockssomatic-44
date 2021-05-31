@@ -18,8 +18,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class AuListCommand extends AbstractLockssCommand
-{
+class AuListCommand extends AbstractLockssCommand {
     protected static $defaultName = 'lockss:aus:list';
 
     public function __construct(LockssService $lockssService, ParameterBagInterface $params, ?string $name = null) {

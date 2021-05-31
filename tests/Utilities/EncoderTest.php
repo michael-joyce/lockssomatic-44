@@ -13,8 +13,7 @@ namespace App\Tests\Utilities;
 use App\Utilities\Encoder;
 use PHPUnit\Framework\TestCase;
 
-class EncoderTest extends TestCase
-{
+class EncoderTest extends TestCase {
     /**
      * @var Encoder
      */

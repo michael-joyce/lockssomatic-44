@@ -19,8 +19,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Table(name="deposit_status")
  * @ORM\Entity(repositoryClass="App\Repository\DepositStatusRepository")
  */
-class DepositStatus extends AbstractEntity
-{
+class DepositStatus extends AbstractEntity {
     /**
      * Deposit that owns this status.
      *

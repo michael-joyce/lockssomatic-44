@@ -30,8 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @ParamConverter("pln", options={"id": "plnId"})
  * @ParamConverter("box", options={"id": "boxId"})
  */
-class BoxStatusController extends AbstractController implements PaginatorAwareInterface
-{
+class BoxStatusController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

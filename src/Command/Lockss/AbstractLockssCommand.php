@@ -24,8 +24,7 @@ use stdClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-abstract class AbstractLockssCommand extends Command
-{
+abstract class AbstractLockssCommand extends Command {
     /**
      * @var EntityManagerInterface
      */

@@ -15,8 +15,7 @@ use App\Entity\Pln;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class PlnPropertyControllerTest extends ControllerBaseCase
-{
+class PlnPropertyControllerTest extends ControllerBaseCase {
     protected function fixtures() : array {
         return [
             UserFixtures::class,

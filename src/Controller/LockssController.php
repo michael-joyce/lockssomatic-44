@@ -37,8 +37,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/plnconfigs/{plnId}", methods={"GET"})
  * @ParamConverter("pln", options={"id": "plnId"})
  */
-class LockssController extends AbstractController implements PaginatorAwareInterface
-{
+class LockssController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
@@ -68,9 +67,7 @@ class LockssController extends AbstractController implements PaginatorAwareInter
      * @throws AccessDeniedHttpException
      */
     private function checkIp(Request $request, Pln $pln) : void {
-        $boxIps = array_map(function (Box $box) {
-            return $box->getIpAddress();
-        }, $pln->getBoxes()->toArray());
+        $boxIps = array_map(fn (Box $box) => $box->getIpAddress(), $pln->getBoxes()->toArray());
         $allowed = array_merge($boxIps, $this->getParameter('lom.allowed_ips'));
         $ip = $request->getClientIp();
         if ( ! IpUtils::checkIp($ip, $allowed)) {

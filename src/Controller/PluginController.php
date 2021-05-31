@@ -31,8 +31,7 @@ use ZipArchive;
  * @Security("is_granted('ROLE_USER')")
  * @Route("/plugin")
  */
-class PluginController extends AbstractController implements PaginatorAwareInterface
-{
+class PluginController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

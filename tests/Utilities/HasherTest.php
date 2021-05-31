@@ -10,14 +10,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Utilities;
 
-use App\Utilities\Encoder;
 use App\Utilities\Hasher;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 
-class HasherTest extends TestCase
-{
+class HasherTest extends TestCase {
     /**
      * @var Hasher
      */
@@ -32,13 +30,14 @@ class HasherTest extends TestCase
         $this->assertInstanceOf(Hasher::class, $this->hasher);
     }
 
-    public function testHash() {
+    public function testHash() : void {
         $data = 'some junk.';
         $file = vfsStream::newFile('testfile')
             ->withContent($data)
-            ->at($this->root);
-        $this->assertEquals(md5($data), $this->hasher->hash($file->url(), 'md5'));
-        $this->assertEquals(sha1($data), $this->hasher->hash($file->url(), 'sha1'));
+            ->at($this->root)
+        ;
+        $this->assertSame(md5($data), $this->hasher->hash($file->url(), 'md5'));
+        $this->assertSame(sha1($data), $this->hasher->hash($file->url(), 'sha1'));
     }
 
     protected function setup() : void {

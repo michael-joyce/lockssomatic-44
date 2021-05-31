@@ -12,6 +12,5 @@ namespace App\Services\Lockss;
 
 use GuzzleHttp\Client;
 
-class HttpClient extends Client
-{
+class HttpClient extends Client {
 }

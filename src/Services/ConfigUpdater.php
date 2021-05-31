@@ -16,8 +16,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Update the configuration properties of a PLN.
  */
-class ConfigUpdater
-{
+class ConfigUpdater {
     /**
      * Number of AUs in a titledb XML file.
      *

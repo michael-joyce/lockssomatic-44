@@ -17,8 +17,7 @@ namespace App\Utilities;
  * result of rawurlencode(), but the set of characters encoded is slightly
  * different.
  */
-class Encoder
-{
+class Encoder {
     /**
      * Encode a string.
      *

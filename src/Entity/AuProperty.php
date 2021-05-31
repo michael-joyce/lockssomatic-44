@@ -21,8 +21,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Table(name="au_property")
  * @ORM\Entity(repositoryClass="App\Repository\AuPropertyRepository")
  */
-class AuProperty extends AbstractEntity
-{
+class AuProperty extends AbstractEntity {
     /**
      * The name of the property, corresponding to the name attribute in XML.
      *

@@ -18,8 +18,7 @@ use Nines\UtilBundle\Tests\ControllerBaseCase;
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class ContentProviderTest extends ControllerBaseCase
-{
+class ContentProviderTest extends ControllerBaseCase {
     /**
      * @var ContentProvider
      */

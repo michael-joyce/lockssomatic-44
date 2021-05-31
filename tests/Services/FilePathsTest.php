@@ -18,8 +18,7 @@ use App\DataFixtures\PluginFixtures;
 use App\Services\FilePaths;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class FilePathsTest extends ControllerBaseCase
-{
+class FilePathsTest extends ControllerBaseCase {
     /**
      * @var FilePaths
      */

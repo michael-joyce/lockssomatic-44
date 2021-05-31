@@ -22,8 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * LomValidateAuCommand command.
  */
-class ValidateAuCommand extends Command
-{
+class ValidateAuCommand extends Command {
     /**
      * AU Manager.
      *

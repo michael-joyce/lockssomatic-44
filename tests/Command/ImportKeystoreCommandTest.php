@@ -16,8 +16,7 @@ use Nines\UtilBundle\Tests\ControllerBaseCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class ImportKeystoreCommandTest extends ControllerBaseCase
-{
+class ImportKeystoreCommandTest extends ControllerBaseCase {
     public const NAME = 'lom:import:keystore';
 
     public const KEYSTORE = 'tests/Data/dummy.keystore';

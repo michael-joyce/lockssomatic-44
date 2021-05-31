@@ -19,8 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Data entry form for individual pln properties.
  */
-class PlnPropertyType extends AbstractType
-{
+class PlnPropertyType extends AbstractType {
     /**
      * Build the form by adding types to $builder.
      */

@@ -17,8 +17,7 @@ use Nines\UtilBundle\Tests\ControllerBaseCase;
 /**
  * Description of PluginPropertyTest.
  */
-class PluginTest extends ControllerBaseCase
-{
+class PluginTest extends ControllerBaseCase {
     protected function fixtures() : array {
         return [
             PluginPropertyFixtures::class,
@@ -101,34 +100,34 @@ class PluginTest extends ControllerBaseCase
 
     public function xmlData() {
         return <<<'ENDXML'
-<map>
-    <entry>
-        <string>plugin_config_props</string>
-        <list>
-            <org.lockss.daemon.ConfigParamDescr>
-                <key>base_url</key>
-                <definitional>true</definitional>
-            </org.lockss.daemon.ConfigParamDescr>
-            <org.lockss.daemon.ConfigParamDescr>
-                <key>container_number</key>
-                <definitional>true</definitional>
-            </org.lockss.daemon.ConfigParamDescr>
-            <org.lockss.daemon.ConfigParamDescr>
-                <key>manifest_url</key>
-                <definitional>false</definitional>
-            </org.lockss.daemon.ConfigParamDescr>
-            <org.lockss.daemon.ConfigParamDescr>
-                <key>permission_url</key>
-                <definitional>false</definitional>
-            </org.lockss.daemon.ConfigParamDescr>
-        </list>
-    </entry>
-    <entry>
-        <string>plugin_version</string>
-        <string>1</string>
-    </entry>
-</map>
-ENDXML;
+            <map>
+                <entry>
+                    <string>plugin_config_props</string>
+                    <list>
+                        <org.lockss.daemon.ConfigParamDescr>
+                            <key>base_url</key>
+                            <definitional>true</definitional>
+                        </org.lockss.daemon.ConfigParamDescr>
+                        <org.lockss.daemon.ConfigParamDescr>
+                            <key>container_number</key>
+                            <definitional>true</definitional>
+                        </org.lockss.daemon.ConfigParamDescr>
+                        <org.lockss.daemon.ConfigParamDescr>
+                            <key>manifest_url</key>
+                            <definitional>false</definitional>
+                        </org.lockss.daemon.ConfigParamDescr>
+                        <org.lockss.daemon.ConfigParamDescr>
+                            <key>permission_url</key>
+                            <definitional>false</definitional>
+                        </org.lockss.daemon.ConfigParamDescr>
+                    </list>
+                </entry>
+                <entry>
+                    <string>plugin_version</string>
+                    <string>1</string>
+                </entry>
+            </map>
+            ENDXML;
     }
 
     protected function setup() : void {

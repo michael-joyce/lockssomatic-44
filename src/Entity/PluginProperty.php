@@ -22,8 +22,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Table(name="plugin_property")
  * @ORM\Entity(repositoryClass="App\Repository\PluginPropertyRepository")
  */
-class PluginProperty extends AbstractEntity
-{
+class PluginProperty extends AbstractEntity {
     /**
      * Name of the property, as defined by the name attribute.
      *

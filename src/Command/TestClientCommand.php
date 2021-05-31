@@ -19,8 +19,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class TestClientCommand extends Command
-{
+class TestClientCommand extends Command {
     /**
      * @var EntityManagerInterface
      */

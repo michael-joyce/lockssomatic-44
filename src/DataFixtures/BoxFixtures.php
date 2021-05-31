@@ -20,8 +20,7 @@ use Doctrine\Persistence\ObjectManager;
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class BoxFixtures extends Fixture implements DependentFixtureInterface
-{
+class BoxFixtures extends Fixture implements DependentFixtureInterface {
     /**
      * Load the objects.
      */

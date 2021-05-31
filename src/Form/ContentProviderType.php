@@ -19,8 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Data entry form for content providers.
  */
-class ContentProviderType extends AbstractType
-{
+class ContentProviderType extends AbstractType {
     /**
      * Build the form by adding types to $builder.
      */
@@ -68,9 +67,7 @@ class ContentProviderType extends AbstractType
         ]);
         $builder->add('plugin', null, [
             'required' => true,
-            'choice_label' => function (Plugin $plugin) {
-                return $plugin->getName() . ' version ' . $plugin->getVersion();
-            },
+            'choice_label' => fn (Plugin $plugin) => $plugin->getName() . ' version ' . $plugin->getVersion(),
         ]);
     }
 

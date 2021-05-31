@@ -25,8 +25,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class BoxStatusCommand extends AbstractLockssCommand
-{
+class BoxStatusCommand extends AbstractLockssCommand {
     protected static $defaultName = 'lockss:box:status';
 
     public function __construct(LockssService $lockssService, ParameterBagInterface $params, ?string $name = null) {
