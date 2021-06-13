@@ -13,6 +13,7 @@ namespace App\Menu;
 use App\Entity\Pln;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Menu\FactoryInterface;
+use Knp\Menu\ItemInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -24,11 +25,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class Builder implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
-
-    /**
-     * U+25BE, black down-pointing small triangle.
-     */
-    public const CARET = ' ▾';
 
     /**
      * Menu item factory.
@@ -83,6 +79,8 @@ class Builder implements ContainerAwareInterface
 
     /**
      * Build the main menu.
+     *
+     * @return ItemInterface
      */
     public function mainMenu(array $options) {
         $menu = $this->factory->createItem('root');
@@ -99,69 +97,71 @@ class Builder implements ContainerAwareInterface
             return $menu;
         }
 
-        $menu->addChild('lockss', [
+        $lockssMenu = $menu->addChild('lockss', [
             'uri' => '#',
-            'label' => 'LOCKSS ' . self::CARET,
+            'label' => 'LOCKSS',
         ]);
-        $menu['lockss']->setAttribute('dropdown', true);
-        $menu['lockss']->setLinkAttribute('class', 'dropdown-toggle');
-        $menu['lockss']->setLinkAttribute('data-toggle', 'dropdown');
-        $menu['lockss']->setChildrenAttribute('class', 'dropdown-menu');
+        $lockssMenu->setAttribute('dropdown', true);
+        $lockssMenu->setLinkAttribute('class', 'dropdown-toggle');
+        $lockssMenu->setLinkAttribute('data-toggle', 'dropdown');
+        $lockssMenu->setChildrenAttribute('class', 'dropdown-menu');
 
-        $menu['lockss']->addChild('Content Owners', [
+        $lockssMenu->addChild('Content Owners', [
             'route' => 'content_owner_index',
         ]);
-        $menu['lockss']->addChild('Networks', [
+        $lockssMenu->addChild('Networks', [
             'route' => 'pln_index',
         ]);
-        $menu['lockss']->addChild('LOCKSS Plugins', [
+        $lockssMenu->addChild('LOCKSS Plugins', [
             'route' => 'plugin_index',
         ]);
-        $menu['lockss']->addChild('Content Providers', [
+        $lockssMenu->addChild('Content Providers', [
             'route' => 'content_provider_index',
         ]);
 
         $networkMenu = $menu->addChild('networks', [
             'uri' => '#',
-            'label' => 'Networks ' . self::CARET,
+            'label' => 'Networks',
         ]);
         $networkMenu->setAttribute('dropdown', true);
         $networkMenu->setLinkAttribute('class', 'dropdown-toggle');
         $networkMenu->setLinkAttribute('data-toggle', 'dropdown');
         $networkMenu->setChildrenAttribute('class', 'dropdown-menu');
 
+        $networkMenu->addChild('All Networks', [
+            'route' => 'pln_index',
+        ]);
+
         $networks = $this->em->getRepository(Pln::class)->findAll();
+        $divider = $networkMenu->addChild('divider', [
+            'label' => '',
+        ]);
+        $divider->setAttributes([
+            'role' => 'separator',
+            'class' => 'divider',
+        ]);
 
         foreach ($networks as $pln) {
-            $id = 'network_' . $pln->getId();
-            $item = $networkMenu->addChild($id, [
-                'uri' => '#',
-                'label' => $pln->getName(),
-            ]);
-            $item->setAttribute('class', 'dropdown-submenu');
-            $item->setChildrenAttribute('class', 'dropdown-menu');
-            $item->setLinkAttribute('data-toggle', 'dropdown');
-            $item->setLinkAttribute('class', 'dropdown-toggle');
-
-            $item->addChild($pln->getName(), [
+            $networkMenu->addChild($pln->getName(), [
                 'route' => 'pln_show',
                 'routeParameters' => [
                     'id' => $pln->getId(),
                 ],
-            ]);
-            $item->addChild('Archival Units', [
+                'class' => 'subhead'
+            ])->setLinkAttribute('class', 'subhead');
+            $networkMenu->addChild('Archival Units', [
                 'route' => 'au_index',
                 'routeParameters' => [
                     'plnId' => $pln->getId(),
                 ],
             ]);
-            $item->addChild('Boxes', [
+            $networkMenu->addChild('Boxes', [
                 'route' => 'box_index',
                 'routeParameters' => [
                     'plnId' => $pln->getId(),
                 ],
             ]);
-            $item->addChild('Deposits', [
+            $networkMenu->addChild('Deposits', [
                 'route' => 'deposit_index',
                 'routeParameters' => [
                     'plnId' => $pln->getId(),

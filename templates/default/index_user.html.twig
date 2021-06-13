@@ -2,4 +2,7 @@
 
 {% block body %}
     <p>Welcome to LOCKSSOMatic.</p>
+    {% if is_granted('ROLE_ADMIN') %}
+        <p>The server's SWORD service document URL is {{ url('sword_service_document') }}</p>
+    {% endif %}
 {% endblock %}

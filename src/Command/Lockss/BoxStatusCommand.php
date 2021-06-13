@@ -96,11 +96,13 @@ class BoxStatusCommand extends AbstractLockssCommand
         foreach ($this->getBoxes($plnIds) as $box) {
             $this->logger->notice("Checking status on {$box->getHostname()}:{$box->getPort()}");
             $status = $this->getStatus($box);
+            $output->writeln("Checking status on {$box->getHostname()}:{$box->getPort()}");
 
             if ( ! $dryRun) {
                 foreach ($status->getData() as $cache) {
+                    $percent = $cache['percentageFull'] * 100;
+                    $output->writeln("  {$box->getHostname()} is {$percent}% full");
                     if ($cache['percentageFull'] > $this->params->get('lom.boxstatus.sizewarning')) {
-                        $percent = $cache['percentageFull'] * 100;
                         $this->logger->warning("{$box->getHostname()} is {$percent}% full");
                         $this->notifier->freeSpaceWarning($box, $status);
                     }
