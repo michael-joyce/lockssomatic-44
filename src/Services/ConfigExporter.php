@@ -12,6 +12,7 @@ namespace App\Services;
 
 use App\Entity\Pln;
 use Doctrine\ORM\EntityManagerInterface;
+use DOMDocument;
 use Exception;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Environment;
@@ -65,7 +66,7 @@ class ConfigExporter {
     /**
      * Build the exporter.
      *
-     * @param type $ausPerTitleDb
+     * @param int $ausPerTitleDb
      */
     public function __construct($ausPerTitleDb, EntityManagerInterface $em, Environment $templating, FilePaths $fp, AuManager $manager) {
         $this->ausPerTitleDb = $ausPerTitleDb;
@@ -90,6 +91,19 @@ class ConfigExporter {
         $this->manager = $manager;
     }
 
+    public function writeData($data, $path, $asHtml = false) {
+        $dom = new DOMDocument();
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = true;
+        if($asHtml) {
+            $dom->loadHTML($data, LIBXML_HTML_NOIMPLIED);
+        } else {
+            $dom->loadXML($data);
+        }
+        $dom->normalizeDocument();
+        $dom->save($path);
+    }
+
     /**
      * Export the lockss.xml configuration file.
      */
@@ -98,7 +112,7 @@ class ConfigExporter {
             'pln' => $pln,
         ]);
         $path = $this->fp->getLockssXmlFile($pln);
-        $this->fs->dumpFile($path, $xml);
+        $this->writeData($xml, $path);
     }
 
     /**
@@ -127,7 +141,8 @@ class ConfigExporter {
         $html = $this->templating->render('lockss/plugin_list.html.twig', [
             'pln' => $pln,
         ]);
-        $this->fs->dumpFile($this->fp->getPluginsManifestFile($pln), $html);
+        $manifestPath = $this->fp->getPluginsManifestFile($pln);
+        $this->writeData($html, $manifestPath, true);
     }
 
     /**
@@ -135,13 +150,13 @@ class ConfigExporter {
      */
     public function exportManifests(Pln $pln) : void {
         foreach ($pln->getAus() as $au) {
-            $manifestPath = $this->fp->getManifestPath($au);
+            $path = $this->fp->getManifestPath($au);
             $iterator = $this->manager->auDeposits($au);
             $html = $this->templating->render('lockss/manifest.html.twig', [
                 'pln' => $pln,
                 'content' => $iterator,
             ]);
-            $this->fs->dumpFile($manifestPath, $html);
+            $this->writeData($html, $path, true);
         }
     }
 
@@ -154,11 +169,11 @@ class ConfigExporter {
 
             for ($i = 0; $i < ceil($aus->count() / $this->ausPerTitleDb); $i++) {
                 $slice = $aus->slice($i * $this->ausPerTitleDb, $this->ausPerTitleDb);
-                $titleDbPath = $this->fp->getTitleDbPath($provider, $i + 1);
+                $path = $this->fp->getTitleDbPath($provider, $i + 1);
                 $xml = $this->templating->render('lockss/titledb.xml.twig', [
                     'aus' => $slice,
                 ]);
-                $this->fs->dumpFile($titleDbPath, $xml);
+                $this->writeData($xml, $path);
             }
         }
     }

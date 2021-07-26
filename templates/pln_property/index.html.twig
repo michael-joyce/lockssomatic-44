@@ -43,12 +43,14 @@
             </tr>
         </thead>
         <tbody>
-            {% for key, values in pln.properties %}
+            {% set properties = pln.properties %}
+            {% for key in properties|keys|sort %}
+                {% set values=properties[key] %}
                 <tr>
-                    <td>
+                    <th>
                         {{ key }}
-                    </td>
-                    <td>
+                    </th>
+                    <td style='word-wrap:anywhere'>
                         {% if values is iterable %}
                             <ul>
                                 {% for v in values %}
