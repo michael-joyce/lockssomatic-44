@@ -191,6 +191,37 @@ class LockssServiceTest extends ControllerBaseCase {
         $this->assertSame('B9097EE74942D34E0F659159F46DEC10E43E81C3', $result);
     }
 
+    public function testHashUnknown() : void {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock()
+        ;
+        // This can happen if a box does nto know about the deposit yet.
+        $response = (object) [
+            'blockFileDataHandler' => <<< 'ENDBFDH'
+                # Block hashes from hilbert.local, 13:12:43 02/04/21
+                # AU: LOCKSSOMatic AU 1 Deposit from OJS part 1
+                # Hash algorithm: sha1
+                # Encoding: Hex
+                # end
+                ENDBFDH,
+            'filesHashed' => 1,
+        ];
+        $mock->method('getClient')->willReturn($this->mockClient('hash', $response));
+
+        $auManager = $this->getMockBuilder(AuManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['generateAuidFromDeposit'])
+            ->getMock()
+        ;
+        $auManager->method('generateAuidFromDeposit')->willReturn('abc123');
+        $mock->setAuManager($auManager);
+
+        $result = $mock->hash($this->getReference('box.1'), $this->getReference('deposit.1'));
+        $this->assertSame('-', $result);
+    }
+
     public function testHashError() : void {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()

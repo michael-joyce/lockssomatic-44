@@ -16,6 +16,7 @@ use App\Entity\Deposit;
 use App\Services\AuManager;
 use Exception;
 use Psr\Log\LoggerInterface;
+use SoapFault;
 
 class LockssService {
     /**
@@ -28,7 +29,16 @@ class LockssService {
      */
     private $auManager;
 
-    protected function getClient($box, $name) {
+    /**
+     * @param Box $box
+     * @param string $name
+     *
+     * @return SoapClient
+     * @throws SoapFault
+     *
+     * @codeCoverageIgnore
+     */
+    protected function getClient(Box $box, $name) {
         $wsdl = "http://{$box->getHostname()}:{$box->getWebservicePort()}/ws/{$name}?wsdl";
         $options = [
             'login' => $box->getPln()->getUsername(),
@@ -48,8 +58,6 @@ class LockssService {
     protected function call(Box $box, $method, $parameters = [], $serviceName = 'DaemonStatusService') {
         $client = $this->getClient($box, $serviceName);
         $response = $client->{$method}($parameters, $serviceName);
-
-//        print_r($response);
 
         if (isset($response->return)) {
             return $response->return;
