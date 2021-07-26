@@ -101,6 +101,9 @@ class ConfigExporter {
             $dom->loadXML($data);
         }
         $dom->normalizeDocument();
+        if( ! file_exists(dirname($path))) {
+            mkdir(dirname($path), 0777, true);
+        }
         $dom->save($path);
     }
 

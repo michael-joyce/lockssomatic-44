@@ -40,6 +40,11 @@ class ConfigExporterTest extends ControllerBaseCase {
      */
     private $root;
 
+    /**
+     * @var FilePaths
+     */
+    private $fp;
+
     protected function fixtures() : array {
         return [
             PlnFixtures::class,
