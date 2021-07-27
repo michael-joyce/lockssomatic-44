@@ -12,13 +12,8 @@ namespace App\Command\Lockss;
 
 use App\Entity\Box;
 use App\Entity\BoxStatus;
-use App\Repository\BoxRepository;
-use App\Repository\PlnRepository;
-use App\Services\BoxNotifier;
 use App\Services\Lockss\LockssService;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Psr\Log\LoggerInterface;
 use stdClass;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -113,5 +108,4 @@ class BoxStatusCommand extends AbstractLockssCommand {
 
         return 0;
     }
-
 }

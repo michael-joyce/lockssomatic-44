@@ -21,10 +21,6 @@ class RequestProcessor {
 
     /**
      * Add the client IP address to the log record.
-     *
-     * @param array $record
-     *
-     * @return array
      */
     public function __invoke(array $record) : array {
         $request = $this->stack->getCurrentRequest();

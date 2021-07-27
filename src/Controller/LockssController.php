@@ -95,6 +95,7 @@ class LockssController extends AbstractController implements PaginatorAwareInter
         $path = $this->fp->getLockssXmlFile($pln);
         if ( ! file_exists($path)) {
             $this->logger->error("lockss.xml not found - {$pln->getName()}");
+
             throw new NotFoundHttpException('The requested file does not exist.');
         }
 
@@ -118,6 +119,7 @@ class LockssController extends AbstractController implements PaginatorAwareInter
         $path = $this->fp->getTitleDbPath($provider, $id);
         if ( ! file_exists($path)) {
             $this->logger->error("titledb not found - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - titledb_{$id}.xml");
+
             throw new NotFoundHttpException('The requested file does not exist.');
         }
 
@@ -140,6 +142,7 @@ class LockssController extends AbstractController implements PaginatorAwareInter
         $path = $this->fp->getManifestPath($au);
         if ( ! file_exists($path)) {
             $this->logger->error("manifest not found - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - Au #{$au->getId()}");
+
             throw new NotFoundHttpException('The requested AU manifest does not exist.');
         }
 
@@ -159,11 +162,13 @@ class LockssController extends AbstractController implements PaginatorAwareInter
         $keystore = $pln->getKeystorePath();
         if ( ! $keystore) {
             $this->logger->error("keystore does not exist - {$pln->getName()}");
+
             throw new NotFoundHttpException('The requested keystore does not exist.');
         }
         $path = $this->fp->getPluginsExportDir($pln) . '/lockss.keystore';
         if ( ! file_exists($path)) {
             $this->logger->error("keystore file does not exist - {$pln->getName()}");
+
             throw new NotFoundHttpException('The requested keystore does not exist.');
         }
 
@@ -185,6 +190,7 @@ class LockssController extends AbstractController implements PaginatorAwareInter
         $path = $this->fp->getPluginsManifestFile($pln);
         if ( ! file_exists($path)) {
             $this->logger->error("plugin list not found - {$pln->getName()}");
+
             throw new NotFoundHttpException('The requested plugin manifest does not exist.');
         }
 
@@ -208,6 +214,7 @@ class LockssController extends AbstractController implements PaginatorAwareInter
         $path = $dir . '/' . $filename;
         if ( ! file_exists($path)) {
             $this->logger->error("plugin not found - {$pln->getName()} - {$filename}");
+
             throw new NotFoundHttpException('The requested plugin does not exist at ' . $path);
         }
 

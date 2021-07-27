@@ -30,11 +30,11 @@ class LockssService {
     private $auManager;
 
     /**
-     * @param Box $box
      * @param string $name
      *
-     * @return SoapClient
      * @throws SoapFault
+     *
+     * @return SoapClient
      *
      * @codeCoverageIgnore
      */

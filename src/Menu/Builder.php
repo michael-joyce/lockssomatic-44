@@ -146,7 +146,7 @@ class Builder implements ContainerAwareInterface {
                 'routeParameters' => [
                     'id' => $pln->getId(),
                 ],
-                'class' => 'subhead'
+                'class' => 'subhead',
             ])->setLinkAttribute('class', 'subhead');
             $networkMenu->addChild('Archival Units', [
                 'route' => 'au_index',

@@ -74,6 +74,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
         }
         if ($required) {
             $this->logger->error("HTTP header {$key} is missing.");
+
             throw new BadRequestHttpException("HTTP header {$key} is required.", null, Response::HTTP_BAD_REQUEST);
         }
     }
@@ -95,6 +96,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
         ]);
         if ( ! $provider) {
             $this->logger->error("Content provider {$uuid} not found");
+
             throw new NotFoundHttpException('Content provider not found.', null, Response::HTTP_NOT_FOUND);
         }
 
@@ -115,15 +117,18 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
             $nodes = $content->xpath("lom:property[@name='{$name}']");
             if (0 === count($nodes)) {
                 $this->logger->error("Content property {$name} is required but missing for {$plugin->getName()}");
+
                 throw new BadRequestHttpException("{$name} is a required property.");
             }
             if (count($nodes) > 1) {
                 $this->logger->error("Content property {$name} cannot be repeated for {$plugin->getName()}");
+
                 throw new BadRequestHttpException("{$name} cannot be repeated.");
             }
             $value = (string) ($nodes[0]->attributes()->value);
             if ( ! $value) {
                 $this->logger->error("Content property {$name} must have a value {$plugin->getName()}");
+
                 throw new BadRequestHttpException("{$name} must have a value.");
             }
         }
@@ -137,10 +142,12 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
     private function precheckDeposit(SimpleXMLElement $atom, ContentProvider $provider) : void {
         if (0 === count($atom->xpath('//lom:content'))) {
             $this->logger->error("Element lom:content is missing in deposit for {$provider->getName()}");
+
             throw new BadRequestHttpException('Empty deposits are not allowed.', null, Response::HTTP_BAD_REQUEST);
         }
         if (count($atom->xpath('//lom:content')) > 1) {
-            $this->logger->error("Multiple lom:content elements are not allowed for deposit");
+            $this->logger->error('Multiple lom:content elements are not allowed for deposit');
+
             throw new BadRequestHttpException('Deposits with multiple content elements are not allowed.', null, Response::HTTP_BAD_REQUEST);
         }
         $plugin = $provider->getPlugin();
@@ -152,6 +159,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
             $host = parse_url($url, PHP_URL_HOST);
             if ($permissionHost !== $host) {
                 $this->logger->error("Permission host for {$url} does not match content host: content host {$host} != permission host {$permissionHost}");
+
                 throw new BadRequestHttpException("Permission host for {$url} does not match content host. Content host:{$host} Permission host: {$permissionHost}", null, Response::HTTP_BAD_REQUEST);
             }
 
@@ -160,6 +168,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
                 $max = $provider->getMaxFileSize();
 
                 $this->logger->error("Deposit size {$size} is larger than provider's maximum {$max}");
+
                 throw new BadRequestHttpException("Content size {$size} exceeds provider's maximum: {$max}", null, Response::HTTP_BAD_REQUEST);
             }
 
@@ -192,7 +201,8 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
     private function getXml(Request $request) {
         $content = $request->getContent();
         if ( ! $content || ! is_string($content)) {
-            $this->logger->error("Missing request content");
+            $this->logger->error('Missing request content');
+
             throw new BadRequestHttpException('Expected request body. Found none.', null, Response::HTTP_BAD_REQUEST);
         }
 
@@ -203,6 +213,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
             return $xml;
         } catch (Exception $e) {
             $this->logger->error("Unparseable XML: {$e->getMessage()}");
+
             throw new BadRequestHttpException('Cannot parse request XML.', $e, Response::HTTP_BAD_REQUEST);
         }
     }
@@ -228,7 +239,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @Template
      */
     public function serviceDocumentAction(Request $request) {
-        $this->logger->notice("service document");
+        $this->logger->notice('service document');
         $uuid = $this->fetchHeader($request, 'On-Behalf-Of', true);
         $provider = $this->getProvider(mb_strtoupper($uuid));
         $plugin = $provider->getPlugin();

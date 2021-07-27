@@ -91,17 +91,17 @@ class ConfigExporter {
         $this->manager = $manager;
     }
 
-    public function writeData($data, $path, $asHtml = false) {
+    public function writeData($data, $path, $asHtml = false) : void {
         $dom = new DOMDocument();
         $dom->preserveWhiteSpace = false;
         $dom->formatOutput = true;
-        if($asHtml) {
+        if ($asHtml) {
             $dom->loadHTML($data, LIBXML_HTML_NOIMPLIED);
         } else {
             $dom->loadXML($data);
         }
         $dom->normalizeDocument();
-        if( ! file_exists(dirname($path))) {
+        if ( ! file_exists(dirname($path))) {
             mkdir(dirname($path), 0777, true);
         }
         $dom->save($path);

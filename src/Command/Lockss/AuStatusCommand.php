@@ -57,7 +57,7 @@ class AuStatusCommand extends AbstractLockssCommand {
                         $auStatus->addError($box, $e->getMessage());
                     }
                 }
-                if( ! $dryRun) {
+                if ( ! $dryRun) {
                     $this->em->persist($auStatus);
                     $this->em->flush();
                 }
