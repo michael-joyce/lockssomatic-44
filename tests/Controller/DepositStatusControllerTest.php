@@ -33,6 +33,12 @@ class DepositStatusControllerTest extends ControllerBaseCase {
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
     }
 
+    public function testUserIndexBadDeposit() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/pln/2/deposit/1/status/');
+        $this->assertSame(404, $this->client->getResponse()->getStatusCode());
+    }
+
     public function testAdminIndex() : void {
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/pln/1/deposit/1/status/');
@@ -48,6 +54,18 @@ class DepositStatusControllerTest extends ControllerBaseCase {
         $this->login('user.user');
         $crawler = $this->client->request('GET', '/pln/1/deposit/1/status/1');
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testUserShowBadDeposit() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/pln/2/deposit/1/status/1');
+        $this->assertSame(404, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testUserShowBadStatus() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/pln/1/deposit/2/status/1');
+        $this->assertSame(404, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminShow() : void {

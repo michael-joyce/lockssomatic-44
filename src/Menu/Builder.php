@@ -141,26 +141,30 @@ class Builder implements ContainerAwareInterface {
         ]);
 
         foreach ($networks as $pln) {
-            $networkMenu->addChild($pln->getName(), [
+            $networkMenu->addChild('pln_' . $pln->getId(), [
+                'label' => $pln->getName(),
                 'route' => 'pln_show',
                 'routeParameters' => [
                     'id' => $pln->getId(),
                 ],
                 'class' => 'subhead',
             ])->setLinkAttribute('class', 'subhead');
-            $networkMenu->addChild('Archival Units', [
+            $networkMenu->addChild('au_' . $pln->getId(), [
+                'label' => 'Archival Units',
                 'route' => 'au_index',
                 'routeParameters' => [
                     'plnId' => $pln->getId(),
                 ],
             ]);
-            $networkMenu->addChild('Boxes', [
+            $networkMenu->addChild('box_' . $pln->getId(), [
+                'label' => 'Boxes',
                 'route' => 'box_index',
                 'routeParameters' => [
                     'plnId' => $pln->getId(),
                 ],
             ]);
-            $networkMenu->addChild('Deposits', [
+            $networkMenu->addChild('deposit_' . $pln->getId(), [
+                'label' => 'Deposits',
                 'route' => 'deposit_index',
                 'routeParameters' => [
                     'plnId' => $pln->getId(),

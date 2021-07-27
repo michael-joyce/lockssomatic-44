@@ -178,6 +178,13 @@ class PlnControllerTest extends ControllerBaseCase {
         $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
+    public function testAdminExport() : void {
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/pln/1/export');
+
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+    }
+
     public function testAnonDelete() : void {
         $crawler = $this->client->request('GET', '/pln/1/delete');
         $this->assertSame(302, $this->client->getResponse()->getStatusCode());

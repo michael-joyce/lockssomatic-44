@@ -34,6 +34,12 @@ class BoxStatusControllerTest extends ControllerBaseCase {
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
     }
 
+    public function testUserIndexBadBox() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/pln/2/box/1/status/');
+        $this->assertSame(404, $this->client->getResponse()->getStatusCode());
+    }
+
     public function testAdminIndex() : void {
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/pln/1/box/1/status/');
@@ -49,6 +55,18 @@ class BoxStatusControllerTest extends ControllerBaseCase {
         $this->login('user.user');
         $crawler = $this->client->request('GET', '/pln/1/box/1/status/1');
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testUserShowBadBox() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/pln/2/box/1/status/1');
+        $this->assertSame(404, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testUserShowBadStatus() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/pln/1/box/2/status/1');
+        $this->assertSame(404, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminShow() : void {
