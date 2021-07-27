@@ -58,13 +58,6 @@ class UpgradeCommand extends Command {
     private $idMapping;
 
     /**
-     * If true the changes will be flushed to the new database.
-     *
-     * @var bool
-     */
-    private $force;
-
-    /**
      * Construct the command instance.
      *
      * $oldEm is a Doctrine connection configured for the previous version
@@ -82,7 +75,6 @@ class UpgradeCommand extends Command {
         $this->source = $oldEm;
         $this->em = $em;
         $this->idMapping = [];
-        $this->force = false;
     }
 
     /**

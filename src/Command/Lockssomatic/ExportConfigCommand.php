@@ -89,11 +89,11 @@ class ExportConfigCommand extends Command {
 
         foreach ($this->getPlns($plnIds) as $pln) {
             if ($input->getOption('update')) {
-                $output->writeln("update {$pln->getName()}");
+                $output->writeln("update {$pln->getName()}", OutputInterface::VERBOSITY_VERBOSE);
                 $this->updater->update($pln);
                 $this->em->flush();
             }
-            $output->writeln("exporting {$pln->getName()}");
+            $output->writeln("exporting {$pln->getName()}", OutputInterface::VERBOSITY_VERBOSE);
             $this->exporter->export($pln);
         }
 

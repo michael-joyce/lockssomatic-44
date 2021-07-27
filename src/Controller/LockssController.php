@@ -90,10 +90,11 @@ class LockssController extends AbstractController implements PaginatorAwareInter
      * @Route("/properties/lockss.xml", name="lockss_config")
      */
     public function lockssAction(Request $request, Pln $pln) {
-        $this->logger->notice("{$request->getClientIp()} - lockss.xml - {$pln->getName()}");
+        $this->logger->notice("lockss.xml - {$pln->getName()}");
         $this->checkIp($request, $pln);
         $path = $this->fp->getLockssXmlFile($pln);
         if ( ! file_exists($path)) {
+            $this->logger->error("lockss.xml not found - {$pln->getName()}");
             throw new NotFoundHttpException('The requested file does not exist.');
         }
 
@@ -112,10 +113,11 @@ class LockssController extends AbstractController implements PaginatorAwareInter
      * @ParamConverter("provider", options={"id": "providerId"})
      */
     public function titleDbAction(Request $request, Pln $pln, ContentOwner $owner, ContentProvider $provider, $id) {
-        $this->logger->notice("{$request->getClientIp()} - titledb - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - titledb_{$id}.xml");
+        $this->logger->notice("titledb - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - titledb_{$id}.xml");
         $this->checkIp($request, $pln);
         $path = $this->fp->getTitleDbPath($provider, $id);
         if ( ! file_exists($path)) {
+            $this->logger->error("titledb not found - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - titledb_{$id}.xml");
             throw new NotFoundHttpException('The requested file does not exist.');
         }
 
@@ -133,10 +135,11 @@ class LockssController extends AbstractController implements PaginatorAwareInter
      * @ParamConverter("au", options={"id": "auId"})
      */
     public function manifestAction(Request $request, Pln $pln, ContentOwner $owner, ContentProvider $provider, Au $au) {
-        $this->logger->notice("{$request->getClientIp()} - manifest - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - Au #{$au->getId()}");
+        $this->logger->notice("manifest - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - Au #{$au->getId()}");
         $this->checkIp($request, $pln);
         $path = $this->fp->getManifestPath($au);
         if ( ! file_exists($path)) {
+            $this->logger->error("manifest not found - {$pln->getName()} - {$owner->getName()} - {$provider->getName()} - Au #{$au->getId()}");
             throw new NotFoundHttpException('The requested AU manifest does not exist.');
         }
 
@@ -151,14 +154,16 @@ class LockssController extends AbstractController implements PaginatorAwareInter
      * @Route("/plugins/lockssomatic.keystore", name="lockss_keystore")
      */
     public function keystoreAction(Request $request, Pln $pln) {
-        $this->logger->notice("{$request->getClientIp()} - keystore - {$pln->getName()}");
+        $this->logger->notice("keystore - {$pln->getName()}");
         $this->checkIp($request, $pln);
         $keystore = $pln->getKeystorePath();
         if ( ! $keystore) {
+            $this->logger->error("keystore does not exist - {$pln->getName()}");
             throw new NotFoundHttpException('The requested keystore does not exist.');
         }
         $path = $this->fp->getPluginsExportDir($pln) . '/lockss.keystore';
         if ( ! file_exists($path)) {
+            $this->logger->error("keystore file does not exist - {$pln->getName()}");
             throw new NotFoundHttpException('The requested keystore does not exist.');
         }
 
@@ -175,10 +180,11 @@ class LockssController extends AbstractController implements PaginatorAwareInter
      * @Route("/plugins")
      */
     public function pluginListAction(Request $request, Pln $pln) {
-        $this->logger->notice("{$request->getClientIp()} - plugin list - {$pln->getName()}");
+        $this->logger->notice("plugin list - {$pln->getName()}");
         $this->checkIp($request, $pln);
         $path = $this->fp->getPluginsManifestFile($pln);
         if ( ! file_exists($path)) {
+            $this->logger->error("plugin list not found - {$pln->getName()}");
             throw new NotFoundHttpException('The requested plugin manifest does not exist.');
         }
 
@@ -195,12 +201,13 @@ class LockssController extends AbstractController implements PaginatorAwareInter
      * @Route("/plugins/{filename}", name="lockss_plugin")
      */
     public function pluginAction(Request $request, Pln $pln, $filename) {
-        $this->logger->notice("{$request->getClientIp()} - plugin - {$pln->getName()} - {$filename}");
+        $this->logger->notice("plugin - {$pln->getName()} - {$filename}");
         $this->checkIp($request, $pln);
 
         $dir = $this->fp->getPluginsExportDir($pln);
         $path = $dir . '/' . $filename;
         if ( ! file_exists($path)) {
+            $this->logger->error("plugin not found - {$pln->getName()} - {$filename}");
             throw new NotFoundHttpException('The requested plugin does not exist at ' . $path);
         }
 

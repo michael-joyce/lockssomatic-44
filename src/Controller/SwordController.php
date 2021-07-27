@@ -73,6 +73,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
             return $request->query->get($key);
         }
         if ($required) {
+            $this->logger->error("HTTP header {$key} is missing.");
             throw new BadRequestHttpException("HTTP header {$key} is required.", null, Response::HTTP_BAD_REQUEST);
         }
     }
@@ -93,6 +94,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
             'uuid' => $uuid,
         ]);
         if ( ! $provider) {
+            $this->logger->error("Content provider {$uuid} not found");
             throw new NotFoundHttpException('Content provider not found.', null, Response::HTTP_NOT_FOUND);
         }
 
@@ -112,13 +114,16 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
             }
             $nodes = $content->xpath("lom:property[@name='{$name}']");
             if (0 === count($nodes)) {
+                $this->logger->error("Content property {$name} is required but missing for {$plugin->getName()}");
                 throw new BadRequestHttpException("{$name} is a required property.");
             }
             if (count($nodes) > 1) {
+                $this->logger->error("Content property {$name} cannot be repeated for {$plugin->getName()}");
                 throw new BadRequestHttpException("{$name} cannot be repeated.");
             }
             $value = (string) ($nodes[0]->attributes()->value);
             if ( ! $value) {
+                $this->logger->error("Content property {$name} must have a value {$plugin->getName()}");
                 throw new BadRequestHttpException("{$name} must have a value.");
             }
         }
@@ -128,16 +133,14 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * Precheck a deposit for the required properties.
      *
      * Also makes sure the properties all make some sense.
-     *
-     * @throws BadRequestException
-     * @throws HostMismatchException
-     * @throws MaxUploadSizeExceededException
      */
     private function precheckDeposit(SimpleXMLElement $atom, ContentProvider $provider) : void {
         if (0 === count($atom->xpath('//lom:content'))) {
+            $this->logger->error("Element lom:content is missing in deposit for {$provider->getName()}");
             throw new BadRequestHttpException('Empty deposits are not allowed.', null, Response::HTTP_BAD_REQUEST);
         }
         if (count($atom->xpath('//lom:content')) > 1) {
+            $this->logger->error("Multiple lom:content elements are not allowed for deposit");
             throw new BadRequestHttpException('Deposits with multiple content elements are not allowed.', null, Response::HTTP_BAD_REQUEST);
         }
         $plugin = $provider->getPlugin();
@@ -148,6 +151,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
             $url = trim((string) $content);
             $host = parse_url($url, PHP_URL_HOST);
             if ($permissionHost !== $host) {
+                $this->logger->error("Permission host for {$url} does not match content host: content host {$host} != permission host {$permissionHost}");
                 throw new BadRequestHttpException("Permission host for {$url} does not match content host. Content host:{$host} Permission host: {$permissionHost}", null, Response::HTTP_BAD_REQUEST);
             }
 
@@ -155,6 +159,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
                 $size = $content->attributes()->size;
                 $max = $provider->getMaxFileSize();
 
+                $this->logger->error("Deposit size {$size} is larger than provider's maximum {$max}");
                 throw new BadRequestHttpException("Content size {$size} exceeds provider's maximum: {$max}", null, Response::HTTP_BAD_REQUEST);
             }
 
@@ -187,6 +192,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
     private function getXml(Request $request) {
         $content = $request->getContent();
         if ( ! $content || ! is_string($content)) {
+            $this->logger->error("Missing request content");
             throw new BadRequestHttpException('Expected request body. Found none.', null, Response::HTTP_BAD_REQUEST);
         }
 
@@ -196,6 +202,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
 
             return $xml;
         } catch (Exception $e) {
+            $this->logger->error("Unparseable XML: {$e->getMessage()}");
             throw new BadRequestHttpException('Cannot parse request XML.', $e, Response::HTTP_BAD_REQUEST);
         }
     }
@@ -221,7 +228,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @Template
      */
     public function serviceDocumentAction(Request $request) {
-        $this->logger->notice("{$request->getClientIp()} - service document");
+        $this->logger->notice("service document");
         $uuid = $this->fetchHeader($request, 'On-Behalf-Of', true);
         $provider = $this->getProvider(mb_strtoupper($uuid));
         $plugin = $provider->getPlugin();
@@ -242,14 +249,10 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * }, methods={"POST"})
      * @ParamConverter("provider", class="App:ContentProvider", options={"mapping": {"providerUuid": "uuid"}})
      *
-     * @throws HostMismatchException
-     * @throws MaxUploadSizeExceededException
-     * @throws BadRequestException
-     *
      * @return Response
      */
     public function createDepositAction(Request $request, ContentProvider $provider, EntityManagerInterface $em, DepositBuilder $depositBuilder, AuManager $auManager) {
-        $this->logger->notice("{$request->getClientIp()} - create deposit - {$provider->getName()}");
+        $this->logger->notice("create deposit - {$provider->getName()}");
         $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);
         $deposit = $depositBuilder->fromXml($atom, $provider);
@@ -283,7 +286,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @todo what does the recrawl attribute do?
      */
     public function editDepositAction(Request $request, ContentProvider $provider, Deposit $deposit, EntityManagerInterface $em) {
-        $this->logger->notice("{$request->getClientIp()} - edit deposit - {$provider->getName()} - {$deposit->getUuid()}");
+        $this->logger->notice("edit deposit - {$provider->getName()} - {$deposit->getUuid()}");
         $atom = $this->getXml($request);
         $this->precheckDeposit($atom, $provider);
 
@@ -323,7 +326,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      *     @Template
      */
     public function viewDepositAction(Request $request, ContentProvider $provider, Deposit $deposit) {
-        $this->logger->notice("{$request->getClientIp()} - view deposit - {$provider->getName()} - {$deposit->getUuid()}");
+        $this->logger->notice("view deposit - {$provider->getName()} - {$deposit->getUuid()}");
 
         return [
             'provider' => $provider,
@@ -354,7 +357,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      *     @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid": "uuid"}})
      */
     public function statementAction(Request $request, ContentProvider $provider, Deposit $deposit) {
-        $this->logger->notice("{$request->getClientIp()} - statement - {$provider->getName()} - {$deposit->getUuid()}");
+        $this->logger->notice("statement - {$provider->getName()} - {$deposit->getUuid()}");
         if (1.0 === $deposit->getAgreement()) {
             $state = 'agreement';
             $stateDescription = 'LOCKSS boxes have harvested the content and agree on the checksum.';
@@ -389,7 +392,7 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      *     @ParamConverter("deposit", class="App:Deposit", options={"mapping": {"depositUuid": "uuid"}})
      */
     public function receiptAction(Request $request, ContentProvider $provider, Deposit $deposit) {
-        $this->logger->notice("{$request->getClientIp()} - receipt - {$provider->getName()} - {$deposit->getUuid()}");
+        $this->logger->notice("receipt - {$provider->getName()} - {$deposit->getUuid()}");
 
         return [
             'provider' => $provider,
@@ -414,6 +417,6 @@ class SwordController extends AbstractController implements PaginatorAwareInterf
      * @ParamConverter("deposit", options={"uuid": "depositUuid"})
      */
     public function originalDepositAction(ContentProvider $provider, Deposit $deposit, $filename) : void {
-        $this->logger->notice("{$request->getClientIp()} - original deposit - {$provider->getName()} - {$deposit->getUuid()} - {$filename}");
+        $this->logger->notice("original deposit - {$provider->getName()} - {$deposit->getUuid()} - {$filename}");
     }
 }

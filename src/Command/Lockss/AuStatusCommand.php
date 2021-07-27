@@ -53,11 +53,14 @@ class AuStatusCommand extends AbstractLockssCommand {
                         $status = $this->getStatus($au, $box);
                         $auStatus->addStatus($box, $this->toArray($status));
                     } catch (Exception $e) {
+                        $output->writeln("AU status error {$e->getMessage()}", );
                         $auStatus->addError($box, $e->getMessage());
                     }
                 }
-                $this->em->persist($auStatus);
-                $this->em->flush();
+                if( ! $dryRun) {
+                    $this->em->persist($auStatus);
+                    $this->em->flush();
+                }
             }
         }
 

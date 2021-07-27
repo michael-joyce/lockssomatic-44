@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\EventListener;
 
 use App\Controller\SwordController;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -47,6 +48,11 @@ class SwordExceptionListener {
     private $env;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Construct the listener.
      *
      * @param string $env
@@ -54,6 +60,13 @@ class SwordExceptionListener {
     public function __construct($env, Environment $templating) {
         $this->templating = $templating;
         $this->env = $env;
+    }
+
+    /**
+     * @required
+     */
+    public function setLogger(LoggerInterface $swordLogger) : void {
+        $this->logger = $swordLogger;
     }
 
     /**
@@ -82,8 +95,10 @@ class SwordExceptionListener {
         if ($exception instanceof HttpExceptionInterface) {
             $response->setStatusCode($exception->getStatusCode());
             $response->headers->replace($exception->getHeaders());
+            $this->logger->error("Caught exception: {$exception->getStatusCode()} {$exception->getMessage()}");
         } else {
             $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->logger->error("Caught exception: 500 {$exception->getMessage()}");
         }
         $response->headers->set('Content-Type', 'text/xml');
         $response->setContent($this->templating->render('sword/exception_document.xml.twig', [

@@ -75,7 +75,7 @@ class BoxStatusCommand extends AbstractLockssCommand {
             $result = $this->lockssService->boxStatus($box);
             $status->setSuccess(true);
         } catch (Exception $e) {
-            $this->logger->error("{$box->getIpAddress()} - {$e->getMessage()}");
+            $this->logger->error("Box status error - {$box->getIpAddress()} - {$e->getMessage()}");
             $status->setSuccess(false);
             $status->setErrors($e->getMessage());
         }
@@ -93,7 +93,6 @@ class BoxStatusCommand extends AbstractLockssCommand {
         $plnIds = $input->getOption('pln');
 
         foreach ($this->getBoxes($plnIds) as $box) {
-            $this->logger->notice("Checking status on {$box->getHostname()}:{$box->getPort()}");
             $status = $this->getStatus($box);
             $output->writeln("Checking status on {$box->getHostname()}:{$box->getPort()}");
 
@@ -115,38 +114,4 @@ class BoxStatusCommand extends AbstractLockssCommand {
         return 0;
     }
 
-    /**
-     * @required
-     */
-    public function setEntityManager(EntityManagerInterface $em) : void {
-        $this->em = $em;
-    }
-
-    /**
-     * @required
-     */
-    public function setLogger(LoggerInterface $soapLogger) : void {
-        $this->logger = $soapLogger;
-    }
-
-    /**
-     * @required
-     */
-    public function setBoxRepository(BoxRepository $repo) : void {
-        $this->boxRepository = $repo;
-    }
-
-    /**
-     * @required
-     */
-    public function setPlnRepository(PlnRepository $repo) : void {
-        $this->plnRepository = $repo;
-    }
-
-    /**
-     * @required
-     */
-    public function setNotifier(BoxNotifier $notifier) : void {
-        $this->notifier = $notifier;
-    }
 }
