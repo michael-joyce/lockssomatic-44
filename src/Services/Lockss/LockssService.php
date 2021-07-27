@@ -44,8 +44,9 @@ class LockssService {
             'login' => $box->getPln()->getUsername(),
             'password' => $box->getPln()->getPassword(),
         ];
-
-        return new SoapClient($wsdl, $options);
+        $client = new SoapClient($wsdl, $options);
+        $client->setLogger($this->logger);
+        return $client;
     }
 
     /**
@@ -55,7 +56,7 @@ class LockssService {
      *
      * @return mixed
      */
-    protected function call(Box $box, $method, $parameters = [], $serviceName = 'DaemonStatusService') {
+    public function call(Box $box, $method, $parameters = [], $serviceName = 'DaemonStatusService') {
         $client = $this->getClient($box, $serviceName);
         $response = $client->{$method}($parameters, $serviceName);
 
@@ -68,6 +69,10 @@ class LockssService {
 
     public function isDaemonReady(Box $box) {
         return $this->call($box, 'isDaemonReady');
+    }
+
+    public function platformStatus(Box $box) {
+        return $this->call($box, 'getPlatformConfiguration');
     }
 
     public function boxStatus(Box $box) {
@@ -111,6 +116,7 @@ class LockssService {
         ];
         $response = $this->call($box, 'hash', $params, 'HasherService');
         if ( ! isset($response->blockFileDataHandler)) {
+            $this->logger->error("Hash response for {$deposit->getUuid()} from {$box->getHostname()} request does not include blockFileDataHandler");
             throw new Exception($response->errorMessage);
         }
         $data = $response->blockFileDataHandler;
@@ -132,7 +138,7 @@ class LockssService {
     /**
      * @required
      */
-    public function setLogger(LoggerInterface $logger) : void {
-        $this->logger = $logger;
+    public function setLogger(LoggerInterface $soapLogger) : void {
+        $this->logger = $soapLogger;
     }
 }

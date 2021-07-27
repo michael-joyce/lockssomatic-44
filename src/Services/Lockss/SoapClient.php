@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace App\Services\Lockss;
 
 use DOMDocument;
+use GuzzleHttp\Psr7\Header;
+use GuzzleHttp\Psr7\Message;
 use function GuzzleHttp\Psr7\parse_header;
 use function GuzzleHttp\Psr7\parse_response;
 use GuzzleHttp\Psr7\Response;
@@ -46,10 +48,11 @@ class SoapClient extends BaseSoapClient {
     }
 
     public function __doRequest($request, $location, $action, $version, $one_way = 0) {
+        $this->logger->notice("Sending request to {$location}");
         $rawResult = parent::__doRequest($request, $location, $action, $version, $one_way);
         $rawHeaders = $this->__getLastResponseHeaders();
 
-        $httpMessage = parse_response($rawHeaders . "\n" . $rawResult);
+        $httpMessage = Message::parseResponse($rawHeaders . "\n" . $rawResult);
         $contentType = $httpMessage->getHeader('content-type');
         if (str_starts_with($contentType[0], 'text/xml;')) {
             $this->isMultipart = false;
@@ -58,14 +61,14 @@ class SoapClient extends BaseSoapClient {
         }
         $this->isMultipart = true;
 
-        $parsedType = parse_header($contentType[0]);
+        $parsedType = Header::parse($contentType[0]);
         $boundary = $parsedType[0]['boundary'];
 
         $messageParts = array_map(fn ($a) => trim($a), explode("--{$boundary}", $rawResult));
         $filtered = array_filter($messageParts, fn ($a) => $a && '--' !== $a);
 
         foreach ($filtered as $m) {
-            $response = parse_response("HTTP/1.1 200 OK\r\n" . $m);
+            $response = Message::parseResponse("HTTP/1.1 200 OK\r\n" . $m);
             if ($response->hasHeader('Content-ID')) {
                 $id = preg_replace('/^<|>$/', '', $response->getHeader('Content-ID')[0]);
                 $this->parts[$id] = $response;
@@ -94,9 +97,11 @@ class SoapClient extends BaseSoapClient {
     }
 
     /**
-     * @required
+     * This class isn't a service. Consumers of this class must call setLogger.
+     *
+     * @param LoggerInterface $soapLogger
      */
-    public function setLogger(LoggerInterface $logger) : void {
-        $this->logger = $logger;
+    public function setLogger(LoggerInterface $soapLogger) : void {
+        $this->logger = $soapLogger;
     }
 }

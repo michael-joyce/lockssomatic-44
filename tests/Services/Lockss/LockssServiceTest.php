@@ -18,6 +18,7 @@ use App\Services\Lockss\LockssService;
 use App\Services\Lockss\SoapClient;
 use Exception;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
+use Psr\Log\NullLogger;
 use stdClass;
 
 class LockssServiceTest extends ControllerBaseCase {
@@ -51,6 +52,44 @@ class LockssServiceTest extends ControllerBaseCase {
         $this->assertInstanceOf(LockssService::class, $this->lockssService);
     }
 
+    public function testCall() : void {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock();
+
+        $return = new stdClass();
+        $return->return = ['data'];
+        $client = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['testMethod'])
+            ->getMock()
+        ;
+        $client->method('testMethod')->willReturn($return);
+        $mock->method('getClient')->willReturn($client);
+
+        $this->assertEquals(['data'], $mock->call($this->getReference('box.1'), 'testMethod'));
+    }
+
+    public function testCallBadReturn() : void {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock();
+
+        $return = new stdClass();
+        $return->content = ['data'];
+        $client = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['testMethod'])
+            ->getMock()
+        ;
+        $client->method('testMethod')->willReturn($return);
+        $mock->method('getClient')->willReturn($client);
+
+        $this->assertEquals((object)['content' => ['data']], $mock->call($this->getReference('box.1'), 'testMethod'));
+    }
+
     public function testIsDaemonReady() : void {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()
@@ -74,6 +113,20 @@ class LockssServiceTest extends ControllerBaseCase {
         $mock->method('getClient')->willReturn($this->mockClient('queryRepositorySpaces', $response));
         $result = $mock->boxStatus($this->getReference('box.1'));
         $this->assertSame(2, $result['activeCount']);
+    }
+
+    public function testPlatformStatus() : void {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock()
+        ;
+        $response = [
+            'groups' => 'nogroup',
+        ];
+        $mock->method('getClient')->willReturn($this->mockClient('getPlatformConfiguration', $response));
+        $result = $mock->platformStatus($this->getReference('box.1'));
+        $this->assertSame('nogroup', $result['groups']);
     }
 
     public function testAuStatus() : void {
@@ -226,8 +279,9 @@ class LockssServiceTest extends ControllerBaseCase {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()
             ->setMethods(['getClient'])
-            ->getMock()
-        ;
+            ->getMock();
+        $logger = new NullLogger();
+        $mock->setLogger($logger);
         $response = (object) [
             'errorMessage' => 'an error',
             'filesHashed' => 1,
