@@ -44,27 +44,27 @@ class DepositRepositoryTest extends ControllerBaseCase {
         $this->assertStringContainsString('AND a.pln = :pln', $query->getDQL());
     }
 
-    public function testCheckQuery() {
+    public function testCheckQuery() : void {
         $query = $this->repo->checkQuery();
         $this->assertStringContainsString('WHERE (d.agreement IS NULL or d.agreement < 1.0) AND (d.checked IS NULL OR d.checked < :yesterday)', $query->getDQL());
     }
 
-    public function testCheckQueryPlns() {
+    public function testCheckQueryPlns() : void {
         $query = $this->repo->checkQuery([$this->getReference('pln.1')]);
         $this->assertStringContainsString(' AND d.pln in :plns', $query->getDQL());
     }
 
-    public function testCheckQueryUuids() {
+    public function testCheckQueryUuids() : void {
         $query = $this->repo->checkQuery(null, ['uuid']);
         $this->assertStringContainsString('d.uuid in :uuids', $query->getDQL());
     }
 
-    public function testCheckQueryAll() {
+    public function testCheckQueryAll() : void {
         $query = $this->repo->checkQuery(null, null, true);
         $this->assertStringNotContainsString('WHERE', $query->getDQL());
     }
 
-    public function testCheckQueryCount() {
+    public function testCheckQueryCount() : void {
         $query = $this->repo->checkQuery(null, null, false, true);
         $this->assertStringContainsString('count(1)', $query->getDQL());
     }

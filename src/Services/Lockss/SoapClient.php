@@ -13,8 +13,6 @@ namespace App\Services\Lockss;
 use DOMDocument;
 use GuzzleHttp\Psr7\Header;
 use GuzzleHttp\Psr7\Message;
-use function GuzzleHttp\Psr7\parse_header;
-use function GuzzleHttp\Psr7\parse_response;
 use GuzzleHttp\Psr7\Response;
 use Psr\Log\LoggerInterface;
 use SoapClient as BaseSoapClient;
@@ -98,8 +96,6 @@ class SoapClient extends BaseSoapClient {
 
     /**
      * This class isn't a service. Consumers of this class must call setLogger.
-     *
-     * @param LoggerInterface $soapLogger
      */
     public function setLogger(LoggerInterface $soapLogger) : void {
         $this->logger = $soapLogger;

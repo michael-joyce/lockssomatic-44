@@ -56,7 +56,8 @@ class LockssServiceTest extends ControllerBaseCase {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()
             ->setMethods(['getClient'])
-            ->getMock();
+            ->getMock()
+        ;
 
         $return = new stdClass();
         $return->return = ['data'];
@@ -68,14 +69,15 @@ class LockssServiceTest extends ControllerBaseCase {
         $client->method('testMethod')->willReturn($return);
         $mock->method('getClient')->willReturn($client);
 
-        $this->assertEquals(['data'], $mock->call($this->getReference('box.1'), 'testMethod'));
+        $this->assertSame(['data'], $mock->call($this->getReference('box.1'), 'testMethod'));
     }
 
     public function testCallBadReturn() : void {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()
             ->setMethods(['getClient'])
-            ->getMock();
+            ->getMock()
+        ;
 
         $return = new stdClass();
         $return->content = ['data'];
@@ -87,7 +89,7 @@ class LockssServiceTest extends ControllerBaseCase {
         $client->method('testMethod')->willReturn($return);
         $mock->method('getClient')->willReturn($client);
 
-        $this->assertEquals((object)['content' => ['data']], $mock->call($this->getReference('box.1'), 'testMethod'));
+        $this->assertSame((object) ['content' => ['data']], $mock->call($this->getReference('box.1'), 'testMethod'));
     }
 
     public function testIsDaemonReady() : void {
@@ -279,7 +281,8 @@ class LockssServiceTest extends ControllerBaseCase {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()
             ->setMethods(['getClient'])
-            ->getMock();
+            ->getMock()
+        ;
         $logger = new NullLogger();
         $mock->setLogger($logger);
         $response = (object) [

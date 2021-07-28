@@ -37,10 +37,10 @@ class PlatformConfiguration extends AbstractLockssCommand {
         foreach ($this->getBoxes($plnIds) as $box) {
             $output->writeln("Checking platform status on {$box->getHostname()}");
             $status = $this->lockssService->platformStatus($box);
-            $output->writeln("  V3 Identity: " . $status->v3Identity);
-            $output->writeln("  LOCKSS version: " . $status->daemonVersion->fullVersion);
-            $output->write("  Java Version: " . $status->javaVersion->runtimeName);
-            $output->writeln("  " . $status->javaVersion->runtimeVersion);
+            $output->writeln('  V3 Identity: ' . $status->v3Identity);
+            $output->writeln('  LOCKSS version: ' . $status->daemonVersion->fullVersion);
+            $output->write('  Java Version: ' . $status->javaVersion->runtimeName);
+            $output->writeln('  ' . $status->javaVersion->runtimeVersion);
             $output->writeln("  Box is member of groups {$status->groups}");
         }
 

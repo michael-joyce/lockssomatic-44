@@ -46,6 +46,7 @@ class LockssService {
         ];
         $client = new SoapClient($wsdl, $options);
         $client->setLogger($this->logger);
+
         return $client;
     }
 
@@ -117,6 +118,7 @@ class LockssService {
         $response = $this->call($box, 'hash', $params, 'HasherService');
         if ( ! isset($response->blockFileDataHandler)) {
             $this->logger->error("Hash response for {$deposit->getUuid()} from {$box->getHostname()} request does not include blockFileDataHandler");
+
             throw new Exception($response->errorMessage);
         }
         $data = $response->blockFileDataHandler;

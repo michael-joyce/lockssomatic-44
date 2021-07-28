@@ -55,12 +55,10 @@ class DepositRepository extends ServiceEntityRepository {
      *
      * @param ?array $plns
      * @param ?array $uuids
-     * @param bool $all
-     * @param bool $count
      *
      * @return Query
      */
-    public function checkQuery(array $plns = null, array $uuids = null, bool $all = false, bool $count = false) {
+    public function checkQuery(?array $plns = null, ?array $uuids = null, bool $all = false, bool $count = false) {
         $yesterday = new DateTimeImmutable();
         $yesterday->modify('-1 day');
 

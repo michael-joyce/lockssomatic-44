@@ -49,14 +49,14 @@ class DepositControllerTest extends ControllerBaseCase {
         $repo = $this->createMock(DepositRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('deposit.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set('test.'.DepositRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . DepositRepository::class, $repo);
 
         $this->login('user.user');
         $crawler = $this->client->request('GET', '/pln/1/deposit/search');
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $form = $crawler->selectButton('Search')->form([
-            'q' => 'deposit'
+            'q' => 'deposit',
         ]);
         $responseCrawler = $this->client->submit($form);
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
@@ -66,14 +66,14 @@ class DepositControllerTest extends ControllerBaseCase {
         $repo = $this->createMock(DepositRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('deposit.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set('test.'.DepositRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . DepositRepository::class, $repo);
 
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/pln/1/deposit/search');
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $form = $crawler->selectButton('Search')->form([
-            'q' => 'deposit'
+            'q' => 'deposit',
         ]);
         $responseCrawler = $this->client->submit($form);
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
