@@ -467,7 +467,7 @@ class Pln extends AbstractEntity {
     /**
      * Get keystore.
      *
-     * @return Keystore
+     * @return string
      */
     public function getKeystorePath() {
         return $this->keystore;
