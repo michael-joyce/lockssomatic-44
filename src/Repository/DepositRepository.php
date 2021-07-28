@@ -35,6 +35,14 @@ class DepositRepository extends ServiceEntityRepository {
         return $qb->getQuery();
     }
 
+    public function findByIdsQuery($ids) {
+        $qb = $this->createQueryBuilder('e');
+        $qb->where('e.id in (:ids)');
+        $qb->orWhere('e.uuid in (:ids)');
+        $qb->setParameter('ids', $ids);
+        return $qb->getQuery();
+    }
+
     public function searchQuery($q, ?Pln $pln = null) {
         $qb = $this->createQueryBuilder('e');
         $qb->addSelect('MATCH(e.uuid, e.url, e.title) AGAINST(:q BOOLEAN) AS HIDDEN score');

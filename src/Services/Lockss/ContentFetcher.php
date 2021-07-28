@@ -51,17 +51,17 @@ class ContentFetcher {
                 'save_to' => $filepath,
             ]);
         } catch (RequestException $e) {
-            $this->logger->error("Cannot download content from {$box->getHostName()}: {$e->getMessage()}");
+            $this->logger->error("Cannot download content: {$e->getMessage()}. URL was {$url}?url={$deposit->getUrl()}");
 
-            return;
+            return null;
         }
 
         $hash = $this->hasher->hash($filepath, $deposit->getChecksumType());
-        if ($hash !== $deposit->getChecksumValue()) {
+        if (strtoupper($hash) !== $deposit->getChecksumValue()) {
             $this->logger->error("Downloaded checksum for deposit {$deposit->getId()} from {$box->getHostName()} "
                 . "does not match. Expected {$deposit->getChecksumType()} {$deposit->getChecksumValue()} but got {$hash}.");
 
-            return;
+            return null;
         }
 
         return fopen($filepath, 'rb');
@@ -90,6 +90,7 @@ class ContentFetcher {
             }
         }
         $this->logger->error("Cannot find matching content for deposit {$deposit->getId()} on any box.");
+        return null;
     }
 
     /**
