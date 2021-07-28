@@ -82,6 +82,18 @@ class LockssService {
         ]);
     }
 
+    public function queryPolls(Box $box) {
+        return $this->call($box, 'queryPolls',[
+            'pollQuery' => 'SELECT *'
+        ]);
+    }
+
+    public function queryVotes(Box $box) {
+        return $this->call($box, 'queryPolls',[
+            'voteQuery' => 'SELECT *'
+        ]);
+    }
+
     public function auStatus(Box $box, Au $au) {
         return $this->call($box, 'getAuStatus', [
             'auId' => $this->auManager->generateAuidFromAu($au, true),
