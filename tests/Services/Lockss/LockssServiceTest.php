@@ -89,7 +89,7 @@ class LockssServiceTest extends ControllerBaseCase {
         $client->method('testMethod')->willReturn($return);
         $mock->method('getClient')->willReturn($client);
 
-        $this->assertSame((object) ['content' => ['data']], $mock->call($this->getReference('box.1'), 'testMethod'));
+        $this->assertEquals((object) ['content' => ['data']], $mock->call($this->getReference('box.1'), 'testMethod'));
     }
 
     public function testIsDaemonReady() : void {
