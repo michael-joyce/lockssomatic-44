@@ -117,6 +117,42 @@ class LockssServiceTest extends ControllerBaseCase {
         $this->assertSame(2, $result['activeCount']);
     }
 
+    public function testQueryPolls() : void {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock()
+        ;
+        $response = [
+            [
+                'auid' => 'abc123',
+                'auName' => 'WV Test',
+                'pollStatus' => 'pending'
+            ]
+        ];
+        $mock->method('getClient')->willReturn($this->mockClient('queryPolls', $response));
+        $result = $mock->queryPolls($this->getReference('box.1'));
+        $this->assertSame('abc123', $result[0]['auid']);
+    }
+
+    public function testQueryVotes() : void {
+        $mock = $this->getMockBuilder(LockssService::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getClient'])
+            ->getMock()
+        ;
+        $response = [
+            [
+                'auid' => 'abc123',
+                'auName' => 'WV Test',
+                'pollStatus' => 'pending'
+            ]
+        ];
+        $mock->method('getClient')->willReturn($this->mockClient('queryVotes', $response));
+        $result = $mock->queryVotes($this->getReference('box.1'));
+        $this->assertSame('abc123', $result[0]['auid']);
+    }
+
     public function testPlatformStatus() : void {
         $mock = $this->getMockBuilder(LockssService::class)
             ->disableOriginalConstructor()

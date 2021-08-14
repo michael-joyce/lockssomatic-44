@@ -66,9 +66,18 @@
 
     <footer class="footer">
         <div class="container">
-            <div class='col-md-12'>
+            <div class='col-sm-6'>
                 <p><strong>LOCKSSOMatic</strong></p>
             </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class='col-sm-6'>
+                    <p><strong>Dev</strong><br/>
+                        <a href='{{ path('sword_service_document') }}'>SWORD SD</a> |
+                        <a href='{{ asset('dev/coverage/index.html') }}'>Coverage</a> |
+                        <a href='https://github.com/coppul/westvault-44'>GitHub</a>
+                    </p>
+                </div>
+            {% endif %}
         </div>
     </footer>
 

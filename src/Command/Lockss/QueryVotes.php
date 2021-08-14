@@ -37,6 +37,7 @@ class QueryVotes extends AbstractLockssCommand {
         foreach ($this->getBoxes($plnIds) as $box) {
             $output->writeln("Querying {$box->getHostname()}. ");
             $status = $this->lockssService->queryPolls($box);
+            dump($status);
             foreach($status as $s) {
                 $output->writeln("  " . $s->auName . ' - ' . $s->pollStatus);
             }

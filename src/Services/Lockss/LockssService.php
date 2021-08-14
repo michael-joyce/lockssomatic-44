@@ -89,7 +89,7 @@ class LockssService {
     }
 
     public function queryVotes(Box $box) {
-        return $this->call($box, 'queryPolls',[
+        return $this->call($box, 'queryVotes',[
             'voteQuery' => 'SELECT *'
         ]);
     }
