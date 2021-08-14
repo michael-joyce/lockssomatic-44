@@ -40,15 +40,15 @@ class ContentFetcher {
      *
      * @return ?resource
      */
-    public function download(Deposit $deposit, Box $box, $username = null, $password = null) {
+    public function download(Deposit $deposit, Box $box, $username, $password) {
         $filepath = tempnam(sys_get_temp_dir(), 'lom-cfs-');
-        $client = new Client();
         $url = "http://{$box->getHostname()}:{$box->getPln()->getContentPort()}/ServeContent";
 
         try {
             $this->client->get($url, [
                 'query' => ['url' => $deposit->getUrl()],
                 'save_to' => $filepath,
+                'auth' => [$username, $password],
             ]);
         } catch (RequestException $e) {
             $this->logger->error("Cannot download content: {$e->getMessage()}. URL was {$url}?url={$deposit->getUrl()}");
@@ -68,14 +68,14 @@ class ContentFetcher {
     }
 
     /**
-     * @param ?string $username
-     * @param ?string $password
+     * @param string $username
+     * @param string $password
      *
      * @throws Exception
      *
      * @return null|resource
      */
-    public function fetch(Deposit $deposit, $username = null, $password = null) {
+    public function fetch(Deposit $deposit, $username, $password) {
         if (1.0 !== $deposit->getAgreement()) {
             throw new Exception("Cannot download deposit when agreement {$deposit->getAgreement()} is less than 100%.");
         }
@@ -84,7 +84,7 @@ class ContentFetcher {
         shuffle($boxes);
 
         foreach ($boxes as $box) {
-            $fh = $this->download($deposit, $box);
+            $fh = $this->download($deposit, $box, $username, $password);
             if ($fh) {
                 return $fh;
             }

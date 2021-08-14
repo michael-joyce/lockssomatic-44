@@ -28,8 +28,9 @@ class FetchDepositCommand extends AbstractLockssCommand {
     }
 
     protected function configure() : void {
-        $this->addArgument('ids', InputArgument::IS_ARRAY, 'List of database IDs or UUIDs to fetch');
-        $this->setDescription('Download deposits from the network');
+        $this->addArgument('id', InputArgument::REQUIRED, 'Database ID or UUID to fetch');
+        $this->addArgument('file', InputArgument::REQUIRED, 'Location to store the deposit');
+        $this->setDescription('Download one deposit from the network');
     }
 
     protected function getDeposits($ids) {
@@ -39,14 +40,29 @@ class FetchDepositCommand extends AbstractLockssCommand {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int {
-        $ids = $input->getArgument('ids');
+        $id = $input->getArgument('id');
+        /** @var Deposit $deposit */
+        $deposit = $this->em->find(Deposit::class, $id);
+        if( ! $deposit) {
+            $deposit = $this->em->getRepository(Deposit::class)->findOneBy([
+                'uuid' => $id,
+            ]);
+        }
+        if( ! $deposit) {
+            $output->writeln("Cannot find deposit with ID {$id}.");
+            return 1;
+        }
 
-        foreach ($this->getDeposits($ids)->execute() as $deposit) {
-            $fh = $this->fetcher->fetch($deposit, 'lockss-u', 'lockss-p');
-            $destination = fopen('tmp', 'wb');
-            while($data = fread($fh, 64*1023)) {
-                fwrite($destination, $data);
-            }
+        $pln = $deposit->getAu()->getPln();
+        $file = $input->getArgument('file');
+        $fh = $this->fetcher->fetch($deposit, $pln->getUsername(), $pln->getPassword());
+        if( ! $fh) {
+            $output->writeln("Cannot download deposit {$id} from any box.");
+            return 2;
+        }
+        $destination = fopen($file, 'wb');
+        while($data = fread($fh, 64*1023)) {
+            fwrite($destination, $data);
         }
 
         return 0;

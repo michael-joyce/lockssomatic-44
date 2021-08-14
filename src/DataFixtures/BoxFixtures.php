@@ -32,7 +32,7 @@ class BoxFixtures extends Fixture implements DependentFixtureInterface {
         $box1->setPort('1234');
         $box1->setWebServicePort('11234');
         $box1->setSendNotifications(false);
-        $box1->setActive(false);
+        $box1->setActive(true);
         $box1->setPln($this->getReference('pln.1'));
         $em->persist($box1);
         $this->setReference('box.1', $box1);
